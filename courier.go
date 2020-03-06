@@ -31,6 +31,7 @@ func CourierClient(apiKey string, baseUrl string) *Client {
 func (s *Client) doRequest(req *http.Request) ([]byte, error) {
 	req.Header.Set("Authorization", "Bearer " + s.ApiKey)
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("User-Agent", "courier-go/0.0.1")
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
