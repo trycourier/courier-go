@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
@@ -45,13 +44,11 @@ func (s *Client) doRequest(req *http.Request) ([]byte, error) {
 	if 200 != resp.StatusCode {
 		return nil, fmt.Errorf("%s", body)
 	}
-	// log.Println(string(body))
 	return body, nil
 }
 
 func (s *Client) GetProfile(id string) (*Profile, error) {
 	url := fmt.Sprintf(s.BaseUrl + "/profiles/%s", id)
-	log.Println(url)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -69,10 +66,40 @@ func (s *Client) GetProfile(id string) (*Profile, error) {
 }
 
 func (s *Client) MergeProfile(id string, profile []byte) error {
-	log.Println(string(profile))
 	url := fmt.Sprintf(s.BaseUrl + "/profiles/%s", id)
-	fmt.Println(url)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(profile))
+	if err != nil {
+		return err
+	}
+	_, err = s.doRequest(req)
+	return err
+}
+
+type SendResponse struct {
+	messageId string
+}
+
+func (s *Client) Send(message []byte) (*SendResponse, error) {
+	url := fmt.Sprintf(s.BaseUrl + "/send")
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(message))
+	if err != nil {
+		return nil, err
+	}
+	bytes, err := s.doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	var data SendResponse
+	err = json.Unmarshal(bytes, &data)
+	if err != nil {
+		return nil, err
+	}
+	return &data, nil
+}
+
+func (s *Client) UpdateProfile(id string, profile []byte) error {
+	url := fmt.Sprintf(s.BaseUrl + "/profiles/%s", id)
+	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(profile))
 	if err != nil {
 		return err
 	}
