@@ -32,9 +32,9 @@ func send() {
     data: {} // optional variables for merging into templates
     overrides: {} // optional http provider overrides
   }`)
-	data, err := client.Send(message)
-	if err != nil {
-		log.Fatalln(err)
+  data, err := client.Send(message)
+  if err != nil {
+    log.Fatalln(err)
   }
   log.Println(data)
 }
