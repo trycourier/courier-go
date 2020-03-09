@@ -16,21 +16,22 @@ import "github.com/trycourier/courier-go"
 package main
 
 import (
-	"log"
-	"github.com/trycourier/courier-go"
+  "log"
+  "github.com/trycourier/courier-go"
 )
 
 func send() {
-	client := courier.CourierClient("<AUTH_TOKEN>")  // get from the Courier UI
-	var message = []byte(`{
-		eventId: "<EVENT_ID>", // get from the Courier UI
+  client := courier.CourierClient("<AUTH_TOKEN>")
+  var message = []byte(`{
+    eventId: "<EVENT_ID>", // get from the Courier UI
     recipientId: "<RECIPIENT_ID>"
-		profile: {
+    profile: {
       email: "example@example.com",
       phone_number: "555-228-3890"
     },
     data: {} // optional variables for merging into templates
-	}`)
+    overrides: {} // optional http provider overrides
+  }`)
 	data, err := client.Send(message)
 	if err != nil {
 		log.Fatalln(err)
@@ -92,9 +93,6 @@ func updateProfile() {
 	}
 }
 ```
-
-## Development
-todo
 
 ## Contributing
 Bug reports and pull requests are welcome on GitHub at https://github.com/trycourier/courier-go.
