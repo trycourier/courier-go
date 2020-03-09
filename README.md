@@ -4,6 +4,8 @@ This Go package helps you send notifications through Courier, the smartest way t
 
 API Documenation: https://docs.trycourier.com/reference
 
+!["Golang Gopher"](https://blog.golang.org/gopher/gopher.png)
+
 ## Installation
 Add this line to your go package:
 ```bash
