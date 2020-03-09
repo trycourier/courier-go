@@ -1,11 +1,11 @@
-# courier-go
+# `trycourier`
 
-A go package for communicating with the Courier REST API.
+This Go package helps you send notifications through Courier, the smartest way to design & deliver notifications. Design your notifications once using our drag & drop editor, then deliver to any channel through one API. Email, mobile push, SMS, Slack — you name it!
 
 API Documenation: https://docs.trycourier.com/reference
 
-## Installation (via [npm](https://www.npmjs.com/package/@trycourier/courier))
-
+## Installation
+Add this line to your go package:
 ```bash
 import "github.com/trycourier/courier-go"
 ```
@@ -43,11 +43,11 @@ func main() {
 }
 ```
 
-## Environment Variables
+If you need to use a base url other than the default https://api.trycourier.app, you can pass it in as the second paramter to the `CourierClient`:
 
-`courier-go` supports credential storage in environment variables. If no `authorizationToken` is provided when instantiating the Courier client (e.g., `client := courier.CourierClient("<AUTH_TOKEN>")`), the value in the `COURIER_AUTH_TOKEN` env var will be used.
-
-If you need to use a base url other than the default https://api.trycourier.app, you can set it using the `COURIER_BASE_URL` env var.
+```go
+client := courier.CourierClient("<AUTH_TOKEN>", "<BASE_URL>")
+```
 
 ## Advanced Usage
 
@@ -93,10 +93,12 @@ func updateProfile() {
 }
 ```
 
+## Development
+todo
+
+## Contributing
+Bug reports and pull requests are welcome on GitHub at https://github.com/trycourier/courier-go.
+
 ## License
-
+The package is available as open source under the terms of the MIT License.
 [MIT License](http://www.opensource.org/licenses/mit-license.php)
-
-## Author
-
-[Courier](https://github.com/trycourier) ([support@trycourier.com](mailto:support@trycourier.com))
