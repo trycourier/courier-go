@@ -18,31 +18,31 @@ import "github.com/trycourier/courier-go"
 package main
 
 import (
-  "log"
-  "github.com/trycourier/courier-go"
+        "log"
+        "github.com/trycourier/courier-go"
 )
 
 func send() {
-  client := courier.CourierClient("<AUTH_TOKEN>")
-  var message = []byte(`{
-    eventId: "<EVENT_ID>", // get from the Courier UI
-    recipientId: "<RECIPIENT_ID>"
-    profile: {
-      email: "example@example.com",
-      phone_number: "555-228-3890"
-    },
-    data: {} // optional variables for merging into templates
-    overrides: {} // optional http provider overrides
-  }`)
-  response, err := client.Send(message)
-  if err != nil {
-    log.Fatalln(err)
-  }
-	log.Println(response.MessageId)
+        client := courier.CourierClient("<AUTH_TOKEN>")
+        var message = []byte(`{
+                eventId: "<EVENT_ID>", // get from the Courier UI
+                recipientId: "<RECIPIENT_ID>"
+                profile: {
+                        email: "example@example.com",
+                        phone_number: "555-228-3890"
+                },
+        data: {} // optional variables for merging into templates
+        overrides: {} // optional http provider overrides
+        }`)
+        response, err := client.Send(message)
+        if err != nil {
+                log.Fatalln(err)
+        }
+        log.Println(response.MessageId)
 }
 
 func main() {
-  send()
+        send()
 }
 ```
 
@@ -56,43 +56,43 @@ client := courier.CourierClient("<AUTH_TOKEN>", "<BASE_URL>")
 
 ```go
 func getProfile() {
-  client := courier.CourierClient("<AUTH_TOKEN>")
-  var recipientId = "<RECIPIENT_ID>"
-  response, err := client.GetProfile(recipientId)
-  if err != nil {
-    log.Fatalln(err)
-  }
-  log.Println(response.Profile)
+        client := courier.CourierClient("<AUTH_TOKEN>")
+        var recipientId = "<RECIPIENT_ID>"
+        response, err := client.GetProfile(recipientId)
+        if err != nil {
+                log.Fatalln(err)
+        }
+        log.Println(response.Profile)
 }
 
 func mergeProfile() {
-  client := courier.CourierClient("<AUTH_TOKEN>")
-  var profile = []byte(`{
-    profile: {
-      email: "example@example.com",
-      phone_number: "555-228-3890"
-    },
-    data: {} // optional variables for merging into templates
-  }`)
-  err := client.MergeProfile("<RECIPIENT_ID>", profile)
-  if err != nil {
-    log.Fatalln(err)
-  }
+        client := courier.CourierClient("<AUTH_TOKEN>")
+        var profile = []byte(`{
+                profile: {
+                        email: "example@example.com",
+                        phone_number: "555-228-3890"
+                },
+                data: {} // optional variables for merging into templates
+        }`)
+        err := client.MergeProfile("<RECIPIENT_ID>", profile)
+        if err != nil {
+                log.Fatalln(err)
+        }
 }
 
 func updateProfile() {
-  client := courier.CourierClient("<AUTH_TOKEN>")
-  var profile = []byte(`{
-    profile: {
-      email: "example@example.com",
-      phone_number: "555-228-3890"
-    },
-    data: {} // optional variables for merging into templates
-  }`)
-  err := client.UpdateProfile("5957debf-5e16-499f-ab35-a614a87fded5", profile)
-  if err != nil {
-    log.Fatalln(err)
-  }
+        client := courier.CourierClient("<AUTH_TOKEN>")
+        var profile = []byte(`{
+                profile: {
+                        email: "example@example.com",
+                        phone_number: "555-228-3890"
+                },
+                data: {} // optional variables for merging into templates
+        }`)
+        err := client.UpdateProfile("5957debf-5e16-499f-ab35-a614a87fded5", profile)
+        if err != nil {
+                log.Fatalln(err)
+        }
 }
 ```
 
