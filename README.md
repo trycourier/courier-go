@@ -34,11 +34,11 @@ func send() {
     data: {} // optional variables for merging into templates
     overrides: {} // optional http provider overrides
   }`)
-  data, err := client.Send(message)
+  response, err := client.Send(message)
   if err != nil {
     log.Fatalln(err)
   }
-  log.Println(data)
+	log.Println(response.MessageId)
 }
 
 func main() {
@@ -58,11 +58,11 @@ client := courier.CourierClient("<AUTH_TOKEN>", "<BASE_URL>")
 func getProfile() {
   client := courier.CourierClient("<AUTH_TOKEN>")
   var recipientId = "<RECIPIENT_ID>"
-  profile, err := client.GetProfile(recipientId)
+  response, err := client.GetProfile(recipientId)
   if err != nil {
     log.Fatalln(err)
   }
-  log.Println(profile.Profile)
+  log.Println(response.Profile)
 }
 
 func mergeProfile() {

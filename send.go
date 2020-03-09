@@ -8,7 +8,7 @@ import (
 )
 
 type SendResponse struct {
-	messageId string
+	MessageId string
 }
 
 func (s *Client) Send(message []byte) (*SendResponse, error) {
@@ -26,5 +26,6 @@ func (s *Client) Send(message []byte) (*SendResponse, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return &data, nil
 }
