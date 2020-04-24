@@ -8,7 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/expel-io/courier-go"
+	"github.com/trycourier/courier-go"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -44,8 +44,10 @@ func TestSend(t *testing.T) {
 			}
 
 			rw.Header().Add("Content-Type", "application/json")
-			// nolint
-			rw.Write([]byte(fmt.Sprintf("{ \"MessageId\" : \"%s\" }", expectedResponseID)))
+			_, writeErr := rw.Write([]byte(fmt.Sprintf("{ \"MessageId\" : \"%s\" }", expectedResponseID)))
+			if writeErr != nil {
+				t.Error(writeErr)
+			}
 
 		}))
 	defer server.Close()
@@ -54,22 +56,22 @@ func TestSend(t *testing.T) {
 
 		client := courier.CourierClient("key", server.URL)
 
-		myData := &Data{
+		data := &Data{
 			Foo: "bar",
 		}
-		myProfile := &Profile{
+		profile := &Profile{
 			Email: "foo@bar.com",
 		}
 		eventID := "event-id"
 		recipientID := "recpient-id"
-		messageID, err := client.Send(context.Background(), eventID, recipientID, myProfile, myData)
+		messageID, err := client.Send(context.Background(), eventID, recipientID, profile, data)
 
 		assert.Nil(t, err)
 		assert.Equal(t, expectedResponseID, messageID)
 		assert.Equal(t, eventID, requestBody.Event)
 		assert.Equal(t, recipientID, requestBody.Recipient)
-		assert.Equal(t, myData.Foo, requestBody.Data.Foo)
-		assert.Equal(t, myProfile.Email, requestBody.Profile.Email)
+		assert.Equal(t, data.Foo, requestBody.Data.Foo)
+		assert.Equal(t, profile.Email, requestBody.Profile.Email)
 	})
 
 }

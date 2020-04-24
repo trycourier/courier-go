@@ -1,4 +1,4 @@
-module github.com/expel-io/courier-go
+module github.com/trycourier/courier-go
 
 go 1.13
 
