@@ -24,21 +24,20 @@ import (
 
 func send() {
         client := courier.CourierClient("<AUTH_TOKEN>")
-        var message = []byte(`{
-                eventId: "<EVENT_ID>", // get from the Courier UI
-                recipientId: "<RECIPIENT_ID>"
-                profile: {
-                        email: "example@example.com",
-                        phone_number: "555-228-3890"
-                },
-        data: {} // optional variables for merging into templates
-        overrides: {} // optional http provider overrides
-        }`)
-        response, err := client.Send(message)
-        if err != nil {
-                log.Fatalln(err)
+
+        data := struct {
+                foo string
+        }{
+                foo: "bar",
         }
-        log.Println(response.MessageId)
+        profile = struct {
+                email string
+        }{
+                email: "foo@bar.com",
+        }
+
+        messageID, err := courier.Send(context.Background(), "event-id", "recipient-id", profile, data)
+        log.Println(messageId)
 }
 
 func main() {
