@@ -9,6 +9,7 @@ import (
 
 type ProvidersChannelResponse struct {
 	Key string
+	Name string
 	Template string
 }
 type ProvidersResponse struct {
@@ -27,6 +28,7 @@ type MessageResponse struct {
 	Event string
 	Notification string
 	Status string
+	Error string
 	Reason string
 	Recipient string
 	Enqueued int64
