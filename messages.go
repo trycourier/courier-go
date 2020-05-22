@@ -7,16 +7,33 @@ import (
 	"net/http"
 )
 
+type ProvidersChannelResponse struct {
+	Key string
+	Template string
+}
+type ProvidersResponse struct {
+	Channel *ProvidersChannelResponse
+	Error string
+	Status string
+	Delivered int64
+	Sent int64
+	Clicked int64
+	Provider string
+	Reference interface{} // provider specific response
+}
+
 type MessageResponse struct {
 	Id string
+	Event string
+	Notification string
 	Status string
+	Reason string
+	Recipient string
 	Enqueued int64
 	Delivered int64
-	Provider string
-	RecipientId string
-	EventId string
-	Configuration string
-	ProviderResponse string
+	Sent int64
+	Clicked int64
+	Providers []*ProvidersResponse
 }
 
 func (c *Client) GetMessage(ctx context.Context, messageID string) (*MessageResponse, error) {
