@@ -25,16 +25,16 @@ import (
 )
 
 type profile struct {
-	Email string `json:"email"`
+        Email string `json:"email"`
 }
 type data struct {
-	Foo string `json:"foo"`
+        Foo string `json:"foo"`
 }
 
 func send() {
-	var authToken = "<AUTH_TOKEN>"
-	var eventID = "<EVENT_ID>"
-	var recipientID = "<RECIPIENT_ID>"
+        var authToken = "<AUTH_TOKEN>"
+        var eventID = "<EVENT_ID>"
+        var recipientID = "<RECIPIENT_ID>"
         client := courier.CourierClient(authToken, "https://api.trycourier.app")
 
         profile := &profile{
@@ -46,7 +46,7 @@ func send() {
 
         messageID, err := client.Send(context.Background(), eventID, recipientID, profile, data)
         if err != nil {
-		log.Fatalln(err)
+                log.Fatalln(err)
 	}
         log.Println(messageID)
 }
