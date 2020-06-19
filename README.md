@@ -37,10 +37,10 @@ func send() {
 	var recipientID = "<RECIPIENT_ID>"
         client := courier.CourierClient(authToken, "https://api.trycourier.app")
 
-        profile := struct {
+        profile := &profile{
                 email: "foo@bar.com",
         }
-        data := struct {
+        data := &data{
                 foo: "bar",
         }
 
