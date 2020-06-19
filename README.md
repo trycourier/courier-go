@@ -18,25 +18,36 @@ import "github.com/trycourier/courier-go"
 package main
 
 import (
+        "context
         "log"
+
         "github.com/trycourier/courier-go"
 )
 
-func send() {
-        client := courier.CourierClient("<AUTH_TOKEN>", "https://api.trycourier.app")
+type profile struct {
+	Email string `json:"email"`
+}
+type data struct {
+	Foo string `json:"foo"`
+}
 
-        data := struct {
-                foo string
-        }{
-                foo: "bar",
-        }
+func send() {
+	var authToken = "<AUTH_TOKEN>"
+	var eventID = "<EVENT_ID>"
+	var recipientID = "<RECIPIENT_ID>"
+        client := courier.CourierClient(authToken, "https://api.trycourier.app")
+
         profile := struct {
-                email string
-        }{
                 email: "foo@bar.com",
         }
+        data := struct {
+                foo: "bar",
+        }
 
-        messageID, err := courier.Send(context.Background(), "event-id", "recipient-id", profile, data)
+        messageID, err := client.Send(context.Background(), eventID, recipientID, profile, data)
+        if err != nil {
+		log.Fatalln(err)
+	}
         log.Println(messageID)
 }
 
