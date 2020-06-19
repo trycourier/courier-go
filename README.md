@@ -23,21 +23,21 @@ import (
 )
 
 func send() {
-        client := courier.CourierClient("<AUTH_TOKEN>")
+        client := courier.CourierClient("<AUTH_TOKEN>", "https://api.trycourier.app")
 
         data := struct {
                 foo string
         }{
                 foo: "bar",
         }
-        profile = struct {
+        profile := struct {
                 email string
         }{
                 email: "foo@bar.com",
         }
 
         messageID, err := courier.Send(context.Background(), "event-id", "recipient-id", profile, data)
-        log.Println(messageId)
+        log.Println(messageID)
 }
 
 func main() {
