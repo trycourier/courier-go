@@ -15,44 +15,30 @@ import "github.com/trycourier/courier-go"
 ## Usage
 
 ```go
-package main
-
-import (
-        "context
-        "log"
-
-        "github.com/trycourier/courier-go"
-)
-
-type profile struct {
-        Email string `json:"email"`
-}
-type data struct {
-        Foo string `json:"foo"`
-}
-
 func send() {
-        var authToken = "<YOUR_AUTH_TOKEN>"
-        var eventID = "<YOUR_EVENT_ID>"
-        var recipientID = "<YOUR_RECIPIENT_ID>"
-
-        profile := &profile{
-                email: "foo@example.com",
+        type profile struct {
+                Email string `json:"email"`
         }
-        data := &data{
-                foo: "bar",
+        type data struct {
+                Foo string `json:"foo"`
         }
 
-        client := courier.CreateClient(authToken, nil)
-        messageID, err := client.Send(context.Background(), eventID, recipientID, profile, data)
+        var eventID = "example-event"
+        var recipientID = "example-recipient"
+
+        client := courier.CreateClient("<YOUR_AUTH_TOKEN>", nil)
+        messageID, err := client.Send(context.Background(), eventID, recipientID, courier.SendBody{
+                profile{
+                        Email: "foo@example.com",
+                },
+                data{
+                        Foo: "bar",
+                },
+        })
         if err != nil {
                 log.Fatalln(err)
 	}
         log.Println(messageID)
-}
-
-func main() {
-        send()
 }
 ```
 
@@ -66,45 +52,52 @@ client := courier.CreateClient("<AUTH_TOKEN>", "<BASE_URL>")
 
 ```go
 func getProfile() {
-        client := courier.CreateClient("<AUTH_TOKEN>", nil)
-        var recipientId = "<RECIPIENT_ID>"
-        response, err := client.GetProfile(recipientId)
+        var recipientID = "<YOUR_RECIPIENT_ID>"
+
+        client := courier.CreateClient("<YOUR_AUTH_TOKEN>", nil)
+        response, err := client.GetProfile(context.Background(), recipientID)
         if err != nil {
                 log.Fatalln(err)
         }
+
         log.Println(response.Profile)
 }
 
 func mergeProfile() {
-        client := courier.CreateClient("<AUTH_TOKEN>", nil)
+        var recipientID = "<YOUR_RECIPIENT_ID>"
         var profile = []byte(`{
                 profile: {
                         email: "example@example.com",
                         phone_number: "555-228-3890"
-                },
-                data: {} // optional variables for merging into templates
+                }
         }`)
-        err := client.MergeProfile("<RECIPIENT_ID>", profile)
+
+        client := courier.CreateClient("<YOUR_AUTH_TOKEN>", nil)
+        err := client.MergeProfile(context.Background(), recipientID, profile)
         if err != nil {
                 log.Fatalln(err)
         }
 }
 
 func updateProfile() {
-        client := courier.CreateClient("<AUTH_TOKEN>", nil)
+        var recipientID = "<YOUR_RECIPIENT_ID>"
         var profile = []byte(`{
                 profile: {
                         email: "example@example.com",
                         phone_number: "555-228-3890"
-                },
-                data: {} // optional variables for merging into templates
+                }
         }`)
-        err := client.UpdateProfile("5957debf-5e16-499f-ab35-a614a87fded5", profile)
+
+        client := courier.CreateClient("<YOUR_AUTH_TOKEN>", nil)
+        err := client.UpdateProfile(context.Background(), recipientID, profile)
         if err != nil {
                 log.Fatalln(err)
         }
 }
 ```
+
+## Staying Updated
+To update this SDK to the latest version, use `go get -u github.com/trycourier/courier-go`.
 
 ## Contributing
 Bug reports and pull requests are welcome on GitHub at https://github.com/trycourier/courier-go.

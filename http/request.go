@@ -37,6 +37,26 @@ func (api *APIConfiguration) SendRequestWithJSON(ctx context.Context, method str
 	return nil
 }
 
+// SendRequestWithMaps wraps HTTPSendBytes
+func (api *APIConfiguration) SendRequestWithMaps(ctx context.Context, method string, relativePath string, body map[string]interface{}) (map[string]json.RawMessage, error) {
+	jsonBody, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+
+	bytes, err := api.SendRequestWithBytes(ctx, method, relativePath, bytes.NewReader(jsonBody))
+	if err != nil {
+		return nil, err
+	}
+
+	var objmap map[string]json.RawMessage
+	err = json.Unmarshal(bytes, &objmap)
+	if err != nil {
+		return nil, err
+	}
+	return objmap, nil
+}
+
 // SendRequestWithBytes wraps HTTPRequest
 func (api *APIConfiguration) SendRequestWithBytes(ctx context.Context, method string, relativePath string, body io.Reader) ([]byte, error) {
 	fullyQualifiedURL := api.BaseURL + relativePath
@@ -44,7 +64,6 @@ func (api *APIConfiguration) SendRequestWithBytes(ctx context.Context, method st
 	if err != nil {
 		return nil, err
 	}
-
 	return api.ExecuteRequest(req)
 }
 
