@@ -2,7 +2,6 @@ package courier
 
 import (
 	"context"
-	"fmt"
 )
 
 // ProvidersChannelResponse represents the channel section of the ProvidersResponse
@@ -43,11 +42,9 @@ type MessageResponse struct {
 // GetMessage calls the /messages/:id endpoint of the Courier API
 func (c *Client) GetMessage(ctx context.Context, messageID string) (*MessageResponse, error) {
 	var response MessageResponse
-
-	err := c.HTTPSendJSON(ctx, "GET", fmt.Sprintf("/messages/%s", messageID), nil, &response)
+	err := c.http.SendRequestWithJSON(ctx, "GET", "/messages/"+messageID, nil, &response)
 	if err != nil {
 		return nil, err
 	}
-
 	return &response, nil
 }
