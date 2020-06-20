@@ -59,10 +59,10 @@ func TestClient_GetMessage(t *testing.T) {
 	defer server.Close()
 
 	t.Run("makes requests for message ID", func(t *testing.T) {
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CreateClient("key", &server.URL)
 		rsp, err := client.GetMessage(context.Background(), requestMessageID)
 		assert.Nil(t, err)
-		assert.Equal(t, requestMessageID, rsp.Id)
+		assert.Equal(t, requestMessageID, rsp.ID)
 		assert.Equal(t, sent, rsp.Sent)
 		assert.Equal(t, status, rsp.Status)
 	})

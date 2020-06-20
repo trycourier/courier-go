@@ -43,7 +43,7 @@ func send() {
                 foo: "bar",
         }
 
-        client := courier.CourierClient(authToken, "https://api.trycourier.app")
+        client := courier.CreateClient(authToken, nil)
         messageID, err := client.Send(context.Background(), eventID, recipientID, profile, data)
         if err != nil {
                 log.Fatalln(err)
@@ -59,14 +59,14 @@ func main() {
 If you need to use a base url other than the default https://api.trycourier.app, you can pass it in as the second paramter to the `CourierClient`:
 
 ```go
-client := courier.CourierClient("<AUTH_TOKEN>", "<BASE_URL>")
+client := courier.CreateClient("<AUTH_TOKEN>", "<BASE_URL>")
 ```
 
 ## Advanced Usage
 
 ```go
 func getProfile() {
-        client := courier.CourierClient("<AUTH_TOKEN>")
+        client := courier.CreateClient("<AUTH_TOKEN>", nil)
         var recipientId = "<RECIPIENT_ID>"
         response, err := client.GetProfile(recipientId)
         if err != nil {
@@ -76,7 +76,7 @@ func getProfile() {
 }
 
 func mergeProfile() {
-        client := courier.CourierClient("<AUTH_TOKEN>")
+        client := courier.CreateClient("<AUTH_TOKEN>", nil)
         var profile = []byte(`{
                 profile: {
                         email: "example@example.com",
@@ -91,7 +91,7 @@ func mergeProfile() {
 }
 
 func updateProfile() {
-        client := courier.CourierClient("<AUTH_TOKEN>")
+        client := courier.CreateClient("<AUTH_TOKEN>", nil)
         var profile = []byte(`{
                 profile: {
                         email: "example@example.com",

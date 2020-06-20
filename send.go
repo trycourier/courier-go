@@ -1,50 +1,39 @@
 package courier
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
-	"net/http"
 )
 
+// SendResponse is the response returned by the CourierAPI upon success
 type SendResponse struct {
-	MessageId string
+	MessageID string `json:"messageId"`
 }
 
-type sendRequest struct {
+// SendRequest is the JSON body expected by Courier's /send endpoint
+type SendRequest struct {
 	EventID   string      `json:"event"`
 	Recipient string      `json:"recipient"`
 	Profile   interface{} `json:"profile"`
 	Data      interface{} `json:"data"`
 }
 
+// Send calls the /send endpoint of the Courier API
 func (c *Client) Send(ctx context.Context, eventID, recipientID string, profile, data interface{}) (string, error) {
-	payload := sendRequest{
+	payload := SendRequest{
 		EventID:   eventID,
 		Recipient: recipientID,
 		Profile:   profile,
 		Data:      data,
 	}
 
-	body, err := json.Marshal(payload)
+	var response SendResponse
+	err := c.HTTPSendJSON(ctx, "POST", "/send", payload, &response)
 	if err != nil {
 		return "", err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, "POST", c.BaseUrl+"/send", bytes.NewReader(body))
-	if err != nil {
-		return "", err
-	}
-
-	bytes, err := c.doRequest(req)
-	if err != nil {
-		return "", err
-	}
-	var responseData SendResponse
-	err = json.Unmarshal(bytes, &responseData)
-	if err != nil {
-		return "", err
-	}
-
-	return responseData.MessageId, nil
+	return response.MessageID, nil
 }
+
+// func (c *Client) SendMap(ctx context.Context, eventID, recipientID string, porfile map[string]interface{}, data interface{}) (string, error) {
+// }

@@ -44,7 +44,7 @@ func TestSend(t *testing.T) {
 			}
 
 			rw.Header().Add("Content-Type", "application/json")
-			_, writeErr := rw.Write([]byte(fmt.Sprintf("{ \"MessageId\" : \"%s\" }", expectedResponseID)))
+			_, writeErr := rw.Write([]byte(fmt.Sprintf("{ \"messageId\" : \"%s\" }", expectedResponseID)))
 			if writeErr != nil {
 				t.Error(writeErr)
 			}
@@ -54,7 +54,7 @@ func TestSend(t *testing.T) {
 
 	t.Run("sends request", func(t *testing.T) {
 
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CreateClient("key", &server.URL)
 
 		data := &Data{
 			Foo: "bar",
