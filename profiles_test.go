@@ -22,6 +22,7 @@ func TestProfiles_GetProfile(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(
 		func(rw http.ResponseWriter, req *http.Request) {
 			assert.Equal(t, url, req.URL.String())
+			rw.WriteHeader(http.StatusOK)
 			rw.Header().Add("Content-Type", "application/json")
 			rsp := `
 				{
@@ -47,7 +48,7 @@ func TestProfiles_GetProfile(t *testing.T) {
 	})
 }
 
-func TestProfiles_MergeProfileBytes(t *testing.T) {
+func TestProfiles_ProfilePOST(t *testing.T) {
 	type RequestBody struct {
 		Profile interface{}
 	}
@@ -71,6 +72,7 @@ func TestProfiles_MergeProfileBytes(t *testing.T) {
 				t.Error(err)
 			}
 
+			rw.WriteHeader(http.StatusOK)
 			rw.Header().Add("Content-Type", "application/json")
 			_, writeErr := rw.Write([]byte(fmt.Sprintf("{ \"status\" : \"%s\" }", "SUCCESS")))
 			if writeErr != nil {
@@ -93,7 +95,7 @@ func TestProfiles_MergeProfileBytes(t *testing.T) {
 		}
 
 		client := courier.CreateClient("key", &server.URL)
-		err = client.MergeProfileBytes(context.Background(), recipientID, bytes)
+		_, err = client.API.SendRequestWithBytes(context.Background(), "POST", "/profiles/"+recipientID, bytes)
 
 		assert.Nil(t, err)
 	})

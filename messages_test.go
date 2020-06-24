@@ -21,6 +21,7 @@ func TestMessages_GetMessage(t *testing.T) {
 		func(rw http.ResponseWriter, req *http.Request) {
 			assert.Equal(t, url, req.URL.String())
 
+			rw.WriteHeader(http.StatusOK)
 			rw.Header().Add("Content-Type", "application/json")
 			rsp := `
 				{

@@ -1,12 +1,12 @@
 package courier
 
-import "github.com/trycourier/courier-go/http"
+import "github.com/trycourier/courier-go/api"
 
 const version = "2.0.0"
 
 // Client lets you communicate with the Courier API
 type Client struct {
-	API *http.APIConfiguration
+	API *api.Configuration
 }
 
 // CreateClient creates a new client for communicating with the Courier API
@@ -19,7 +19,7 @@ func CreateClient(authToken string, baseURL *string) *Client {
 	}
 
 	return &Client{
-		API: &http.APIConfiguration{
+		API: &api.Configuration{
 			AuthToken:  authToken,
 			BaseURL:    url,
 			SDKVersion: version,

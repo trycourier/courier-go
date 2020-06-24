@@ -73,7 +73,7 @@ func mergeProfile() {
         }`)
 
         client := courier.CreateClient("<YOUR_AUTH_TOKEN>", nil)
-        err := client.MergeProfileBytes(context.Background(), recipientID, profile)
+        _, err = client.API.SendRequestWithBytes(context.Background(), "POST", "/profiles/"+recipientID, profile)
         if err != nil {
                 log.Fatalln(err)
         }
@@ -89,7 +89,7 @@ func updateProfile() {
         }`)
 
         client := courier.CreateClient("<YOUR_AUTH_TOKEN>", nil)
-        err := client.UpdateProfileBytes(context.Background(), recipientID, profile)
+        _, err = client.API.SendRequestWithBytes(context.Background(), "PUT", "/profiles/"+recipientID, profile)
         if err != nil {
                 log.Fatalln(err)
         }

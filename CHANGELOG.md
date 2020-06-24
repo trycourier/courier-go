@@ -13,7 +13,5 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * added `SendMap`
 * `GetProfile` now requires a `context` argument 
 * `GetProfile` now returns a `map[string]json.RawMessage{}` instead of hydrating a struct reference
-* renamed `MergeProfile` to `MergeProfileBytes`
-* `MergeProfileBytes` now requires a `context` argument
-* renamed `UpdateProfile` to `UpdateProfileBytes`
-* `UpdateProfileBytes` now requires a `context` argument
+* removed `MergeProfile`; use `client.API.SendRequestWithBytes(context.Background(), "PUT", "/profiles/"+recipientID, profile)` instead
+* removed `UpdateProfile`; use `client.API.SendRequestWithBytes(context.Background(), "PUT", "/profiles/"+recipientID, profile)` instead
