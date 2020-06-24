@@ -14,10 +14,6 @@ import (
 	"github.com/trycourier/courier-go"
 )
 
-// type TestResponseProfile struct {
-// 	Foo string `json:"foo"`
-// }
-
 func TestProfiles_GetProfile(t *testing.T) {
 	profileID := "example"
 	foo := "bar"

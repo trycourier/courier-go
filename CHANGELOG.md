@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 * `courier.CourierClient` has been renamed to `courier.CreateClient`
 * `courier.CreateClient` now takes a `nil` second parameter if you wish to use our default API URL, not `""`
-* Our underlying API communication functionas are now exposed via `client.API`
+* Our underlying API communication functions are now exposed via `client.API`
 * renamed `SendRequest` to `SendBody` and modified the struct
 * `Send` now takes one `body interface{}` argument rather than separate `profile` and `data` arguments
 * added `SendMap`
