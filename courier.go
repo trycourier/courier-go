@@ -6,7 +6,7 @@ const version = "2.0.0"
 
 // Client lets you communicate with the Courier API
 type Client struct {
-	http *http.APIConfiguration
+	API *http.APIConfiguration
 }
 
 // CreateClient creates a new client for communicating with the Courier API
@@ -19,7 +19,7 @@ func CreateClient(authToken string, baseURL *string) *Client {
 	}
 
 	return &Client{
-		http: &http.APIConfiguration{
+		API: &http.APIConfiguration{
 			AuthToken:  authToken,
 			BaseURL:    url,
 			SDKVersion: version,

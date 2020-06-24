@@ -24,7 +24,7 @@ func (api *APIConfiguration) SendRequestWithJSON(ctx context.Context, method str
 		return err
 	}
 
-	bytes, err := api.SendRequestWithBytes(ctx, method, relativePath, bytes.NewReader(jsonBody))
+	bytes, err := api.SendRequestWithBytes(ctx, method, relativePath, jsonBody)
 	if err != nil {
 		return err
 	}
@@ -44,7 +44,7 @@ func (api *APIConfiguration) SendRequestWithMaps(ctx context.Context, method str
 		return nil, err
 	}
 
-	bytes, err := api.SendRequestWithBytes(ctx, method, relativePath, bytes.NewReader(jsonBody))
+	bytes, err := api.SendRequestWithBytes(ctx, method, relativePath, jsonBody)
 	if err != nil {
 		return nil, err
 	}
@@ -57,8 +57,15 @@ func (api *APIConfiguration) SendRequestWithMaps(ctx context.Context, method str
 	return objmap, nil
 }
 
-// SendRequestWithBytes wraps HTTPRequest
-func (api *APIConfiguration) SendRequestWithBytes(ctx context.Context, method string, relativePath string, body io.Reader) ([]byte, error) {
+// SendRequestWithBytes wraps SendRequestWithReader
+func (api *APIConfiguration) SendRequestWithBytes(ctx context.Context, method string, relativePath string, body []byte) ([]byte, error) {
+	// buf := bytes.NewBuffer(body)
+	buf := bytes.NewReader(body)
+	return api.SendRequestWithReader(ctx, method, relativePath, buf)
+}
+
+// SendRequestWithReader wraps HTTPRequest
+func (api *APIConfiguration) SendRequestWithReader(ctx context.Context, method string, relativePath string, body io.Reader) ([]byte, error) {
 	fullyQualifiedURL := api.BaseURL + relativePath
 	req, err := http.NewRequestWithContext(ctx, method, fullyQualifiedURL, body)
 	if err != nil {

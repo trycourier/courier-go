@@ -42,7 +42,7 @@ type MessageResponse struct {
 // GetMessage calls the /messages/:id endpoint of the Courier API
 func (c *Client) GetMessage(ctx context.Context, messageID string) (*MessageResponse, error) {
 	var response MessageResponse
-	err := c.http.SendRequestWithJSON(ctx, "GET", "/messages/"+messageID, nil, &response)
+	err := c.API.SendRequestWithJSON(ctx, "GET", "/messages/"+messageID, nil, &response)
 	if err != nil {
 		return nil, err
 	}

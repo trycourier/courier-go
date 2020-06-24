@@ -17,20 +17,16 @@ func (c *Client) Send(ctx context.Context, eventID, recipientID string, body int
 	if err != nil {
 		return "", err
 	}
-
-	// these are required, so we accept them as separate params
-	bodyMap["event"] = eventID
-	bodyMap["recipient"] = recipientID
-
 	return c.SendMap(ctx, eventID, recipientID, bodyMap)
 }
 
 // SendMap calls the /send endpoint of the Courier API (passing maps)
 func (c *Client) SendMap(ctx context.Context, eventID, recipientID string, body map[string]interface{}) (string, error) {
+	// these are required, so we accept them as separate params
 	body["event"] = eventID
 	body["recipient"] = recipientID
 
-	response, err := c.http.SendRequestWithMaps(ctx, "POST", "/send", body)
+	response, err := c.API.SendRequestWithMaps(ctx, "POST", "/send", body)
 	if err != nil {
 		return "", err
 	}

@@ -1,9 +1,11 @@
 package courier_test
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -34,8 +36,13 @@ func TestSendMap(t *testing.T) {
 		func(rw http.ResponseWriter, req *http.Request) {
 			assert.Equal(t, url, req.URL.String())
 
-			decoder := json.NewDecoder(req.Body)
-			err := decoder.Decode(&requestBody)
+			buf := new(bytes.Buffer)
+			buf.ReadFrom(req.Body)
+			bodyJSON := buf.String()
+			log.Println("send_test.go: TestSendMap")
+			log.Println(bodyJSON)
+
+			err := json.Unmarshal(buf.Bytes(), &requestBody)
 			if err != nil {
 				t.Error(err)
 			}
@@ -53,21 +60,18 @@ func TestSendMap(t *testing.T) {
 		eventID := "event-id"
 		recipientID := "recipient-id"
 
-		var profile map[string]interface{}
-		profile = make(map[string]interface{})
+		profile := make(map[string]interface{})
 		profile["email"] = "foo@bar.com"
 
-		var data map[string]interface{}
-		data = make(map[string]interface{})
+		data := make(map[string]interface{})
 		data["foo"] = "bar"
 
-		var payload map[string]interface{}
-		payload = make(map[string]interface{})
-		payload["profile"] = profile
-		payload["data"] = data
+		body := make(map[string]interface{})
+		body["profile"] = profile
+		body["data"] = data
 
 		client := courier.CreateClient("key", &server.URL)
-		result, err := client.SendMap(context.Background(), eventID, recipientID, payload)
+		result, err := client.SendMap(context.Background(), eventID, recipientID, body)
 
 		assert.Nil(t, err)
 		assert.Equal(t, messageID, result)
@@ -100,8 +104,13 @@ func TestSendStruct(t *testing.T) {
 		func(rw http.ResponseWriter, req *http.Request) {
 			assert.Equal(t, url, req.URL.String())
 
-			decoder := json.NewDecoder(req.Body)
-			err := decoder.Decode(&requestBody)
+			buf := new(bytes.Buffer)
+			buf.ReadFrom(req.Body)
+			bodyJSON := buf.String()
+			log.Println("send_test.go: TestSendStruct")
+			log.Println(bodyJSON)
+
+			err := json.Unmarshal(buf.Bytes(), &requestBody)
 			if err != nil {
 				t.Error(err)
 			}
