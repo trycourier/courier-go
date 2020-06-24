@@ -99,9 +99,6 @@ func updateProfile() {
 ## Staying Updated
 To update this SDK to the latest version, use `go get -u github.com/trycourier/courier-go`.
 
-## Contributing
-Bug reports and pull requests are welcome on GitHub at https://github.com/trycourier/courier-go.
-
 ## License
 The package is available as open source under the terms of the MIT License.
 [MIT License](http://www.opensource.org/licenses/mit-license.php)
