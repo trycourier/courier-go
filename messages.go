@@ -2,61 +2,49 @@ package courier
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"net/http"
 )
 
+// ProvidersChannelResponse represents the channel section of the ProvidersResponse
 type ProvidersChannelResponse struct {
-	Key string
-	Name string
+	Key      string
+	Name     string
 	Template string
 }
+
+// ProvidersResponse represents the providers section of the MessageResponse
 type ProvidersResponse struct {
-	Channel *ProvidersChannelResponse
-	Error string
-	Status string
+	Channel   *ProvidersChannelResponse
+	Error     string
+	Status    string
 	Delivered int64
-	Sent int64
-	Clicked int64
-	Provider string
+	Sent      int64
+	Clicked   int64
+	Provider  string
 	Reference interface{} // provider specific response
 }
 
+// MessageResponse represents the return of the /messages/* endpoints on the Courier API
 type MessageResponse struct {
-	Id string
-	Event string
+	ID           string
+	Event        string
 	Notification string
-	Status string
-	Error string
-	Reason string
-	Recipient string
-	Enqueued int64
-	Delivered int64
-	Sent int64
-	Clicked int64
-	Providers []*ProvidersResponse
+	Status       string
+	Error        string
+	Reason       string
+	Recipient    string
+	Enqueued     int64
+	Delivered    int64
+	Sent         int64
+	Clicked      int64
+	Providers    []*ProvidersResponse
 }
 
+// GetMessage calls the /messages/:id endpoint of the Courier API
 func (c *Client) GetMessage(ctx context.Context, messageID string) (*MessageResponse, error) {
-
-	url := fmt.Sprintf(c.BaseUrl+"/messages/%s", messageID)
-
-	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	var response MessageResponse
+	err := c.API.SendRequestWithJSON(ctx, "GET", "/messages/"+messageID, nil, &response)
 	if err != nil {
 		return nil, err
 	}
-
-	bytes, err := c.doRequest(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var data MessageResponse
-	err = json.Unmarshal(bytes, &data)
-	if err != nil {
-		return nil, err
-	}
-
-	return &data, nil
+	return &response, nil
 }
