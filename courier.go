@@ -1,28 +1,42 @@
 package courier
 
-import "github.com/trycourier/courier-go/api"
+import (
+	"fmt"
+	"io/ioutil"
+	"net/http"
+)
 
-const version = "2.0.0"
-
-// Client lets you communicate with the Courier API
 type Client struct {
-	API *api.Configuration
+	ApiKey  string
+	BaseUrl string
 }
 
-// CreateClient creates a new client for communicating with the Courier API
-func CreateClient(authToken string, baseURL *string) *Client {
-	var url string
-	if baseURL == nil {
-		url = "https://api.trycourier.app"
-	} else {
-		url = *baseURL
+func CourierClient(apiKey string, baseUrl string) *Client {
+	if baseUrl == "" {
+		baseUrl = "https://api.trycourier.app"
 	}
-
 	return &Client{
-		API: &api.Configuration{
-			AuthToken:  authToken,
-			BaseURL:    url,
-			SDKVersion: version,
-		},
+		ApiKey:  apiKey,
+		BaseUrl: baseUrl,
 	}
+}
+
+func (s *Client) doRequest(req *http.Request) ([]byte, error) {
+	req.Header.Set("Authorization", "Bearer "+s.ApiKey)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("User-Agent", "courier-go/0.0.1")
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if http.StatusOK != resp.StatusCode {
+		return nil, fmt.Errorf("%s", body)
+	}
+	return body, nil
 }

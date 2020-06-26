@@ -1,4 +1,4 @@
-package api
+package courier
 
 import (
 	"bytes"
@@ -10,8 +10,8 @@ import (
 	"net/http"
 )
 
-// Configuration represents the core data needed to communicate with the Courier API
-type Configuration struct {
+// APIConfiguration represents the core data needed to communicate with the Courier API
+type APIConfiguration struct {
 	AuthToken  string
 	BaseURL    string
 	SDKVersion string
@@ -31,7 +31,7 @@ func (err *HTTPError) Error() string {
 }
 
 // SendRequestWithJSON wraps HTTPSendBytes
-func (api *Configuration) SendRequestWithJSON(ctx context.Context, method string, relativePath string, body interface{}, response interface{}) error {
+func (api *APIConfiguration) SendRequestWithJSON(ctx context.Context, method string, relativePath string, body interface{}, response interface{}) error {
 	jsonBody, err := json.Marshal(body)
 	if err != nil {
 		return err
@@ -51,7 +51,7 @@ func (api *Configuration) SendRequestWithJSON(ctx context.Context, method string
 }
 
 // SendRequestWithMaps wraps HTTPSendBytes
-func (api *Configuration) SendRequestWithMaps(ctx context.Context, method string, relativePath string, body map[string]interface{}) (map[string]json.RawMessage, error) {
+func (api *APIConfiguration) SendRequestWithMaps(ctx context.Context, method string, relativePath string, body map[string]interface{}) (map[string]json.RawMessage, error) {
 	jsonBody, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
@@ -71,14 +71,14 @@ func (api *Configuration) SendRequestWithMaps(ctx context.Context, method string
 }
 
 // SendRequestWithBytes wraps SendRequestWithReader
-func (api *Configuration) SendRequestWithBytes(ctx context.Context, method string, relativePath string, body []byte) ([]byte, error) {
+func (api *APIConfiguration) SendRequestWithBytes(ctx context.Context, method string, relativePath string, body []byte) ([]byte, error) {
 	// buf := bytes.NewBuffer(body)
 	buf := bytes.NewReader(body)
 	return api.SendRequestWithReader(ctx, method, relativePath, buf)
 }
 
 // SendRequestWithReader wraps HTTPRequest
-func (api *Configuration) SendRequestWithReader(ctx context.Context, method string, relativePath string, body io.Reader) ([]byte, error) {
+func (api *APIConfiguration) SendRequestWithReader(ctx context.Context, method string, relativePath string, body io.Reader) ([]byte, error) {
 	fullyQualifiedURL := api.BaseURL + relativePath
 	req, err := http.NewRequestWithContext(ctx, method, fullyQualifiedURL, body)
 	if err != nil {
@@ -88,7 +88,7 @@ func (api *Configuration) SendRequestWithReader(ctx context.Context, method stri
 }
 
 // ExecuteRequest issues an HTTP request and sets headers expected by the Courier API
-func (api *Configuration) ExecuteRequest(req *http.Request) ([]byte, error) {
+func (api *APIConfiguration) ExecuteRequest(req *http.Request) ([]byte, error) {
 	req.Header.Set("Authorization", "Bearer "+api.AuthToken)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("User-Agent", "courier-go/"+api.SDKVersion)

@@ -11,7 +11,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/trycourier/courier-go"
+	"github.com/trycourier/courier-go/v2"
 )
 
 func TestProfiles_GetProfile(t *testing.T) {
