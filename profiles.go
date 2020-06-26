@@ -1,23 +1,50 @@
 package courier
 
 import (
-	"context"
+	"bytes"
 	"encoding/json"
+	"fmt"
+	"net/http"
 )
 
-// GetProfile calls the GET /profiles/:id endpoint of the Courier API
-func (c *Client) GetProfile(ctx context.Context, id string) (map[string]json.RawMessage, error) {
-	return c.API.SendRequestWithMaps(ctx, "GET", "/profiles/"+id, nil)
+type Profile struct {
+	Profile interface{} `json:"profile"`
 }
 
-// MergeProfileBytes calls the POST /profiles/:id endpoint of the Courier API
-func (c *Client) MergeProfileBytes(ctx context.Context, id string, profile []byte) error {
-	_, err := c.API.SendRequestWithBytes(ctx, "POST", "/profiles/"+id, profile)
+func (s *Client) GetProfile(id string) (*Profile, error) {
+	url := fmt.Sprintf(s.BaseUrl+"/profiles/%s", id)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	bytes, err := s.doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	var data Profile
+	err = json.Unmarshal(bytes, &data)
+	if err != nil {
+		return nil, err
+	}
+	return &data, nil
+}
+
+func (s *Client) MergeProfile(id string, profile []byte) error {
+	url := fmt.Sprintf(s.BaseUrl+"/profiles/%s", id)
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(profile))
+	if err != nil {
+		return err
+	}
+	_, err = s.doRequest(req)
 	return err
 }
 
-// UpdateProfileBytes calls the PUT /profiles/:id endpoint of the Courier API
-func (c *Client) UpdateProfileBytes(ctx context.Context, id string, profile []byte) error {
-	_, err := c.API.SendRequestWithBytes(ctx, "PUT", "/profiles/"+id, profile)
+func (s *Client) UpdateProfile(id string, profile []byte) error {
+	url := fmt.Sprintf(s.BaseUrl+"/profiles/%s", id)
+	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(profile))
+	if err != nil {
+		return err
+	}
+	_, err = s.doRequest(req)
 	return err
 }
