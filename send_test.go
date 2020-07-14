@@ -24,6 +24,7 @@ func TestSend(t *testing.T) {
 	type RequestBody struct {
 		Event     string
 		Recipient string
+		Brand     string
 		Profile   Profile
 		Data      Data
 	}
@@ -63,13 +64,15 @@ func TestSend(t *testing.T) {
 			Email: "foo@bar.com",
 		}
 		eventID := "event-id"
-		recipientID := "recpient-id"
-		messageID, err := client.Send(context.Background(), eventID, recipientID, profile, data)
+		recipientID := "recipient-id"
+		brandID := "brand-id"
+		messageID, err := client.Send(context.Background(), eventID, recipientID, brandID, profile, data)
 
 		assert.Nil(t, err)
 		assert.Equal(t, expectedResponseID, messageID)
 		assert.Equal(t, eventID, requestBody.Event)
 		assert.Equal(t, recipientID, requestBody.Recipient)
+		assert.Equal(t, brandID, requestBody.Brand)
 		assert.Equal(t, data.Foo, requestBody.Data.Foo)
 		assert.Equal(t, profile.Email, requestBody.Profile.Email)
 	})

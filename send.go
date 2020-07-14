@@ -14,14 +14,16 @@ type SendResponse struct {
 type sendRequest struct {
 	EventID   string      `json:"event"`
 	Recipient string      `json:"recipient"`
+	Brand     string      `json:"brand"`
 	Profile   interface{} `json:"profile"`
 	Data      interface{} `json:"data"`
 }
 
-func (c *Client) Send(ctx context.Context, eventID, recipientID string, profile, data interface{}) (string, error) {
+func (c *Client) Send(ctx context.Context, eventID, recipientID, brandID string, profile, data interface{}) (string, error) {
 	payload := sendRequest{
 		EventID:   eventID,
 		Recipient: recipientID,
+		Brand:     brandID,
 		Profile:   profile,
 		Data:      data,
 	}
