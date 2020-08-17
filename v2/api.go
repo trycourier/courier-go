@@ -52,9 +52,14 @@ func (api *APIConfiguration) SendRequestWithJSON(ctx context.Context, method str
 
 // SendRequestWithMaps wraps HTTPSendBytes
 func (api *APIConfiguration) SendRequestWithMaps(ctx context.Context, method string, relativePath string, body map[string]interface{}) (map[string]json.RawMessage, error) {
-	jsonBody, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
+	var jsonBody []byte = nil
+
+	if body != nil {
+		var err error
+		jsonBody, err = json.Marshal(body)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	bytes, err := api.SendRequestWithBytes(ctx, method, relativePath, jsonBody)
