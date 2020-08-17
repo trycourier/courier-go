@@ -37,7 +37,11 @@ func TestProfiles_GetProfile(t *testing.T) {
 
 	t.Run("makes requests for message ID", func(t *testing.T) {
 		client := courier.CreateClient("key", &server.URL)
-		profile, err := client.GetProfile(context.Background(), profileID)
+		response, err := client.GetProfile(context.Background(), profileID)
+		assert.Nil(t, err)
+
+		var profile map[string]string
+		err = json.Unmarshal(response["profile"], &profile)
 		assert.Nil(t, err)
 
 		assert.Equal(t, "bar", profile["foo"])
