@@ -80,6 +80,9 @@ func (api *APIConfiguration) SendRequestWithBytes(ctx context.Context, method st
 // SendRequestWithReader wraps HTTPRequest
 func (api *APIConfiguration) SendRequestWithReader(ctx context.Context, method string, relativePath string, body io.Reader) ([]byte, error) {
 	fullyQualifiedURL := api.BaseURL + relativePath
+	if method == "GET" {
+		body = nil
+	}
 	req, err := http.NewRequestWithContext(ctx, method, fullyQualifiedURL, body)
 	if err != nil {
 		return nil, err
