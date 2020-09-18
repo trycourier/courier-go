@@ -7,8 +7,10 @@ import (
 
 // SendBody is the JSON body expected by Courier's /send endpoint
 type SendBody struct {
-	Profile interface{} `json:"profile"`
-	Data    interface{} `json:"data"`
+	Profile  interface{} `json:"profile"`
+	Data     interface{} `json:"data"`
+	Override interface{} `json:"override,omitempty"`
+	Brand    string      `json:"brand,omitempty"`
 }
 
 // Send calls the /send endpoint of the Courier API (passing a struct)
