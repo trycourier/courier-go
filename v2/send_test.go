@@ -90,16 +90,35 @@ func TestSend_Send(t *testing.T) {
 	type RequestProfile struct {
 		Email string
 	}
+	type RequestBodyOverride struct {
+		ReplyBroadcast bool `json:"reply_broadcast"`
+	}
+	type RequestSlackOverride struct {
+		Body RequestBodyOverride
+	}
+	type RequestOverride struct {
+		Slack RequestSlackOverride
+	}
 	type RequestBody struct {
 		Event     string
 		Recipient string
 		Profile   RequestProfile
 		Data      RequestData
+		Override  RequestOverride
+		Brand     string
+	}
+	type data struct {
+		Foo string `json:"foo"`
+	}
+	type profile struct {
+		Email string `json:"email"`
 	}
 
 	var requestBody RequestBody
 	url := "/send"
 	messageID := "123456789"
+	eventID := "event-id"
+	recipientID := "recipient-id"
 
 	server := httptest.NewServer(http.HandlerFunc(
 		func(rw http.ResponseWriter, req *http.Request) {
@@ -127,6 +146,62 @@ func TestSend_Send(t *testing.T) {
 	defer server.Close()
 
 	t.Run("sends request", func(t *testing.T) {
+		client := courier.CreateClient("key", &server.URL)
+		result, err := client.Send(context.Background(), eventID, recipientID, courier.SendBody{
+			Profile: profile{
+				Email: "foo@bar.com",
+			},
+			Data: data{
+				Foo: "bar",
+			},
+		})
+
+		assert.Nil(t, err)
+		assert.Equal(t, messageID, result)
+		assert.Equal(t, eventID, requestBody.Event)
+		assert.Equal(t, recipientID, requestBody.Recipient)
+		assert.Equal(t, "foo@bar.com", requestBody.Profile.Email)
+		assert.Equal(t, "bar", requestBody.Data.Foo)
+	})
+
+	t.Run("sends request with override", func(t *testing.T) {
+		type bodyOverride struct {
+			ReplyBroadcast bool `json:"reply_broadcast"`
+		}
+		type slackOverride struct {
+			Body bodyOverride `json:"body"`
+		}
+		type override struct {
+			Slack slackOverride `json:"slack"`
+		}
+
+		client := courier.CreateClient("key", &server.URL)
+		result, err := client.Send(context.Background(), eventID, recipientID, courier.SendBody{
+			Profile: profile{
+				Email: "foo@bar.com",
+			},
+			Data: data{
+				Foo: "bar",
+			},
+			Override: override{
+				Slack: slackOverride{
+					Body: bodyOverride{
+						ReplyBroadcast: true,
+					},
+				},
+			},
+		})
+
+		assert.Nil(t, err)
+		assert.Equal(t, messageID, result)
+		assert.Equal(t, eventID, requestBody.Event)
+		assert.Equal(t, recipientID, requestBody.Recipient)
+		assert.Equal(t, "foo@bar.com", requestBody.Profile.Email)
+		assert.Equal(t, "bar", requestBody.Data.Foo)
+		assert.Equal(t, true, requestBody.Override.Slack.Body.ReplyBroadcast)
+	})
+
+	t.Run("sends request with brand", func(t *testing.T) {
 		type data struct {
 			Foo string `json:"foo"`
 		}
@@ -139,12 +214,13 @@ func TestSend_Send(t *testing.T) {
 
 		client := courier.CreateClient("key", &server.URL)
 		result, err := client.Send(context.Background(), eventID, recipientID, courier.SendBody{
-			profile{
+			Profile: profile{
 				Email: "foo@bar.com",
 			},
-			data{
+			Data: data{
 				Foo: "bar",
 			},
+			Brand: "dispatcher",
 		})
 
 		assert.Nil(t, err)
@@ -153,6 +229,7 @@ func TestSend_Send(t *testing.T) {
 		assert.Equal(t, recipientID, requestBody.Recipient)
 		assert.Equal(t, "foo@bar.com", requestBody.Profile.Email)
 		assert.Equal(t, "bar", requestBody.Data.Foo)
+		assert.Equal(t, "dispatcher", requestBody.Brand)
 	})
 }
 
@@ -212,10 +289,10 @@ func TestSend_Send_400Error(t *testing.T) {
 
 		client := courier.CreateClient("key", &server.URL)
 		_, err := client.Send(context.Background(), eventID, recipientID, courier.SendBody{
-			profile{
+			Profile: profile{
 				Email: "foo@bar.com",
 			},
-			data{
+			Data: data{
 				Foo: "bar",
 			},
 		})
