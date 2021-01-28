@@ -13,7 +13,7 @@ type Client struct {
 
 func CourierClient(apiKey string, baseUrl string) *Client {
 	if baseUrl == "" {
-		baseUrl = "https://api.trycourier.app"
+		baseUrl = "https://api.courier.com"
 	}
 	return &Client{
 		ApiKey:  apiKey,
