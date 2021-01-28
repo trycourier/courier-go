@@ -1,10 +1,17 @@
-# `trycourier`
+# `Courier Go SDK`
 
 This Go package helps you send notifications through Courier, the smartest way to design & deliver notifications. Design your notifications once using our drag & drop editor, then deliver to any channel through one API. Email, mobile push, SMS, Slack — you name it!
 
-API Documenation: https://docs.trycourier.com/reference
-
 !["Golang Gopher"](https://blog.golang.org/gopher/gopher.png)
+
+APIs supported:
+* Send API
+* Messages API
+* Profiles API
+
+## Official Courier API docs
+
+For a full description of request and response payloads and properties, please see the [official Courier API docs](https://docs.courier.com/reference).
 
 ## Installation
 Add this line to your go package:
@@ -16,24 +23,16 @@ import "github.com/trycourier/courier-go"
 
 ```go
 func send() {
-        type profile struct {
-                Email string `json:"email"`
-        }
-        type data struct {
-                Foo string `json:"foo"`
-        }
-
         var eventID = "example-event"
         var recipientID = "example-recipient"
 
-        client := courier.CreateClient("<YOUR_AUTH_TOKEN>", nil)
-        messageID, err := client.Send(context.Background(), eventID, recipientID, courier.SendBody{
-                profile{
-                        Email: "foo@example.com",
-                },
-                data{
-                        Foo: "bar",
-                },
+        client := courier.CourierClient("<YOUR_AUTH_TOKEN>", nil)
+        messageID, err := client.Send(
+                context.Background(), 
+                eventID,
+                recipientID,
+                map[string]string{"email": "foo@example.com"},
+		map[string]string{"favoriteAdjective": "awesomeness"},
         })
         if err != nil {
                 log.Fatalln(err)
@@ -42,59 +41,27 @@ func send() {
 }
 ```
 
-If you need to use a base url other than the default https://api.trycourier.app, you can pass it in as the second paramter to the `CourierClient`:
+If you need to use a base url other than the default https://api.courier.com, you can pass it in as the second paramter to the `CourierClient`:
 
 ```go
-client := courier.CreateClient("<AUTH_TOKEN>", "<BASE_URL>")
+client := courier.CourierClient("<AUTH_TOKEN>", "<BASE_URL>")
 ```
 
-## Advanced Usage
+## APIs
 
-```go
-func getProfile() {
-        var recipientID = "<YOUR_RECIPIENT_ID>"
+For a full description of request and response payloads and properties, please see the [official Courier API docs](https://docs.courier.com/reference).
 
-        client := courier.CreateClient("<YOUR_AUTH_TOKEN>", nil)
-        response, err := client.GetProfile(context.Background(), recipientID)
-        if err != nil {
-                log.Fatalln(err)
-        }
+### Send API
+* ```Send(context, eventID string, recipientID string, profile, data): object``` [[?]](https://docs.courier.com/reference/send-api#sendmessage)
 
-        log.Println(response.Profile)
-}
+### Messages API
+* ```GetMessage(context, messageID string): object``` [[?]](https://docs.courier.com/reference/messages-api#getmessagebyid)
 
-func mergeProfile() {
-        var recipientID = "<YOUR_RECIPIENT_ID>"
-        var profile = []byte(`{
-                profile: {
-                        email: "example@example.com",
-                        phone_number: "555-228-3890"
-                }
-        }`)
+### Profiles API
+* ```GetProfile(id string): object``` [[?]](https://docs.courier.com/reference/profiles-api#getprofilebyrecipientid)
+* ```MergeProfile(id string, profile byte[]): object``` [[?]](https://docs.courier.com/reference/profiles-api#mergeprofilebyrecipientid)
+* ```UpdateProfile(id string, profile byte[]): object``` [[?]](https://docs.courier.com/reference/profiles-api#patchprofilebyrecipientid)
 
-        client := courier.CreateClient("<YOUR_AUTH_TOKEN>", nil)
-        _, err = client.API.SendRequestWithBytes(context.Background(), "POST", "/profiles/"+recipientID, profile)
-        if err != nil {
-                log.Fatalln(err)
-        }
-}
-
-func updateProfile() {
-        var recipientID = "<YOUR_RECIPIENT_ID>"
-        var profile = []byte(`{
-                profile: {
-                        email: "example@example.com",
-                        phone_number: "555-228-3890"
-                }
-        }`)
-
-        client := courier.CreateClient("<YOUR_AUTH_TOKEN>", nil)
-        _, err = client.API.SendRequestWithBytes(context.Background(), "PUT", "/profiles/"+recipientID, profile)
-        if err != nil {
-                log.Fatalln(err)
-        }
-}
-```
 
 ## Staying Updated
 To update this SDK to the latest version, use `go get -u github.com/trycourier/courier-go`.
