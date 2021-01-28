@@ -1,4 +1,4 @@
-# `Courier Go SDK`
+# Courier Go SDK
 
 This Go package helps you send notifications through Courier, the smartest way to design & deliver notifications. Design your notifications once using our drag & drop editor, then deliver to any channel through one API. Email, mobile push, SMS, Slack — you name it!
 
