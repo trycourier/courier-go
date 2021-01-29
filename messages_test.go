@@ -118,3 +118,45 @@ func TestClient_GetMessages(t *testing.T) {
 		assert.Equal(t, recipient, rsp.Results[0].Recipient)
 	})
 }
+
+func TestClient_GetMessageHistory(t *testing.T) {
+	messageId := "1-60136482-4f3e07390677c06e2e248de6"
+	_type := "ENQUEUED"
+
+	server := httptest.NewServer(http.HandlerFunc(
+
+		func(rw http.ResponseWriter, req *http.Request) {
+
+			assert.Equal(t, "/messages/"+messageId+"/history?type="+_type, req.URL.String())
+
+			rw.Header().Add("Content-Type", "application/json")
+			rsp := `
+			{
+				"Results": [
+						{
+								"data": {
+										"favoriteAdjective": "awesomeness"
+								},
+								"event": "courier-quickstart",
+								"profile": {
+										"email": "foo@example.com"
+								},
+								"recipient": "Github_6154318",
+								"ts": 1611883650743,
+								"type": "%s"
+						}
+				]
+		}`
+			_, _ = rw.Write([]byte(fmt.Sprintf(rsp, _type)))
+
+		}))
+	defer server.Close()
+
+	t.Run("makes request for message history", func(t *testing.T) {
+		client := courier.CourierClient("key", server.URL)
+		rsp, err := client.GetMessageHistory(context.Background(), "1-60136482-4f3e07390677c06e2e248de6", _type)
+
+		assert.Nil(t, err)
+		assert.Equal(t, 1, len(rsp.Results))
+	})
+}

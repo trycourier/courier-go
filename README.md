@@ -61,6 +61,7 @@ For a full description of request and response payloads and properties, please s
 ### Messages API
 * ```GetMessage(context, messageID string): object``` [[?]](https://docs.courier.com/reference/messages-api#getmessagebyid)
 * ```GetMessages(context, cursor string, event string, list string, messageId string, notification string, recipient string): object``` [[?]](https://docs.courier.com/reference/messages-api#getmessages)
+* ```GetMessageHistory(context, messageID string, _type string): object``` [[?]](https://docs.courier.com/reference/messages-api#getmessagehistorybyid)
 
 ### Profiles API
 * ```GetProfile(id string): object``` [[?]](https://docs.courier.com/reference/profiles-api#getprofilebyrecipientid)

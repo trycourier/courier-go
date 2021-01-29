@@ -52,6 +52,10 @@ type MessagesResponse struct {
 	Results []*MessageResponse
 }
 
+type MessageHistoryResponse struct {
+	Results []interface{}
+}
+
 func (c *Client) GetMessage(ctx context.Context, messageID string) (*MessageResponse, error) {
 	if messageID == "" {
 		return nil, errors.New("messageID is required")
@@ -112,6 +116,36 @@ func (c *Client) GetMessages(ctx context.Context, cursor string, event string, l
 	}
 
 	var data MessagesResponse
+	err = json.Unmarshal(bytes, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data, nil
+}
+
+func (c *Client) GetMessageHistory(ctx context.Context, messageID string, _type string) (*MessageHistoryResponse, error) {
+	if messageID == "" {
+		return nil, errors.New("messageID is required")
+	}
+
+	requestURL := fmt.Sprintf(c.BaseUrl+"/messages/%s/history", messageID)
+
+	if _type != "" {
+		requestURL = requestURL + "?type=" + _type
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "GET", requestURL, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	bytes, err := c.doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var data MessageHistoryResponse
 	err = json.Unmarshal(bytes, &data)
 	if err != nil {
 		return nil, err
