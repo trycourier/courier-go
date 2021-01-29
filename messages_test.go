@@ -58,12 +58,105 @@ func TestClient_GetMessage(t *testing.T) {
 		}))
 	defer server.Close()
 
-	t.Run("makes requests for message ID", func(t *testing.T) {
+	t.Run("makes request for message ID", func(t *testing.T) {
 		client := courier.CourierClient("key", server.URL)
 		rsp, err := client.GetMessage(context.Background(), requestMessageID)
 		assert.Nil(t, err)
 		assert.Equal(t, requestMessageID, rsp.Id)
 		assert.Equal(t, sent, rsp.Sent)
 		assert.Equal(t, status, rsp.Status)
+	})
+}
+
+func TestClient_GetMessages(t *testing.T) {
+
+	event := "courier-quickstart"
+	recipient := "Github_6154318"
+
+	server := httptest.NewServer(http.HandlerFunc(
+
+		func(rw http.ResponseWriter, req *http.Request) {
+
+			assert.Equal(t, "/messages?event="+event+"&recipient="+recipient, req.URL.String())
+
+			rw.Header().Add("Content-Type", "application/json")
+			rsp := `
+			{
+				"Paging":{
+					 "Cursor":"",
+					 "More":false
+				},
+				"Results":[
+					 {
+							"Id":"1-60122b54-7e5d45d35b820ace1c0ffc49",
+							"Event":"%s",
+							"Notification":"",
+							"Status":"UNMAPPED",
+							"Error":"",
+							"Reason":"",
+							"Recipient":"%s",
+							"Enqueued":1611803477021,
+							"Delivered":0,
+							"Sent":0,
+							"Clicked":0,
+							"Opened":0,
+							"Providers":null
+					 }
+				]
+		 }`
+			_, _ = rw.Write([]byte(fmt.Sprintf(rsp, event, recipient)))
+
+		}))
+	defer server.Close()
+
+	t.Run("makes request for messages", func(t *testing.T) {
+		client := courier.CourierClient("key", server.URL)
+		rsp, err := client.GetMessages(context.Background(), "", event, "", "", "", recipient)
+
+		assert.Nil(t, err)
+		assert.Equal(t, event, rsp.Results[0].Event)
+		assert.Equal(t, recipient, rsp.Results[0].Recipient)
+	})
+}
+
+func TestClient_GetMessageHistory(t *testing.T) {
+	messageId := "1-60136482-4f3e07390677c06e2e248de6"
+	_type := "ENQUEUED"
+
+	server := httptest.NewServer(http.HandlerFunc(
+
+		func(rw http.ResponseWriter, req *http.Request) {
+
+			assert.Equal(t, "/messages/"+messageId+"/history?type="+_type, req.URL.String())
+
+			rw.Header().Add("Content-Type", "application/json")
+			rsp := `
+			{
+				"Results": [
+						{
+								"data": {
+										"favoriteAdjective": "awesomeness"
+								},
+								"event": "courier-quickstart",
+								"profile": {
+										"email": "foo@example.com"
+								},
+								"recipient": "Github_6154318",
+								"ts": 1611883650743,
+								"type": "%s"
+						}
+				]
+		}`
+			_, _ = rw.Write([]byte(fmt.Sprintf(rsp, _type)))
+
+		}))
+	defer server.Close()
+
+	t.Run("makes request for message history", func(t *testing.T) {
+		client := courier.CourierClient("key", server.URL)
+		rsp, err := client.GetMessageHistory(context.Background(), "1-60136482-4f3e07390677c06e2e248de6", _type)
+
+		assert.Nil(t, err)
+		assert.Equal(t, 1, len(rsp.Results))
 	})
 }
