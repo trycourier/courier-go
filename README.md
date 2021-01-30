@@ -68,6 +68,11 @@ For a full description of request and response payloads and properties, please s
 * ```GetEvent(context, eventID string): object``` [[?]](https://docs.courier.com/reference/events-api#geteventbyid)
 * ```PutEvent(context, eventID string, notificationID string, eventType string): object``` [[?]](https://docs.courier.com/reference/events-api#replaceeventbyid)
 
+### Brands API
+* ```GetBrands(context, cursor string): object``` [[?]](https://docs.courier.com/reference/brands-api#getbrands)
+* ```PostBrand(context, brandID string, brandName string, brandSettings BrandSettings, brandSnippets BrandSnippets): object``` [[?]](https://docs.courier.com/reference/brands-api#createbrand)
+* ```GetBrand(context, brandID string): object``` [[?]](https://docs.courier.com/reference/brands-api#getbrand)
+
 ### Profiles API
 * ```GetProfile(id string): object``` [[?]](https://docs.courier.com/reference/profiles-api#getprofilebyrecipientid)
 * ```MergeProfile(id string, profile byte[]): object``` [[?]](https://docs.courier.com/reference/profiles-api#mergeprofilebyrecipientid)
