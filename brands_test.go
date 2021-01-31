@@ -143,3 +143,63 @@ func TestClient_PostBrand(t *testing.T) {
 		assert.Equal(t, brandName, rsp.Name)
 	})
 }
+
+func TestClient_PutBrand(t *testing.T) {
+	brandID := "VYXZGN7TY94NHDG7A7P9F534DFBK"
+	brandUpdatedName := "my-brand-updated"
+	server := httptest.NewServer(http.HandlerFunc(
+
+		func(rw http.ResponseWriter, req *http.Request) {
+
+			assert.Equal(t, "/brands/"+brandID, req.URL.String())
+
+			rw.Header().Add("Content-Type", "application/json")
+			rsp := `
+			{
+				"Id": "%s",
+				"Name": "%s",
+				"Created": 1611970081707,
+				"Published": 1611970081707,
+				"Updated": 1611970081707,
+				"Settings": {
+						"colors": {},
+						"email": {
+								"footer": {
+										"markdown": null
+								}
+						}
+				},
+				"Snippets": {},
+				"Version": "2021-01-30T01:28:01.707Z"
+			}`
+			_, _ = rw.Write([]byte(fmt.Sprintf(rsp, brandID, brandUpdatedName)))
+
+		}))
+	defer server.Close()
+
+	t.Run("makes request to update a brand", func(t *testing.T) {
+		client := courier.CourierClient("key", server.URL)
+		rsp, err := client.PutBrand(context.Background(), brandID, brandUpdatedName, courier.BrandSettings{}, courier.BrandSnippets{})
+		assert.Nil(t, err)
+		assert.Equal(t, brandUpdatedName, rsp.Name)
+	})
+}
+
+func TestClient_DeleteBrand(t *testing.T) {
+	brandID := "VYXZGN7TY94NHDG7A7P9F534DFBK"
+	server := httptest.NewServer(http.HandlerFunc(
+
+		func(rw http.ResponseWriter, req *http.Request) {
+
+			assert.Equal(t, "/brands/"+brandID, req.URL.String())
+
+			rw.WriteHeader(http.StatusNoContent)
+
+		}))
+	defer server.Close()
+
+	t.Run("makes request to delete a brand", func(t *testing.T) {
+		client := courier.CourierClient("key", server.URL)
+		client.DeleteBrand(context.Background(), brandID)
+	})
+}

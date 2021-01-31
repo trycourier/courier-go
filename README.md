@@ -72,6 +72,8 @@ For a full description of request and response payloads and properties, please s
 * ```GetBrands(context, cursor string): object``` [[?]](https://docs.courier.com/reference/brands-api#getbrands)
 * ```PostBrand(context, brandID string, brandName string, brandSettings BrandSettings, brandSnippets BrandSnippets): object``` [[?]](https://docs.courier.com/reference/brands-api#createbrand)
 * ```GetBrand(context, brandID string): object``` [[?]](https://docs.courier.com/reference/brands-api#getbrand)
+* ```PutBrand(context, brandID string, brandName string, brandSettings BrandSettings, brandSnippets BrandSnippets): object``` [[?]](https://docs.courier.com/reference/brands-api#replacebrand)
+* ```DeleteBrand(context, brandID string): error string``` [[?]](https://docs.courier.com/reference/brands-api#deletebrand)
 
 ### Profiles API
 * ```GetProfile(id string): object``` [[?]](https://docs.courier.com/reference/profiles-api#getprofilebyrecipientid)

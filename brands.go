@@ -58,6 +58,12 @@ type CreateBrandRequest struct {
 	Snippets BrandSnippets `json:"snippets,omitempty"`
 }
 
+type UpdateBrandRequest struct {
+	Name     string        `json:"name"`
+	Settings BrandSettings `json:"settings"`
+	Snippets BrandSnippets `json:"snippets,omitempty"`
+}
+
 func (c *Client) GetBrands(ctx context.Context, cursor string) (*BrandsResponse, error) {
 	url := c.BaseUrl + "/brands"
 
@@ -146,4 +152,71 @@ func (c *Client) PostBrand(ctx context.Context, brandID string, brandName string
 	}
 
 	return &data, nil
+}
+
+func (c *Client) PutBrand(ctx context.Context, brandID string, brandName string, brandSettings BrandSettings, brandSnippets BrandSnippets) (*BrandResponse, error) {
+	if brandID == "" {
+		return nil, errors.New("Brand ID is required")
+	}
+
+	if brandName == "" {
+		return nil, errors.New("Brand Name is required")
+	}
+
+	payload := UpdateBrandRequest{
+		Name:     brandName,
+		Settings: brandSettings,
+		Snippets: brandSnippets,
+	}
+
+	body, err := json.Marshal(payload)
+	if err != nil {
+		return nil, err
+	}
+
+	url := fmt.Sprintf(c.BaseUrl+"/brands/%s", brandID)
+
+	req, err := http.NewRequestWithContext(ctx, "PUT", url, bytes.NewReader(body))
+	if err != nil {
+		return nil, err
+	}
+
+	bytes, err := c.doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var data BrandResponse
+	err = json.Unmarshal(bytes, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data, nil
+}
+
+func (c *Client) DeleteBrand(ctx context.Context, brandID string) error {
+	if brandID == "" {
+		return errors.New("brandID is required")
+	}
+
+	url := fmt.Sprintf(c.BaseUrl+"/brands/%s", brandID)
+
+	req, err := http.NewRequestWithContext(ctx, "DELETE", url, nil)
+	if err != nil {
+		return err
+	}
+
+	bytes, err := c.doRequest(req)
+	if err != nil {
+		return err
+	}
+
+	var data string
+	err = json.Unmarshal(bytes, &data)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
