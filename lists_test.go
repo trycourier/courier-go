@@ -40,7 +40,7 @@ func TestClient_GetLists(t *testing.T) {
 	defer server.Close()
 
 	t.Run("makes request to get all lists", func(t *testing.T) {
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 		rsp, err := client.GetLists(context.Background(), "", "")
 		assert.Nil(t, err)
 		assert.Equal(t, "my-list", rsp.Items[0].Id)
@@ -69,7 +69,7 @@ func TestClient_GetList(t *testing.T) {
 	defer server.Close()
 
 	t.Run("makes request to get a list", func(t *testing.T) {
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 		rsp, err := client.GetList(context.Background(), listID)
 		assert.Nil(t, err)
 		assert.Equal(t, listID, rsp.Id)
@@ -91,7 +91,7 @@ func TestClient_PutList(t *testing.T) {
 	defer server.Close()
 
 	t.Run("makes request to update a list", func(t *testing.T) {
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 		client.PutList(context.Background(), listID, listUpdatedName)
 	})
 }
@@ -110,7 +110,7 @@ func TestClient_DeleteList(t *testing.T) {
 	defer server.Close()
 
 	t.Run("makes request to delete a list", func(t *testing.T) {
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 		client.DeleteList(context.Background(), listID)
 	})
 }
@@ -129,7 +129,7 @@ func TestClient_RestoreList(t *testing.T) {
 	defer server.Close()
 
 	t.Run("makes request to restore a list", func(t *testing.T) {
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 		client.RestoreList(context.Background(), listID)
 	})
 }
@@ -162,7 +162,7 @@ func TestClient_GetListSubscriptions(t *testing.T) {
 	defer server.Close()
 
 	t.Run("makes request to get a list's all subscriptions", func(t *testing.T) {
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 		rsp, err := client.GetListSubscriptions(context.Background(), listID, "")
 		assert.Nil(t, err)
 		assert.Equal(t, 1, len(rsp.Items))
@@ -184,7 +184,7 @@ func TestClient_SubscribeMultipleRecipientsToList(t *testing.T) {
 	defer server.Close()
 
 	t.Run("makes request to update a list", func(t *testing.T) {
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 		client.SubscribeMultipleRecipientsToList(context.Background(), listID, []courier.Recipient{{"recipient001"}})
 	})
 }
@@ -204,7 +204,7 @@ func TestClient_SubscribeRecipientToList(t *testing.T) {
 	defer server.Close()
 
 	t.Run("makes request to update a list", func(t *testing.T) {
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 		client.SubscribeRecipientToList(context.Background(), listID, recipientID)
 	})
 }
@@ -224,7 +224,7 @@ func TestClient_DeleteListSubscription(t *testing.T) {
 	defer server.Close()
 
 	t.Run("makes request to update a list", func(t *testing.T) {
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 		client.DeleteListSubscription(context.Background(), listID, recipientID)
 	})
 }

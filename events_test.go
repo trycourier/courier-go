@@ -36,7 +36,7 @@ func TestClient_GetEvent(t *testing.T) {
 	defer server.Close()
 
 	t.Run("makes request to get an event", func(t *testing.T) {
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 		rsp, err := client.GetEvent(context.Background(), eventID)
 		assert.Nil(t, err)
 		assert.Equal(t, notificationID, rsp.Id)
@@ -77,7 +77,7 @@ func TestClient_PutEvent(t *testing.T) {
 	defer server.Close()
 
 	t.Run("makes request to upsert an event", func(t *testing.T) {
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 		_, err := client.PutEvent(context.Background(), eventID, notificationID, eventType)
 		assert.Nil(t, err)
 		assert.Equal(t, notificationID, requestBody.Id)

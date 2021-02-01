@@ -59,7 +59,7 @@ func TestClient_GetMessage(t *testing.T) {
 	defer server.Close()
 
 	t.Run("makes request for message ID", func(t *testing.T) {
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 		rsp, err := client.GetMessage(context.Background(), requestMessageID)
 		assert.Nil(t, err)
 		assert.Equal(t, requestMessageID, rsp.Id)
@@ -110,7 +110,7 @@ func TestClient_GetMessages(t *testing.T) {
 	defer server.Close()
 
 	t.Run("makes request for messages", func(t *testing.T) {
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 		rsp, err := client.GetMessages(context.Background(), "", event, "", "", "", recipient)
 
 		assert.Nil(t, err)
@@ -153,7 +153,7 @@ func TestClient_GetMessageHistory(t *testing.T) {
 	defer server.Close()
 
 	t.Run("makes request for message history", func(t *testing.T) {
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 		rsp, err := client.GetMessageHistory(context.Background(), "1-60136482-4f3e07390677c06e2e248de6", _type)
 
 		assert.Nil(t, err)

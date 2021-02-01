@@ -19,14 +19,29 @@ Add this line to your go package:
 import "github.com/trycourier/courier-go"
 ```
 
-## Usage
+## Configuration
+Instantiate the Courier client class with your authorization token OR username and password. Providing just a authorization token will generate a "Bearer" authorization header, while providing a username and password will generate a "Basic" (base64-encoded) authorization header
+
+```go
+client := courier.CourierClient("COURIER_AUTH_TOKEN", "COURIER_BASE_URL", "COURIER_AUTH_USERNAME", "COURIER_AUTH_USERNAME")
+```
+
+Following Environment variables are supported -
+* COURIER_AUTH_TOKEN
+* COURIER_BASE_URL
+* COURIER_AUTH_USERNAME
+* COURIER_AUTH_USERNAME
+
+Please note: COURIER_BASE_URL defaults to https://api.courier.com
+
+## Example Usage
 
 ```go
 func send() {
         var eventID = "example-event"
         var recipientID = "example-recipient"
 
-        client := courier.CourierClient("<YOUR_AUTH_TOKEN>", nil)
+        client := courier.CourierClient("<COURIER_AUTH_TOKEN>", "", "", "")
         messageID, err := client.Send(
                 context.Background(), 
                 eventID,
@@ -42,12 +57,6 @@ func send() {
 	}
         log.Println(messageID)
 }
-```
-
-If you need to use a base url other than the default https://api.courier.com, you can pass it in as the second paramter to the `CourierClient`:
-
-```go
-client := courier.CourierClient("<AUTH_TOKEN>", "<BASE_URL>")
 ```
 
 ## APIs

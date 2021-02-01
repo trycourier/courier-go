@@ -47,7 +47,7 @@ func TestClient_GetBrand(t *testing.T) {
 	defer server.Close()
 
 	t.Run("makes request to get a brand", func(t *testing.T) {
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 		rsp, err := client.GetBrand(context.Background(), brandID)
 		assert.Nil(t, err)
 		assert.Equal(t, brandID, rsp.Id)
@@ -97,7 +97,7 @@ func TestClient_GetBrands(t *testing.T) {
 	defer server.Close()
 
 	t.Run("makes request to get all brands", func(t *testing.T) {
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 		rsp, err := client.GetBrands(context.Background(), "")
 		assert.Nil(t, err)
 		assert.Equal(t, "VYXZGN7TY94NHDG7A7P9F534DFBK", rsp.Results[0].Id)
@@ -137,7 +137,7 @@ func TestClient_PostBrand(t *testing.T) {
 	defer server.Close()
 
 	t.Run("makes request to create a brand", func(t *testing.T) {
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 		rsp, err := client.PostBrand(context.Background(), "", brandName, courier.BrandSettings{}, courier.BrandSnippets{})
 		assert.Nil(t, err)
 		assert.Equal(t, brandName, rsp.Name)
@@ -178,7 +178,7 @@ func TestClient_PutBrand(t *testing.T) {
 	defer server.Close()
 
 	t.Run("makes request to update a brand", func(t *testing.T) {
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 		rsp, err := client.PutBrand(context.Background(), brandID, brandUpdatedName, courier.BrandSettings{}, courier.BrandSnippets{})
 		assert.Nil(t, err)
 		assert.Equal(t, brandUpdatedName, rsp.Name)
@@ -199,7 +199,7 @@ func TestClient_DeleteBrand(t *testing.T) {
 	defer server.Close()
 
 	t.Run("makes request to delete a brand", func(t *testing.T) {
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 		client.DeleteBrand(context.Background(), brandID)
 	})
 }
