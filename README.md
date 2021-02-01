@@ -87,10 +87,11 @@ For a full description of request and response payloads and properties, please s
 * ```DeleteListSubscription(context, listID string, recipientID string): error string``` [[?]](https://docs.courier.com/reference/lists-api#deletelistsubscription)
 
 ### Profiles API
-* ```GetProfile(id string): object``` [[?]](https://docs.courier.com/reference/profiles-api#getprofilebyrecipientid)
-* ```MergeProfile(id string, profile byte[]): object``` [[?]](https://docs.courier.com/reference/profiles-api#mergeprofilebyrecipientid)
-* ```UpdateProfile(id string, profile byte[]): object``` [[?]](https://docs.courier.com/reference/profiles-api#patchprofilebyrecipientid)
-
+* ```GetProfile(recipientID string): object``` [[?]](https://docs.courier.com/reference/profiles-api#getprofilebyrecipientid)
+* ```MergeProfile(recipientID string, profile byte[]): error string``` [[?]](https://docs.courier.com/reference/profiles-api#mergeprofilebyrecipientid)
+* ```UpdateProfile(recipientID string, profile byte[]): error string``` [[?]](https://docs.courier.com/reference/profiles-api#patchprofilebyrecipientid)
+* ```PatchProfile(recipientID string, patch []PatchOp): error string``` [[?]](https://docs.courier.com/reference/profiles-api#patchprofilebyrecipientid)
+* ```GetProfileLists(recipientID string, cursor string): Object``` [[?]](https://docs.courier.com/reference/profiles-api#getlistsforprofilebyrecipientid)
 
 ## Staying Updated
 To update this SDK to the latest version, use `go get -u github.com/trycourier/courier-go`.
