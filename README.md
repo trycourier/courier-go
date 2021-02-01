@@ -51,6 +51,7 @@ func send() {
                 "my-brand-id",
                 nil,
                 nil,
+                "",
         })
         if err != nil {
                 log.Fatalln(err)
@@ -64,8 +65,8 @@ func send() {
 For a full description of request and response payloads and properties, please see the [official Courier API docs](https://docs.courier.com/reference).
 
 ### Send API
-* ```Send(context, eventID string, recipientID string, profile interface{}, data interface{}, brand string, override interface{}, preferences interface{}): object``` [[?]](https://docs.courier.com/reference/send-api#sendmessage)
-* ```SendToList(context, eventID string, listID string, pattern string, data interface{}, brand string, override interface{}): object``` [[?]](https://docs.courier.com/reference/send-api#sendlist)
+* ```Send(context, eventID string, recipientID string, profile interface{}, data interface{}, brand string, override interface{}, preferences interface{}, idempotencyKey string): object``` [[?]](https://docs.courier.com/reference/send-api#sendmessage)
+* ```SendToList(context, eventID string, listID string, pattern string, data interface{}, brand string, override interface{}, idempotencyKey string): object``` [[?]](https://docs.courier.com/reference/send-api#sendlist)
 
 ### Messages API
 * ```GetMessage(context, messageID string): object``` [[?]](https://docs.courier.com/reference/messages-api#getmessagebyid)
@@ -79,7 +80,7 @@ For a full description of request and response payloads and properties, please s
 
 ### Brands API
 * ```GetBrands(context, cursor string): object``` [[?]](https://docs.courier.com/reference/brands-api#getbrands)
-* ```PostBrand(context, brandID string, brandName string, brandSettings BrandSettings, brandSnippets BrandSnippets): object``` [[?]](https://docs.courier.com/reference/brands-api#createbrand)
+* ```PostBrand(context, brandID string, brandName string, brandSettings BrandSettings, brandSnippets BrandSnippets, idempotencyKey string): object``` [[?]](https://docs.courier.com/reference/brands-api#createbrand)
 * ```GetBrand(context, brandID string): object``` [[?]](https://docs.courier.com/reference/brands-api#getbrand)
 * ```PutBrand(context, brandID string, brandName string, brandSettings BrandSettings, brandSnippets BrandSnippets): object``` [[?]](https://docs.courier.com/reference/brands-api#replacebrand)
 * ```DeleteBrand(context, brandID string): error string``` [[?]](https://docs.courier.com/reference/brands-api#deletebrand)

@@ -138,7 +138,7 @@ func TestClient_PostBrand(t *testing.T) {
 
 	t.Run("makes request to create a brand", func(t *testing.T) {
 		client := courier.CourierClient("key", server.URL, "", "")
-		rsp, err := client.PostBrand(context.Background(), "", brandName, courier.BrandSettings{}, courier.BrandSnippets{})
+		rsp, err := client.PostBrand(context.Background(), "", brandName, courier.BrandSettings{}, courier.BrandSnippets{}, "")
 		assert.Nil(t, err)
 		assert.Equal(t, brandName, rsp.Name)
 	})

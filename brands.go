@@ -116,7 +116,7 @@ func (c *Client) GetBrand(ctx context.Context, brandID string) (*BrandResponse, 
 	return &data, nil
 }
 
-func (c *Client) PostBrand(ctx context.Context, brandID string, brandName string, brandSettings BrandSettings, brandSnippets BrandSnippets) (*BrandResponse, error) {
+func (c *Client) PostBrand(ctx context.Context, brandID string, brandName string, brandSettings BrandSettings, brandSnippets BrandSnippets, idempotencyKey string) (*BrandResponse, error) {
 	if brandName == "" {
 		return nil, errors.New("Brand Name is required")
 	}
@@ -138,6 +138,11 @@ func (c *Client) PostBrand(ctx context.Context, brandID string, brandName string
 	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewReader(body))
 	if err != nil {
 		return nil, err
+	}
+
+	// Idempotent Request check
+	if idempotencyKey != "" {
+		req.Header.Set("Idempotency-Key", idempotencyKey)
 	}
 
 	bytes, err := c.doRequest(req)
