@@ -1,6 +1,6 @@
 package courier
 
-const version = "2.0.0"
+const version = "2.1.0"
 
 // Client lets you communicate with the Courier API
 type Client struct {
@@ -11,7 +11,7 @@ type Client struct {
 func CreateClient(authToken string, baseURL *string) *Client {
 	var url string
 	if baseURL == nil {
-		url = "https://api.trycourier.app"
+		url = "https://api.courier.com"
 	} else {
 		url = *baseURL
 	}

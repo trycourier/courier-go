@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [v2.1.0] - 2021-04-09
+### Added
+- Support for [Automation API](https://docs.courier.com/reference/automation-api) by @tk26
+  - `POST /automations/invoke` with `courier.InvokeAutomation` method
+  - `POST /automations/{template_id}/invoke` with `courier.InvokeAutomationTemplate` method
+  - Usage Examples in v2/examples/automations
+- Changed default base URL to `https://api.courier.com`
+
+## [v2.0.2] - 2020-09-22
+* Adds brand and override support to SendBody struct
+
+## [v2.0.1] - 2020-09-17
+* Fixes issues where a body was being set on GET requests
+
 ## [v2.0.0] - 2020-06-24
 
 * `courier.CourierClient` has been renamed to `courier.CreateClient`
