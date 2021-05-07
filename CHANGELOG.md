@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased][unreleased]
+### Added
+- Support for [Lists API](https://docs.courier.com/reference/lists-api) by @tk26
+  - `GET /lists` with `courier.GetLists` method
+  - `GET /list/{list_id}` with `courier.GetList` method
+  - `PUT /list/{list_id}` with `courier.PutList` method
+  - `DELETE /list/{list_id}` with `courier.DeleteList` method
+  - `PUT /list/{list_id}/restore` with `courier.RestoreList` method
+  - `GET /list/{list_id}/subscriptions` with `courier.GetListSubscriptions` method
+  - `PUT /list/{list_id}/subscriptions` with `courier.PutListSubscriptions` method
+  - `POST /list/{list_id}/subscriptions` with `courier.PostListSubscriptions` method
+  - `PUT /lists/{list_id}/subscriptions/{recipient_id}` with `courier.ListSubscribe` method
+  - `DELETE /lists/{list_id}/subscriptions/{recipient_id}` with `courier.ListUnsubscribe` method
+  - Usage Examples in v2/examples/lists
+
 ## [v2.1.0] - 2021-04-09
 ### Added
 - Support for [Automation API](https://docs.courier.com/reference/automation-api) by @tk26
