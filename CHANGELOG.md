@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
+
+## [v2.2.0] - 2021-05-07
 ### Added
 - Support for [Lists API](https://docs.courier.com/reference/lists-api) by @tk26
   - `GET /lists` with `courier.GetLists` method
@@ -17,6 +19,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `PUT /lists/{list_id}/subscriptions/{recipient_id}` with `courier.ListSubscribe` method
   - `DELETE /lists/{list_id}/subscriptions/{recipient_id}` with `courier.ListUnsubscribe` method
   - Usage Examples in v2/examples/lists
+
+- Support for [Brands API](https://docs.courier.com/reference/brands-api) by @tk26
+  - `GET /brands` with `courier.GetBrands` method
+  - `GET /brands/{brand_id}` with `courier.GetBrand` method
+  - `POST /brands/{brand_id}` with `courier.PostBrand` method
+  - `PUT /brands/{brand_id}` with `courier.PutBrand` method
+  - `DELETE /brands/{brand_id}` with `courier.DeleteBrand` method
+  - Usage Examples in v2/examples/brands
 
 ## [v2.1.0] - 2021-04-09
 ### Added
