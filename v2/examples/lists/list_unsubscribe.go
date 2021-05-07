@@ -6,8 +6,8 @@ import (
 	"github.com/trycourier/courier-go/v2"
 )
 
-func deleteListSubscriptionRecipient() {
+func listUnsubscribe() {
 	client := courier.CreateClient("<YOUR_AUTH_TOKEN>", nil)
 
-	client.DeleteListSubscriptionsRecipient(context.Background(), "my-list", "my-recipient")
+	client.ListUnsubscribe(context.Background(), "my-list", "my-recipient")
 }

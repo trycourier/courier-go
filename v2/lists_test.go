@@ -221,7 +221,7 @@ func TestPostListSubscriptions(t *testing.T) {
 	})
 }
 
-func TestPutListSubscriptionsRecipient(t *testing.T) {
+func TestListSubscribe(t *testing.T) {
 	listID := "my-list"
 	recipientID := "foo"
 	server := httptest.NewServer(http.HandlerFunc(
@@ -235,13 +235,13 @@ func TestPutListSubscriptionsRecipient(t *testing.T) {
 		}))
 	defer server.Close()
 
-	t.Run("Put list subscription recipient", func(t *testing.T) {
+	t.Run("subscribe to a list", func(t *testing.T) {
 		client := courier.CreateClient("key", &server.URL)
-		client.PutListSubscriptionsRecipient(context.Background(), listID, recipientID, courier.ListSubscriptionRecipientBody{})
+		client.ListSubscribe(context.Background(), listID, recipientID, courier.ListSubscriptionRecipientBody{})
 	})
 }
 
-func TestDeleteListSubscriptionsRecipient(t *testing.T) {
+func TestListUnsubscribe(t *testing.T) {
 	listID := "my-list"
 	recipientID := "foo"
 	server := httptest.NewServer(http.HandlerFunc(
@@ -255,8 +255,8 @@ func TestDeleteListSubscriptionsRecipient(t *testing.T) {
 		}))
 	defer server.Close()
 
-	t.Run("Delete list subscription recipient", func(t *testing.T) {
+	t.Run("unsubscribe from a list", func(t *testing.T) {
 		client := courier.CreateClient("key", &server.URL)
-		client.DeleteListSubscriptionsRecipient(context.Background(), listID, recipientID)
+		client.ListUnsubscribe(context.Background(), listID, recipientID)
 	})
 }

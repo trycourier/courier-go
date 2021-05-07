@@ -234,8 +234,8 @@ func (c *Client) PostListSubscriptions(ctx context.Context, listID string, body 
 	return nil
 }
 
-// PutListSubscriptionsRecipient calls the PUT /lists/{list_id}/subscriptions/{recipient_id} endpoint of the Courier API
-func (c *Client) PutListSubscriptionsRecipient(ctx context.Context, listID string, recipientID string, body interface{}) error {
+// ListSubscribe calls the PUT /lists/{list_id}/subscriptions/{recipient_id} endpoint of the Courier API
+func (c *Client) ListSubscribe(ctx context.Context, listID string, recipientID string, body interface{}) error {
 	if listID == "" {
 		return errors.New("List ID is required")
 	}
@@ -257,8 +257,8 @@ func (c *Client) PutListSubscriptionsRecipient(ctx context.Context, listID strin
 	return nil
 }
 
-// DeleteListSubscriptionsRecipient calls the PUT /lists/{list_id}/subscriptions/{recipient_id} endpoint of the Courier API
-func (c *Client) DeleteListSubscriptionsRecipient(ctx context.Context, listID string, recipientID string) error {
+// ListUnsubscribe calls the PUT /lists/{list_id}/subscriptions/{recipient_id} endpoint of the Courier API
+func (c *Client) ListUnsubscribe(ctx context.Context, listID string, recipientID string) error {
 	if listID == "" {
 		return errors.New("List ID is required")
 	}

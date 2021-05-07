@@ -14,8 +14,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `GET /list/{list_id}/subscriptions` with `courier.GetListSubscriptions` method
   - `PUT /list/{list_id}/subscriptions` with `courier.PutListSubscriptions` method
   - `POST /list/{list_id}/subscriptions` with `courier.PostListSubscriptions` method
-  - `PUT /lists/{list_id}/subscriptions/{recipient_id}` with `courier.PutListSubscriptionsRecipient` method
-  - `DELETE /lists/{list_id}/subscriptions/{recipient_id}` with `courier.DeleteListSubscriptionsRecipient` method
+  - `PUT /lists/{list_id}/subscriptions/{recipient_id}` with `courier.ListSubscribe` method
+  - `DELETE /lists/{list_id}/subscriptions/{recipient_id}` with `courier.ListUnsubscribe` method
   - Usage Examples in v2/examples/lists
 
 ## [v2.1.0] - 2021-04-09
