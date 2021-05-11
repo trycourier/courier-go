@@ -109,7 +109,9 @@ func (api *APIConfiguration) ExecuteRequest(req *http.Request) ([]byte, error) {
 		return nil, err
 	}
 
-	if http.StatusOK != resp.StatusCode {
+	// Success is indicated with 2xx status codes
+	success := resp.StatusCode >= 200 && resp.StatusCode < 300
+	if !success {
 		errMessage := string(body[:])
 		return nil, &HTTPError{resp.StatusCode, &errMessage}
 	}

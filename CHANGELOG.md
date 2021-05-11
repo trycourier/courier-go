@@ -5,6 +5,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [v2.2.1] - 2021-05-11
+* Fixes [Issue 26](https://github.com/trycourier/courier-go/issues/26)
+
 ## [v2.2.0] - 2021-05-07
 ### Added
 - Support for [Lists API](https://docs.courier.com/reference/lists-api) by @tk26
