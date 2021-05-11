@@ -244,12 +244,17 @@ func (c *Client) ListSubscribe(ctx context.Context, listID string, recipientID s
 		return errors.New("Recipient ID is required")
 	}
 
-	bodyMap, err := toJSONMap(body)
+	_, err := toJSONMap(body)
 	if err != nil {
 		return err
 	}
 
-	_, err = c.API.SendRequestWithMaps(ctx, "PUT", "/lists/"+listID+"/subscriptions/"+recipientID, bodyMap)
+	jsonBody, err := json.Marshal(body)
+	if err != nil {
+		return err
+	}
+
+	_, err = c.API.SendRequestWithBytes(ctx, "PUT", "/lists/"+listID+"/subscriptions/"+recipientID, jsonBody)
 	if err != nil {
 		return err
 	}
