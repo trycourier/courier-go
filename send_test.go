@@ -63,7 +63,7 @@ func TestSend(t *testing.T) {
 
 	t.Run("sends request", func(t *testing.T) {
 
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 
 		data := &Data{
 			Foo: "bar",
@@ -80,7 +80,7 @@ func TestSend(t *testing.T) {
 		preferences := &Preferences{
 			Fizz: "fizz",
 		}
-		messageID, err := client.Send(context.Background(), eventID, recipientID, profile, data, brand, override, preferences)
+		messageID, err := client.Send(context.Background(), eventID, recipientID, profile, data, brand, override, preferences, "")
 
 		assert.Nil(t, err)
 		assert.Equal(t, expectedResponseID, messageID)
@@ -140,7 +140,7 @@ func TestSendToList(t *testing.T) {
 
 	t.Run("sends request", func(t *testing.T) {
 
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 
 		data := &Data{
 			Foo: "bar",
@@ -151,7 +151,7 @@ func TestSendToList(t *testing.T) {
 		override := &Override{
 			Bar: "bar",
 		}
-		messageID, err := client.SendToList(context.Background(), eventID, listID, "", data, brand, override)
+		messageID, err := client.SendToList(context.Background(), eventID, listID, "", data, brand, override, "")
 
 		assert.Nil(t, err)
 		assert.Equal(t, expectedResponseID, messageID)

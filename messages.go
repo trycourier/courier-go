@@ -42,11 +42,6 @@ type MessageResponse struct {
 	Providers    []*ProvidersResponse
 }
 
-type PagingResponse struct {
-	Cursor string
-	More   bool
-}
-
 type MessagesResponse struct {
 	Paging  *PagingResponse
 	Results []*MessageResponse

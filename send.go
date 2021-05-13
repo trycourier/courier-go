@@ -31,7 +31,7 @@ type sendToListRequest struct {
 	Override interface{} `json:"override,omitempty"`
 }
 
-func (c *Client) Send(ctx context.Context, eventID string, recipientID string, profile interface{}, data interface{}, brand string, override interface{}, preferences interface{}) (string, error) {
+func (c *Client) Send(ctx context.Context, eventID string, recipientID string, profile interface{}, data interface{}, brand string, override interface{}, preferences interface{}, idempotencyKey string) (string, error) {
 	payload := sendRequest{
 		EventID:     eventID,
 		Recipient:   recipientID,
@@ -52,6 +52,11 @@ func (c *Client) Send(ctx context.Context, eventID string, recipientID string, p
 		return "", err
 	}
 
+	// Idempotent Request check
+	if idempotencyKey != "" {
+		req.Header.Set("Idempotency-Key", idempotencyKey)
+	}
+
 	bytes, err := c.doRequest(req)
 	if err != nil {
 		return "", err
@@ -65,7 +70,7 @@ func (c *Client) Send(ctx context.Context, eventID string, recipientID string, p
 	return responseData.MessageId, nil
 }
 
-func (c *Client) SendToList(ctx context.Context, eventID string, listID string, pattern string, data interface{}, brand string, override interface{}) (string, error) {
+func (c *Client) SendToList(ctx context.Context, eventID string, listID string, pattern string, data interface{}, brand string, override interface{}, idempotencyKey string) (string, error) {
 	if (listID == "" && pattern == "") || (listID != "" && pattern != "") {
 		return "", errors.New("list.send requires a listID or a pattern")
 	}
@@ -87,6 +92,11 @@ func (c *Client) SendToList(ctx context.Context, eventID string, listID string, 
 	req, err := http.NewRequestWithContext(ctx, "POST", c.BaseUrl+"/send/list", bytes.NewReader(body))
 	if err != nil {
 		return "", err
+	}
+
+	// Idempotent Request check
+	if idempotencyKey != "" {
+		req.Header.Set("Idempotency-Key", idempotencyKey)
 	}
 
 	bytes, err := c.doRequest(req)
