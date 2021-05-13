@@ -63,7 +63,7 @@ func TestSend(t *testing.T) {
 
 	t.Run("sends request", func(t *testing.T) {
 
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 
 		data := &Data{
 			Foo: "bar",
@@ -140,7 +140,7 @@ func TestSendToList(t *testing.T) {
 
 	t.Run("sends request", func(t *testing.T) {
 
-		client := courier.CourierClient("key", server.URL)
+		client := courier.CourierClient("key", server.URL, "", "")
 
 		data := &Data{
 			Foo: "bar",

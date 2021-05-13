@@ -19,14 +19,29 @@ Add this line to your go package:
 import "github.com/trycourier/courier-go"
 ```
 
-## Usage
+## Configuration
+Instantiate the Courier client class with your authorization token OR username and password. Providing just a authorization token will generate a "Bearer" authorization header, while providing a username and password will generate a "Basic" (base64-encoded) authorization header
+
+```go
+client := courier.CourierClient("COURIER_AUTH_TOKEN", "COURIER_BASE_URL", "COURIER_AUTH_USERNAME", "COURIER_AUTH_USERNAME")
+```
+
+Following Environment variables are supported -
+* COURIER_AUTH_TOKEN
+* COURIER_BASE_URL
+* COURIER_AUTH_USERNAME
+* COURIER_AUTH_USERNAME
+
+Please note: COURIER_BASE_URL defaults to https://api.courier.com
+
+## Example Usage
 
 ```go
 func send() {
         var eventID = "example-event"
         var recipientID = "example-recipient"
 
-        client := courier.CourierClient("<YOUR_AUTH_TOKEN>", nil)
+        client := courier.CourierClient("<COURIER_AUTH_TOKEN>", "", "", "")
         messageID, err := client.Send(
                 context.Background(), 
                 eventID,
@@ -44,12 +59,6 @@ func send() {
 }
 ```
 
-If you need to use a base url other than the default https://api.courier.com, you can pass it in as the second paramter to the `CourierClient`:
-
-```go
-client := courier.CourierClient("<AUTH_TOKEN>", "<BASE_URL>")
-```
-
 ## APIs
 
 For a full description of request and response payloads and properties, please see the [official Courier API docs](https://docs.courier.com/reference).
@@ -63,11 +72,35 @@ For a full description of request and response payloads and properties, please s
 * ```GetMessages(context, cursor string, event string, list string, messageId string, notification string, recipient string): object``` [[?]](https://docs.courier.com/reference/messages-api#getmessages)
 * ```GetMessageHistory(context, messageID string, _type string): object``` [[?]](https://docs.courier.com/reference/messages-api#getmessagehistorybyid)
 
-### Profiles API
-* ```GetProfile(id string): object``` [[?]](https://docs.courier.com/reference/profiles-api#getprofilebyrecipientid)
-* ```MergeProfile(id string, profile byte[]): object``` [[?]](https://docs.courier.com/reference/profiles-api#mergeprofilebyrecipientid)
-* ```UpdateProfile(id string, profile byte[]): object``` [[?]](https://docs.courier.com/reference/profiles-api#patchprofilebyrecipientid)
+### Events API
+* ```GetEvents(context): object``` [[?]](https://docs.courier.com/reference/events-api#getevents)
+* ```GetEvent(context, eventID string): object``` [[?]](https://docs.courier.com/reference/events-api#geteventbyid)
+* ```PutEvent(context, eventID string, notificationID string, eventType string): object``` [[?]](https://docs.courier.com/reference/events-api#replaceeventbyid)
 
+### Brands API
+* ```GetBrands(context, cursor string): object``` [[?]](https://docs.courier.com/reference/brands-api#getbrands)
+* ```PostBrand(context, brandID string, brandName string, brandSettings BrandSettings, brandSnippets BrandSnippets): object``` [[?]](https://docs.courier.com/reference/brands-api#createbrand)
+* ```GetBrand(context, brandID string): object``` [[?]](https://docs.courier.com/reference/brands-api#getbrand)
+* ```PutBrand(context, brandID string, brandName string, brandSettings BrandSettings, brandSnippets BrandSnippets): object``` [[?]](https://docs.courier.com/reference/brands-api#replacebrand)
+* ```DeleteBrand(context, brandID string): error string``` [[?]](https://docs.courier.com/reference/brands-api#deletebrand)
+
+### Lists API
+* ```GetLists(context, cursor string, pattern string): object``` [[?]](https://docs.courier.com/reference/lists-api#getlists)
+* ```GetList(context, listID string): object``` [[?]](https://docs.courier.com/reference/lists-api#getlist)
+* ```PutList(context, listID string, listName string): object``` [[?]](https://docs.courier.com/reference/lists-api#putlist)
+* ```DeleteList(context, listID string): error string``` [[?]](https://docs.courier.com/reference/lists-api#deletelist)
+* ```RestoreList(context, listID string): error string``` [[?]](https://docs.courier.com/reference/lists-api#putlistrestore)
+* ```GetListSubscriptions(context, listID string, cursor string): object``` [[?]](https://docs.courier.com/reference/lists-api#getlistsubscriptions)
+* ```SubscribeMultipleRecipientsToList(context, listID string, recipients []Recipient): error string``` [[?]](https://docs.courier.com/reference/lists-api#createlistsubscriptions)
+* ```SubscribeRecipientToList(context, listID string, recipientID string): error string``` [[?]](https://docs.courier.com/reference/lists-api#putlistsubscription)
+* ```DeleteListSubscription(context, listID string, recipientID string): error string``` [[?]](https://docs.courier.com/reference/lists-api#deletelistsubscription)
+
+### Profiles API
+* ```GetProfile(recipientID string): object``` [[?]](https://docs.courier.com/reference/profiles-api#getprofilebyrecipientid)
+* ```MergeProfile(recipientID string, profile byte[]): error string``` [[?]](https://docs.courier.com/reference/profiles-api#mergeprofilebyrecipientid)
+* ```UpdateProfile(recipientID string, profile byte[]): error string``` [[?]](https://docs.courier.com/reference/profiles-api#patchprofilebyrecipientid)
+* ```PatchProfile(recipientID string, patch []PatchOp): error string``` [[?]](https://docs.courier.com/reference/profiles-api#patchprofilebyrecipientid)
+* ```GetProfileLists(recipientID string, cursor string): Object``` [[?]](https://docs.courier.com/reference/profiles-api#getlistsforprofilebyrecipientid)
 
 ## Staying Updated
 To update this SDK to the latest version, use `go get -u github.com/trycourier/courier-go`.
