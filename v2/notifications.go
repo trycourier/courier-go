@@ -21,6 +21,7 @@ type NotificationsResponse struct {
 type NotificationContentResponse struct {
 	Blocks   []interface{} `json:"blocks"`
 	Channels []interface{} `json:"channels,omitempty"`
+	Checksum string        `json:"checksum"`
 }
 
 type NotificationVariationsRequestBody struct {

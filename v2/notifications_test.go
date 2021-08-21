@@ -62,20 +62,21 @@ func TestGetNotificationContent(t *testing.T) {
 					"id": "block_00d0bcb0-aba1-443f-a8dd-daac505500fe",
 					"type": "text",
 					"content": "text block",
+					"checksum": "block-checksum",
 					"locales": {
 						"fr_FR": "french text block"
 					}
 				}],
 				"channels": [{
 					"id": "channel_79d25574-83be-4da1-a5c3-3d4e2ab5f154",
-					"email": {
+					"type": "email",
+					"content": {
 						"subject": "Hey hey!"
 					},
+					"checksum": "channel-checksum",
         	"locales": {
           	"fr_FR": {
-            	"email": {
-              	"subject": "French hey!"
-            	}
+							"subject": "French hey!"
           	}
         	}
 				}]
@@ -110,20 +111,21 @@ func TestGetNotificationDraftContent(t *testing.T) {
 					"id": "block_00d0bcb0-aba1-443f-a8dd-daac505500fe",
 					"type": "text",
 					"content": "text block",
+					"checksum": "block-checksum",
 					"locales": {
 						"fr_FR": "french text block"
 					}
 				}],
 				"channels": [{
 					"id": "channel_79d25574-83be-4da1-a5c3-3d4e2ab5f154",
-					"email": {
+					"type": "email",
+					"content": {
 						"subject": "Hey hey!"
 					},
+					"checksum": "channel-checksum",
         	"locales": {
           	"fr_FR": {
-            	"email": {
-              	"subject": "French hey!"
-            	}
+							"subject": "French hey!"
           	}
         	}
 				}]
