@@ -5,6 +5,19 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [v2.3.0] - 2021-08-23
+### Added
+- Support for Notifications API by @tk26
+  - `GET /notifications` with `courier.GetNotifications` method
+  - `GET /notifications/{notification_id}/content` with `courier.GetNotificationContent` method
+  - `GET /notifications/{notification_id}/draft/content` with `courier.GetNotificationDraftContent` method
+  - `POST /notifications/{notification_id}/variations` with `courier.PostNotificationVariations` method
+  - `POST /notifications/{notification_id}/draft/variations` with `courier.PostNotificationDraftVariations` method
+  - `GET /notifications/{notification_id}/{submission_id}/checks` with `courier.GetNotificationSubmissionChecks` method
+  - `PUT /notifications/{notification_id}/{submission_id}/checks` with `courier.PutNotificationSubmissionChecks` method
+  - `DELETE /notifications/{notification_id}/{submission_id}/checks` with `courier.CancelNotificationSubmission` method
+  - Usage Examples in v2/examples/notifications
+
 ## [v2.2.1] - 2021-05-11
 * Fixes [Issue 26](https://github.com/trycourier/courier-go/issues/26)
 
