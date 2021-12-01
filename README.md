@@ -26,7 +26,7 @@ func send() {
         var eventID = "example-event"
         var recipientID = "example-recipient"
 
-        client := courier.CourierClient("<YOUR_AUTH_TOKEN>", nil)
+        client := courier.CourierClient("<YOUR_AUTH_TOKEN>", "")
         messageID, err := client.Send(
                 context.Background(), 
                 eventID,
