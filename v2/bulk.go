@@ -38,6 +38,12 @@ type GetBulkJobUsersResponse struct {
 	Paging *PagingResponse
 }
 
+// IngestBulkJobResponse can be used to deserialize POST /bulk/:jobId response
+type IngestBulkJobResponse struct {
+	Errors []interface{} `json:"errors"`
+	Total  int           `json:"total"`
+}
+
 // CreateJob calls the POST /bulk endpoint of the Courier API
 func (c *Client) CreateJob(ctx context.Context, body interface{}) (string, error) {
 	bodyMap, err := toJSONMap(body)
@@ -59,13 +65,25 @@ func (c *Client) CreateJob(ctx context.Context, body interface{}) (string, error
 }
 
 // IngestJob calls the POST /bulk/:jobId endpoint of the Courier API
-func (c *Client) IngestJob(ctx context.Context, jobID string, body interface{}) (map[string]json.RawMessage, error) {
-	bodyMap, err := toJSONMap(body)
+func (c *Client) IngestJob(ctx context.Context, jobID string, body interface{}) (*IngestBulkJobResponse, error) {
+	jsonBody, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 
-	return c.API.SendRequestWithMaps(ctx, "POST", "/bulk/"+jobID, bodyMap)
+	bytes, err := c.API.SendRequestWithBytes(ctx, "POST", "/bulk/"+jobID, jsonBody)
+	if err != nil {
+		return nil, err
+	}
+
+	var data IngestBulkJobResponse
+
+	err = json.Unmarshal(bytes, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data, nil
 }
 
 // RunJob calls the POST /bulk/:jobId/run endpoint of the Courier API
