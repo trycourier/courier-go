@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [v2.4.0] - 2022-01-26
+### Added
+- Support for Bulk API by @tk26
+
 ## [v2.3.0] - 2021-08-23
 ### Added
 - Support for Notifications API by @tk26
