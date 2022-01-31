@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [v2.5.0] - 2022-01-31
+### Added
+- Support for enhanced Send API features by @tk26
+
 ## [v2.4.0] - 2022-01-26
 ### Added
 - Support for Bulk API by @tk26
