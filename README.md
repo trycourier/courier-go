@@ -27,15 +27,14 @@ func send() {
         var recipientID = "example-recipient"
 
         client := courier.CourierClient("<YOUR_AUTH_TOKEN>", nil)
-        messageID, err := client.Send(
+        requestID, err := client.SendMessage(
                 context.Background(), 
-                eventID,
-                recipientID,
-                map[string]string{"email": "foo@example.com"},
-                map[string]string{"favoriteAdjective": "awesomeness"},
-                "my-brand-id",
-                nil,
-                nil,
+                courier.SendMessageRequestBody{
+                        "template": "<COURIER_TEMPLATE",
+                        "to": map[string]string{
+                                "email": "test@email.com"
+                        }
+                }
         })
         if err != nil {
                 log.Fatalln(err)
@@ -55,6 +54,7 @@ client := courier.CourierClient("<AUTH_TOKEN>", "<BASE_URL>")
 For a full description of request and response payloads and properties, please see the [official Courier API docs](https://docs.courier.com/reference).
 
 ### Send API
+* ```SendMessage(context, message interface{}): object``` [[?]](https://docs.courier.com/reference/send-api#sendmessage)
 * ```Send(context, eventID string, recipientID string, profile interface{}, data interface{}, brand string, override interface{}, preferences interface{}): object``` [[?]](https://docs.courier.com/reference/send-api#sendmessage)
 * ```SendToList(context, eventID string, listID string, pattern string, data interface{}, brand string, override interface{}): object``` [[?]](https://docs.courier.com/reference/send-api#sendlist)
 
