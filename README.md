@@ -54,14 +54,14 @@ client := courier.CourierClient("<AUTH_TOKEN>", "<BASE_URL>")
 For a full description of request and response payloads and properties, please see the [official Courier API docs](https://docs.courier.com/reference).
 
 ### Send API
-* ```SendMessage(context, message interface{}): object``` [[?]](https://docs.courier.com/reference/send-api#sendmessage)
-* ```Send(context, eventID string, recipientID string, profile interface{}, data interface{}, brand string, override interface{}, preferences interface{}): object``` [[?]](https://docs.courier.com/reference/send-api#sendmessage)
-* ```SendToList(context, eventID string, listID string, pattern string, data interface{}, brand string, override interface{}): object``` [[?]](https://docs.courier.com/reference/send-api#sendlist)
+* ```SendMessage(context, message interface{}): object``` [[?]](https://www.courier.com/docs/reference/send/message/)
+* ```Send(context, eventID string, recipientID string, profile interface{}, data interface{}, brand string, override interface{}, preferences interface{}): object``` [[?]](https://www.courier.com/docs/reference/send/message/)
+* ```SendToList(context, eventID string, listID string, pattern string, data interface{}, brand string, override interface{}): object``` [[?]](https://www.courier.com/docs/reference/send/list/)
 
 ### Messages API
-* ```GetMessage(context, messageID string): object``` [[?]](https://docs.courier.com/reference/messages-api#getmessagebyid)
-* ```GetMessages(context, cursor string, event string, list string, messageId string, notification string, recipient string): object``` [[?]](https://docs.courier.com/reference/messages-api#getmessages)
-* ```GetMessageHistory(context, messageID string, _type string): object``` [[?]](https://docs.courier.com/reference/messages-api#getmessagehistorybyid)
+* ```GetMessage(context, messageID string): object``` [[?]](https://www.courier.com/docs/reference/messages/by-id/)
+* ```GetMessages(context, cursor string, event string, list string, messageId string, notification string, recipient string): object``` [[?]](https://www.courier.com/docs/reference/messages/list/)
+* ```GetMessageHistory(context, messageID string, _type string): object``` [[?]](https://www.courier.com/docs/reference/messages/history-by-id/)
 
 ### Profiles API
 * ```GetProfile(id string): object``` [[?]](https://docs.courier.com/reference/profiles-api#getprofilebyrecipientid)
