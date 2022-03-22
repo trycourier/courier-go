@@ -16,7 +16,7 @@ func sendMessage() {
 			"to": map[string]string{
 				"email": "foo@bar.com",
 			},
-			"timeout": int64(3600000)  // 1 hour in milliseconds
+			"timeout": int64(3600000), // 1 hour in milliseconds
 		},
 	})
 
