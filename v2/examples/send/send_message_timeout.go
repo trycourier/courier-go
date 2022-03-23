@@ -7,7 +7,7 @@ import (
 	"github.com/trycourier/courier-go/v2"
 )
 
-func sendMessage() {
+func sendMessageTimeout() {
 	client := courier.CreateClient("<YOUR_AUTH_TOKEN>", nil)
 
 	requestID, err := client.SendMessage(context.Background(), courier.SendMessageRequestBody{
