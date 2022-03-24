@@ -12,7 +12,6 @@ import (
 )
 
 func TestPutAudience(t *testing.T) {
-	// expectedResponseID := "software-engineers-from-sf"
 	server := httptest.NewServer(http.HandlerFunc(
 		func(rw http.ResponseWriter, req *http.Request) {
 			assert.Equal(t, "/audiences/software-engineers-from-sf", req.URL.String())
