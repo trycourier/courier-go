@@ -74,3 +74,78 @@ func TestGetAudience(t *testing.T) {
 		assert.Equal(t, expectedResponseID, response.Id)
 	})
 }
+
+func TestGetAudienceMembers(t *testing.T) {
+	expectedMemberId := "test-member-id"
+	server := httptest.NewServer(http.HandlerFunc(
+		func(rw http.ResponseWriter, req *http.Request) {
+			assert.Equal(t, "/audiences/123456789/members", req.URL.String())
+			rw.Header().Add("Content-Type", "application/json")
+			rsp := `
+			{
+				"items": [
+					{
+						"added_at": "2022-03-22T19:13:13.137Z",
+						"audience_id": "software-engineers-from-sf",
+						"audience_version": 3,
+						"member_id": "test-member-id",
+						"reason": "EQ('title', 'Software Engineer') => true"
+					}
+				],
+				"paging": {
+					"cursor": null,
+					"more": false
+				}
+			}`
+			_, _ = rw.Write([]byte(rsp))
+		}))
+	defer server.Close()
+
+	t.Run("Get Audience Members", func(t *testing.T) {
+		expectedAudienceVersion := 3
+		client := courier.CreateClient("key", &server.URL)
+		response, err := client.GetAudienceMembers(context.Background(), "123456789", "")
+		assert.Nil(t, err)
+		assert.Equal(t, expectedMemberId, response.Items[0].MemberId)
+		assert.Equal(t, expectedAudienceVersion, response.Items[0].AudienceVersion)
+	})
+}
+
+func TestGetAudiences(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(
+		func(rw http.ResponseWriter, req *http.Request) {
+			assert.Equal(t, "/audiences", req.URL.String())
+			rw.Header().Add("Content-Type", "application/json")
+			rsp := `
+			{
+				"items": [
+					{
+						"created_at": "2022-03-22T19:07:32.066Z",
+						"description": "Updated descriptionss",
+						"id": "software-engineers-from-sf",
+						"name": "Software Engineers From SF",
+						"filter": {
+							"path": "title",
+							"value": "Software Engineer",
+							"operator": "EQ"
+						},
+						"updated_at": "2022-03-24T05:30:58.659Z"
+					}
+				],
+				"paging": {
+					"cursor": null,
+					"more": false
+				}
+			}`
+			_, _ = rw.Write([]byte(rsp))
+		}))
+	defer server.Close()
+
+	t.Run("Get Audiences", func(t *testing.T) {
+		client := courier.CreateClient("key", &server.URL)
+		response, err := client.GetAudiences(context.Background(), "")
+		assert.Nil(t, err)
+		assert.Equal(t, "software-engineers-from-sf", response.Items[0].Id)
+		assert.Equal(t, "Software Engineers From SF", response.Items[0].Name)
+	})
+}

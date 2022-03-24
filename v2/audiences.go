@@ -40,7 +40,7 @@ type AudienceResponse struct {
 }
 
 type AudienceMember struct {
-	AudienceId      int    `json:"audience_id"`
+	AudienceId      string `json:"audience_id"`
 	AddedAt         string `json:"added_at"`
 	AudienceVersion int    `json:"audience_version"`
 	MemberId        string `json:"member_id"`
@@ -53,7 +53,7 @@ type GetAudienceMembersResponse struct {
 }
 
 type GetAudiencesResponse struct {
-	Items  []*Audience `json:"items"`
+	Items  []*AudienceResponseBody `json:"items"`
 	Paging *PagingResponse
 }
 
@@ -125,7 +125,7 @@ func (c *Client) GetAudience(ctx context.Context, audienceId string) (*AudienceR
 	return &data, nil
 }
 
-func (c *Client) GetAudienceMembers(ctx context.Context, audienceId string, cursor string) (*AudienceResponseBody, error) {
+func (c *Client) GetAudienceMembers(ctx context.Context, audienceId string, cursor string) (*GetAudienceMembersResponse, error) {
 	if audienceId == "" {
 		return nil, errors.New("Audience ID is required")
 	}
@@ -149,11 +149,12 @@ func (c *Client) GetAudienceMembers(ctx context.Context, audienceId string, curs
 		return nil, err
 	}
 
-	var data AudienceResponseBody
+	var data GetAudienceMembersResponse
 
 	err = json.Unmarshal(bytes, &data)
 
 	if err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
 
