@@ -75,6 +75,26 @@ func TestGetAudience(t *testing.T) {
 	})
 }
 
+func TestAudienceError(t *testing.T) {
+	expectedResponseID := "123456789"
+	server := httptest.NewServer(http.HandlerFunc(
+		func(rw http.ResponseWriter, req *http.Request) {
+			assert.Equal(t, "/audiences/123456789", req.URL.String())
+			rw.Header().Add("Content-Type", "application/json")
+			_, writeErr := rw.Write([]byte(fmt.Sprintf("{ \"id\" : \"%s\" }", expectedResponseID)))
+			if writeErr != nil {
+				t.Error(writeErr)
+			}
+		}))
+	defer server.Close()
+
+	t.Run("should throw Audience ID required if empty", func(t *testing.T) {
+		client := courier.CreateClient("key", &server.URL)
+		_, err := client.GetAudience(context.Background(), "")
+		assert.Equal(t, err.Error(), "Audience ID is required")
+	})
+}
+
 func TestGetAudienceMembers(t *testing.T) {
 	expectedMemberId := "test-member-id"
 	server := httptest.NewServer(http.HandlerFunc(
@@ -108,6 +128,25 @@ func TestGetAudienceMembers(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, expectedMemberId, response.Items[0].MemberId)
 		assert.Equal(t, expectedAudienceVersion, response.Items[0].AudienceVersion)
+	})
+}
+
+func TestAudienceMembersError(t *testing.T) {
+	expectedResponseID := "123456789"
+	server := httptest.NewServer(http.HandlerFunc(
+		func(rw http.ResponseWriter, req *http.Request) {
+			rw.Header().Add("Content-Type", "application/json")
+			_, writeErr := rw.Write([]byte(fmt.Sprintf("{ \"id\" : \"%s\" }", expectedResponseID)))
+			if writeErr != nil {
+				t.Error(writeErr)
+			}
+		}))
+	defer server.Close()
+
+	t.Run("should throw Audience ID required if empty", func(t *testing.T) {
+		client := courier.CreateClient("key", &server.URL)
+		_, err := client.GetAudience(context.Background(), "")
+		assert.Equal(t, err.Error(), "Audience ID is required")
 	})
 }
 
