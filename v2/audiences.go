@@ -78,7 +78,7 @@ func (c *Client) PutAudience(ctx context.Context, audienceId string, audience Au
 		return nil, err
 	}
 
-	bytes, err := c.API.SendRequestWithBytes(ctx, http.MethodPut, "/audiences/"+audienceId, jsonBody)
+	bytes, err := c.API.SendRequestWithBytes(ctx, http.MethodPut, fmt.Sprintf("/audiences/%s", audienceId), jsonBody)
 
 	if err != nil {
 		return nil, err
