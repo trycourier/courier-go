@@ -36,7 +36,7 @@ func TestPutAudience(t *testing.T) {
 		}))
 	defer server.Close()
 
-	t.Run("Put Audience", func(t *testing.T) {
+	t.Run("Put Audience Happy Path", func(t *testing.T) {
 		client := courier.CreateClient("key", &server.URL)
 
 		audiencePutResponse, err := client.PutAudience(context.Background(), "software-engineers-from-sf", courier.Audience{
@@ -67,26 +67,12 @@ func TestGetAudience(t *testing.T) {
 		}))
 	defer server.Close()
 
-	t.Run("Get Audience", func(t *testing.T) {
+	t.Run("Get Audience Happy Path", func(t *testing.T) {
 		client := courier.CreateClient("key", &server.URL)
 		response, err := client.GetAudience(context.Background(), "123456789")
 		assert.Nil(t, err)
 		assert.Equal(t, expectedResponseID, response.Id)
 	})
-}
-
-func TestAudienceError(t *testing.T) {
-	expectedResponseID := "123456789"
-	server := httptest.NewServer(http.HandlerFunc(
-		func(rw http.ResponseWriter, req *http.Request) {
-			assert.Equal(t, "/audiences/123456789", req.URL.String())
-			rw.Header().Add("Content-Type", "application/json")
-			_, writeErr := rw.Write([]byte(fmt.Sprintf("{ \"id\" : \"%s\" }", expectedResponseID)))
-			if writeErr != nil {
-				t.Error(writeErr)
-			}
-		}))
-	defer server.Close()
 
 	t.Run("should throw Audience ID required if empty", func(t *testing.T) {
 		client := courier.CreateClient("key", &server.URL)
@@ -121,7 +107,7 @@ func TestGetAudienceMembers(t *testing.T) {
 		}))
 	defer server.Close()
 
-	t.Run("Get Audience Members", func(t *testing.T) {
+	t.Run("Get Audience Members Happy Path", func(t *testing.T) {
 		expectedAudienceVersion := 3
 		client := courier.CreateClient("key", &server.URL)
 		response, err := client.GetAudienceMembers(context.Background(), "123456789", "")
@@ -180,7 +166,7 @@ func TestGetAudiences(t *testing.T) {
 		}))
 	defer server.Close()
 
-	t.Run("Get Audiences", func(t *testing.T) {
+	t.Run("Get Audiences Happy path", func(t *testing.T) {
 		client := courier.CreateClient("key", &server.URL)
 		response, err := client.GetAudiences(context.Background(), "")
 		assert.Nil(t, err)

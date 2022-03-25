@@ -111,7 +111,7 @@ func (c *Client) GetAudience(ctx context.Context, audienceId string) (*AudienceR
 	bytes, err := c.API.ExecuteRequest(req)
 
 	if err != nil {
-		return nil, err
+		return nil, errors.New(fmt.Sprintf("AudienceId %s, not found", audienceId))
 	}
 
 	var data AudienceResponseBody
@@ -154,7 +154,6 @@ func (c *Client) GetAudienceMembers(ctx context.Context, audienceId string, curs
 	err = json.Unmarshal(bytes, &data)
 
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 
