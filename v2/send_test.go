@@ -388,3 +388,49 @@ func TestSend_SendMessage_Timeout(t *testing.T) {
 		assert.Equal(t, requestID, result)
 	})
 }
+
+func TestSend_SendIdempotentMessage(t *testing.T) {
+	var requestBody courier.SendMessageRequestBody
+	url := "/send"
+	requestID := "123456789"
+
+	server := httptest.NewServer(http.HandlerFunc(
+		func(rw http.ResponseWriter, req *http.Request) {
+			assert.Equal(t, url, req.URL.String())
+
+			buf := new(bytes.Buffer)
+			buf.ReadFrom(req.Body)
+
+			err := json.Unmarshal(buf.Bytes(), &requestBody)
+			if err != nil {
+				t.Error(err)
+			}
+
+			rw.WriteHeader(http.StatusOK)
+			rw.Header().Add("Content-Type", "application/json")
+			_, writeErr := rw.Write([]byte(fmt.Sprintf("{ \"requestId\" : \"%s\" }", requestID)))
+			if writeErr != nil {
+				t.Error(writeErr)
+			}
+		}),
+	)
+	defer server.Close()
+
+	t.Run("sends request with idempotency key", func(t *testing.T) {
+		client := courier.CreateClient("key", &server.URL)
+		result, err := client.SendIdempotentMessage(
+			context.Background(),
+			map[string]interface{}{
+				"template": "my-template",
+				"to": map[string]string{
+					"email": "foo@bar.com",
+				},
+			},
+			"POST",
+			"fake-key",
+		)
+
+		assert.Nil(t, err)
+		assert.Equal(t, requestID, result)
+	})
+}

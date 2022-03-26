@@ -1,8 +1,12 @@
 package courier
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
 )
 
 // SendBody is the JSON body expected by Courier's /send endpoint
@@ -69,4 +73,68 @@ func (c *Client) SendMessageMap(ctx context.Context, body map[string]interface{}
 		return "", err
 	}
 	return requestID, nil
+}
+
+type Option interface {
+	apply(r *http.Request) error
+}
+
+type reqFunc func(r *http.Request) error
+
+func (fn reqFunc) apply(r *http.Request) error {
+	return fn(r)
+}
+
+func (c *Client) NewSendRequest(ctx context.Context, body io.Reader, method string, opts ...Option) (*http.Request, error) {
+	fullyQualifiedURL := fmt.Sprintf("%s/send", c.API.BaseURL)
+	req, err := http.NewRequestWithContext(ctx, method, fullyQualifiedURL, body)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, opt := range opts {
+		if err := opt.apply(req); err != nil {
+			return req, err
+		}
+	}
+	return req, err
+}
+
+func WithHeader(header, value string) Option {
+	return reqFunc(func(r *http.Request) error {
+		if header != "" && value != "" {
+			r.Header.Add(header, value)
+		}
+		return nil
+	})
+
+}
+
+func (c *Client) SendIdempotentMessage(ctx context.Context, body map[string]interface{}, method, idempotencyKey string) (string, error) {
+	if method == "GET" {
+		body = nil
+	}
+	bytesBody, err := json.Marshal(body)
+	if err != nil {
+		return "", err
+	}
+	buf := bytes.NewReader(bytesBody)
+
+	req, err := c.NewSendRequest(ctx, buf, method, WithHeader("Idempotency-Key", idempotencyKey))
+	if err != nil {
+		return "", err
+	}
+
+	res, err := c.API.ExecuteRequest(req)
+	if err != nil {
+		return "", err
+	}
+
+	var payload map[string]string
+	err = json.Unmarshal(res, &payload)
+	if err != nil {
+		return "", err
+	}
+
+	return payload["requestId"], nil
 }
