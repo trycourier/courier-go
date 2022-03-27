@@ -3,14 +3,15 @@ package examples
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/trycourier/courier-go/v2"
 )
 
-func sendMessageIdempotent() {
+func sendIdempotentMessage() {
 	client := courier.CreateClient("<YOUR_AUTH_TOKEN>", nil)
-
-	requestID, err := client.SendIdempotentMessage(context.Background(),
+	expiration := time.Now().Add(time.Hour * 24)
+	requestID, err := client.SendMessageWithOptions(context.Background(),
 		map[string]interface{}{
 			"template": "my-template",
 			"to": map[string]string{
@@ -18,7 +19,8 @@ func sendMessageIdempotent() {
 			},
 		},
 		"POST",
-		"fake-idempotency-key",
+		courier.WithIdempotencyKey("fake-key"),
+		courier.WithIdempotencyKeyExpiration(expiration),
 	)
 	if err != nil {
 		log.Fatalln(err)

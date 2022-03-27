@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/trycourier/courier-go/v2"
@@ -389,7 +390,7 @@ func TestSend_SendMessage_Timeout(t *testing.T) {
 	})
 }
 
-func TestSend_SendIdempotentMessage(t *testing.T) {
+func TestSend_SendMessageWithOptions(t *testing.T) {
 	var requestBody courier.SendMessageRequestBody
 	url := "/send"
 	requestID := "123456789"
@@ -418,7 +419,7 @@ func TestSend_SendIdempotentMessage(t *testing.T) {
 
 	t.Run("sends request with idempotency key", func(t *testing.T) {
 		client := courier.CreateClient("key", &server.URL)
-		result, err := client.SendIdempotentMessage(
+		result, err := client.SendMessageWithOptions(
 			context.Background(),
 			map[string]interface{}{
 				"template": "my-template",
@@ -427,7 +428,26 @@ func TestSend_SendIdempotentMessage(t *testing.T) {
 				},
 			},
 			"POST",
-			"fake-key",
+			courier.WithIdempotencyKey("fake-key"),
+		)
+
+		assert.Nil(t, err)
+		assert.Equal(t, requestID, result)
+	})
+	t.Run("sends request with idempotency key and key expiration", func(t *testing.T) {
+		client := courier.CreateClient("key", &server.URL)
+		expiration := time.Now().Add(time.Hour * 26)
+		result, err := client.SendMessageWithOptions(
+			context.Background(),
+			map[string]interface{}{
+				"template": "my-template",
+				"to": map[string]string{
+					"email": "foo@bar.com",
+				},
+			},
+			"POST",
+			courier.WithIdempotencyKey("fake-key"),
+			courier.WithIdempotencyKeyExpiration(expiration),
 		)
 
 		assert.Nil(t, err)

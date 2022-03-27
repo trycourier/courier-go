@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
+	"time"
 )
 
 // SendBody is the JSON body expected by Courier's /send endpoint
@@ -85,7 +87,7 @@ func (fn reqFunc) apply(r *http.Request) error {
 	return fn(r)
 }
 
-func (c *Client) NewSendRequest(ctx context.Context, body io.Reader, method string, opts ...Option) (*http.Request, error) {
+func (c *Client) newSendRequest(ctx context.Context, body io.Reader, method string, opts ...Option) (*http.Request, error) {
 	fullyQualifiedURL := fmt.Sprintf("%s/send", c.API.BaseURL)
 	req, err := http.NewRequestWithContext(ctx, method, fullyQualifiedURL, body)
 	if err != nil {
@@ -100,17 +102,24 @@ func (c *Client) NewSendRequest(ctx context.Context, body io.Reader, method stri
 	return req, err
 }
 
-func WithHeader(header, value string) Option {
+func withHeader(header, value string) Option {
 	return reqFunc(func(r *http.Request) error {
 		if header != "" && value != "" {
 			r.Header.Add(header, value)
 		}
 		return nil
 	})
-
 }
 
-func (c *Client) SendIdempotentMessage(ctx context.Context, body map[string]interface{}, method, idempotencyKey string) (string, error) {
+func WithIdempotencyKey(value string) Option {
+	return withHeader("Idempotency-Key", value)
+}
+
+func WithIdempotencyKeyExpiration(expiration time.Time) Option {
+	return withHeader("x-idempotency-expiration", strconv.FormatInt(expiration.UnixMilli(), 10))
+}
+
+func (c *Client) SendMessageWithOptions(ctx context.Context, body map[string]interface{}, method string, opts ...Option) (string, error) {
 	if method == "GET" {
 		body = nil
 	}
@@ -120,7 +129,7 @@ func (c *Client) SendIdempotentMessage(ctx context.Context, body map[string]inte
 	}
 	buf := bytes.NewReader(bytesBody)
 
-	req, err := c.NewSendRequest(ctx, buf, method, WithHeader("Idempotency-Key", idempotencyKey))
+	req, err := c.newSendRequest(ctx, buf, method, opts...)
 	if err != nil {
 		return "", err
 	}
