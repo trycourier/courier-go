@@ -72,7 +72,6 @@ func (api *APIConfiguration) SendRequestWithMaps(ctx context.Context, method str
 
 // SendRequestWithBytes wraps SendRequestWithReader
 func (api *APIConfiguration) SendRequestWithBytes(ctx context.Context, method string, relativePath string, body []byte) ([]byte, error) {
-	// buf := bytes.NewBuffer(body)
 	buf := bytes.NewReader(body)
 	return api.SendRequestWithReader(ctx, method, relativePath, buf)
 }
