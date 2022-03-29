@@ -34,16 +34,42 @@ func send() {
         requestID, err := client.SendMessage(
                 context.Background(),
                 courier.SendMessageRequestBody{
-                        "template": "<COURIER_TEMPLATE",
+                        "template": "<COURIER_TEMPLATE>",
                         "to": map[string]string{
                                 "email": "test@email.com"
                         }
                 }
-        })
+        )
         if err != nil {
                 log.Fatalln(err)
 	}
-        log.Println(messageID)
+        log.Println(requestID)
+}
+```
+
+If you would like to send an idempotent message then be sure to use the SendMessageWithOptions method as shown below:
+
+```go
+func sendIdempotentMessage() {
+        var eventID = "example-event"
+        var recipientID = "example-recipient"
+        expiration := time.Now().Add(time.Hour * 30)
+        client := courier.CourierClient("<YOUR_AUTH_TOKEN>", nil)
+        requestID, err := client.SendMessageWithOptions(
+                context.Background(),
+                map[string]interface{}{
+                        "template": "<COURIER_TEMPLATE>",
+                        "to": map[string]string{
+                                "email": "test@email.com"
+                        }
+                },
+                courier.WithIdempotencyKey("fake-key"),
+		courier.WithIdempotencyKeyExpiration(expiration)
+        )
+        if err != nil {
+                log.Fatalln(err)
+	}
+        log.Println(requestID)
 }
 ```
 
@@ -58,10 +84,10 @@ client := courier.CourierClient("<AUTH_TOKEN>", "<BASE_URL>")
 For a full description of request and response payloads and properties, please see the [official Courier API docs](https://docs.courier.com/reference).
 
 ### Send API
-
-- `SendMessage(context, message interface{}): object` [[?]](https://www.courier.com/docs/reference/send/message/)
-- `Send(context, eventID string, recipientID string, profile interface{}, data interface{}, brand string, override interface{}, preferences interface{}): object` [[?]](https://www.courier.com/docs/reference/send/message/)
-- `SendToList(context, eventID string, listID string, pattern string, data interface{}, brand string, override interface{}): object` [[?]](https://www.courier.com/docs/reference/send/list/)
+* ```SendMessage(context, message interface{}): object``` [[?]](https://www.courier.com/docs/reference/send/message/)
+* ```Send(context, eventID string, recipientID string, profile interface{}, data interface{}, brand string, override interface{}, preferences interface{}): object``` [[?]](https://www.courier.com/docs/reference/send/message/)
+* ```SendToList(context, eventID string, listID string, pattern string, data interface{}, brand string, override interface{}): object``` [[?]](https://www.courier.com/docs/reference/send/list/)
+* ```SendMessageWithOptions(ctx context.Context, body map[string]interface{}, method string, opts ...Option) (string, error):``` [[?]](https://www.courier.com/docs/reference/idempotent-requests/)
 
 ### Messages API
 
