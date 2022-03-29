@@ -66,7 +66,7 @@ func (c *Client) PutAudience(ctx context.Context, audienceId string, audience Au
 	_, nestedFilterOk := audience.Filter.(NestedFilter)
 
 	if !singleFilterOk && !nestedFilterOk {
-		return nil, errors.New("Audience filter must be a SingleFilter or NestedFilter")
+		return nil, errors.New("Audience filter must be of type SingleFilter or NestFilter")
 	}
 
 	reqBodyBytes := new(bytes.Buffer)
