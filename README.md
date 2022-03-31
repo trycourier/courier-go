@@ -5,16 +5,20 @@ This Go package helps you send notifications through Courier, the smartest way t
 !["Golang Gopher"](https://blog.golang.org/gopher/gopher.png)
 
 APIs supported:
-* Send API
-* Messages API
-* Profiles API
+
+- Audiences API
+- Messages API
+- Profiles API
+- Send API
 
 ## Official Courier API docs
 
 For a full description of request and response payloads and properties, please see the [official Courier API docs](https://docs.courier.com/reference).
 
 ## Installation
+
 Add this line to your go package:
+
 ```bash
 import "github.com/trycourier/courier-go"
 ```
@@ -28,7 +32,7 @@ func send() {
 
         client := courier.CourierClient("<YOUR_AUTH_TOKEN>", nil)
         requestID, err := client.SendMessage(
-                context.Background(), 
+                context.Background(),
                 courier.SendMessageRequestBody{
                         "template": "<COURIER_TEMPLATE>",
                         "to": map[string]string{
@@ -86,19 +90,22 @@ For a full description of request and response payloads and properties, please s
 * ```SendMessageWithOptions(ctx context.Context, body map[string]interface{}, method string, opts ...Option) (string, error):``` [[?]](https://www.courier.com/docs/reference/idempotent-requests/)
 
 ### Messages API
-* ```GetMessage(context, messageID string): object``` [[?]](https://www.courier.com/docs/reference/messages/by-id/)
-* ```GetMessages(context, cursor string, event string, list string, messageId string, notification string, recipient string): object``` [[?]](https://www.courier.com/docs/reference/messages/list/)
-* ```GetMessageHistory(context, messageID string, _type string): object``` [[?]](https://www.courier.com/docs/reference/messages/history-by-id/)
+
+- `GetMessage(context, messageID string): object` [[?]](https://www.courier.com/docs/reference/messages/by-id/)
+- `GetMessages(context, cursor string, event string, list string, messageId string, notification string, recipient string): object` [[?]](https://www.courier.com/docs/reference/messages/list/)
+- `GetMessageHistory(context, messageID string, _type string): object` [[?]](https://www.courier.com/docs/reference/messages/history-by-id/)
 
 ### Profiles API
-* ```GetProfile(id string): object``` [[?]](https://docs.courier.com/reference/profiles-api#getprofilebyrecipientid)
-* ```MergeProfile(id string, profile byte[]): object``` [[?]](https://docs.courier.com/reference/profiles-api#mergeprofilebyrecipientid)
-* ```UpdateProfile(id string, profile byte[]): object``` [[?]](https://docs.courier.com/reference/profiles-api#patchprofilebyrecipientid)
 
+- `GetProfile(id string): object` [[?]](https://docs.courier.com/reference/profiles-api#getprofilebyrecipientid)
+- `MergeProfile(id string, profile byte[]): object` [[?]](https://docs.courier.com/reference/profiles-api#mergeprofilebyrecipientid)
+- `UpdateProfile(id string, profile byte[]): object` [[?]](https://docs.courier.com/reference/profiles-api#patchprofilebyrecipientid)
 
 ## Staying Updated
+
 To update this SDK to the latest version, use `go get -u github.com/trycourier/courier-go`.
 
 ## License
+
 The package is available as open source under the terms of the MIT License.
 [MIT License](http://www.opensource.org/licenses/mit-license.php)
