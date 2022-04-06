@@ -174,3 +174,25 @@ func TestGetAudiences(t *testing.T) {
 		assert.Equal(t, "Software Engineers From SF", response.Items[0].Name)
 	})
 }
+
+func TestDeleteAudience(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(
+		func(rw http.ResponseWriter, req *http.Request) {
+			assert.Equal(t, "/audiences/123456789", req.URL.String())
+			rw.Header().Add("Content-Type", "application/json")
+			rw.WriteHeader(http.StatusNoContent)
+		}))
+	defer server.Close()
+
+	t.Run("Delete Audience Happy Path", func(t *testing.T) {
+		client := courier.CreateClient("key", &server.URL)
+		err := client.DeleteAudience(context.Background(), "123456789")
+		assert.NoError(t, err)
+	})
+
+	t.Run("should throw Audience ID required if empty", func(t *testing.T) {
+		client := courier.CreateClient("key", &server.URL)
+		err := client.DeleteAudience(context.Background(), "")
+		assert.EqualError(t, err, "Audience ID is required")
+	})
+}
