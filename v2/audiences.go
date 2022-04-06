@@ -191,3 +191,25 @@ func (c *Client) GetAudiences(ctx context.Context, cursor string) (*GetAudiences
 
 	return &data, nil
 }
+
+func (c *Client) DeleteAudience(ctx context.Context, audienceId string) error {
+	if audienceId == "" {
+		return errors.New("Audience ID is required")
+	}
+
+	url := fmt.Sprintf(c.API.BaseURL+"/audiences/%s", audienceId)
+
+	req, err := http.NewRequestWithContext(ctx, "DELETE", url, nil)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = c.API.ExecuteRequest(req)
+
+	if err != nil {
+		return errors.New(fmt.Sprintf("AudienceId %s, not found", audienceId))
+	}
+
+	return nil
+}
