@@ -16,7 +16,11 @@ func sendMessageWithMetadata() {
 			"to": map[string]string{
 				"email": "foo@bar.com",
 			},
-			"metadata": map[string]string{
+			"metadata": map[string]interface{}{
+				"utm": map[string]string{
+					"source": "go",
+				},
+				"tags":     []string{"tag-1", "tag-2"},
 				"trace_id": "Wassup?",
 			},
 		},
