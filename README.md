@@ -20,59 +20,74 @@ For a full description of request and response payloads and properties, please s
 
 ## Installation
 
-Add this line to your go package:
+Download the package using `go get`:
 
 ```bash
-import "github.com/trycourier/courier-go"
+go get -u github.com/trycourier/courier-go/v2
 ```
 
 ## Usage
 
 ```go
-func send() {
-        var eventID = "example-event"
-        var recipientID = "example-recipient"
+package main
 
-        client := courier.CourierClient("<YOUR_AUTH_TOKEN>", nil)
-        requestID, err := client.SendMessage(
-                context.Background(),
-                courier.SendMessageRequestBody{
-                        "template": "<COURIER_TEMPLATE>",
-                        "to": map[string]string{
-                                "email": "test@email.com"
-                        }
-                }
-        )
-        if err != nil {
-                log.Fatalln(err)
+import (
+	"context"
+	"fmt"
+	
+	"github.com/trycourier/courier-go/v2"
+)
+
+func main() {
+	client := courier.CourierClient("<YOUR_AUTH_TOKEN>", nil)
+	message := courier.SendMessageRequestBody{
+		"template": "<COURIER_TEMPLATE>",
+			"to": map[string]string{
+				"email": "test@email.com"
+		}
 	}
-        log.Println(requestID)
+
+	id, err := client.SendMessage(context.Background(), message)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(id)
 }
 ```
 
 If you would like to send an idempotent message then be sure to use the SendMessageWithOptions method as shown below:
 
 ```go
-func sendIdempotentMessage() {
-        var eventID = "example-event"
-        var recipientID = "example-recipient"
-        expiration := time.Now().Add(time.Hour * 30)
-        client := courier.CourierClient("<YOUR_AUTH_TOKEN>", nil)
-        requestID, err := client.SendMessageWithOptions(
-                context.Background(),
-                map[string]interface{}{
-                        "template": "<COURIER_TEMPLATE>",
-                        "to": map[string]string{
-                                "email": "test@email.com"
-                        }
-                },
-                courier.WithIdempotencyKey("fake-key"),
-		courier.WithIdempotencyKeyExpiration(expiration)
-        )
-        if err != nil {
-                log.Fatalln(err)
+package main
+
+import (
+	"fmt"
+	"time"
+	"context"
+	
+	"github.com/trycourier/courier-go/v2"
+)
+
+func main() {
+	client := courier.CourierClient("<YOUR_AUTH_TOKEN>", nil)
+	message := map[string]interface{}{
+		"template": "<COURIER_TEMPLATE>",
+			"to": map[string]string{
+				"email": "test@email.com"
+			}
 	}
-        log.Println(requestID)
+	id, err := client.SendMessageWithOptions(
+		context.Background(),
+		message,
+		courier.WithIdempotencyKey("fake-key"),
+		courier.WithIdempotencyKeyExpiration(time.Now().Add(time.Hour * 30))
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(id)
 }
 ```
 
