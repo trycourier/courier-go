@@ -47,12 +47,12 @@ func main() {
 		}
 	}
 
-	id, err := client.SendMessage(context.Background(), message)
+	reqID, err := client.SendMessage(context.Background(), message)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println(id)
+	fmt.Println(reqID)
 }
 ```
 
@@ -77,7 +77,8 @@ func main() {
 				"email": "test@email.com"
 			}
 	}
-	id, err := client.SendMessageWithOptions(
+	
+	reqID, err := client.SendMessageWithOptions(
 		context.Background(),
 		message,
 		courier.WithIdempotencyKey("fake-key"),
@@ -87,7 +88,7 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println(id)
+	fmt.Println(reqID)
 }
 ```
 
