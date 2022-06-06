@@ -18,10 +18,10 @@ func sendMessageTimeout() {
 			},
 			"timeout": map[string]interface{}{
 				"message": int64(3600000), // 1 hour in milliseconds
-				"channels": map[string]int64{
+				"channel": map[string]int64{
 					"email": int64(300000),
 				},
-				"providers": map[string]int64{
+				"provider": map[string]int64{
 					"sendgrid": int64(0), // disable retry
 				},
 			},
