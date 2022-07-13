@@ -15,7 +15,7 @@ func sendIdempotentMessage() {
 		map[string]interface{}{
 			"message": map[string]interface{}{
 				"to": map[string]string{
-					"email": "vatasha@courier.com",
+					"email": "foo@example.com",
 				},
 				"content": map[string]string{
 					"title": "Welcome!",
