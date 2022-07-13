@@ -72,11 +72,20 @@ import (
 func main() {
 	client := courier.CourierClient("<YOUR_AUTH_TOKEN>", nil)
 	message := map[string]interface{}{
-		"template": "<COURIER_TEMPLATE>",
-			"to": map[string]string{
-				"email": "test@email.com"
-			}
-	}
+			"message": map[string]interface{}{
+				"to": map[string]string{
+					"email": "foo@example.com",
+				},
+				"content": map[string]string{
+					"title": "Welcome!",
+					"body":  "Thanks for signing up Harry Potter",
+				},
+				"routing": map[string]interface{}{
+					"method":   "single",
+					"channels": []string{"email"},
+				},
+			},
+		}
 	
 	reqID, err := client.SendMessageWithOptions(
 		context.Background(),
