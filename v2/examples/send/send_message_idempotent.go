@@ -13,13 +13,22 @@ func sendIdempotentMessage() {
 	expiration := time.Now().Add(time.Hour * 24)
 	requestID, err := client.SendMessageWithOptions(context.Background(),
 		map[string]interface{}{
-			"template": "my-template",
-			"to": map[string]string{
-				"email": "foo@bar.com",
+			"message": map[string]interface{}{
+				"to": map[string]string{
+					"email": "vatasha@courier.com",
+				},
+				"content": map[string]string{
+					"title": "Welcome!",
+					"body":  "Thanks for signing up Harry Potter",
+				},
+				"routing": map[string]interface{}{
+					"method":   "single",
+					"channels": []string{"email"},
+				},
 			},
 		},
 		"POST",
-		courier.WithIdempotencyKey("fake-key"),
+		courier.WithIdempotencyKey("fake-key-6"),
 		courier.WithIdempotencyKeyExpiration(expiration),
 	)
 	if err != nil {
