@@ -5,16 +5,26 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [v2.7.0] - 2022-07-26
+
+- Support for Audit Events API
+
 ## [v2.5.0] - 2022-01-31
+
 ### Added
+
 - Support for enhanced Send API features by @tk26
 
 ## [v2.4.0] - 2022-01-26
+
 ### Added
+
 - Support for Bulk API by @tk26
 
 ## [v2.3.0] - 2021-08-23
+
 ### Added
+
 - Support for Notifications API by @tk26
   - `GET /notifications` with `courier.GetNotifications` method
   - `GET /notifications/{notification_id}/content` with `courier.GetNotificationContent` method
@@ -27,11 +37,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - Usage Examples in v2/examples/notifications
 
 ## [v2.2.1] - 2021-05-11
-* Fixes [Issue 26](https://github.com/trycourier/courier-go/issues/26)
+
+- Fixes [Issue 26](https://github.com/trycourier/courier-go/issues/26)
 
 ## [v2.2.0] - 2021-05-07
+
 ### Added
+
 - Support for [Lists API](https://docs.courier.com/reference/lists-api) by @tk26
+
   - `GET /lists` with `courier.GetLists` method
   - `GET /list/{list_id}` with `courier.GetList` method
   - `PUT /list/{list_id}` with `courier.PutList` method
@@ -53,7 +67,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - Usage Examples in v2/examples/brands
 
 ## [v2.1.0] - 2021-04-09
+
 ### Added
+
 - Support for [Automation API](https://docs.courier.com/reference/automation-api) by @tk26
   - `POST /automations/invoke` with `courier.InvokeAutomation` method
   - `POST /automations/{template_id}/invoke` with `courier.InvokeAutomationTemplate` method
@@ -61,20 +77,22 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Changed default base URL to `https://api.courier.com`
 
 ## [v2.0.2] - 2020-09-22
-* Adds brand and override support to SendBody struct
+
+- Adds brand and override support to SendBody struct
 
 ## [v2.0.1] - 2020-09-17
-* Fixes issues where a body was being set on GET requests
+
+- Fixes issues where a body was being set on GET requests
 
 ## [v2.0.0] - 2020-06-24
 
-* `courier.CourierClient` has been renamed to `courier.CreateClient`
-* `courier.CreateClient` now takes a `nil` second parameter if you wish to use our default API URL, not `""`
-* Our underlying API communication functions are now exposed via `client.API`
-* renamed `SendRequest` to `SendBody` and modified the struct
-* `Send` now takes one `body interface{}` argument rather than separate `profile` and `data` arguments
-* added `SendMap`
-* `GetProfile` now requires a `context` argument 
-* `GetProfile` now returns a `map[string]json.RawMessage{}` instead of hydrating a struct reference
-* removed `MergeProfile`; use `client.API.SendRequestWithBytes(context.Background(), "PUT", "/profiles/"+recipientID, profile)` instead
-* removed `UpdateProfile`; use `client.API.SendRequestWithBytes(context.Background(), "PUT", "/profiles/"+recipientID, profile)` instead
+- `courier.CourierClient` has been renamed to `courier.CreateClient`
+- `courier.CreateClient` now takes a `nil` second parameter if you wish to use our default API URL, not `""`
+- Our underlying API communication functions are now exposed via `client.API`
+- renamed `SendRequest` to `SendBody` and modified the struct
+- `Send` now takes one `body interface{}` argument rather than separate `profile` and `data` arguments
+- added `SendMap`
+- `GetProfile` now requires a `context` argument
+- `GetProfile` now returns a `map[string]json.RawMessage{}` instead of hydrating a struct reference
+- removed `MergeProfile`; use `client.API.SendRequestWithBytes(context.Background(), "PUT", "/profiles/"+recipientID, profile)` instead
+- removed `UpdateProfile`; use `client.API.SendRequestWithBytes(context.Background(), "PUT", "/profiles/"+recipientID, profile)` instead

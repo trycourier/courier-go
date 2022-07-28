@@ -538,27 +538,27 @@ func TestSend_SendMessage_WithGranularMetadata(t *testing.T) {
 				},
 				"metadata": map[string]interface{}{
 					"utm": map[string]string{
-					  "source": "go",
+						"source": "go",
 					},
 				},
 				"channels": map[string]interface{}{
 					"email": map[string]interface{}{
-					  "metadata": map[string]interface{}{
-						"utm": map[string]string{
-						  "medium": "email",
-						 },
-					  }
-					}
-				  },
-				  "providers": map[string]interface{}{
+						"metadata": map[string]interface{}{
+							"utm": map[string]string{
+								"medium": "email",
+							},
+						},
+					},
+				},
+				"providers": map[string]interface{}{
 					"sendgrid": map[string]interface{}{
-					  "metadata": map[string]interface{}{
-						"utm": map[string]string{
-						  "campaign": "sendgrid",
-						 },
-					  }
-					}
-				  }
+						"metadata": map[string]interface{}{
+							"utm": map[string]string{
+								"campaign": "sendgrid",
+							},
+						},
+					},
+				},
 			},
 		})
 
