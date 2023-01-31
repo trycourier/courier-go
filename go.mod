@@ -1,4 +1,4 @@
-module github.com/trycourier/courier-go
+module module github.com/chkk-io/courier-go
 
 go 1.13
 
