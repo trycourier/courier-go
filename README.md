@@ -111,6 +111,7 @@ For a full description of request and response payloads and properties, please s
 
 ### Messages API
 
+- `CancelMessage(ctx context.Context, messageID string) (*CancelMessageResponse, error)` [[?]](https://www.courier.com/docs/reference/logs/cancel/)
 - `GetMessage(ctx context.Context, messageID string) (*MessageResponse, error)` [[?]](https://www.courier.com/docs/reference/messages/by-id/)
 
 ### Audiences API

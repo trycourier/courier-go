@@ -42,6 +42,26 @@ type MessageResponse struct {
 	Providers    []*ProvidersResponse
 }
 
+type CancelMessageResponse struct {
+	CanceledAt int64
+	Event      string
+	Id         string
+	Recipient  string
+	Status     string
+	// optional
+	Clicked       int64
+	Delivered     int64
+	Enqueued      int64
+	Error         string
+	JobId         string
+	ListId        string
+	ListMessageId string
+	Notification  string
+	Opened        int64
+	RunId         string
+	Sent          int64
+}
+
 type PagingResponse struct {
 	Cursor string
 	More   bool
@@ -74,6 +94,32 @@ func (c *Client) GetMessage(ctx context.Context, messageID string) (*MessageResp
 	}
 
 	var data MessageResponse
+	err = json.Unmarshal(bytes, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data, nil
+}
+
+func (c *Client) CancelMessage(ctx context.Context, messageID string) (*CancelMessageResponse, error) {
+	if messageID == "" {
+		return nil, errors.New("messageID is required")
+	}
+
+	url := fmt.Sprintf(c.BaseUrl+"/messages/%s/cancel", messageID)
+
+	req, err := http.NewRequestWithContext(ctx, "POST", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	bytes, err := c.doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var data CancelMessageResponse
 	err = json.Unmarshal(bytes, &data)
 	if err != nil {
 		return nil, err
