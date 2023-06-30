@@ -20,6 +20,7 @@ type ProvidersResponse struct {
 	Sent      int64
 	Clicked   int64
 	Provider  string
+        ProviderResponse interface{}
 	Reference interface{}
 }
 
