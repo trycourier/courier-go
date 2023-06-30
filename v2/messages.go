@@ -20,7 +20,7 @@ type ProvidersResponse struct {
 	Sent      int64
 	Clicked   int64
 	Provider  string
-	Reference interface{} // provider specific response
+	Reference interface{}
 }
 
 // MessageResponse represents the return of the /messages/* endpoints on the Courier API
