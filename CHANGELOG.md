@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [v2.9.0] - 2023-06-30
+
+- Add missing type to message struct
+
 ## [v2.8.0] - 2023-06-22
 
 - Support for Cancel Message API
