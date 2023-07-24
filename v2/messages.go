@@ -13,15 +13,15 @@ type ProvidersChannelResponse struct {
 
 // ProvidersResponse represents the providers section of the MessageResponse
 type ProvidersResponse struct {
-	Channel   *ProvidersChannelResponse
-	Error     string
-	Status    string
-	Delivered int64
-	Sent      int64
-	Clicked   int64
-	Provider  string
-        ProviderResponse interface{}
-	Reference interface{}
+	Channel          *ProvidersChannelResponse
+	Error            string
+	Status           string
+	Delivered        int64
+	Sent             int64
+	Clicked          int64
+	Provider         string
+	ProviderResponse interface{}
+	Reference        interface{}
 }
 
 // MessageResponse represents the return of the /messages/* endpoints on the Courier API
