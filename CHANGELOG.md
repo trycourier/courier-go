@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [v2.10.0] - 2023-07-24
+
+- Add accounts API
+
 ## [v2.9.0] - 2023-06-30
 
 - Add missing type to message struct

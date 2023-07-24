@@ -6,6 +6,7 @@ This Go package helps you send notifications through Courier, the smartest way t
 
 APIs supported:
 
+- Accounts API
 - Audiences API
 - Audit Events API
 - Automations API
