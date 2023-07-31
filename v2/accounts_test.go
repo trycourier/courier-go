@@ -46,7 +46,8 @@ func TestGetAccounts(t *testing.T) {
 						"name": "my-account"
 					}
 				],
-				"has_more": false
+				"has_more": false,
+				"url": "/accounts"
 			}`
 			_, _ = rw.Write([]byte(rsp))
 		}))
@@ -58,6 +59,7 @@ func TestGetAccounts(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, expectedAccountId, response.Items[0].Id)
 		assert.Equal(t, "my-account", response.Items[0].Name)
+		assert.Equal(t, "/accounts", response.Url)
 	})
 }
 

@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [v2.11.0] - 2023-07-31
+
+- Add pagination attributes for accounts API
+
 ## [v2.10.0] - 2023-07-24
 
 - Add accounts API
