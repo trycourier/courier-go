@@ -22,9 +22,10 @@ type Account struct {
 
 // ListAccountsResponse is type for the GET /accounts response
 type ListAccountsResponse struct {
-	Items    []Account `json:"items"`
-	HasMore  bool      `json:"has_more'`
-	NextPage string    `json:"next_page,omitempty"`
+	Items   []Account `json:"items"`
+	HasMore bool      `json:"has_more'`
+	Url     string    `json:"url"`
+	NextUrl string    `json:"next_url,omitempty"`
 }
 
 // GetAccount calls the GET /accounts/:accountID endpoint of the Courier API
@@ -54,7 +55,7 @@ func (c *Client) GetAccount(ctx context.Context, accountID string) (*Account, er
 }
 
 // GetAccounts calls the GET /accounts endpoint of the Courier API
-func (c *Client) GetAccounts(ctx context.Context, limit string, starting_after string) (*ListAccountsResponse, error) {
+func (c *Client) GetAccounts(ctx context.Context, limit string, cursor string) (*ListAccountsResponse, error) {
 	url := fmt.Sprintf(c.API.BaseURL + "/accounts")
 
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
@@ -66,8 +67,8 @@ func (c *Client) GetAccounts(ctx context.Context, limit string, starting_after s
 	if limit != "" {
 		q.Add("limit", limit)
 	}
-	if starting_after != "" {
-		q.Add("starting_after", starting_after)
+	if cursor != "" {
+		q.Add("cursor", cursor)
 	}
 	req.URL.RawQuery = q.Encode()
 
