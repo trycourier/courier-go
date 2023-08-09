@@ -11,11 +11,11 @@ import (
 	"github.com/trycourier/courier-go/v2"
 )
 
-func TestGetAccount(t *testing.T) {
+func TestGetTenant(t *testing.T) {
 	expectedResponseID := "123456789"
 	server := httptest.NewServer(http.HandlerFunc(
 		func(rw http.ResponseWriter, req *http.Request) {
-			assert.Equal(t, "/accounts/123456789", req.URL.String())
+			assert.Equal(t, "/tenants/123456789", req.URL.String())
 			rw.Header().Add("Content-Type", "application/json")
 			_, writeErr := rw.Write([]byte(fmt.Sprintf("{ \"id\" : \"%s\" }", expectedResponseID)))
 			if writeErr != nil {
@@ -24,30 +24,30 @@ func TestGetAccount(t *testing.T) {
 		}))
 	defer server.Close()
 
-	t.Run("Get Account", func(t *testing.T) {
+	t.Run("Get Tenant", func(t *testing.T) {
 		client := courier.CreateClient("key", &server.URL)
-		response, err := client.GetAccount(context.Background(), "123456789")
+		response, err := client.GetTenant(context.Background(), "123456789")
 		assert.Nil(t, err)
 		assert.Equal(t, expectedResponseID, response.Id)
 	})
 }
 
-func TestGetAccounts(t *testing.T) {
+func TestGetTenants(t *testing.T) {
 	expectedAccountId := "ZX3xXUMNKL4y2NkiKgstl"
 	server := httptest.NewServer(http.HandlerFunc(
 		func(rw http.ResponseWriter, req *http.Request) {
-			assert.Equal(t, "/accounts", req.URL.String())
+			assert.Equal(t, "/tenants", req.URL.String())
 			rw.Header().Add("Content-Type", "application/json")
 			rsp := `
 			{
 				"items": [
 					{
 						"id": "ZX3xXUMNKL4y2NkiKgstl",
-						"name": "my-account"
+						"name": "my-tenant"
 					}
 				],
 				"has_more": false,
-				"url": "/accounts"
+				"url": "/tenants"
 			}`
 			_, _ = rw.Write([]byte(rsp))
 		}))
@@ -55,23 +55,23 @@ func TestGetAccounts(t *testing.T) {
 
 	t.Run("Get Accounts", func(t *testing.T) {
 		client := courier.CreateClient("key", &server.URL)
-		response, err := client.GetAccounts(context.Background(), "", "")
+		response, err := client.GetTenants(context.Background(), "", "")
 		assert.Nil(t, err)
 		assert.Equal(t, expectedAccountId, response.Items[0].Id)
-		assert.Equal(t, "my-account", response.Items[0].Name)
-		assert.Equal(t, "/accounts", response.Url)
+		assert.Equal(t, "my-tenant", response.Items[0].Name)
+		assert.Equal(t, "/tenants", response.Url)
 	})
 }
 
-func TestPutAccount(t *testing.T) {
+func TestPutTenant(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(
 		func(rw http.ResponseWriter, req *http.Request) {
-			assert.Equal(t, "/accounts/account-1", req.URL.String())
+			assert.Equal(t, "/tenants/tenant-1", req.URL.String())
 			rw.Header().Add("Content-Type", "application/json")
 			rsp := `
 			{
-				"id": "account-1",
-				"name": "My Account"
+				"id": "tenant-1",
+				"name": "My Tenant"
 			}`
 			_, _ = rw.Write([]byte(rsp))
 
@@ -81,22 +81,22 @@ func TestPutAccount(t *testing.T) {
 	t.Run("Put Account", func(t *testing.T) {
 		client := courier.CreateClient("key", &server.URL)
 
-		accountPutResponse, err := client.PutAccount(context.Background(), "account-1", map[string]string{
-			"name": "My Account",
+		accountPutResponse, err := client.PutTenant(context.Background(), "tenant-1", map[string]string{
+			"name": "My Tenant",
 		})
 		assert.Nil(t, err)
 
-		assert.Equal(t, "account-1", accountPutResponse.Id)
+		assert.Equal(t, "tenant-1", accountPutResponse.Id)
 	})
 }
 
 func TestDeleteAccount(t *testing.T) {
-	accountID := "my-account"
+	tenantId := "my-tenant"
 	server := httptest.NewServer(http.HandlerFunc(
 
 		func(rw http.ResponseWriter, req *http.Request) {
 
-			assert.Equal(t, "/accounts/"+accountID, req.URL.String())
+			assert.Equal(t, "/tenants/"+tenantId, req.URL.String())
 
 			rw.WriteHeader(http.StatusNoContent)
 
@@ -105,6 +105,6 @@ func TestDeleteAccount(t *testing.T) {
 
 	t.Run("Delete Account", func(t *testing.T) {
 		client := courier.CreateClient("key", &server.URL)
-		client.DeleteAccount(context.Background(), accountID)
+		client.DeleteTenant(context.Background(), tenantId)
 	})
 }
