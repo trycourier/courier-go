@@ -7,6 +7,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [v3.0.0] - 2023-08-09
 
+- Accounts -> Tenants
+
+
 ## [v2.11.0] - 2023-07-31
 
 - Add pagination attributes for accounts API
