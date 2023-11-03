@@ -5,10 +5,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [v3.1.0]
+
+- Adds support for the cancel message endpoint (@BenAlderfer)
+
 ## [v3.0.0] - 2023-08-09
 
 - Accounts -> Tenants
-
 
 ## [v2.11.0] - 2023-07-31
 
