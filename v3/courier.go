@@ -1,6 +1,6 @@
 package courier
 
-const version = "2.12.0"
+const version = "3.1.1"
 
 // Client lets you communicate with the Courier API
 type Client struct {

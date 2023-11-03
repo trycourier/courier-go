@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [v3.1.1]
+
+- Fixes v3 release by adding v3 folder
+
 ## [v3.1.0]
 
 - Adds support for the cancel message endpoint (@BenAlderfer)
