@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [v3.1.0] - 2023-11-03
+- Add cancel message endpoint #60
+- bumps version #61
+
 ## [v3.0.0] - 2023-08-09
 
 - Accounts -> Tenants
