@@ -1,0 +1,8 @@
+# Specify files that shouldn't be modified by Fern
+
+LICENSE
+CHANGELOG.md
+
+README.v1.md
+README.v2.md
+README.md

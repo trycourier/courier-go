@@ -5,6 +5,21 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [v3.0.0]
+We now use :herb: [Fern](https://buildwithfern.com/) to generate our Go 
+SDK. WHile this releasing has breaking changes, it comes with several 
+quality of life upgrades: 
+- **Endpoint coverage**: All endpoints that are supported in our Node SDK are 
+  now also supported in Go. 
+- **Resource-scoped SDK methods**: Endpoints are scoped under their resource. For 
+  example, instead of `courier.DeleteBrands` the SDK now reads `courier.Brands.Delete(...)`  
+- **Docs on Hover**: All endpoint and parameter level documentation that you see 
+  on our docs website are now embedded directly within the SDKs.
+- **Strongly Typed**: The SDK now contains types for all of our modles -- including
+  complex unions like `ContentMessage` and `TemplateMessage`. 
+- **Retries with Exponential Backoffs**: The SDK now supports retries with exponential 
+  backoff. 
+
 ## [v2.12.0]
 
 - Adds support for the cancel message endpoint (@BenAlderfer)

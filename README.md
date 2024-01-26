@@ -1,170 +1,205 @@
-# Courier Go SDK
+# Courier Go Library
 
-This Go package helps you send notifications through Courier, the smartest way to design & deliver notifications. Design your notifications once using our drag & drop editor, then deliver to any channel through one API. Email, mobile push, SMS, Slack — you name it!
+[![Courier: Your Complete Communication Stack](https://marketing-assets-public.s3.us-west-1.amazonaws.com/github_nodejs.png)](https://courier.com)
 
-!["Golang Gopher"](https://blog.golang.org/gopher/gopher.png)
+[![go shield](https://img.shields.io/badge/go-docs-blue)](https://pkg.go.dev/github.com/merge-api/merge-go-client)
+[![fern shield](https://img.shields.io/badge/%F0%9F%8C%BF-SDK%20generated%20by%20Fern-brightgreen)](https://buildwithfern.com/?utm_source=trycourier/courier-go/readme)
 
-APIs supported:
+This is the official Go library for sending notifications with the [Courier](https://courier.com) REST API.
 
-- Accounts API
-- Audiences API
-- Audit Events API
-- Automations API
-- Brand API
-- Messages API
-- Profiles API
-- Send API
-- List API
+## Documentation 
 
-## Official Courier API docs
+For a full description of request and response payloads and properties, please see the 
+[official Courier API docs](https://www.courier.com/docs/reference/).
 
-For a full description of request and response payloads and properties, please see the [official Courier API docs](https://docs.courier.com/reference).
+## Requirements
+
+This module requires Go version >= 1.13.
 
 ## Installation
 
-Download the package using `go get`:
+Run the following command to use the Go library in your Go module:
 
-```bash
-go get -u github.com/trycourier/courier-go/v2
+```sh
+go get github.com/trycourier/courier-go/v3
 ```
 
-## Usage
+## Instantiation
 
 ```go
-package main
-
 import (
-	"context"
-	"fmt"
+  "context"
+  "fmt"
 
-	"github.com/trycourier/courier-go/v2"
+  courier "github.com/trycourier/courier-go/v3"
+  courierclient "github.com/trycourier/courier-go/v3"
 )
 
-func main() {
-	client := courier.CourierClient("<YOUR_AUTH_TOKEN>", nil)
-	message := courier.SendMessageRequestBody{
-		"template": "<COURIER_TEMPLATE>",
-			"to": map[string]string{
-				"email": "test@email.com"
-		}
-	}
+client := courierclient.NewClient(
+  courierclient.ClientWithAuthorizationToken("<YOUR_TOKEN>"),
+)
+```
 
-	reqID, err := client.SendMessage(context.Background(), message)
-	if err != nil {
-		panic(err)
-	}
+## Usage 
 
-	fmt.Println(reqID)
+```go
+import (
+  "context"
+  "fmt"
+
+  courier "github.com/trycourier/courier-go/v3"
+  courierclient "github.com/trycourier/courier-go/v3"
+)
+
+client := courierclient.NewClient(
+  mergeclient.ClientWithAuthorizationToken("<YOUR_TOKEN>"),
+)
+sendResponse, err := client.Send(
+  context.TODO(),
+  &courier.SendMessageRequest{
+		Message: courier.Message.NewMessageFromTemplateMessage({
+			Template: "<COURIER_TEMPLATE>"
+		}),
+  },
+)
+if err != nil {
+  return err
+}
+fmt.Printf("Sent message %s\n", sendResponse.RequestId)
+```
+
+## Unions
+Our API, particularly the send method, uses several unions. Our Go SDK provides
+strongly typed factories to construct these unions `courier.Message.NewMessageFromTemplateMessage(...)`. 
+
+```go
+import (
+  courier "github.com/trycourier/courier-go/v3"
+)
+
+courier.SendMessageRequest{
+  // Construct a template message
+  Message: courier.Message.NewMessageFromTemplateMessage({
+    // Construct a single recepient
+    To: courier.MessageRecipient.NewMessageRecipientFromRecipient(
+      // Construct a single recepient that is a user recepient
+      courier.Recipient.NewRecipientFromUserRecipient(&courier.UserRecipient{
+        Email: courier.String("marty_mcfly@email.com"),
+        Data: &map[string]interface{}{
+            "name": "Marty"
+          }
+      }))
+    Template: &map[string]interface{}{
+      "name": "Marty"
+    }
+  }),
+  // Construct content from elemental content sugar
+  Content: courier.Content.NewContentFromElementalContentSugar({
+    Title: "Back to the Future"
+    Body: "Oh my {{name}}, we need 1.21 Gigawatts!"
+  })
 }
 ```
 
-If you would like to send an idempotent message then be sure to use the SendMessageWithOptions method as shown below:
+## Timeouts
+
+Setting a timeout for each individual request is as simple as using the standard
+`context` library. Setting a one second timeout for an individual API call looks
+like the following:
 
 ```go
-package main
+ctx, cancel := context.WithTimeout(context.TODO(), time.Second)
+defer cancel()
 
-import (
-	"fmt"
-	"time"
-	"context"
-
-	"github.com/trycourier/courier-go/v2"
+response, err := client.send(
+  context.TODO(),
+  &courier.SendMessageRequest{
+    Message: ...
+  },
 )
+```
 
-func main() {
-	client := courier.CourierClient("<YOUR_AUTH_TOKEN>", nil)
-	message := map[string]interface{}{
-		"template": "<COURIER_TEMPLATE>",
-			"to": map[string]string{
-				"email": "test@email.com"
-			}
-	}
+## Client Options
 
-	reqID, err := client.SendMessageWithOptions(
-		context.Background(),
-		message,
-		courier.WithIdempotencyKey("fake-key"),
-		courier.WithIdempotencyKeyExpiration(time.Now().Add(time.Hour * 30))
-	)
-	if err != nil {
-		panic(err)
-	}
+A variety of client options are included to adapt the behavior of the library, which includes configuring authorization tokens to be sent on every request, or providing your own instrumented *http.Client. Both of these options are shown below:
 
-	fmt.Println(reqID)
+```go
+client := courierclient.NewClient(
+  cohereclient.WithToken("<YOUR_AUTH_TOKEN>"),
+  cohereclient.WithHTTPClient(
+    &http.Client{
+      Timeout: 5 * time.Second,
+    },
+  ),
+)
+```
+
+> Providing your own `*http.Client` is recommended. Otherwise, the `http.DefaultClient` will be used,
+> and your client will wait indefinitely for a response (unless the per-request, context-based timeout
+> is used).
+
+## Errors
+
+Structured error types are returned from API calls that return non-success status codes. For example,
+you can check if the error was due to a bad request (i.e. status code 400) with the following:
+
+```go
+response, err := client.send(
+  context.TODO(),
+  &courier.SendMessageRequest{
+    Message: &{}
+  },
+)
+if err != nil {
+  if apiErr, ok := err.(*core.APIError); ok && apiErr.StatusCode == http.StatusBadRequest {
+    // Do something with the bad request ...
+  }
+  return err
 }
 ```
 
-If you need to use a base url other than the default https://api.courier.com, you can pass it in as the second paramter to the `CourierClient`:
+These errors are also compatible with the `errors.Is` and `errors.As` APIs, so you can access the error
+like so:
 
 ```go
-client := courier.CourierClient("<AUTH_TOKEN>", "<BASE_URL>")
+response, err := client.send(
+  context.TODO(),
+  &courier.SendMessageRequest{
+    Message: &{}
+  },
+)
+if err != nil {
+  var apiErr *core.APIError
+  if errors.As(err, apiError); ok {
+    switch apiErr.StatusCode {
+      case http.StatusBadRequest:
+        // Do something with the bad request ...
+    }
+  }
+  return err
+}
 ```
 
-## APIs
+If you'd like to wrap the errors with additional information and still retain the ability to access the type
+with `errors.Is` and `errors.As`, you can use the `%w` directive:
 
-For a full description of request and response payloads and properties, please see the [official Courier API docs](https://docs.courier.com/reference).
+```go
+response, err := client.send(
+  context.TODO(),
+  &courier.SendMessageRequest{
+    Message: &{}
+  },
+)
+if err != nil {
+  return fmt.Errorf("failed to list employees: %w", err)
+}
+```
 
-### Send API
+## Contributing
 
-- `SendMessage(ctx context.Context, body SendMessageRequestBody) (string, error)` [[?]](https://www.courier.com/docs/reference/send/message/)
-- `Send(ctx context.Context, eventID, recipientID string, body interface{}) (string, error): object` [[?]](https://www.courier.com/docs/reference/send/message/)
-- `SendMessageWithOptions(ctx context.Context, body map[string]interface{}, method string, opts ...Option) (string, error)` [[?]](https://www.courier.com/docs/reference/idempotent-requests/)
+While we value open-source contributions to this SDK, this library is generated programmatically. Additions
+made directly to this library would have to be moved over to our generation code, otherwise they would be
+overwritten upon the next generated release. Feel free to open a PR as a proof of concept, but know that we
+will not be able to merge it as-is. We suggest opening an issue first to discuss with us!
 
-### Messages API
-
-- `CancelMessage(ctx context.Context, messageID string) (*CancelMessageResponse, error)` [[?]](https://www.courier.com/docs/reference/logs/cancel/)
-- `GetMessage(ctx context.Context, messageID string) (*MessageResponse, error)` [[?]](https://www.courier.com/docs/reference/messages/by-id/)
-
-### Audiences API
-
-- `PutAudience(ctx context.Context, audienceId string, audience Audience) (*AudienceResponse, error)` [[?]](https://www.courier.com/docs/reference/audiences/put/)
-- `GetAudience(ctx context.Context, audienceId string) (*AudienceResponseBody, error)` [[?]](https://www.courier.com/docs/reference/audiences/by-id/)
-- `GetAudienceMembers(ctx context.Context, audienceId string, cursor string) (*GetAudienceMembersResponse, error)` [[?]](https://www.courier.com/docs/reference/audiences/list-audience-members/)
-- `GetAudiences(ctx context.Context, cursor string) (*GetAudiencesResponse, error)` [[?]](https://www.courier.com/docs/reference/audiences/list-audiences/)
-- `DeleteAudience(ctx context.Context, audienceId string) error ` [[?]](https://www.courier.com/docs/reference/audiences/delete/)
-
-### Brand API
-
-- `GetBrands(ctx context.Context, cursor string) (*BrandsResponse, error)` [[?]](https://www.courier.com/docs/reference/brands/list/)
-- `GetBrand(ctx context.Context, brandID string) (*BrandResponse, error)` [[?]](https://www.courier.com/docs/reference/brands/by-id/)
-- `PostBrand(ctx context.Context, body PostBrandBody) (*BrandResponse, error)` [[?]](https://www.courier.com/docs/reference/brands/create/)
-- `PutBrand(ctx context.Context, brandID string, body PutBrandBody) (*BrandResponse, error)` [[?]](https://www.courier.com/docs/reference/brands/replace/)
-- `DeleteBrand(ctx context.Context, brandID string) error` [[?]](https://www.courier.com/docs/reference/brands/delete/)
-
-### Profiles API
-
-- `GetProfile(ctx context.Context, id string) (map[string]json.RawMessage, error): object` [[?]](https://docs.courier.com/reference/profiles-api#getprofilebyrecipientid)
-- `MergeProfileBytes(ctx context.Context, id string, profile []byte) error` [[?]](https://docs.courier.com/reference/profiles-api#mergeprofilebyrecipientid)
-- `UpdateProfileBytes(ctx context.Context, id string, profile []byte) error` [[?]](https://docs.courier.com/reference/profiles-api#patchprofilebyrecipientid)
-
-### Lists API
-
-- `GetLists(ctx context.Context, cursor string, pattern string) (*ListsResponse, error)` [[?]](https://www.courier.com/docs/reference/lists/list/)
-- `GetList(ctx context.Context, listID string) (*ListResponse, error)` [[?]](https://www.courier.com/docs/reference/lists/by-id/)
-- `PutList(ctx context.Context, listID string, body interface{}) error` [[?]](https://www.courier.com/docs/reference/lists/replace/)
-- `DeleteList(ctx context.Context, listID string) error` [[?]](https://www.courier.com/docs/reference/lists/delete/)
-- `RestoreList(ctx context.Context, listID string) error` [[?]](https://www.courier.com/docs/reference/lists/restore/)
-- `GetListSubscriptions(ctx context.Context, listID string, cursor string) (*ListSubscriptionsResponse, error)` [[?]](https://www.courier.com/docs/reference/lists/subscriptions/)
-- `PutListSubscriptions(ctx context.Context, listID string, body interface{}) error` [[?]](https://www.courier.com/docs/reference/lists/put-subscribe/)
-- `PostListSubscriptions(ctx context.Context, listID string, body interface{}) error` [[?]](https://www.courier.com/docs/reference/lists/post-subscribe/)
-- `ListSubscribe(ctx context.Context, listID string, recipientID string, body interface{}) error` [[?]](https://www.courier.com/docs/reference/lists/recipient-subscribe/)
-- `ListUnsubscribe(ctx context.Context, listID string, recipientID string) error` [[?]](https://www.courier.com/docs/reference/lists/delete-subscription/)
-
-### Automations API
-
-- `InvokeAutomation(ctx context.Context, body interface{}) (string, error)`[[?]](https://www.courier.com/docs/reference/automation/invoke/)
-- `InvokeAutomationTemplate(ctx context.Context, templateId string, body interface{}) (string, error)` [[?]](https://www.courier.com/docs/reference/automation/invoke-template/)
-
-### Audit Events API
-
-- `GetAuditEvent(ctx context.Context, auditEventID string) (*AuditEvent, error)` [[?]](https://www.courier.com/docs/reference/audit-events/by-id/)
-- `ListAuditEvents(ctx context.Context, cursor string) (*ListAuditEventsResponse, error)` [[?]](https://www.courier.com/docs/reference/audit-events/list/)
-
-## Staying Updated
-
-To update this SDK to the latest version, use `go get -u github.com/trycourier/courier-go`.
-
-## License
-
-The package is available as open source under the terms of the MIT License.
-[MIT License](http://www.opensource.org/licenses/mit-license.php)
+On the other hand, contributions to the README are always very welcome!

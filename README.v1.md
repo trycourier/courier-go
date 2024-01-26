@@ -20,29 +20,24 @@ package main
 import (
         "context
         "log"
-
         "github.com/trycourier/courier-go"
 )
-
 type profile struct {
         Email string `json:"email"`
 }
 type data struct {
         Foo string `json:"foo"`
 }
-
 func send() {
         var authToken = "<YOUR_AUTH_TOKEN>"
         var eventID = "<YOUR_EVENT_ID>"
         var recipientID = "<YOUR_RECIPIENT_ID>"
-
         profile := &profile{
                 email: "foo@example.com",
         }
         data := &data{
                 foo: "bar",
         }
-
         client := courier.CourierClient(authToken, "https://api.trycourier.app")
         messageID, err := client.Send(context.Background(), eventID, recipientID, profile, data)
         if err != nil {
