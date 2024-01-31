@@ -7,9 +7,9 @@
 
 This is the official Go library for sending notifications with the [Courier](https://courier.com) REST API.
 
-## Documentation 
+## Documentation
 
-For a full description of request and response payloads and properties, please see the 
+For a full description of request and response payloads and properties, please see the
 [official Courier API docs](https://www.courier.com/docs/reference/).
 
 ## Requirements
@@ -31,16 +31,16 @@ import (
   "context"
   "fmt"
 
-  courier "github.com/trycourier/courier-go/v3"
-  courierclient "github.com/trycourier/courier-go/v3"
+  courierclient "github.com/trycourier/courier-go/v3/client"
+  option "github.com/trycourier/courier-go/v3/option"
 )
 
 client := courierclient.NewClient(
-  courierclient.ClientWithAuthorizationToken("<YOUR_TOKEN>"),
+  option.WithAuthorizationToken("<YOUR_TOKEN>"),
 )
 ```
 
-## Usage 
+## Usage
 
 ```go
 import (
@@ -48,18 +48,20 @@ import (
   "fmt"
 
   courier "github.com/trycourier/courier-go/v3"
-  courierclient "github.com/trycourier/courier-go/v3"
+  courierclient "github.com/trycourier/courier-go/v3/client"
+  option "github.com/trycourier/courier-go/v3/option"
+
 )
 
 client := courierclient.NewClient(
-  mergeclient.ClientWithAuthorizationToken("<YOUR_TOKEN>"),
+  option.WithAuthorizationToken("<YOUR_TOKEN>"),
 )
 sendResponse, err := client.Send(
   context.TODO(),
   &courier.SendMessageRequest{
-		Message: courier.Message.NewMessageFromTemplateMessage({
-			Template: "<COURIER_TEMPLATE>"
-		}),
+    Message: courier.NewMessageFromTemplateMessage({
+      Template: "<COURIER_TEMPLATE>",
+    }),
   },
 )
 if err != nil {
@@ -69,8 +71,9 @@ fmt.Printf("Sent message %s\n", sendResponse.RequestId)
 ```
 
 ## Unions
+
 Our API, particularly the send method, uses several unions. Our Go SDK provides
-strongly typed factories to construct these unions `courier.Message.NewMessageFromTemplateMessage(...)`. 
+strongly typed factories to construct these unions, such as `courier.NewMessageFromContentMessage(...)`.
 
 ```go
 import (
@@ -79,25 +82,22 @@ import (
 
 courier.SendMessageRequest{
   // Construct a template message
-  Message: courier.Message.NewMessageFromTemplateMessage({
+  Message: courier.NewMessageFromContentMessage(&courier.ContentMessage{
     // Construct a single recepient
-    To: courier.MessageRecipient.NewMessageRecipientFromRecipient(
+    To: courier.NewMessageRecipientFromRecipient(
       // Construct a single recepient that is a user recepient
-      courier.Recipient.NewRecipientFromUserRecipient(&courier.UserRecipient{
+      courier.NewRecipientFromUserRecipient(&courier.UserRecipient{
         Email: courier.String("marty_mcfly@email.com"),
-        Data: &map[string]interface{}{
-            "name": "Marty"
-          }
-      }))
-    Template: &map[string]interface{}{
-      "name": "Marty"
-    }
+        Data: &courier.MessageData{
+          "name": "Marty",
+        },
+      })),
+    // Construct content from elemental content sugar
+    Content: courier.NewContentFromElementalContentSugar(&courier.ElementalContentSugar{
+      Title: "Back to the Future",
+      Body:  "Oh my {{name}}, we need 1.21 Gigawatts!",
+    }),
   }),
-  // Construct content from elemental content sugar
-  Content: courier.Content.NewContentFromElementalContentSugar({
-    Title: "Back to the Future"
-    Body: "Oh my {{name}}, we need 1.21 Gigawatts!"
-  })
 }
 ```
 
@@ -111,8 +111,8 @@ like the following:
 ctx, cancel := context.WithTimeout(context.TODO(), time.Second)
 defer cancel()
 
-response, err := client.send(
-  context.TODO(),
+response, err := client.Send(
+  ctx,
   &courier.SendMessageRequest{
     Message: ...
   },
@@ -121,12 +121,14 @@ response, err := client.send(
 
 ## Client Options
 
-A variety of client options are included to adapt the behavior of the library, which includes configuring authorization tokens to be sent on every request, or providing your own instrumented *http.Client. Both of these options are shown below:
+A variety of client options are included to adapt the behavior of the library, which
+includes configuring authorization tokens to be sent on every request, or providing your
+own instrumented `*http.Client`. Both of these options are shown below:
 
 ```go
 client := courierclient.NewClient(
-  cohereclient.WithToken("<YOUR_AUTH_TOKEN>"),
-  cohereclient.WithHTTPClient(
+  option.WithAuthorizationToken("<YOUR_TOKEN>"),
+  option.WithHTTPClient(
     &http.Client{
       Timeout: 5 * time.Second,
     },
@@ -144,11 +146,9 @@ Structured error types are returned from API calls that return non-success statu
 you can check if the error was due to a bad request (i.e. status code 400) with the following:
 
 ```go
-response, err := client.send(
+response, err := client.Send(
   context.TODO(),
-  &courier.SendMessageRequest{
-    Message: &{}
-  },
+  &courier.SendMessageRequest{},
 )
 if err != nil {
   if apiErr, ok := err.(*core.APIError); ok && apiErr.StatusCode == http.StatusBadRequest {
@@ -162,11 +162,9 @@ These errors are also compatible with the `errors.Is` and `errors.As` APIs, so y
 like so:
 
 ```go
-response, err := client.send(
+response, err := client.Send(
   context.TODO(),
-  &courier.SendMessageRequest{
-    Message: &{}
-  },
+  &courier.SendMessageRequest{},
 )
 if err != nil {
   var apiErr *core.APIError
@@ -184,11 +182,9 @@ If you'd like to wrap the errors with additional information and still retain th
 with `errors.Is` and `errors.As`, you can use the `%w` directive:
 
 ```go
-response, err := client.send(
+response, err := client.Send(
   context.TODO(),
-  &courier.SendMessageRequest{
-    Message: &{}
-  },
+  &courier.SendMessageRequest{},
 )
 if err != nil {
   return fmt.Errorf("failed to list employees: %w", err)
