@@ -7,7 +7,6 @@ import (
 	fmt "fmt"
 	v3 "github.com/trycourier/courier-go/v3"
 	core "github.com/trycourier/courier-go/v3/core"
-	option "github.com/trycourier/courier-go/v3/option"
 	http "net/http"
 	url "net/url"
 )
@@ -18,8 +17,11 @@ type Client struct {
 	header  http.Header
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(opts ...core.ClientOption) *Client {
+	options := core.NewClientOptions()
+	for _, opt := range opts {
+		opt(options)
+	}
 	return &Client{
 		baseURL: options.BaseURL,
 		caller:  core.NewCaller(options.HTTPClient),
@@ -28,19 +30,10 @@ func NewClient(opts ...option.RequestOption) *Client {
 }
 
 // Returns a list of notification templates
-func (c *Client) List(
-	ctx context.Context,
-	request *v3.ListTemplatesRequest,
-	opts ...option.RequestOption,
-) (*v3.ListTemplatesResponse, error) {
-	options := core.NewRequestOptions(opts...)
-
+func (c *Client) List(ctx context.Context, request *v3.ListTemplatesRequest) (*v3.ListTemplatesResponse, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
 	}
 	endpointURL := baseURL + "/" + "notifications"
 
@@ -52,16 +45,13 @@ func (c *Client) List(
 		endpointURL += "?" + queryParams.Encode()
 	}
 
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
-
 	var response *v3.ListTemplatesResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
 			URL:      endpointURL,
 			Method:   http.MethodGet,
-			Headers:  headers,
-			Client:   options.HTTPClient,
+			Headers:  c.header,
 			Response: &response,
 		},
 	); err != nil {

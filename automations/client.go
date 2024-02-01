@@ -7,7 +7,6 @@ import (
 	fmt "fmt"
 	v3 "github.com/trycourier/courier-go/v3"
 	core "github.com/trycourier/courier-go/v3/core"
-	option "github.com/trycourier/courier-go/v3/option"
 	http "net/http"
 )
 
@@ -17,8 +16,11 @@ type Client struct {
 	header  http.Header
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(opts ...core.ClientOption) *Client {
+	options := core.NewClientOptions()
+	for _, opt := range opts {
+		opt(options)
+	}
 	return &Client{
 		baseURL: options.BaseURL,
 		caller:  core.NewCaller(options.HTTPClient),
@@ -27,25 +29,14 @@ func NewClient(opts ...option.RequestOption) *Client {
 }
 
 // Invoke an automation run from an automation template.
-func (c *Client) InvokeAutomationTemplate(
-	ctx context.Context,
-	// A unique identifier representing the automation template to be invoked. This could be the Automation Template ID or the Automation Template Alias.
-	templateId string,
-	request *v3.AutomationInvokeParams,
-	opts ...option.IdempotentRequestOption,
-) (*v3.AutomationInvokeResponse, error) {
-	options := core.NewIdempotentRequestOptions(opts...)
-
+//
+// A unique identifier representing the automation template to be invoked. This could be the Automation Template ID or the Automation Template Alias.
+func (c *Client) InvokeAutomationTemplate(ctx context.Context, templateId string, request *v3.AutomationInvokeParams) (*v3.AutomationInvokeResponse, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"automations/%v/invoke", templateId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	var response *v3.AutomationInvokeResponse
 	if err := c.caller.Call(
@@ -53,8 +44,7 @@ func (c *Client) InvokeAutomationTemplate(
 		&core.CallParams{
 			URL:      endpointURL,
 			Method:   http.MethodPost,
-			Headers:  headers,
-			Client:   options.HTTPClient,
+			Headers:  c.header,
 			Request:  request,
 			Response: &response,
 		},
@@ -65,23 +55,12 @@ func (c *Client) InvokeAutomationTemplate(
 }
 
 // Invoke an ad hoc automation run. This endpoint accepts a JSON payload with a series of automation steps. For information about what steps are available, checkout the ad hoc automation guide [here](https://www.courier.com/docs/automations/steps/).
-func (c *Client) InvokeAdHocAutomation(
-	ctx context.Context,
-	request *v3.AutomationAdHocInvokeParams,
-	opts ...option.IdempotentRequestOption,
-) (*v3.AutomationInvokeResponse, error) {
-	options := core.NewIdempotentRequestOptions(opts...)
-
+func (c *Client) InvokeAdHocAutomation(ctx context.Context, request *v3.AutomationAdHocInvokeParams) (*v3.AutomationInvokeResponse, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := baseURL + "/" + "automations/invoke"
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	var response *v3.AutomationInvokeResponse
 	if err := c.caller.Call(
@@ -89,8 +68,7 @@ func (c *Client) InvokeAdHocAutomation(
 		&core.CallParams{
 			URL:      endpointURL,
 			Method:   http.MethodPost,
-			Headers:  headers,
-			Client:   options.HTTPClient,
+			Headers:  c.header,
 			Request:  request,
 			Response: &response,
 		},

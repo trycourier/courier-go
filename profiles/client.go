@@ -10,7 +10,6 @@ import (
 	fmt "fmt"
 	v3 "github.com/trycourier/courier-go/v3"
 	core "github.com/trycourier/courier-go/v3/core"
-	option "github.com/trycourier/courier-go/v3/option"
 	io "io"
 	http "net/http"
 	url "net/url"
@@ -22,8 +21,11 @@ type Client struct {
 	header  http.Header
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(opts ...core.ClientOption) *Client {
+	options := core.NewClientOptions()
+	for _, opt := range opts {
+		opt(options)
+	}
 	return &Client{
 		baseURL: options.BaseURL,
 		caller:  core.NewCaller(options.HTTPClient),
@@ -32,24 +34,14 @@ func NewClient(opts ...option.RequestOption) *Client {
 }
 
 // Returns the specified user profile.
-func (c *Client) Get(
-	ctx context.Context,
-	// A unique identifier representing the user associated with the requested profile.
-	userId string,
-	opts ...option.RequestOption,
-) (*v3.ProfileGetResponse, error) {
-	options := core.NewRequestOptions(opts...)
-
+//
+// A unique identifier representing the user associated with the requested profile.
+func (c *Client) Get(ctx context.Context, userId string) (*v3.ProfileGetResponse, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"profiles/%v", userId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -76,8 +68,7 @@ func (c *Client) Get(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodGet,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
@@ -88,25 +79,14 @@ func (c *Client) Get(
 }
 
 // Merge the supplied values with an existing profile or create a new profile if one doesn't already exist.
-func (c *Client) Create(
-	ctx context.Context,
-	// A unique identifier representing the user associated with the requested profile.
-	userId string,
-	request *v3.MergeProfileRequest,
-	opts ...option.IdempotentRequestOption,
-) (*v3.MergeProfileResponse, error) {
-	options := core.NewIdempotentRequestOptions(opts...)
-
+//
+// A unique identifier representing the user associated with the requested profile.
+func (c *Client) Create(ctx context.Context, userId string, request *v3.MergeProfileRequest) (*v3.MergeProfileResponse, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"profiles/%v", userId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -133,8 +113,7 @@ func (c *Client) Create(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodPost,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			Request:      request,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
@@ -149,25 +128,14 @@ func (c *Client) Create(
 // Any key-value pairs that exist in the profile but fail to be included in the `PUT` request will be
 // removed from the profile. Remember, a `PUT` update is a full replacement of the data. For partial updates,
 // use the [Patch](https://www.courier.com/docs/reference/profiles/patch/) request.
-func (c *Client) Replace(
-	ctx context.Context,
-	// A unique identifier representing the user associated with the requested profile.
-	userId string,
-	request *v3.ReplaceProfileRequest,
-	opts ...option.RequestOption,
-) (*v3.ReplaceProfileResponse, error) {
-	options := core.NewRequestOptions(opts...)
-
+//
+// A unique identifier representing the user associated with the requested profile.
+func (c *Client) Replace(ctx context.Context, userId string, request *v3.ReplaceProfileRequest) (*v3.ReplaceProfileResponse, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"profiles/%v", userId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -194,8 +162,7 @@ func (c *Client) Replace(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodPut,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			Request:      request,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
@@ -207,24 +174,14 @@ func (c *Client) Replace(
 }
 
 // Deletes the specified user profile.
-func (c *Client) Delete(
-	ctx context.Context,
-	// A unique identifier representing the user associated with the requested profile.
-	userId string,
-	opts ...option.RequestOption,
-) error {
-	options := core.NewRequestOptions(opts...)
-
+//
+// A unique identifier representing the user associated with the requested profile.
+func (c *Client) Delete(ctx context.Context, userId string) error {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"profiles/%v", userId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -250,8 +207,7 @@ func (c *Client) Delete(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodDelete,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			ErrorDecoder: errorDecoder,
 		},
 	); err != nil {
@@ -261,21 +217,12 @@ func (c *Client) Delete(
 }
 
 // Returns the subscribed lists for a specified user.
-func (c *Client) GetListSubscriptions(
-	ctx context.Context,
-	// A unique identifier representing the user associated with the requested profile.
-	userId string,
-	request *v3.GetListSubscriptionsRequest,
-	opts ...option.RequestOption,
-) (*v3.GetListSubscriptionsResponse, error) {
-	options := core.NewRequestOptions(opts...)
-
+//
+// A unique identifier representing the user associated with the requested profile.
+func (c *Client) GetListSubscriptions(ctx context.Context, userId string, request *v3.GetListSubscriptionsRequest) (*v3.GetListSubscriptionsResponse, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
 	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"profiles/%v/lists", userId)
 
@@ -286,8 +233,6 @@ func (c *Client) GetListSubscriptions(
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
 	}
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -314,8 +259,7 @@ func (c *Client) GetListSubscriptions(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodGet,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
@@ -326,25 +270,14 @@ func (c *Client) GetListSubscriptions(
 }
 
 // Subscribes the given user to one or more lists. If the list does not exist, it will be created.
-func (c *Client) SubscribeToLists(
-	ctx context.Context,
-	// A unique identifier representing the user associated with the requested profile.
-	userId string,
-	request *v3.SubscribeToListsRequest,
-	opts ...option.IdempotentRequestOption,
-) (*v3.SubscribeToListsResponse, error) {
-	options := core.NewIdempotentRequestOptions(opts...)
-
+//
+// A unique identifier representing the user associated with the requested profile.
+func (c *Client) SubscribeToLists(ctx context.Context, userId string, request *v3.SubscribeToListsRequest) (*v3.SubscribeToListsResponse, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"profiles/%v/lists", userId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -371,8 +304,7 @@ func (c *Client) SubscribeToLists(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodPost,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			Request:      request,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
@@ -384,24 +316,14 @@ func (c *Client) SubscribeToLists(
 }
 
 // Removes all list subscriptions for given user.
-func (c *Client) DeleteListSubscription(
-	ctx context.Context,
-	// A unique identifier representing the user associated with the requested profile.
-	userId string,
-	opts ...option.RequestOption,
-) (*v3.DeleteListSubscriptionResponse, error) {
-	options := core.NewRequestOptions(opts...)
-
+//
+// A unique identifier representing the user associated with the requested profile.
+func (c *Client) DeleteListSubscription(ctx context.Context, userId string) (*v3.DeleteListSubscriptionResponse, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"profiles/%v/lists", userId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -428,8 +350,7 @@ func (c *Client) DeleteListSubscription(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodDelete,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},

@@ -10,7 +10,6 @@ import (
 	fmt "fmt"
 	v3 "github.com/trycourier/courier-go/v3"
 	core "github.com/trycourier/courier-go/v3/core"
-	option "github.com/trycourier/courier-go/v3/option"
 	users "github.com/trycourier/courier-go/v3/users"
 	io "io"
 	http "net/http"
@@ -22,8 +21,11 @@ type Client struct {
 	header  http.Header
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(opts ...core.ClientOption) *Client {
+	options := core.NewClientOptions()
+	for _, opt := range opts {
+		opt(options)
+	}
 	return &Client{
 		baseURL: options.BaseURL,
 		caller:  core.NewCaller(options.HTTPClient),
@@ -32,24 +34,14 @@ func NewClient(opts ...option.RequestOption) *Client {
 }
 
 // Adds multiple tokens to a user and overwrites matching existing tokens.
-func (c *Client) AddMultiple(
-	ctx context.Context,
-	// The user's ID. This can be any uniquely identifiable string.
-	userId string,
-	opts ...option.RequestOption,
-) error {
-	options := core.NewRequestOptions(opts...)
-
+//
+// The user's ID. This can be any uniquely identifiable string.
+func (c *Client) AddMultiple(ctx context.Context, userId string) error {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v/tokens", userId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -75,8 +67,7 @@ func (c *Client) AddMultiple(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodPut,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			ErrorDecoder: errorDecoder,
 		},
 	); err != nil {
@@ -86,27 +77,15 @@ func (c *Client) AddMultiple(
 }
 
 // Adds a single token to a user and overwrites a matching existing token.
-func (c *Client) Add(
-	ctx context.Context,
-	// The user's ID. This can be any uniquely identifiable string.
-	userId string,
-	// The full token string.
-	token string,
-	request *users.UserToken,
-	opts ...option.RequestOption,
-) error {
-	options := core.NewRequestOptions(opts...)
-
+//
+// The user's ID. This can be any uniquely identifiable string.
+// The full token string.
+func (c *Client) Add(ctx context.Context, userId string, token string, request *users.UserToken) error {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v/tokens/%v", userId, token)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -132,8 +111,7 @@ func (c *Client) Add(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodPut,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			Request:      request,
 			ErrorDecoder: errorDecoder,
 		},
@@ -144,27 +122,15 @@ func (c *Client) Add(
 }
 
 // Apply a JSON Patch (RFC 6902) to the specified token.
-func (c *Client) Update(
-	ctx context.Context,
-	// The user's ID. This can be any uniquely identifiable string.
-	userId string,
-	// The full token string.
-	token string,
-	request *users.PatchUserTokenOpts,
-	opts ...option.RequestOption,
-) error {
-	options := core.NewRequestOptions(opts...)
-
+//
+// The user's ID. This can be any uniquely identifiable string.
+// The full token string.
+func (c *Client) Update(ctx context.Context, userId string, token string, request *users.PatchUserTokenOpts) error {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v/tokens/%v", userId, token)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -190,8 +156,7 @@ func (c *Client) Update(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodPatch,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			Request:      request,
 			ErrorDecoder: errorDecoder,
 		},
@@ -202,26 +167,15 @@ func (c *Client) Update(
 }
 
 // Get single token available for a `:token`
-func (c *Client) Get(
-	ctx context.Context,
-	// The user's ID. This can be any uniquely identifiable string.
-	userId string,
-	// The full token string.
-	token string,
-	opts ...option.RequestOption,
-) (*users.GetUserTokenResponse, error) {
-	options := core.NewRequestOptions(opts...)
-
+//
+// The user's ID. This can be any uniquely identifiable string.
+// The full token string.
+func (c *Client) Get(ctx context.Context, userId string, token string) (*users.GetUserTokenResponse, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v/tokens/%v", userId, token)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -248,8 +202,7 @@ func (c *Client) Get(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodGet,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
@@ -260,24 +213,14 @@ func (c *Client) Get(
 }
 
 // Gets all tokens available for a :user_id
-func (c *Client) List(
-	ctx context.Context,
-	// The user's ID. This can be any uniquely identifiable string.
-	userId string,
-	opts ...option.RequestOption,
-) (users.GetAllTokensResponse, error) {
-	options := core.NewRequestOptions(opts...)
-
+//
+// The user's ID. This can be any uniquely identifiable string.
+func (c *Client) List(ctx context.Context, userId string) (users.GetAllTokensResponse, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v/tokens", userId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -304,8 +247,7 @@ func (c *Client) List(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodGet,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},

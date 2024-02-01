@@ -6,7 +6,6 @@ import (
 	context "context"
 	fmt "fmt"
 	core "github.com/trycourier/courier-go/v3/core"
-	option "github.com/trycourier/courier-go/v3/option"
 	users "github.com/trycourier/courier-go/v3/users"
 	http "net/http"
 	url "net/url"
@@ -18,8 +17,11 @@ type Client struct {
 	header  http.Header
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(opts ...core.ClientOption) *Client {
+	options := core.NewClientOptions()
+	for _, opt := range opts {
+		opt(options)
+	}
 	return &Client{
 		baseURL: options.BaseURL,
 		caller:  core.NewCaller(options.HTTPClient),
@@ -32,33 +34,21 @@ func NewClient(opts ...option.RequestOption) *Client {
 // A custom profile can also be supplied for each tenant.
 // This profile will be merged with the user's main
 // profile when sending to the user with that tenant.
-func (c *Client) AddMultple(
-	ctx context.Context,
-	// The user's ID. This can be any uniquely identifiable string.
-	userId string,
-	request *users.AddUserToMultipleTenantsParams,
-	opts ...option.RequestOption,
-) error {
-	options := core.NewRequestOptions(opts...)
-
+//
+// The user's ID. This can be any uniquely identifiable string.
+func (c *Client) AddMultple(ctx context.Context, userId string, request *users.AddUserToMultipleTenantsParams) error {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v/tenants", userId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
 			URL:     endpointURL,
 			Method:  http.MethodPut,
-			Headers: headers,
-			Client:  options.HTTPClient,
+			Headers: c.header,
 			Request: request,
 		},
 	); err != nil {
@@ -72,35 +62,22 @@ func (c *Client) AddMultple(
 // A custom profile can also be supplied with the tenant.
 // This profile will be merged with the user's main profile
 // when sending to the user with that tenant.
-func (c *Client) Add(
-	ctx context.Context,
-	// Id of the user to be added to the supplied tenant.
-	userId string,
-	// Id of the tenant the user should be added to.
-	tenantId string,
-	request *users.AddUserToSingleTenantsParams,
-	opts ...option.RequestOption,
-) error {
-	options := core.NewRequestOptions(opts...)
-
+//
+// Id of the user to be added to the supplied tenant.
+// Id of the tenant the user should be added to.
+func (c *Client) Add(ctx context.Context, userId string, tenantId string, request *users.AddUserToSingleTenantsParams) error {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v/tenants/%v", userId, tenantId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
 			URL:     endpointURL,
 			Method:  http.MethodPut,
-			Headers: headers,
-			Client:  options.HTTPClient,
+			Headers: c.header,
 			Request: request,
 		},
 	); err != nil {
@@ -110,34 +87,22 @@ func (c *Client) Add(
 }
 
 // Removes a user from the supplied tenant.
-func (c *Client) Remove(
-	ctx context.Context,
-	// Id of the user to be removed from the supplied tenant.
-	userId string,
-	// Id of the tenant the user should be removed from.
-	tenantId string,
-	opts ...option.RequestOption,
-) error {
-	options := core.NewRequestOptions(opts...)
-
+//
+// Id of the user to be removed from the supplied tenant.
+// Id of the tenant the user should be removed from.
+func (c *Client) Remove(ctx context.Context, userId string, tenantId string) error {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v/tenants/%v", userId, tenantId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
 			URL:     endpointURL,
 			Method:  http.MethodDelete,
-			Headers: headers,
-			Client:  options.HTTPClient,
+			Headers: c.header,
 		},
 	); err != nil {
 		return err
@@ -146,21 +111,12 @@ func (c *Client) Remove(
 }
 
 // Returns a paginated list of user tenant associations.
-func (c *Client) List(
-	ctx context.Context,
-	// Id of the user to retrieve all associated tenants for.
-	userId string,
-	request *users.ListTenantsForUserParams,
-	opts ...option.RequestOption,
-) (*users.ListTenantsForUserResponse, error) {
-	options := core.NewRequestOptions(opts...)
-
+//
+// Id of the user to retrieve all associated tenants for.
+func (c *Client) List(ctx context.Context, userId string, request *users.ListTenantsForUserParams) (*users.ListTenantsForUserResponse, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
 	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v/tenants", userId)
 
@@ -175,16 +131,13 @@ func (c *Client) List(
 		endpointURL += "?" + queryParams.Encode()
 	}
 
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
-
 	var response *users.ListTenantsForUserResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
 			URL:      endpointURL,
 			Method:   http.MethodGet,
-			Headers:  headers,
-			Client:   options.HTTPClient,
+			Headers:  c.header,
 			Response: &response,
 		},
 	); err != nil {

@@ -10,7 +10,6 @@ import (
 	fmt "fmt"
 	v3 "github.com/trycourier/courier-go/v3"
 	core "github.com/trycourier/courier-go/v3/core"
-	option "github.com/trycourier/courier-go/v3/option"
 	io "io"
 	http "net/http"
 )
@@ -21,8 +20,11 @@ type Client struct {
 	header  http.Header
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(opts ...core.ClientOption) *Client {
+	options := core.NewClientOptions()
+	for _, opt := range opts {
+		opt(options)
+	}
 	return &Client{
 		baseURL: options.BaseURL,
 		caller:  core.NewCaller(options.HTTPClient),
@@ -30,25 +32,13 @@ func NewClient(opts ...option.RequestOption) *Client {
 	}
 }
 
-func (c *Client) CreateOrReplace(
-	ctx context.Context,
-	// A unique identifier representing the tenant to be returned.
-	tenantId string,
-	request *v3.TenantCreateOrReplaceParams,
-	opts ...option.RequestOption,
-) (*v3.Tenant, error) {
-	options := core.NewRequestOptions(opts...)
-
+// A unique identifier representing the tenant to be returned.
+func (c *Client) CreateOrReplace(ctx context.Context, tenantId string, request *v3.TenantCreateOrReplaceParams) (*v3.Tenant, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"tenants/%v", tenantId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -75,8 +65,7 @@ func (c *Client) CreateOrReplace(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodPut,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			Request:      request,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
@@ -87,24 +76,13 @@ func (c *Client) CreateOrReplace(
 	return response, nil
 }
 
-func (c *Client) Get(
-	ctx context.Context,
-	// A unique identifier representing the tenant to be returned.
-	tenantId string,
-	opts ...option.RequestOption,
-) (*v3.Tenant, error) {
-	options := core.NewRequestOptions(opts...)
-
+// A unique identifier representing the tenant to be returned.
+func (c *Client) Get(ctx context.Context, tenantId string) (*v3.Tenant, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"tenants/%v", tenantId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -131,8 +109,7 @@ func (c *Client) Get(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodGet,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
@@ -142,22 +119,12 @@ func (c *Client) Get(
 	return response, nil
 }
 
-func (c *Client) List(
-	ctx context.Context,
-	opts ...option.RequestOption,
-) (*v3.TenantListResponse, error) {
-	options := core.NewRequestOptions(opts...)
-
+func (c *Client) List(ctx context.Context) (*v3.TenantListResponse, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := baseURL + "/" + "tenants"
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	var response *v3.TenantListResponse
 	if err := c.caller.Call(
@@ -165,8 +132,7 @@ func (c *Client) List(
 		&core.CallParams{
 			URL:      endpointURL,
 			Method:   http.MethodGet,
-			Headers:  headers,
-			Client:   options.HTTPClient,
+			Headers:  c.header,
 			Response: &response,
 		},
 	); err != nil {
@@ -175,35 +141,66 @@ func (c *Client) List(
 	return response, nil
 }
 
-func (c *Client) Delete(
-	ctx context.Context,
-	// Id of the tenant to be deleted.
-	tenantId string,
-	opts ...option.RequestOption,
-) error {
-	options := core.NewRequestOptions(opts...)
-
+// Id of the tenant to be deleted.
+func (c *Client) Delete(ctx context.Context, tenantId string) error {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"tenants/%v", tenantId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
 			URL:     endpointURL,
 			Method:  http.MethodDelete,
-			Headers: headers,
-			Client:  options.HTTPClient,
+			Headers: c.header,
 		},
 	); err != nil {
 		return err
 	}
 	return nil
+}
+
+// Id of the tenant for user membership.
+func (c *Client) GetUsersByTenant(ctx context.Context, tenantId string) (*v3.ListUsersForTenantResponse, error) {
+	baseURL := "https://api.courier.com"
+	if c.baseURL != "" {
+		baseURL = c.baseURL
+	}
+	endpointURL := fmt.Sprintf(baseURL+"/"+"tenants/%v/users", tenantId)
+
+	errorDecoder := func(statusCode int, body io.Reader) error {
+		raw, err := io.ReadAll(body)
+		if err != nil {
+			return err
+		}
+		apiError := core.NewAPIError(statusCode, errors.New(string(raw)))
+		decoder := json.NewDecoder(bytes.NewReader(raw))
+		switch statusCode {
+		case 400:
+			value := new(v3.BadRequestError)
+			value.APIError = apiError
+			if err := decoder.Decode(value); err != nil {
+				return apiError
+			}
+			return value
+		}
+		return apiError
+	}
+
+	var response *v3.ListUsersForTenantResponse
+	if err := c.caller.Call(
+		ctx,
+		&core.CallParams{
+			URL:          endpointURL,
+			Method:       http.MethodGet,
+			Headers:      c.header,
+			Response:     &response,
+			ErrorDecoder: errorDecoder,
+		},
+	); err != nil {
+		return nil, err
+	}
+	return response, nil
 }

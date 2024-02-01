@@ -22,21 +22,6 @@ type HTTPClient interface {
 	Do(*http.Request) (*http.Response, error)
 }
 
-// MergeHeaders merges the given headers together, where the right
-// takes precedence over the left.
-func MergeHeaders(left, right http.Header) http.Header {
-	for key, values := range right {
-		if len(values) > 1 {
-			left[key] = values
-			continue
-		}
-		if value := right.Get(key); value != "" {
-			left.Set(key, value)
-		}
-	}
-	return left
-}
-
 // WriteMultipartJSON writes the given value as a JSON part.
 // This is used to serialize non-primitive multipart properties
 // (i.e. lists, objects, etc).
@@ -98,11 +83,6 @@ type Caller struct {
 
 // NewCaller returns a new *Caller backed by the given HTTP client.
 func NewCaller(client HTTPClient) *Caller {
-	if client == nil {
-		return &Caller{
-			client: http.DefaultClient,
-		}
-	}
 	return &Caller{
 		client: client,
 	}
@@ -113,7 +93,6 @@ type CallParams struct {
 	URL                string
 	Method             string
 	Headers            http.Header
-	Client             HTTPClient
 	Request            interface{}
 	Response           interface{}
 	ResponseIsOptional bool
@@ -132,13 +111,7 @@ func (c *Caller) Call(ctx context.Context, params *CallParams) error {
 		return err
 	}
 
-	client := c.client
-	if params.Client != nil {
-		// Use the HTTP client scoped to the request.
-		client = params.Client
-	}
-
-	resp, err := client.Do(req)
+	resp, err := c.client.Do(req)
 	if err != nil {
 		return err
 	}

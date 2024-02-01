@@ -10,7 +10,6 @@ import (
 	fmt "fmt"
 	v3 "github.com/trycourier/courier-go/v3"
 	core "github.com/trycourier/courier-go/v3/core"
-	option "github.com/trycourier/courier-go/v3/option"
 	io "io"
 	http "net/http"
 	url "net/url"
@@ -22,8 +21,11 @@ type Client struct {
 	header  http.Header
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(opts ...core.ClientOption) *Client {
+	options := core.NewClientOptions()
+	for _, opt := range opts {
+		opt(options)
+	}
 	return &Client{
 		baseURL: options.BaseURL,
 		caller:  core.NewCaller(options.HTTPClient),
@@ -32,19 +34,10 @@ func NewClient(opts ...option.RequestOption) *Client {
 }
 
 // Returns all of the lists, with the ability to filter based on a pattern.
-func (c *Client) List(
-	ctx context.Context,
-	request *v3.GetAllListsRequest,
-	opts ...option.RequestOption,
-) (*v3.ListGetAllResponse, error) {
-	options := core.NewRequestOptions(opts...)
-
+func (c *Client) List(ctx context.Context, request *v3.GetAllListsRequest) (*v3.ListGetAllResponse, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
 	}
 	endpointURL := baseURL + "/" + "lists"
 
@@ -58,8 +51,6 @@ func (c *Client) List(
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
 	}
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -86,8 +77,7 @@ func (c *Client) List(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodGet,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
@@ -98,21 +88,12 @@ func (c *Client) List(
 }
 
 // Returns a list based on the list ID provided.
-func (c *Client) Get(
-	ctx context.Context,
-	// A unique identifier representing the list you wish to retrieve.
-	listId string,
-	request *v3.GetListRequest,
-	opts ...option.RequestOption,
-) (*v3.List, error) {
-	options := core.NewRequestOptions(opts...)
-
+//
+// A unique identifier representing the list you wish to retrieve.
+func (c *Client) Get(ctx context.Context, listId string, request *v3.GetListRequest) (*v3.List, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
 	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"lists/%v", listId)
 
@@ -126,8 +107,6 @@ func (c *Client) Get(
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
 	}
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -154,8 +133,7 @@ func (c *Client) Get(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodGet,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
@@ -166,25 +144,14 @@ func (c *Client) Get(
 }
 
 // Create or replace an existing list with the supplied values.
-func (c *Client) Update(
-	ctx context.Context,
-	// A unique identifier representing the list you wish to retrieve.
-	listId string,
-	request *v3.ListPutParams,
-	opts ...option.RequestOption,
-) (*v3.List, error) {
-	options := core.NewRequestOptions(opts...)
-
+//
+// A unique identifier representing the list you wish to retrieve.
+func (c *Client) Update(ctx context.Context, listId string, request *v3.ListPutParams) (*v3.List, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"lists/%v", listId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	var response *v3.List
 	if err := c.caller.Call(
@@ -192,8 +159,7 @@ func (c *Client) Update(
 		&core.CallParams{
 			URL:      endpointURL,
 			Method:   http.MethodPut,
-			Headers:  headers,
-			Client:   options.HTTPClient,
+			Headers:  c.header,
 			Request:  request,
 			Response: &response,
 		},
@@ -204,32 +170,21 @@ func (c *Client) Update(
 }
 
 // Delete a list by list ID.
-func (c *Client) Delete(
-	ctx context.Context,
-	// A unique identifier representing the list you wish to retrieve.
-	listId string,
-	opts ...option.RequestOption,
-) error {
-	options := core.NewRequestOptions(opts...)
-
+//
+// A unique identifier representing the list you wish to retrieve.
+func (c *Client) Delete(ctx context.Context, listId string) error {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"lists/%v", listId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
 			URL:     endpointURL,
 			Method:  http.MethodDelete,
-			Headers: headers,
-			Client:  options.HTTPClient,
+			Headers: c.header,
 		},
 	); err != nil {
 		return err
@@ -238,32 +193,21 @@ func (c *Client) Delete(
 }
 
 // Restore a previously deleted list.
-func (c *Client) Restore(
-	ctx context.Context,
-	// A unique identifier representing the list you wish to retrieve.
-	listId string,
-	opts ...option.RequestOption,
-) error {
-	options := core.NewRequestOptions(opts...)
-
+//
+// A unique identifier representing the list you wish to retrieve.
+func (c *Client) Restore(ctx context.Context, listId string) error {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"lists/%v/restore", listId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
 			URL:     endpointURL,
 			Method:  http.MethodPut,
-			Headers: headers,
-			Client:  options.HTTPClient,
+			Headers: c.header,
 		},
 	); err != nil {
 		return err
@@ -272,21 +216,12 @@ func (c *Client) Restore(
 }
 
 // Get the list's subscriptions.
-func (c *Client) GetSubscribers(
-	ctx context.Context,
-	// A unique identifier representing the list you wish to retrieve.
-	listId string,
-	request *v3.GetSubscriptionForListRequest,
-	opts ...option.RequestOption,
-) (*v3.ListGetSubscriptionsResponse, error) {
-	options := core.NewRequestOptions(opts...)
-
+//
+// A unique identifier representing the list you wish to retrieve.
+func (c *Client) GetSubscribers(ctx context.Context, listId string, request *v3.GetSubscriptionForListRequest) (*v3.ListGetSubscriptionsResponse, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
 	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"lists/%v/subscriptions", listId)
 
@@ -297,8 +232,6 @@ func (c *Client) GetSubscribers(
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
 	}
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -325,8 +258,7 @@ func (c *Client) GetSubscribers(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodGet,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
@@ -337,25 +269,14 @@ func (c *Client) GetSubscribers(
 }
 
 // Subscribes the users to the list, overwriting existing subscriptions. If the list does not exist, it will be automatically created.
-func (c *Client) UpdateSubscribers(
-	ctx context.Context,
-	// A unique identifier representing the list you wish to retrieve.
-	listId string,
-	request []*v3.PutSubscriptionsRecipient,
-	opts ...option.RequestOption,
-) error {
-	options := core.NewRequestOptions(opts...)
-
+//
+// A unique identifier representing the list you wish to retrieve.
+func (c *Client) UpdateSubscribers(ctx context.Context, listId string, request []*v3.PutSubscriptionsRecipient) error {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"lists/%v/subscriptions", listId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -381,8 +302,7 @@ func (c *Client) UpdateSubscribers(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodPut,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			Request:      request,
 			ErrorDecoder: errorDecoder,
 		},
@@ -393,25 +313,14 @@ func (c *Client) UpdateSubscribers(
 }
 
 // Subscribes additional users to the list, without modifying existing subscriptions. If the list does not exist, it will be automatically created.
-func (c *Client) AddSubscribers(
-	ctx context.Context,
-	// A unique identifier representing the list you wish to retrieve.
-	listId string,
-	request []*v3.PutSubscriptionsRecipient,
-	opts ...option.IdempotentRequestOption,
-) error {
-	options := core.NewIdempotentRequestOptions(opts...)
-
+//
+// A unique identifier representing the list you wish to retrieve.
+func (c *Client) AddSubscribers(ctx context.Context, listId string, request []*v3.PutSubscriptionsRecipient) error {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"lists/%v/subscriptions", listId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -437,8 +346,7 @@ func (c *Client) AddSubscribers(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodPost,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			Request:      request,
 			ErrorDecoder: errorDecoder,
 		},
@@ -449,35 +357,22 @@ func (c *Client) AddSubscribers(
 }
 
 // Subscribe a user to an existing list (note: if the List does not exist, it will be automatically created).
-func (c *Client) Subscribe(
-	ctx context.Context,
-	// A unique identifier representing the list you wish to retrieve.
-	listId string,
-	// A unique identifier representing the recipient associated with the list
-	userId string,
-	request *v3.SubscribeUserToListRequest,
-	opts ...option.RequestOption,
-) error {
-	options := core.NewRequestOptions(opts...)
-
+//
+// A unique identifier representing the list you wish to retrieve.
+// A unique identifier representing the recipient associated with the list
+func (c *Client) Subscribe(ctx context.Context, listId string, userId string, request *v3.SubscribeUserToListRequest) error {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"lists/%v/subscriptions/%v", listId, userId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
 			URL:     endpointURL,
 			Method:  http.MethodPut,
-			Headers: headers,
-			Client:  options.HTTPClient,
+			Headers: c.header,
 			Request: request,
 		},
 	); err != nil {
@@ -487,26 +382,15 @@ func (c *Client) Subscribe(
 }
 
 // Delete a subscription to a list by list ID and user ID.
-func (c *Client) Unsubscribe(
-	ctx context.Context,
-	// A unique identifier representing the list you wish to retrieve.
-	listId string,
-	// A unique identifier representing the recipient associated with the list
-	userId string,
-	opts ...option.RequestOption,
-) error {
-	options := core.NewRequestOptions(opts...)
-
+//
+// A unique identifier representing the list you wish to retrieve.
+// A unique identifier representing the recipient associated with the list
+func (c *Client) Unsubscribe(ctx context.Context, listId string, userId string) error {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"lists/%v/subscriptions/%v", listId, userId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -532,8 +416,7 @@ func (c *Client) Unsubscribe(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodDelete,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			ErrorDecoder: errorDecoder,
 		},
 	); err != nil {

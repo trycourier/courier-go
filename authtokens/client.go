@@ -6,7 +6,6 @@ import (
 	context "context"
 	v3 "github.com/trycourier/courier-go/v3"
 	core "github.com/trycourier/courier-go/v3/core"
-	option "github.com/trycourier/courier-go/v3/option"
 	http "net/http"
 )
 
@@ -16,8 +15,11 @@ type Client struct {
 	header  http.Header
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(opts ...core.ClientOption) *Client {
+	options := core.NewClientOptions()
+	for _, opt := range opts {
+		opt(options)
+	}
 	return &Client{
 		baseURL: options.BaseURL,
 		caller:  core.NewCaller(options.HTTPClient),
@@ -26,23 +28,12 @@ func NewClient(opts ...option.RequestOption) *Client {
 }
 
 // Returns a new access token.
-func (c *Client) IssueToken(
-	ctx context.Context,
-	request *v3.IssueTokenParams,
-	opts ...option.IdempotentRequestOption,
-) (*v3.IssueTokenResponse, error) {
-	options := core.NewIdempotentRequestOptions(opts...)
-
+func (c *Client) IssueToken(ctx context.Context, request *v3.IssueTokenParams) (*v3.IssueTokenResponse, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := baseURL + "/" + "auth/issue-token"
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	var response *v3.IssueTokenResponse
 	if err := c.caller.Call(
@@ -50,8 +41,7 @@ func (c *Client) IssueToken(
 		&core.CallParams{
 			URL:      endpointURL,
 			Method:   http.MethodPost,
-			Headers:  headers,
-			Client:   options.HTTPClient,
+			Headers:  c.header,
 			Request:  request,
 			Response: &response,
 		},

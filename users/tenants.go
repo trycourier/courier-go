@@ -5,6 +5,7 @@ package users
 import (
 	json "encoding/json"
 	fmt "fmt"
+	v3 "github.com/trycourier/courier-go/v3"
 	core "github.com/trycourier/courier-go/v3/core"
 )
 
@@ -13,7 +14,7 @@ type AddUserToSingleTenantsParams struct {
 }
 
 type AddUserToMultipleTenantsParams struct {
-	Tenants []*UserTenantAssociation `json:"tenants,omitempty"`
+	Tenants []*v3.UserTenantAssociation `json:"tenants,omitempty"`
 }
 
 type ListTenantsForUserParams struct {
@@ -62,7 +63,7 @@ func (a *AddUserToSingleTenantsParamsProfile) String() string {
 }
 
 type ListTenantsForUserResponse struct {
-	Items *UserTenantAssociation `json:"items,omitempty"`
+	Items *v3.UserTenantAssociation `json:"items,omitempty"`
 	// Set to true when there are more pages that can be retrieved.
 	HasMore bool `json:"has_more"`
 	// A url that may be used to generate these results.
@@ -117,35 +118,4 @@ func (l *ListTenantsForUserResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", l)
-}
-
-type UserTenantAssociation struct {
-	// Tenant ID the user association is tied to.
-	TenantId string                 `json:"tenant_id"`
-	Profile  map[string]interface{} `json:"profile,omitempty"`
-
-	_rawJSON json.RawMessage
-}
-
-func (u *UserTenantAssociation) UnmarshalJSON(data []byte) error {
-	type unmarshaler UserTenantAssociation
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*u = UserTenantAssociation(value)
-	u._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (u *UserTenantAssociation) String() string {
-	if len(u._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(u._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(u); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", u)
 }
