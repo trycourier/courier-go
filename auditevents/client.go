@@ -7,7 +7,6 @@ import (
 	fmt "fmt"
 	v3 "github.com/trycourier/courier-go/v3"
 	core "github.com/trycourier/courier-go/v3/core"
-	option "github.com/trycourier/courier-go/v3/option"
 	http "net/http"
 	url "net/url"
 )
@@ -18,8 +17,11 @@ type Client struct {
 	header  http.Header
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(opts ...core.ClientOption) *Client {
+	options := core.NewClientOptions()
+	for _, opt := range opts {
+		opt(options)
+	}
 	return &Client{
 		baseURL: options.BaseURL,
 		caller:  core.NewCaller(options.HTTPClient),
@@ -28,19 +30,10 @@ func NewClient(opts ...option.RequestOption) *Client {
 }
 
 // Fetch the list of audit events
-func (c *Client) List(
-	ctx context.Context,
-	request *v3.ListAuditEventsRequest,
-	opts ...option.RequestOption,
-) (*v3.ListAuditEventsResponse, error) {
-	options := core.NewRequestOptions(opts...)
-
+func (c *Client) List(ctx context.Context, request *v3.ListAuditEventsRequest) (*v3.ListAuditEventsResponse, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
 	}
 	endpointURL := baseURL + "/" + "audit-events"
 
@@ -52,16 +45,13 @@ func (c *Client) List(
 		endpointURL += "?" + queryParams.Encode()
 	}
 
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
-
 	var response *v3.ListAuditEventsResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
 			URL:      endpointURL,
 			Method:   http.MethodGet,
-			Headers:  headers,
-			Client:   options.HTTPClient,
+			Headers:  c.header,
 			Response: &response,
 		},
 	); err != nil {
@@ -71,24 +61,14 @@ func (c *Client) List(
 }
 
 // Fetch a specific audit event by ID.
-func (c *Client) Get(
-	ctx context.Context,
-	// A unique identifier associated with the audit event you wish to retrieve
-	auditEventId string,
-	opts ...option.RequestOption,
-) (*v3.AuditEvent, error) {
-	options := core.NewRequestOptions(opts...)
-
+//
+// A unique identifier associated with the audit event you wish to retrieve
+func (c *Client) Get(ctx context.Context, auditEventId string) (*v3.AuditEvent, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"audit-events/%v", auditEventId)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	var response *v3.AuditEvent
 	if err := c.caller.Call(
@@ -96,8 +76,7 @@ func (c *Client) Get(
 		&core.CallParams{
 			URL:      endpointURL,
 			Method:   http.MethodGet,
-			Headers:  headers,
-			Client:   options.HTTPClient,
+			Headers:  c.header,
 			Response: &response,
 		},
 	); err != nil {

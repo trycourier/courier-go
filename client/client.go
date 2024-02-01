@@ -15,7 +15,6 @@ import (
 	lists "github.com/trycourier/courier-go/v3/lists"
 	messages "github.com/trycourier/courier-go/v3/messages"
 	notifications "github.com/trycourier/courier-go/v3/notifications"
-	option "github.com/trycourier/courier-go/v3/option"
 	profiles "github.com/trycourier/courier-go/v3/profiles"
 	templates "github.com/trycourier/courier-go/v3/templates"
 	tenants "github.com/trycourier/courier-go/v3/tenants"
@@ -45,8 +44,11 @@ type Client struct {
 	Users         *usersclient.Client
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(opts ...core.ClientOption) *Client {
+	options := core.NewClientOptions()
+	for _, opt := range opts {
+		opt(options)
+	}
 	return &Client{
 		baseURL:       options.BaseURL,
 		caller:        core.NewCaller(options.HTTPClient),
@@ -69,23 +71,12 @@ func NewClient(opts ...option.RequestOption) *Client {
 }
 
 // Use the send API to send a message to one or more recipients.
-func (c *Client) Send(
-	ctx context.Context,
-	request *v3.SendMessageRequest,
-	opts ...option.IdempotentRequestOption,
-) (*v3.SendMessageResponse, error) {
-	options := core.NewIdempotentRequestOptions(opts...)
-
+func (c *Client) Send(ctx context.Context, request *v3.SendMessageRequest) (*v3.SendMessageResponse, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := baseURL + "/" + "send"
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	var response *v3.SendMessageResponse
 	if err := c.caller.Call(
@@ -93,8 +84,7 @@ func (c *Client) Send(
 		&core.CallParams{
 			URL:      endpointURL,
 			Method:   http.MethodPost,
-			Headers:  headers,
-			Client:   options.HTTPClient,
+			Headers:  c.header,
 			Request:  request,
 			Response: &response,
 		},

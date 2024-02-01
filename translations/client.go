@@ -10,7 +10,6 @@ import (
 	fmt "fmt"
 	v3 "github.com/trycourier/courier-go/v3"
 	core "github.com/trycourier/courier-go/v3/core"
-	option "github.com/trycourier/courier-go/v3/option"
 	io "io"
 	http "net/http"
 )
@@ -21,8 +20,11 @@ type Client struct {
 	header  http.Header
 }
 
-func NewClient(opts ...option.RequestOption) *Client {
-	options := core.NewRequestOptions(opts...)
+func NewClient(opts ...core.ClientOption) *Client {
+	options := core.NewClientOptions()
+	for _, opt := range opts {
+		opt(options)
+	}
 	return &Client{
 		baseURL: options.BaseURL,
 		caller:  core.NewCaller(options.HTTPClient),
@@ -31,26 +33,15 @@ func NewClient(opts ...option.RequestOption) *Client {
 }
 
 // Get translations by locale
-func (c *Client) Get(
-	ctx context.Context,
-	// The domain you want to retrieve translations for. Only `default` is supported at the moment
-	domain string,
-	// The locale you want to retrieve the translations for
-	locale string,
-	opts ...option.RequestOption,
-) (string, error) {
-	options := core.NewRequestOptions(opts...)
-
+//
+// The domain you want to retrieve translations for. Only `default` is supported at the moment
+// The locale you want to retrieve the translations for
+func (c *Client) Get(ctx context.Context, domain string, locale string) (string, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"translations/%v/%v", domain, locale)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -77,8 +68,7 @@ func (c *Client) Get(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodGet,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
@@ -89,27 +79,15 @@ func (c *Client) Get(
 }
 
 // Update a translation
-func (c *Client) Update(
-	ctx context.Context,
-	// The domain you want to retrieve translations for. Only `default` is supported at the moment
-	domain string,
-	// The locale you want to retrieve the translations for
-	locale string,
-	request string,
-	opts ...option.RequestOption,
-) error {
-	options := core.NewRequestOptions(opts...)
-
+//
+// The domain you want to retrieve translations for. Only `default` is supported at the moment
+// The locale you want to retrieve the translations for
+func (c *Client) Update(ctx context.Context, domain string, locale string, request string) error {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"translations/%v/%v", domain, locale)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -135,8 +113,7 @@ func (c *Client) Update(
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodPut,
-			Headers:      headers,
-			Client:       options.HTTPClient,
+			Headers:      c.header,
 			Request:      request,
 			ErrorDecoder: errorDecoder,
 		},

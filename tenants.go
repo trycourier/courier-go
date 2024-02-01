@@ -52,6 +52,64 @@ func (d *DefaultPreferences) String() string {
 	return fmt.Sprintf("%#v", d)
 }
 
+type ListUsersForTenantResponse struct {
+	Items *UserTenantAssociation `json:"items,omitempty"`
+	// Set to true when there are more pages that can be retrieved.
+	HasMore bool `json:"has_more"`
+	// A url that may be used to generate these results.
+	Url string `json:"url"`
+	// A url that may be used to generate fetch the next set of results.
+	// Defined only when `has_more` is set to true
+	NextUrl *string `json:"next_url,omitempty"`
+	// A pointer to the next page of results. Defined
+	// only when `has_more` is set to true
+	Cursor *string `json:"cursor,omitempty"`
+	// Always set to `list`. Represents the type of this object.
+	type_ string
+
+	_rawJSON json.RawMessage
+}
+
+func (l *ListUsersForTenantResponse) Type() string {
+	return l.type_
+}
+
+func (l *ListUsersForTenantResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler ListUsersForTenantResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*l = ListUsersForTenantResponse(value)
+	l.type_ = "list"
+	l._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (l *ListUsersForTenantResponse) MarshalJSON() ([]byte, error) {
+	type embed ListUsersForTenantResponse
+	var marshaler = struct {
+		embed
+		Type string `json:"type"`
+	}{
+		embed: embed(*l),
+		Type:  "list",
+	}
+	return json.Marshal(marshaler)
+}
+
+func (l *ListUsersForTenantResponse) String() string {
+	if len(l._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(l._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(l); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", l)
+}
+
 type TemplateProperty = interface{}
 
 type Tenant struct {
@@ -97,14 +155,14 @@ func (t *Tenant) String() string {
 }
 
 type TenantListResponse struct {
-	// A pointer to the next page of results. Defined only whenhas_more is set to true.
+	// A pointer to the next page of results. Defined only when has_more is set to true.
 	Cursor *string `json:"cursor,omitempty"`
 	// Set to true when there are more pages that can be retrieved.
 	HasMore bool `json:"has_more"`
 	// An array of Tenants
 	Items []*Tenant `json:"items,omitempty"`
 	// A url that may be used to generate fetch the next set of results.
-	// Defined only whenhas_more is set to true
+	// Defined only when has_more is set to true
 	NextUrl *string `json:"next_url,omitempty"`
 	// A url that may be used to generate these results.
 	Url string `json:"url"`

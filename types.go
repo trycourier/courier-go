@@ -2312,6 +2312,57 @@ func (r *Rule) String() string {
 	return fmt.Sprintf("%#v", r)
 }
 
+type UserTenantAssociation struct {
+	// User ID for the assocation between tenant and user
+	UserId string `json:"user_id"`
+	// Tenant ID for the assocation between tenant and user
+	TenantId string                 `json:"tenant_id"`
+	Profile  map[string]interface{} `json:"profile,omitempty"`
+	type_    string
+
+	_rawJSON json.RawMessage
+}
+
+func (u *UserTenantAssociation) Type() string {
+	return u.type_
+}
+
+func (u *UserTenantAssociation) UnmarshalJSON(data []byte) error {
+	type unmarshaler UserTenantAssociation
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*u = UserTenantAssociation(value)
+	u.type_ = "user"
+	u._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (u *UserTenantAssociation) MarshalJSON() ([]byte, error) {
+	type embed UserTenantAssociation
+	var marshaler = struct {
+		embed
+		Type string `json:"type"`
+	}{
+		embed: embed(*u),
+		Type:  "user",
+	}
+	return json.Marshal(marshaler)
+}
+
+func (u *UserTenantAssociation) String() string {
+	if len(u._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(u._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(u); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", u)
+}
+
 type ListFindByRecipientIdParams struct {
 	Cursor *string `json:"cursor,omitempty"`
 
@@ -3309,8 +3360,8 @@ func (g *GetListSubscriptionsList) String() string {
 }
 
 type Intercom struct {
-	From string              `json:"from"`
-	To   *IntercomeRecipient `json:"to,omitempty"`
+	From string             `json:"from"`
+	To   *IntercomRecipient `json:"to,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -3338,24 +3389,24 @@ func (i *Intercom) String() string {
 	return fmt.Sprintf("%#v", i)
 }
 
-type IntercomeRecipient struct {
+type IntercomRecipient struct {
 	Id string `json:"id"`
 
 	_rawJSON json.RawMessage
 }
 
-func (i *IntercomeRecipient) UnmarshalJSON(data []byte) error {
-	type unmarshaler IntercomeRecipient
+func (i *IntercomRecipient) UnmarshalJSON(data []byte) error {
+	type unmarshaler IntercomRecipient
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*i = IntercomeRecipient(value)
+	*i = IntercomRecipient(value)
 	i._rawJSON = json.RawMessage(data)
 	return nil
 }
 
-func (i *IntercomeRecipient) String() string {
+func (i *IntercomRecipient) String() string {
 	if len(i._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(i._rawJSON); err == nil {
 			return value
@@ -3368,30 +3419,63 @@ func (i *IntercomeRecipient) String() string {
 }
 
 type MsTeams struct {
-	typeName             string
-	SendToMsTeamsChannel *SendToMsTeamsChannel
-	SendToMsTeamsUser    *SendToMsTeamsUser
+	typeName                    string
+	SendToMsTeamsUserId         *SendToMsTeamsUserId
+	SendToMsTeamsEmail          *SendToMsTeamsEmail
+	SendToMsTeamsChannelId      *SendToMsTeamsChannelId
+	SendToMsTeamsConversationId *SendToMsTeamsConversationId
+	SendToMsTeamsChannelName    *SendToMsTeamsChannelName
 }
 
-func NewMsTeamsFromSendToMsTeamsChannel(value *SendToMsTeamsChannel) *MsTeams {
-	return &MsTeams{typeName: "sendToMsTeamsChannel", SendToMsTeamsChannel: value}
+func NewMsTeamsFromSendToMsTeamsUserId(value *SendToMsTeamsUserId) *MsTeams {
+	return &MsTeams{typeName: "sendToMsTeamsUserId", SendToMsTeamsUserId: value}
 }
 
-func NewMsTeamsFromSendToMsTeamsUser(value *SendToMsTeamsUser) *MsTeams {
-	return &MsTeams{typeName: "sendToMsTeamsUser", SendToMsTeamsUser: value}
+func NewMsTeamsFromSendToMsTeamsEmail(value *SendToMsTeamsEmail) *MsTeams {
+	return &MsTeams{typeName: "sendToMsTeamsEmail", SendToMsTeamsEmail: value}
+}
+
+func NewMsTeamsFromSendToMsTeamsChannelId(value *SendToMsTeamsChannelId) *MsTeams {
+	return &MsTeams{typeName: "sendToMsTeamsChannelId", SendToMsTeamsChannelId: value}
+}
+
+func NewMsTeamsFromSendToMsTeamsConversationId(value *SendToMsTeamsConversationId) *MsTeams {
+	return &MsTeams{typeName: "sendToMsTeamsConversationId", SendToMsTeamsConversationId: value}
+}
+
+func NewMsTeamsFromSendToMsTeamsChannelName(value *SendToMsTeamsChannelName) *MsTeams {
+	return &MsTeams{typeName: "sendToMsTeamsChannelName", SendToMsTeamsChannelName: value}
 }
 
 func (m *MsTeams) UnmarshalJSON(data []byte) error {
-	valueSendToMsTeamsChannel := new(SendToMsTeamsChannel)
-	if err := json.Unmarshal(data, &valueSendToMsTeamsChannel); err == nil {
-		m.typeName = "sendToMsTeamsChannel"
-		m.SendToMsTeamsChannel = valueSendToMsTeamsChannel
+	valueSendToMsTeamsUserId := new(SendToMsTeamsUserId)
+	if err := json.Unmarshal(data, &valueSendToMsTeamsUserId); err == nil {
+		m.typeName = "sendToMsTeamsUserId"
+		m.SendToMsTeamsUserId = valueSendToMsTeamsUserId
 		return nil
 	}
-	valueSendToMsTeamsUser := new(SendToMsTeamsUser)
-	if err := json.Unmarshal(data, &valueSendToMsTeamsUser); err == nil {
-		m.typeName = "sendToMsTeamsUser"
-		m.SendToMsTeamsUser = valueSendToMsTeamsUser
+	valueSendToMsTeamsEmail := new(SendToMsTeamsEmail)
+	if err := json.Unmarshal(data, &valueSendToMsTeamsEmail); err == nil {
+		m.typeName = "sendToMsTeamsEmail"
+		m.SendToMsTeamsEmail = valueSendToMsTeamsEmail
+		return nil
+	}
+	valueSendToMsTeamsChannelId := new(SendToMsTeamsChannelId)
+	if err := json.Unmarshal(data, &valueSendToMsTeamsChannelId); err == nil {
+		m.typeName = "sendToMsTeamsChannelId"
+		m.SendToMsTeamsChannelId = valueSendToMsTeamsChannelId
+		return nil
+	}
+	valueSendToMsTeamsConversationId := new(SendToMsTeamsConversationId)
+	if err := json.Unmarshal(data, &valueSendToMsTeamsConversationId); err == nil {
+		m.typeName = "sendToMsTeamsConversationId"
+		m.SendToMsTeamsConversationId = valueSendToMsTeamsConversationId
+		return nil
+	}
+	valueSendToMsTeamsChannelName := new(SendToMsTeamsChannelName)
+	if err := json.Unmarshal(data, &valueSendToMsTeamsChannelName); err == nil {
+		m.typeName = "sendToMsTeamsChannelName"
+		m.SendToMsTeamsChannelName = valueSendToMsTeamsChannelName
 		return nil
 	}
 	return fmt.Errorf("%s cannot be deserialized as a %T", data, m)
@@ -3401,27 +3485,72 @@ func (m MsTeams) MarshalJSON() ([]byte, error) {
 	switch m.typeName {
 	default:
 		return nil, fmt.Errorf("invalid type %s in %T", m.typeName, m)
-	case "sendToMsTeamsChannel":
-		return json.Marshal(m.SendToMsTeamsChannel)
-	case "sendToMsTeamsUser":
-		return json.Marshal(m.SendToMsTeamsUser)
+	case "sendToMsTeamsUserId":
+		return json.Marshal(m.SendToMsTeamsUserId)
+	case "sendToMsTeamsEmail":
+		return json.Marshal(m.SendToMsTeamsEmail)
+	case "sendToMsTeamsChannelId":
+		return json.Marshal(m.SendToMsTeamsChannelId)
+	case "sendToMsTeamsConversationId":
+		return json.Marshal(m.SendToMsTeamsConversationId)
+	case "sendToMsTeamsChannelName":
+		return json.Marshal(m.SendToMsTeamsChannelName)
 	}
 }
 
 type MsTeamsVisitor interface {
-	VisitSendToMsTeamsChannel(*SendToMsTeamsChannel) error
-	VisitSendToMsTeamsUser(*SendToMsTeamsUser) error
+	VisitSendToMsTeamsUserId(*SendToMsTeamsUserId) error
+	VisitSendToMsTeamsEmail(*SendToMsTeamsEmail) error
+	VisitSendToMsTeamsChannelId(*SendToMsTeamsChannelId) error
+	VisitSendToMsTeamsConversationId(*SendToMsTeamsConversationId) error
+	VisitSendToMsTeamsChannelName(*SendToMsTeamsChannelName) error
 }
 
 func (m *MsTeams) Accept(visitor MsTeamsVisitor) error {
 	switch m.typeName {
 	default:
 		return fmt.Errorf("invalid type %s in %T", m.typeName, m)
-	case "sendToMsTeamsChannel":
-		return visitor.VisitSendToMsTeamsChannel(m.SendToMsTeamsChannel)
-	case "sendToMsTeamsUser":
-		return visitor.VisitSendToMsTeamsUser(m.SendToMsTeamsUser)
+	case "sendToMsTeamsUserId":
+		return visitor.VisitSendToMsTeamsUserId(m.SendToMsTeamsUserId)
+	case "sendToMsTeamsEmail":
+		return visitor.VisitSendToMsTeamsEmail(m.SendToMsTeamsEmail)
+	case "sendToMsTeamsChannelId":
+		return visitor.VisitSendToMsTeamsChannelId(m.SendToMsTeamsChannelId)
+	case "sendToMsTeamsConversationId":
+		return visitor.VisitSendToMsTeamsConversationId(m.SendToMsTeamsConversationId)
+	case "sendToMsTeamsChannelName":
+		return visitor.VisitSendToMsTeamsChannelName(m.SendToMsTeamsChannelName)
 	}
+}
+
+type MsTeamsBaseProperties struct {
+	TenantId   string `json:"tenant_id"`
+	ServiceUrl string `json:"service_url"`
+
+	_rawJSON json.RawMessage
+}
+
+func (m *MsTeamsBaseProperties) UnmarshalJSON(data []byte) error {
+	type unmarshaler MsTeamsBaseProperties
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = MsTeamsBaseProperties(value)
+	m._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *MsTeamsBaseProperties) String() string {
+	if len(m._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(m._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
 }
 
 type MultipleTokens struct {
@@ -3540,26 +3669,26 @@ func (s *SendToChannel) String() string {
 	return fmt.Sprintf("%#v", s)
 }
 
-type SendToMsTeamsChannel struct {
-	ConversationId string `json:"conversation_id"`
-	TenantId       string `json:"tenant_id"`
-	ServiceUrl     string `json:"service_url"`
+type SendToMsTeamsChannelId struct {
+	TenantId   string `json:"tenant_id"`
+	ServiceUrl string `json:"service_url"`
+	ChannelId  string `json:"channel_id"`
 
 	_rawJSON json.RawMessage
 }
 
-func (s *SendToMsTeamsChannel) UnmarshalJSON(data []byte) error {
-	type unmarshaler SendToMsTeamsChannel
+func (s *SendToMsTeamsChannelId) UnmarshalJSON(data []byte) error {
+	type unmarshaler SendToMsTeamsChannelId
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*s = SendToMsTeamsChannel(value)
+	*s = SendToMsTeamsChannelId(value)
 	s._rawJSON = json.RawMessage(data)
 	return nil
 }
 
-func (s *SendToMsTeamsChannel) String() string {
+func (s *SendToMsTeamsChannelId) String() string {
 	if len(s._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
 			return value
@@ -3571,26 +3700,312 @@ func (s *SendToMsTeamsChannel) String() string {
 	return fmt.Sprintf("%#v", s)
 }
 
-type SendToMsTeamsUser struct {
-	UserId     string `json:"user_id"`
-	TenantId   string `json:"tenant_id"`
-	ServiceUrl string `json:"service_url"`
+type SendToMsTeamsChannelName struct {
+	TenantId    string `json:"tenant_id"`
+	ServiceUrl  string `json:"service_url"`
+	ChannelName string `json:"channel_name"`
+	TeamId      string `json:"team_id"`
 
 	_rawJSON json.RawMessage
 }
 
-func (s *SendToMsTeamsUser) UnmarshalJSON(data []byte) error {
-	type unmarshaler SendToMsTeamsUser
+func (s *SendToMsTeamsChannelName) UnmarshalJSON(data []byte) error {
+	type unmarshaler SendToMsTeamsChannelName
 	var value unmarshaler
 	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*s = SendToMsTeamsUser(value)
+	*s = SendToMsTeamsChannelName(value)
 	s._rawJSON = json.RawMessage(data)
 	return nil
 }
 
-func (s *SendToMsTeamsUser) String() string {
+func (s *SendToMsTeamsChannelName) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+type SendToMsTeamsConversationId struct {
+	TenantId       string `json:"tenant_id"`
+	ServiceUrl     string `json:"service_url"`
+	ConversationId string `json:"conversation_id"`
+
+	_rawJSON json.RawMessage
+}
+
+func (s *SendToMsTeamsConversationId) UnmarshalJSON(data []byte) error {
+	type unmarshaler SendToMsTeamsConversationId
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SendToMsTeamsConversationId(value)
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SendToMsTeamsConversationId) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+type SendToMsTeamsEmail struct {
+	TenantId   string `json:"tenant_id"`
+	ServiceUrl string `json:"service_url"`
+	Email      string `json:"email"`
+
+	_rawJSON json.RawMessage
+}
+
+func (s *SendToMsTeamsEmail) UnmarshalJSON(data []byte) error {
+	type unmarshaler SendToMsTeamsEmail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SendToMsTeamsEmail(value)
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SendToMsTeamsEmail) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+type SendToMsTeamsUserId struct {
+	TenantId   string `json:"tenant_id"`
+	ServiceUrl string `json:"service_url"`
+	UserId     string `json:"user_id"`
+
+	_rawJSON json.RawMessage
+}
+
+func (s *SendToMsTeamsUserId) UnmarshalJSON(data []byte) error {
+	type unmarshaler SendToMsTeamsUserId
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SendToMsTeamsUserId(value)
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SendToMsTeamsUserId) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+type SendToSlackChannel struct {
+	AccessToken string `json:"access_token"`
+	Channel     string `json:"channel"`
+
+	_rawJSON json.RawMessage
+}
+
+func (s *SendToSlackChannel) UnmarshalJSON(data []byte) error {
+	type unmarshaler SendToSlackChannel
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SendToSlackChannel(value)
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SendToSlackChannel) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+type SendToSlackEmail struct {
+	AccessToken string `json:"access_token"`
+	Email       string `json:"email"`
+
+	_rawJSON json.RawMessage
+}
+
+func (s *SendToSlackEmail) UnmarshalJSON(data []byte) error {
+	type unmarshaler SendToSlackEmail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SendToSlackEmail(value)
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SendToSlackEmail) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+type SendToSlackUserId struct {
+	AccessToken string `json:"access_token"`
+	UserId      string `json:"user_id"`
+
+	_rawJSON json.RawMessage
+}
+
+func (s *SendToSlackUserId) UnmarshalJSON(data []byte) error {
+	type unmarshaler SendToSlackUserId
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SendToSlackUserId(value)
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SendToSlackUserId) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+type Slack struct {
+	typeName           string
+	SendToSlackChannel *SendToSlackChannel
+	SendToSlackEmail   *SendToSlackEmail
+	SendToSlackUserId  *SendToSlackUserId
+}
+
+func NewSlackFromSendToSlackChannel(value *SendToSlackChannel) *Slack {
+	return &Slack{typeName: "sendToSlackChannel", SendToSlackChannel: value}
+}
+
+func NewSlackFromSendToSlackEmail(value *SendToSlackEmail) *Slack {
+	return &Slack{typeName: "sendToSlackEmail", SendToSlackEmail: value}
+}
+
+func NewSlackFromSendToSlackUserId(value *SendToSlackUserId) *Slack {
+	return &Slack{typeName: "sendToSlackUserId", SendToSlackUserId: value}
+}
+
+func (s *Slack) UnmarshalJSON(data []byte) error {
+	valueSendToSlackChannel := new(SendToSlackChannel)
+	if err := json.Unmarshal(data, &valueSendToSlackChannel); err == nil {
+		s.typeName = "sendToSlackChannel"
+		s.SendToSlackChannel = valueSendToSlackChannel
+		return nil
+	}
+	valueSendToSlackEmail := new(SendToSlackEmail)
+	if err := json.Unmarshal(data, &valueSendToSlackEmail); err == nil {
+		s.typeName = "sendToSlackEmail"
+		s.SendToSlackEmail = valueSendToSlackEmail
+		return nil
+	}
+	valueSendToSlackUserId := new(SendToSlackUserId)
+	if err := json.Unmarshal(data, &valueSendToSlackUserId); err == nil {
+		s.typeName = "sendToSlackUserId"
+		s.SendToSlackUserId = valueSendToSlackUserId
+		return nil
+	}
+	return fmt.Errorf("%s cannot be deserialized as a %T", data, s)
+}
+
+func (s Slack) MarshalJSON() ([]byte, error) {
+	switch s.typeName {
+	default:
+		return nil, fmt.Errorf("invalid type %s in %T", s.typeName, s)
+	case "sendToSlackChannel":
+		return json.Marshal(s.SendToSlackChannel)
+	case "sendToSlackEmail":
+		return json.Marshal(s.SendToSlackEmail)
+	case "sendToSlackUserId":
+		return json.Marshal(s.SendToSlackUserId)
+	}
+}
+
+type SlackVisitor interface {
+	VisitSendToSlackChannel(*SendToSlackChannel) error
+	VisitSendToSlackEmail(*SendToSlackEmail) error
+	VisitSendToSlackUserId(*SendToSlackUserId) error
+}
+
+func (s *Slack) Accept(visitor SlackVisitor) error {
+	switch s.typeName {
+	default:
+		return fmt.Errorf("invalid type %s in %T", s.typeName, s)
+	case "sendToSlackChannel":
+		return visitor.VisitSendToSlackChannel(s.SendToSlackChannel)
+	case "sendToSlackEmail":
+		return visitor.VisitSendToSlackEmail(s.SendToSlackEmail)
+	case "sendToSlackUserId":
+		return visitor.VisitSendToSlackUserId(s.SendToSlackUserId)
+	}
+}
+
+type SlackBaseProperties struct {
+	AccessToken string `json:"access_token"`
+
+	_rawJSON json.RawMessage
+}
+
+func (s *SlackBaseProperties) UnmarshalJSON(data []byte) error {
+	type unmarshaler SlackBaseProperties
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SlackBaseProperties(value)
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SlackBaseProperties) String() string {
 	if len(s._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
 			return value
@@ -3742,6 +4157,7 @@ type UserProfile struct {
 	FacebookPsid  string          `json:"facebookPSID"`
 	FirebaseToken string          `json:"firebaseToken"`
 	Intercom      *Intercom       `json:"intercom,omitempty"`
+	Slack         *Slack          `json:"slack,omitempty"`
 	MsTeams       *MsTeams        `json:"ms_teams,omitempty"`
 
 	_rawJSON json.RawMessage
@@ -6062,6 +6478,8 @@ type Recipient struct {
 	ListRecipient        *ListRecipient
 	ListPatternRecipient *ListPatternRecipient
 	UserRecipient        *UserRecipient
+	Slack                *Slack
+	MsTeams              *MsTeams
 }
 
 func NewRecipientFromAudienceRecipient(value *AudienceRecipient) *Recipient {
@@ -6078,6 +6496,14 @@ func NewRecipientFromListPatternRecipient(value *ListPatternRecipient) *Recipien
 
 func NewRecipientFromUserRecipient(value *UserRecipient) *Recipient {
 	return &Recipient{typeName: "userRecipient", UserRecipient: value}
+}
+
+func NewRecipientFromSlack(value *Slack) *Recipient {
+	return &Recipient{typeName: "slack", Slack: value}
+}
+
+func NewRecipientFromMsTeams(value *MsTeams) *Recipient {
+	return &Recipient{typeName: "msTeams", MsTeams: value}
 }
 
 func (r *Recipient) UnmarshalJSON(data []byte) error {
@@ -6105,6 +6531,18 @@ func (r *Recipient) UnmarshalJSON(data []byte) error {
 		r.UserRecipient = valueUserRecipient
 		return nil
 	}
+	valueSlack := new(Slack)
+	if err := json.Unmarshal(data, &valueSlack); err == nil {
+		r.typeName = "slack"
+		r.Slack = valueSlack
+		return nil
+	}
+	valueMsTeams := new(MsTeams)
+	if err := json.Unmarshal(data, &valueMsTeams); err == nil {
+		r.typeName = "msTeams"
+		r.MsTeams = valueMsTeams
+		return nil
+	}
 	return fmt.Errorf("%s cannot be deserialized as a %T", data, r)
 }
 
@@ -6120,6 +6558,10 @@ func (r Recipient) MarshalJSON() ([]byte, error) {
 		return json.Marshal(r.ListPatternRecipient)
 	case "userRecipient":
 		return json.Marshal(r.UserRecipient)
+	case "slack":
+		return json.Marshal(r.Slack)
+	case "msTeams":
+		return json.Marshal(r.MsTeams)
 	}
 }
 
@@ -6128,6 +6570,8 @@ type RecipientVisitor interface {
 	VisitListRecipient(*ListRecipient) error
 	VisitListPatternRecipient(*ListPatternRecipient) error
 	VisitUserRecipient(*UserRecipient) error
+	VisitSlack(*Slack) error
+	VisitMsTeams(*MsTeams) error
 }
 
 func (r *Recipient) Accept(visitor RecipientVisitor) error {
@@ -6142,6 +6586,10 @@ func (r *Recipient) Accept(visitor RecipientVisitor) error {
 		return visitor.VisitListPatternRecipient(r.ListPatternRecipient)
 	case "userRecipient":
 		return visitor.VisitUserRecipient(r.UserRecipient)
+	case "slack":
+		return visitor.VisitSlack(r.Slack)
+	case "msTeams":
+		return visitor.VisitMsTeams(r.MsTeams)
 	}
 }
 
