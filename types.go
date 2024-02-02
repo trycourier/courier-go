@@ -6389,6 +6389,35 @@ func (m *Metadata) String() string {
 	return fmt.Sprintf("%#v", m)
 }
 
+type MsTeamsRecipient struct {
+	MsTeams *MsTeams `json:"ms_teams,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (m *MsTeamsRecipient) UnmarshalJSON(data []byte) error {
+	type unmarshaler MsTeamsRecipient
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = MsTeamsRecipient(value)
+	m._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *MsTeamsRecipient) String() string {
+	if len(m._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(m._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
+}
+
 type Override string
 
 const (
@@ -6478,8 +6507,8 @@ type Recipient struct {
 	ListRecipient        *ListRecipient
 	ListPatternRecipient *ListPatternRecipient
 	UserRecipient        *UserRecipient
-	Slack                *Slack
-	MsTeams              *MsTeams
+	SlackRecipient       *SlackRecipient
+	MsTeamsRecipient     *MsTeamsRecipient
 }
 
 func NewRecipientFromAudienceRecipient(value *AudienceRecipient) *Recipient {
@@ -6498,12 +6527,12 @@ func NewRecipientFromUserRecipient(value *UserRecipient) *Recipient {
 	return &Recipient{typeName: "userRecipient", UserRecipient: value}
 }
 
-func NewRecipientFromSlack(value *Slack) *Recipient {
-	return &Recipient{typeName: "slack", Slack: value}
+func NewRecipientFromSlackRecipient(value *SlackRecipient) *Recipient {
+	return &Recipient{typeName: "slackRecipient", SlackRecipient: value}
 }
 
-func NewRecipientFromMsTeams(value *MsTeams) *Recipient {
-	return &Recipient{typeName: "msTeams", MsTeams: value}
+func NewRecipientFromMsTeamsRecipient(value *MsTeamsRecipient) *Recipient {
+	return &Recipient{typeName: "msTeamsRecipient", MsTeamsRecipient: value}
 }
 
 func (r *Recipient) UnmarshalJSON(data []byte) error {
@@ -6531,16 +6560,16 @@ func (r *Recipient) UnmarshalJSON(data []byte) error {
 		r.UserRecipient = valueUserRecipient
 		return nil
 	}
-	valueSlack := new(Slack)
-	if err := json.Unmarshal(data, &valueSlack); err == nil {
-		r.typeName = "slack"
-		r.Slack = valueSlack
+	valueSlackRecipient := new(SlackRecipient)
+	if err := json.Unmarshal(data, &valueSlackRecipient); err == nil {
+		r.typeName = "slackRecipient"
+		r.SlackRecipient = valueSlackRecipient
 		return nil
 	}
-	valueMsTeams := new(MsTeams)
-	if err := json.Unmarshal(data, &valueMsTeams); err == nil {
-		r.typeName = "msTeams"
-		r.MsTeams = valueMsTeams
+	valueMsTeamsRecipient := new(MsTeamsRecipient)
+	if err := json.Unmarshal(data, &valueMsTeamsRecipient); err == nil {
+		r.typeName = "msTeamsRecipient"
+		r.MsTeamsRecipient = valueMsTeamsRecipient
 		return nil
 	}
 	return fmt.Errorf("%s cannot be deserialized as a %T", data, r)
@@ -6558,10 +6587,10 @@ func (r Recipient) MarshalJSON() ([]byte, error) {
 		return json.Marshal(r.ListPatternRecipient)
 	case "userRecipient":
 		return json.Marshal(r.UserRecipient)
-	case "slack":
-		return json.Marshal(r.Slack)
-	case "msTeams":
-		return json.Marshal(r.MsTeams)
+	case "slackRecipient":
+		return json.Marshal(r.SlackRecipient)
+	case "msTeamsRecipient":
+		return json.Marshal(r.MsTeamsRecipient)
 	}
 }
 
@@ -6570,8 +6599,8 @@ type RecipientVisitor interface {
 	VisitListRecipient(*ListRecipient) error
 	VisitListPatternRecipient(*ListPatternRecipient) error
 	VisitUserRecipient(*UserRecipient) error
-	VisitSlack(*Slack) error
-	VisitMsTeams(*MsTeams) error
+	VisitSlackRecipient(*SlackRecipient) error
+	VisitMsTeamsRecipient(*MsTeamsRecipient) error
 }
 
 func (r *Recipient) Accept(visitor RecipientVisitor) error {
@@ -6586,10 +6615,10 @@ func (r *Recipient) Accept(visitor RecipientVisitor) error {
 		return visitor.VisitListPatternRecipient(r.ListPatternRecipient)
 	case "userRecipient":
 		return visitor.VisitUserRecipient(r.UserRecipient)
-	case "slack":
-		return visitor.VisitSlack(r.Slack)
-	case "msTeams":
-		return visitor.VisitMsTeams(r.MsTeams)
+	case "slackRecipient":
+		return visitor.VisitSlackRecipient(r.SlackRecipient)
+	case "msTeamsRecipient":
+		return visitor.VisitMsTeamsRecipient(r.MsTeamsRecipient)
 	}
 }
 
@@ -6812,6 +6841,35 @@ func NewRuleTypeFromString(s string) (RuleType, error) {
 
 func (r RuleType) Ptr() *RuleType {
 	return &r
+}
+
+type SlackRecipient struct {
+	Slack *Slack `json:"slack,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (s *SlackRecipient) UnmarshalJSON(data []byte) error {
+	type unmarshaler SlackRecipient
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SlackRecipient(value)
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SlackRecipient) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
 }
 
 type TemplateMessage struct {

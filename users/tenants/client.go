@@ -86,6 +86,29 @@ func (c *Client) Add(ctx context.Context, userId string, tenantId string, reques
 	return nil
 }
 
+// Removes a user from any tenants they may have been associated with.
+//
+// Id of the user to be removed from the supplied tenant.
+func (c *Client) RemoveAll(ctx context.Context, userId string) error {
+	baseURL := "https://api.courier.com"
+	if c.baseURL != "" {
+		baseURL = c.baseURL
+	}
+	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v/tenants", userId)
+
+	if err := c.caller.Call(
+		ctx,
+		&core.CallParams{
+			URL:     endpointURL,
+			Method:  http.MethodDelete,
+			Headers: c.header,
+		},
+	); err != nil {
+		return err
+	}
+	return nil
+}
+
 // Removes a user from the supplied tenant.
 //
 // Id of the user to be removed from the supplied tenant.
