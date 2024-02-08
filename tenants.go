@@ -23,6 +23,22 @@ type TenantCreateOrReplaceParams struct {
 	BrandId *string `json:"brand_id,omitempty"`
 }
 
+type ListUsersForTenantParams struct {
+	// The number of accounts to return
+	// (defaults to 20, maximum value of 100)
+	Limit *int `json:"-"`
+	// Continue the pagination with the next cursor
+	Cursor *string `json:"-"`
+}
+
+type ListTenantParams struct {
+	// The number of accousnts to return
+	// (defaults to 20, maximum value of 100)
+	Limit *int `json:"-"`
+	// Continue the pagination with the next cursor
+	Cursor *string `json:"-"`
+}
+
 type DefaultPreferences struct {
 	Items []*SubscriptionTopic `json:"items,omitempty"`
 

@@ -147,8 +147,8 @@ func (c *Client) List(ctx context.Context, userId string, request *users.ListTen
 	if request.Limit != nil {
 		queryParams.Add("limit", fmt.Sprintf("%v", *request.Limit))
 	}
-	if request.StartingAfter != nil {
-		queryParams.Add("starting_after", fmt.Sprintf("%v", *request.StartingAfter))
+	if request.Cursor != nil {
+		queryParams.Add("cursor", fmt.Sprintf("%v", *request.Cursor))
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()

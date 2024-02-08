@@ -21,8 +21,8 @@ type ListTenantsForUserParams struct {
 	// The number of accounts to return
 	// (defaults to 20, maximum value of 100)
 	Limit *int `json:"-"`
-	// Value of next_page from previous response
-	StartingAfter *int `json:"-"`
+	// Continue the pagination with the next cursor
+	Cursor *string `json:"-"`
 }
 
 type AddUserToSingleTenantsParamsProfile struct {
