@@ -8,13 +8,6 @@ import (
 	core "github.com/trycourier/courier-go/v3/core"
 )
 
-type GetListRequest struct {
-	// A unique identifier that allows for fetching the next page of lists.
-	Cursor *string `json:"-"`
-	// "A pattern used to filter the list items returned. Pattern types supported: exact match on `list_id` or a pattern of one or more pattern parts. you may replace a part with either: `*` to match all parts in that position, or `**` to signify a wildcard `endsWith` pattern match."
-	Pattern *string `json:"-"`
-}
-
 type GetSubscriptionForListRequest struct {
 	// A unique identifier that allows for fetching the next set of list subscriptions
 	Cursor *string `json:"-"`

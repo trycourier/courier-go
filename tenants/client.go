@@ -12,6 +12,7 @@ import (
 	core "github.com/trycourier/courier-go/v3/core"
 	io "io"
 	http "net/http"
+	url "net/url"
 )
 
 type Client struct {
@@ -119,12 +120,23 @@ func (c *Client) Get(ctx context.Context, tenantId string) (*v3.Tenant, error) {
 	return response, nil
 }
 
-func (c *Client) List(ctx context.Context) (*v3.TenantListResponse, error) {
+func (c *Client) List(ctx context.Context, request *v3.ListTenantParams) (*v3.TenantListResponse, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
 	endpointURL := baseURL + "/" + "tenants"
+
+	queryParams := make(url.Values)
+	if request.Limit != nil {
+		queryParams.Add("limit", fmt.Sprintf("%v", *request.Limit))
+	}
+	if request.Cursor != nil {
+		queryParams.Add("cursor", fmt.Sprintf("%v", *request.Cursor))
+	}
+	if len(queryParams) > 0 {
+		endpointURL += "?" + queryParams.Encode()
+	}
 
 	var response *v3.TenantListResponse
 	if err := c.caller.Call(
@@ -163,12 +175,23 @@ func (c *Client) Delete(ctx context.Context, tenantId string) error {
 }
 
 // Id of the tenant for user membership.
-func (c *Client) GetUsersByTenant(ctx context.Context, tenantId string) (*v3.ListUsersForTenantResponse, error) {
+func (c *Client) GetUsersByTenant(ctx context.Context, tenantId string, request *v3.ListUsersForTenantParams) (*v3.ListUsersForTenantResponse, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"tenants/%v/users", tenantId)
+
+	queryParams := make(url.Values)
+	if request.Limit != nil {
+		queryParams.Add("limit", fmt.Sprintf("%v", *request.Limit))
+	}
+	if request.Cursor != nil {
+		queryParams.Add("cursor", fmt.Sprintf("%v", *request.Cursor))
+	}
+	if len(queryParams) > 0 {
+		endpointURL += "?" + queryParams.Encode()
+	}
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)

@@ -90,23 +90,12 @@ func (c *Client) List(ctx context.Context, request *v3.GetAllListsRequest) (*v3.
 // Returns a list based on the list ID provided.
 //
 // A unique identifier representing the list you wish to retrieve.
-func (c *Client) Get(ctx context.Context, listId string, request *v3.GetListRequest) (*v3.List, error) {
+func (c *Client) Get(ctx context.Context, listId string) (*v3.List, error) {
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"lists/%v", listId)
-
-	queryParams := make(url.Values)
-	if request.Cursor != nil {
-		queryParams.Add("cursor", fmt.Sprintf("%v", *request.Cursor))
-	}
-	if request.Pattern != nil {
-		queryParams.Add("pattern", fmt.Sprintf("%v", *request.Pattern))
-	}
-	if len(queryParams) > 0 {
-		endpointURL += "?" + queryParams.Encode()
-	}
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
