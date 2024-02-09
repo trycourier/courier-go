@@ -69,7 +69,7 @@ func (d *DefaultPreferences) String() string {
 }
 
 type ListUsersForTenantResponse struct {
-	Items *UserTenantAssociation `json:"items,omitempty"`
+	Items []*UserTenantAssociation `json:"items,omitempty"`
 	// Set to true when there are more pages that can be retrieved.
 	HasMore bool `json:"has_more"`
 	// A url that may be used to generate these results.

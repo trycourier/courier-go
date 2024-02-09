@@ -63,7 +63,7 @@ func (a *AddUserToSingleTenantsParamsProfile) String() string {
 }
 
 type ListTenantsForUserResponse struct {
-	Items *v3.UserTenantAssociation `json:"items,omitempty"`
+	Items []*v3.UserTenantAssociation `json:"items,omitempty"`
 	// Set to true when there are more pages that can be retrieved.
 	HasMore bool `json:"has_more"`
 	// A url that may be used to generate these results.
