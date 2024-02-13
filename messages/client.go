@@ -63,8 +63,8 @@ func (c *Client) List(ctx context.Context, request *v3.ListMessagesRequest) (*v3
 	if request.Recipient != nil {
 		queryParams.Add("recipient", fmt.Sprintf("%v", *request.Recipient))
 	}
-	if request.Status != nil {
-		queryParams.Add("status", fmt.Sprintf("%v", *request.Status))
+	for _, value := range request.Status {
+		queryParams.Add("status", fmt.Sprintf("%v", *value))
 	}
 	if request.Tags != nil {
 		queryParams.Add("tags", fmt.Sprintf("%v", *request.Tags))
