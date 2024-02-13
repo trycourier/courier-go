@@ -29,7 +29,7 @@ type ListMessagesRequest struct {
 	// A unique identifier representing the recipient associated with the requested profile.
 	Recipient *string `json:"-"`
 	// An indicator of the current status of the message. Multiple status values can be passed in.
-	Status *string `json:"-"`
+	Status []*string `json:"-"`
 	// A comma delimited list of 'tags'. Messages will be returned if they match any of the tags passed in.
 	Tags *string `json:"-"`
 	// The enqueued datetime of a message to filter out messages received before.
