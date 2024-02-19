@@ -10,37 +10,37 @@ import (
 
 type TenantCreateOrReplaceParams struct {
 	// Name of the tenant.
-	Name string `json:"name"`
+	Name string `json:"name" url:"name"`
 	// Tenant's parent id (if any).
-	ParentTenantId *string `json:"parent_tenant_id,omitempty"`
+	ParentTenantId *string `json:"parent_tenant_id,omitempty" url:"parent_tenant_id,omitempty"`
 	// Defines the preferences used for the tenant when the user hasn't specified their own.
-	DefaultPreferences *DefaultPreferences `json:"default_preferences,omitempty"`
+	DefaultPreferences *DefaultPreferences `json:"default_preferences,omitempty" url:"default_preferences,omitempty"`
 	// Arbitrary properties accessible to a template.
-	Properties []TemplateProperty `json:"properties,omitempty"`
+	Properties []TemplateProperty `json:"properties,omitempty" url:"properties,omitempty"`
 	// A user profile object merged with user profile on send.
-	UserProfile map[string]interface{} `json:"user_profile,omitempty"`
+	UserProfile map[string]interface{} `json:"user_profile,omitempty" url:"user_profile,omitempty"`
 	// Brand to be used for the account when one is not specified by the send call.
-	BrandId *string `json:"brand_id,omitempty"`
+	BrandId *string `json:"brand_id,omitempty" url:"brand_id,omitempty"`
 }
 
 type ListUsersForTenantParams struct {
 	// The number of accounts to return
 	// (defaults to 20, maximum value of 100)
-	Limit *int `json:"-"`
+	Limit *int `json:"-" url:"limit,omitempty"`
 	// Continue the pagination with the next cursor
-	Cursor *string `json:"-"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
 }
 
 type ListTenantParams struct {
 	// The number of accousnts to return
 	// (defaults to 20, maximum value of 100)
-	Limit *int `json:"-"`
+	Limit *int `json:"-" url:"limit,omitempty"`
 	// Continue the pagination with the next cursor
-	Cursor *string `json:"-"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
 }
 
 type DefaultPreferences struct {
-	Items []*SubscriptionTopic `json:"items,omitempty"`
+	Items []*SubscriptionTopic `json:"items,omitempty" url:"items,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -69,17 +69,17 @@ func (d *DefaultPreferences) String() string {
 }
 
 type ListUsersForTenantResponse struct {
-	Items []*UserTenantAssociation `json:"items,omitempty"`
+	Items []*UserTenantAssociation `json:"items,omitempty" url:"items,omitempty"`
 	// Set to true when there are more pages that can be retrieved.
-	HasMore bool `json:"has_more"`
+	HasMore bool `json:"has_more" url:"has_more"`
 	// A url that may be used to generate these results.
-	Url string `json:"url"`
+	Url string `json:"url" url:"url"`
 	// A url that may be used to generate fetch the next set of results.
 	// Defined only when `has_more` is set to true
-	NextUrl *string `json:"next_url,omitempty"`
+	NextUrl *string `json:"next_url,omitempty" url:"next_url,omitempty"`
 	// A pointer to the next page of results. Defined
 	// only when `has_more` is set to true
-	Cursor *string `json:"cursor,omitempty"`
+	Cursor *string `json:"cursor,omitempty" url:"cursor,omitempty"`
 	// Always set to `list`. Represents the type of this object.
 	type_ string
 
@@ -91,12 +91,16 @@ func (l *ListUsersForTenantResponse) Type() string {
 }
 
 func (l *ListUsersForTenantResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ListUsersForTenantResponse
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed ListUsersForTenantResponse
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*l),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*l = ListUsersForTenantResponse(value)
+	*l = ListUsersForTenantResponse(unmarshaler.embed)
 	l.type_ = "list"
 	l._rawJSON = json.RawMessage(data)
 	return nil
@@ -130,19 +134,19 @@ type TemplateProperty = interface{}
 
 type Tenant struct {
 	// Id of the tenant.
-	Id string `json:"id"`
+	Id string `json:"id" url:"id"`
 	// Name of the tenant.
-	Name string `json:"name"`
+	Name string `json:"name" url:"name"`
 	// Tenant's parent id (if any).
-	ParentTenantId *string `json:"parent_tenant_id,omitempty"`
+	ParentTenantId *string `json:"parent_tenant_id,omitempty" url:"parent_tenant_id,omitempty"`
 	// Defines the preferences used for the account when the user hasn't specified their own.
-	DefaultPreferences *DefaultPreferences `json:"default_preferences,omitempty"`
+	DefaultPreferences *DefaultPreferences `json:"default_preferences,omitempty" url:"default_preferences,omitempty"`
 	// Arbitrary properties accessible to a template.
-	Properties *TemplateProperty `json:"properties,omitempty"`
+	Properties *TemplateProperty `json:"properties,omitempty" url:"properties,omitempty"`
 	// A user profile object merged with user profile on send.
-	UserProfile map[string]interface{} `json:"user_profile,omitempty"`
+	UserProfile map[string]interface{} `json:"user_profile,omitempty" url:"user_profile,omitempty"`
 	// Brand to be used for the account when one is not specified by the send call.
-	BrandId *string `json:"brand_id,omitempty"`
+	BrandId *string `json:"brand_id,omitempty" url:"brand_id,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -172,16 +176,16 @@ func (t *Tenant) String() string {
 
 type TenantListResponse struct {
 	// A pointer to the next page of results. Defined only when has_more is set to true.
-	Cursor *string `json:"cursor,omitempty"`
+	Cursor *string `json:"cursor,omitempty" url:"cursor,omitempty"`
 	// Set to true when there are more pages that can be retrieved.
-	HasMore bool `json:"has_more"`
+	HasMore bool `json:"has_more" url:"has_more"`
 	// An array of Tenants
-	Items []*Tenant `json:"items,omitempty"`
+	Items []*Tenant `json:"items,omitempty" url:"items,omitempty"`
 	// A url that may be used to generate fetch the next set of results.
 	// Defined only when has_more is set to true
-	NextUrl *string `json:"next_url,omitempty"`
+	NextUrl *string `json:"next_url,omitempty" url:"next_url,omitempty"`
 	// A url that may be used to generate these results.
-	Url string `json:"url"`
+	Url string `json:"url" url:"url"`
 	// Always set to "list". Represents the type of this object.
 	type_ string
 
@@ -193,12 +197,16 @@ func (t *TenantListResponse) Type() string {
 }
 
 func (t *TenantListResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler TenantListResponse
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed TenantListResponse
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*t),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*t = TenantListResponse(value)
+	*t = TenantListResponse(unmarshaler.embed)
 	t.type_ = "list"
 	t._rawJSON = json.RawMessage(data)
 	return nil

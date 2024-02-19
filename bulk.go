@@ -9,11 +9,11 @@ import (
 )
 
 type BulkCreateJobParams struct {
-	Message *InboundBulkMessage `json:"message,omitempty"`
+	Message *InboundBulkMessage `json:"message,omitempty" url:"message,omitempty"`
 }
 
 type BulkCreateJobResponse struct {
-	JobId string `json:"jobId"`
+	JobId string `json:"jobId" url:"jobId"`
 
 	_rawJSON json.RawMessage
 }
@@ -42,7 +42,7 @@ func (b *BulkCreateJobResponse) String() string {
 }
 
 type BulkGetJobResponse struct {
-	Job *JobDetails `json:"job,omitempty"`
+	Job *JobDetails `json:"job,omitempty" url:"job,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -71,8 +71,8 @@ func (b *BulkGetJobResponse) String() string {
 }
 
 type BulkGetJobUsersResponse struct {
-	Items  []*BulkMessageUserResponse `json:"items,omitempty"`
-	Paging *Paging                    `json:"paging,omitempty"`
+	Items  []*BulkMessageUserResponse `json:"items,omitempty" url:"items,omitempty"`
+	Paging *Paging                    `json:"paging,omitempty" url:"paging,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -101,7 +101,7 @@ func (b *BulkGetJobUsersResponse) String() string {
 }
 
 type BulkIngestUsersParams struct {
-	Users []*InboundBulkMessageUser `json:"users,omitempty"`
+	Users []*InboundBulkMessageUser `json:"users,omitempty" url:"users,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -132,17 +132,17 @@ func (b *BulkIngestUsersParams) String() string {
 type InboundBulkMessage struct {
 	// A unique identifier that represents the brand that should be used
 	// for rendering the notification.
-	Brand *string `json:"brand,omitempty"`
+	Brand *string `json:"brand,omitempty" url:"brand,omitempty"`
 	// JSON that includes any data you want to pass to a message template.
 	// The data will populate the corresponding template variables.
-	Data   map[string]interface{} `json:"data,omitempty"`
-	Event  *string                `json:"event,omitempty"`
-	Locale map[string]interface{} `json:"locale,omitempty"`
+	Data   map[string]interface{} `json:"data,omitempty" url:"data,omitempty"`
+	Event  *string                `json:"event,omitempty" url:"event,omitempty"`
+	Locale map[string]interface{} `json:"locale,omitempty" url:"locale,omitempty"`
 	// JSON that is merged into the request sent by Courier to the provider
 	// to override properties or to gain access to features in the provider
 	// API that are not natively supported by Courier.
-	Override interface{}           `json:"override,omitempty"`
-	Message  *InboundBulkMessageV2 `json:"message,omitempty"`
+	Override interface{}           `json:"override,omitempty" url:"override,omitempty"`
+	Message  *InboundBulkMessageV2 `json:"message,omitempty" url:"message,omitempty"`
 
 	_rawJSON json.RawMessage
 }

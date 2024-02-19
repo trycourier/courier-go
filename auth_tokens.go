@@ -9,12 +9,12 @@ import (
 )
 
 type IssueTokenParams struct {
-	Scope     string `json:"scope"`
-	ExpiresIn string `json:"expires_in"`
+	Scope     string `json:"scope" url:"scope"`
+	ExpiresIn string `json:"expires_in" url:"expires_in"`
 }
 
 type IssueTokenResponse struct {
-	Token *string `json:"token,omitempty"`
+	Token *string `json:"token,omitempty" url:"token,omitempty"`
 
 	_rawJSON json.RawMessage
 }

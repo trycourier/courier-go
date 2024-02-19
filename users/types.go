@@ -11,12 +11,12 @@ import (
 
 type TopicPreference struct {
 	// The Channels a user has chosen to receive notifications through for this topic
-	CustomRouting    []v3.ChannelClassification `json:"custom_routing,omitempty"`
-	DefaultStatus    v3.PreferenceStatus        `json:"default_status,omitempty"`
-	HasCustomRouting *bool                      `json:"has_custom_routing,omitempty"`
-	Status           v3.PreferenceStatus        `json:"status,omitempty"`
-	TopicId          string                     `json:"topic_id"`
-	TopicName        string                     `json:"topic_name"`
+	CustomRouting    []v3.ChannelClassification `json:"custom_routing,omitempty" url:"custom_routing,omitempty"`
+	DefaultStatus    v3.PreferenceStatus        `json:"default_status,omitempty" url:"default_status,omitempty"`
+	HasCustomRouting *bool                      `json:"has_custom_routing,omitempty" url:"has_custom_routing,omitempty"`
+	Status           v3.PreferenceStatus        `json:"status,omitempty" url:"status,omitempty"`
+	TopicId          string                     `json:"topic_id" url:"topic_id"`
+	TopicName        string                     `json:"topic_name" url:"topic_name"`
 
 	_rawJSON json.RawMessage
 }
@@ -45,8 +45,8 @@ func (t *TopicPreference) String() string {
 }
 
 type DeleteUserTokenOpts struct {
-	UserId string `json:"user_id"`
-	Token  string `json:"token"`
+	UserId string `json:"user_id" url:"user_id"`
+	Token  string `json:"token" url:"token"`
 
 	_rawJSON json.RawMessage
 }
@@ -76,17 +76,17 @@ func (d *DeleteUserTokenOpts) String() string {
 
 type Device struct {
 	// Id of the application the token is used for
-	AppId *string `json:"app_id,omitempty"`
+	AppId *string `json:"app_id,omitempty" url:"app_id,omitempty"`
 	// Id of the advertising identifier
-	AdId *string `json:"ad_id,omitempty"`
+	AdId *string `json:"ad_id,omitempty" url:"ad_id,omitempty"`
 	// Id of the device the token is associated with
-	DeviceId *string `json:"device_id,omitempty"`
+	DeviceId *string `json:"device_id,omitempty" url:"device_id,omitempty"`
 	// The device platform i.e. android, ios, web
-	Platform *string `json:"platform,omitempty"`
+	Platform *string `json:"platform,omitempty" url:"platform,omitempty"`
 	// The device manufacturer
-	Manufacturer *string `json:"manufacturer,omitempty"`
+	Manufacturer *string `json:"manufacturer,omitempty" url:"manufacturer,omitempty"`
 	// The device model
-	Model *string `json:"model,omitempty"`
+	Model *string `json:"model,omitempty" url:"model,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -172,8 +172,8 @@ func (e *ExpiryDate) Accept(visitor ExpiryDateVisitor) error {
 }
 
 type GetUserTokenOpts struct {
-	UserId string `json:"user_id"`
-	Token  string `json:"token"`
+	UserId string `json:"user_id" url:"user_id"`
+	Token  string `json:"token" url:"token"`
 
 	_rawJSON json.RawMessage
 }
@@ -202,7 +202,7 @@ func (g *GetUserTokenOpts) String() string {
 }
 
 type GetUserTokensOpts struct {
-	UserId string `json:"user_id"`
+	UserId string `json:"user_id" url:"user_id"`
 
 	_rawJSON json.RawMessage
 }
@@ -266,11 +266,11 @@ func (p PatchOp) Ptr() *PatchOp {
 
 type PatchOperation struct {
 	// The operation to perform.
-	Op string `json:"op"`
+	Op string `json:"op" url:"op"`
 	// The JSON path specifying the part of the profile to operate on.
-	Path string `json:"path"`
+	Path string `json:"path" url:"path"`
 	// The value for the operation.
-	Value *string `json:"value,omitempty"`
+	Value *string `json:"value,omitempty" url:"value,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -327,8 +327,8 @@ func (p ProviderKey) Ptr() *ProviderKey {
 }
 
 type PutUserTokenOpts struct {
-	UserId string     `json:"user_id"`
-	Token  *UserToken `json:"token,omitempty"`
+	UserId string     `json:"user_id" url:"user_id"`
+	Token  *UserToken `json:"token,omitempty" url:"token,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -357,8 +357,8 @@ func (p *PutUserTokenOpts) String() string {
 }
 
 type PutUserTokensOpts struct {
-	UserId string       `json:"user_id"`
-	Tokens []*UserToken `json:"tokens,omitempty"`
+	UserId string       `json:"user_id" url:"user_id"`
+	Tokens []*UserToken `json:"tokens,omitempty" url:"tokens,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -416,13 +416,13 @@ func (t TokenStatus) Ptr() *TokenStatus {
 
 type Tracking struct {
 	// The operating system version
-	OsVersion *string `json:"os_version,omitempty"`
+	OsVersion *string `json:"os_version,omitempty" url:"os_version,omitempty"`
 	// The IP address of the device
-	Ip *string `json:"ip,omitempty"`
+	Ip *string `json:"ip,omitempty" url:"ip,omitempty"`
 	// The latitude of the device
-	Lat *string `json:"lat,omitempty"`
+	Lat *string `json:"lat,omitempty" url:"lat,omitempty"`
 	// The longitude of the device
-	Long *string `json:"long,omitempty"`
+	Long *string `json:"long,omitempty" url:"long,omitempty"`
 
 	_rawJSON json.RawMessage
 }

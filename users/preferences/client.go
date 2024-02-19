@@ -10,6 +10,7 @@ import (
 	fmt "fmt"
 	v3 "github.com/trycourier/courier-go/v3"
 	core "github.com/trycourier/courier-go/v3/core"
+	option "github.com/trycourier/courier-go/v3/option"
 	users "github.com/trycourier/courier-go/v3/users"
 	io "io"
 	http "net/http"
@@ -21,27 +22,39 @@ type Client struct {
 	header  http.Header
 }
 
-func NewClient(opts ...core.ClientOption) *Client {
-	options := core.NewClientOptions()
-	for _, opt := range opts {
-		opt(options)
-	}
+func NewClient(opts ...option.RequestOption) *Client {
+	options := core.NewRequestOptions(opts...)
 	return &Client{
 		baseURL: options.BaseURL,
-		caller:  core.NewCaller(options.HTTPClient),
-		header:  options.ToHeader(),
+		caller: core.NewCaller(
+			&core.CallerParams{
+				Client:      options.HTTPClient,
+				MaxAttempts: options.MaxAttempts,
+			},
+		),
+		header: options.ToHeader(),
 	}
 }
 
 // Fetch all user preferences.
-//
-// A unique identifier associated with the user whose preferences you wish to retrieve.
-func (c *Client) List(ctx context.Context, userId string) (*users.UserPreferencesListResponse, error) {
+func (c *Client) List(
+	ctx context.Context,
+	// A unique identifier associated with the user whose preferences you wish to retrieve.
+	userId string,
+	opts ...option.RequestOption,
+) (*users.UserPreferencesListResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v/preferences", userId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -68,7 +81,9 @@ func (c *Client) List(ctx context.Context, userId string) (*users.UserPreference
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodGet,
-			Headers:      c.header,
+			MaxAttempts:  options.MaxAttempts,
+			Headers:      headers,
+			Client:       options.HTTPClient,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
@@ -79,15 +94,26 @@ func (c *Client) List(ctx context.Context, userId string) (*users.UserPreference
 }
 
 // Fetch user preferences for a specific subscription topic.
-//
-// A unique identifier associated with the user whose preferences you wish to retrieve.
-// A unique identifier associated with a subscription topic.
-func (c *Client) Get(ctx context.Context, userId string, topicId string) (*users.UserPreferencesGetResponse, error) {
+func (c *Client) Get(
+	ctx context.Context,
+	// A unique identifier associated with the user whose preferences you wish to retrieve.
+	userId string,
+	// A unique identifier associated with a subscription topic.
+	topicId string,
+	opts ...option.RequestOption,
+) (*users.UserPreferencesGetResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v/preferences/%v", userId, topicId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -114,7 +140,9 @@ func (c *Client) Get(ctx context.Context, userId string, topicId string) (*users
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodGet,
-			Headers:      c.header,
+			MaxAttempts:  options.MaxAttempts,
+			Headers:      headers,
+			Client:       options.HTTPClient,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
@@ -125,15 +153,27 @@ func (c *Client) Get(ctx context.Context, userId string, topicId string) (*users
 }
 
 // Update or Create user preferences for a specific subscription topic.
-//
-// A unique identifier associated with the user whose preferences you wish to retrieve.
-// A unique identifier associated with a subscription topic.
-func (c *Client) Update(ctx context.Context, userId string, topicId string, request *users.UserPreferencesUpdateParams) (*users.UserPreferencesUpdateResponse, error) {
+func (c *Client) Update(
+	ctx context.Context,
+	// A unique identifier associated with the user whose preferences you wish to retrieve.
+	userId string,
+	// A unique identifier associated with a subscription topic.
+	topicId string,
+	request *users.UserPreferencesUpdateParams,
+	opts ...option.RequestOption,
+) (*users.UserPreferencesUpdateResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v/preferences/%v", userId, topicId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -160,7 +200,9 @@ func (c *Client) Update(ctx context.Context, userId string, topicId string, requ
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodPut,
-			Headers:      c.header,
+			MaxAttempts:  options.MaxAttempts,
+			Headers:      headers,
+			Client:       options.HTTPClient,
 			Request:      request,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,

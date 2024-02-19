@@ -10,6 +10,7 @@ import (
 	fmt "fmt"
 	v3 "github.com/trycourier/courier-go/v3"
 	core "github.com/trycourier/courier-go/v3/core"
+	option "github.com/trycourier/courier-go/v3/option"
 	io "io"
 	http "net/http"
 )
@@ -20,24 +21,37 @@ type Client struct {
 	header  http.Header
 }
 
-func NewClient(opts ...core.ClientOption) *Client {
-	options := core.NewClientOptions()
-	for _, opt := range opts {
-		opt(options)
-	}
+func NewClient(opts ...option.RequestOption) *Client {
+	options := core.NewRequestOptions(opts...)
 	return &Client{
 		baseURL: options.BaseURL,
-		caller:  core.NewCaller(options.HTTPClient),
-		header:  options.ToHeader(),
+		caller: core.NewCaller(
+			&core.CallerParams{
+				Client:      options.HTTPClient,
+				MaxAttempts: options.MaxAttempts,
+			},
+		),
+		header: options.ToHeader(),
 	}
 }
 
-func (c *Client) CreateJob(ctx context.Context, request *v3.BulkCreateJobParams) (*v3.BulkCreateJobResponse, error) {
+func (c *Client) CreateJob(
+	ctx context.Context,
+	request *v3.BulkCreateJobParams,
+	opts ...option.IdempotentRequestOption,
+) (*v3.BulkCreateJobResponse, error) {
+	options := core.NewIdempotentRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := baseURL + "/" + "bulk"
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -64,7 +78,9 @@ func (c *Client) CreateJob(ctx context.Context, request *v3.BulkCreateJobParams)
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodPost,
-			Headers:      c.header,
+			MaxAttempts:  options.MaxAttempts,
+			Headers:      headers,
+			Client:       options.HTTPClient,
 			Request:      request,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
@@ -76,22 +92,35 @@ func (c *Client) CreateJob(ctx context.Context, request *v3.BulkCreateJobParams)
 }
 
 // Ingest user data into a Bulk Job
-//
-// A unique identifier representing the bulk job
-func (c *Client) IngestUsers(ctx context.Context, jobId string, request *v3.BulkIngestUsersParams) error {
+func (c *Client) IngestUsers(
+	ctx context.Context,
+	// A unique identifier representing the bulk job
+	jobId string,
+	request *v3.BulkIngestUsersParams,
+	opts ...option.IdempotentRequestOption,
+) error {
+	options := core.NewIdempotentRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"bulk/%v", jobId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
-			URL:     endpointURL,
-			Method:  http.MethodPost,
-			Headers: c.header,
-			Request: request,
+			URL:         endpointURL,
+			Method:      http.MethodPost,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
+			Request:     request,
 		},
 	); err != nil {
 		return err
@@ -100,14 +129,24 @@ func (c *Client) IngestUsers(ctx context.Context, jobId string, request *v3.Bulk
 }
 
 // Run a bulk job
-//
-// A unique identifier representing the bulk job
-func (c *Client) RunJob(ctx context.Context, jobId string) error {
+func (c *Client) RunJob(
+	ctx context.Context,
+	// A unique identifier representing the bulk job
+	jobId string,
+	opts ...option.IdempotentRequestOption,
+) error {
+	options := core.NewIdempotentRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"bulk/%v/run", jobId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -133,7 +172,9 @@ func (c *Client) RunJob(ctx context.Context, jobId string) error {
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodPost,
-			Headers:      c.header,
+			MaxAttempts:  options.MaxAttempts,
+			Headers:      headers,
+			Client:       options.HTTPClient,
 			ErrorDecoder: errorDecoder,
 		},
 	); err != nil {
@@ -143,14 +184,24 @@ func (c *Client) RunJob(ctx context.Context, jobId string) error {
 }
 
 // Get a bulk job
-//
-// A unique identifier representing the bulk job
-func (c *Client) GetJob(ctx context.Context, jobId string) (*v3.BulkGetJobResponse, error) {
+func (c *Client) GetJob(
+	ctx context.Context,
+	// A unique identifier representing the bulk job
+	jobId string,
+	opts ...option.RequestOption,
+) (*v3.BulkGetJobResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"bulk/%v", jobId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -177,7 +228,9 @@ func (c *Client) GetJob(ctx context.Context, jobId string) (*v3.BulkGetJobRespon
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodGet,
-			Headers:      c.header,
+			MaxAttempts:  options.MaxAttempts,
+			Headers:      headers,
+			Client:       options.HTTPClient,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
@@ -188,14 +241,24 @@ func (c *Client) GetJob(ctx context.Context, jobId string) (*v3.BulkGetJobRespon
 }
 
 // Get Bulk Job Users
-//
-// A unique identifier representing the bulk job
-func (c *Client) GetUsers(ctx context.Context, jobId string) (*v3.BulkGetJobUsersResponse, error) {
+func (c *Client) GetUsers(
+	ctx context.Context,
+	// A unique identifier representing the bulk job
+	jobId string,
+	opts ...option.RequestOption,
+) (*v3.BulkGetJobUsersResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"bulk/%v/users", jobId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -222,7 +285,9 @@ func (c *Client) GetUsers(ctx context.Context, jobId string) (*v3.BulkGetJobUser
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodGet,
-			Headers:      c.header,
+			MaxAttempts:  options.MaxAttempts,
+			Headers:      headers,
+			Client:       options.HTTPClient,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},

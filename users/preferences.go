@@ -10,7 +10,7 @@ import (
 )
 
 type UserPreferencesGetResponse struct {
-	Topic *TopicPreference `json:"topic,omitempty"`
+	Topic *TopicPreference `json:"topic,omitempty" url:"topic,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -39,9 +39,9 @@ func (u *UserPreferencesGetResponse) String() string {
 }
 
 type UserPreferencesListResponse struct {
-	Paging *v3.Paging `json:"paging,omitempty"`
+	Paging *v3.Paging `json:"paging,omitempty" url:"paging,omitempty"`
 	// The Preferences associated with the user_id.
-	Items []*TopicPreference `json:"items,omitempty"`
+	Items []*TopicPreference `json:"items,omitempty" url:"items,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -70,7 +70,7 @@ func (u *UserPreferencesListResponse) String() string {
 }
 
 type UserPreferencesUpdateResponse struct {
-	Message string `json:"message"`
+	Message string `json:"message" url:"message"`
 
 	_rawJSON json.RawMessage
 }
@@ -99,9 +99,9 @@ func (u *UserPreferencesUpdateResponse) String() string {
 }
 
 type UserPreferencesUpdateParams struct {
-	Status v3.PreferenceStatus `json:"status,omitempty"`
+	Status v3.PreferenceStatus `json:"status,omitempty" url:"status,omitempty"`
 	// The Channels a user has chosen to receive notifications through for this topic
-	CustomRouting    []v3.ChannelClassification `json:"custom_routing,omitempty"`
-	DefaultStatus    v3.PreferenceStatus        `json:"default_status,omitempty"`
-	HasCustomRouting *bool                      `json:"has_custom_routing,omitempty"`
+	CustomRouting    []v3.ChannelClassification `json:"custom_routing,omitempty" url:"custom_routing,omitempty"`
+	DefaultStatus    v3.PreferenceStatus        `json:"default_status,omitempty" url:"default_status,omitempty"`
+	HasCustomRouting *bool                      `json:"has_custom_routing,omitempty" url:"has_custom_routing,omitempty"`
 }

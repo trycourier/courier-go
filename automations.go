@@ -9,12 +9,12 @@ import (
 )
 
 type AutomationAdHocInvokeParams struct {
-	Brand      *string                `json:"brand,omitempty"`
-	Data       map[string]interface{} `json:"data,omitempty"`
-	Profile    *Profile               `json:"profile,omitempty"`
-	Recipient  *string                `json:"recipient,omitempty"`
-	Template   *string                `json:"template,omitempty"`
-	Automation *Automation            `json:"automation,omitempty"`
+	Brand      *string                `json:"brand,omitempty" url:"brand,omitempty"`
+	Data       map[string]interface{} `json:"data,omitempty" url:"data,omitempty"`
+	Profile    *Profile               `json:"profile,omitempty" url:"profile,omitempty"`
+	Recipient  *string                `json:"recipient,omitempty" url:"recipient,omitempty"`
+	Template   *string                `json:"template,omitempty" url:"template,omitempty"`
+	Automation *Automation            `json:"automation,omitempty" url:"automation,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -43,11 +43,11 @@ func (a *AutomationAdHocInvokeParams) String() string {
 }
 
 type AutomationInvokeParams struct {
-	Brand     *string                `json:"brand,omitempty"`
-	Data      map[string]interface{} `json:"data,omitempty"`
-	Profile   *Profile               `json:"profile,omitempty"`
-	Recipient *string                `json:"recipient,omitempty"`
-	Template  *string                `json:"template,omitempty"`
+	Brand     *string                `json:"brand,omitempty" url:"brand,omitempty"`
+	Data      map[string]interface{} `json:"data,omitempty" url:"data,omitempty"`
+	Profile   *Profile               `json:"profile,omitempty" url:"profile,omitempty"`
+	Recipient *string                `json:"recipient,omitempty" url:"recipient,omitempty"`
+	Template  *string                `json:"template,omitempty" url:"template,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -76,7 +76,7 @@ func (a *AutomationInvokeParams) String() string {
 }
 
 type AutomationInvokeResponse struct {
-	RunId string `json:"runId"`
+	RunId string `json:"runId" url:"runId"`
 
 	_rawJSON json.RawMessage
 }

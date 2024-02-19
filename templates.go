@@ -10,13 +10,13 @@ import (
 
 type ListTemplatesRequest struct {
 	// A unique identifier that allows for fetching the next set of templates
-	Cursor *string `json:"-"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
 }
 
 type ListTemplatesResponse struct {
-	Paging *Paging `json:"paging,omitempty"`
+	Paging *Paging `json:"paging,omitempty" url:"paging,omitempty"`
 	// An array of Notification Templates
-	Results []*NotificationTemplates `json:"results,omitempty"`
+	Results []*NotificationTemplates `json:"results,omitempty" url:"results,omitempty"`
 
 	_rawJSON json.RawMessage
 }

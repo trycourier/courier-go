@@ -4,6 +4,7 @@ package client
 
 import (
 	core "github.com/trycourier/courier-go/v3/core"
+	option "github.com/trycourier/courier-go/v3/option"
 	preferences "github.com/trycourier/courier-go/v3/users/preferences"
 	tenants "github.com/trycourier/courier-go/v3/users/tenants"
 	tokens "github.com/trycourier/courier-go/v3/users/tokens"
@@ -20,14 +21,16 @@ type Client struct {
 	Tokens      *tokens.Client
 }
 
-func NewClient(opts ...core.ClientOption) *Client {
-	options := core.NewClientOptions()
-	for _, opt := range opts {
-		opt(options)
-	}
+func NewClient(opts ...option.RequestOption) *Client {
+	options := core.NewRequestOptions(opts...)
 	return &Client{
-		baseURL:     options.BaseURL,
-		caller:      core.NewCaller(options.HTTPClient),
+		baseURL: options.BaseURL,
+		caller: core.NewCaller(
+			&core.CallerParams{
+				Client:      options.HTTPClient,
+				MaxAttempts: options.MaxAttempts,
+			},
+		),
 		header:      options.ToHeader(),
 		Preferences: preferences.NewClient(opts...),
 		Tenants:     tenants.NewClient(opts...),

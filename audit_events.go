@@ -10,16 +10,16 @@ import (
 
 type ListAuditEventsRequest struct {
 	// A unique identifier that allows for fetching the next set of audit events.
-	Cursor *string `json:"-"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
 }
 
 type AuditEvent struct {
-	Actor        *Actor  `json:"actor,omitempty"`
-	Target       *Target `json:"target,omitempty"`
-	AuditEventId string  `json:"auditEventId"`
-	Source       string  `json:"source"`
-	Timestamp    string  `json:"timestamp"`
-	Type         string  `json:"type"`
+	Actor        *Actor  `json:"actor,omitempty" url:"actor,omitempty"`
+	Target       *Target `json:"target,omitempty" url:"target,omitempty"`
+	AuditEventId string  `json:"auditEventId" url:"auditEventId"`
+	Source       string  `json:"source" url:"source"`
+	Timestamp    string  `json:"timestamp" url:"timestamp"`
+	Type         string  `json:"type" url:"type"`
 
 	_rawJSON json.RawMessage
 }
@@ -48,8 +48,8 @@ func (a *AuditEvent) String() string {
 }
 
 type ListAuditEventsResponse struct {
-	Paging  *Paging       `json:"paging,omitempty"`
-	Results []*AuditEvent `json:"results,omitempty"`
+	Paging  *Paging       `json:"paging,omitempty" url:"paging,omitempty"`
+	Results []*AuditEvent `json:"results,omitempty" url:"results,omitempty"`
 
 	_rawJSON json.RawMessage
 }

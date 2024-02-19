@@ -9,16 +9,16 @@ import (
 )
 
 type NotificationListParams struct {
-	Cursor *string `json:"-"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
 }
 
 type SubmissionChecksReplaceParams struct {
-	Checks []*BaseCheck `json:"checks,omitempty"`
+	Checks []*BaseCheck `json:"checks,omitempty" url:"checks,omitempty"`
 }
 
 type BaseCheck struct {
-	Id     string      `json:"id"`
-	Status CheckStatus `json:"status,omitempty"`
+	Id     string      `json:"id" url:"id"`
+	Status CheckStatus `json:"status,omitempty" url:"status,omitempty"`
 	type_  string
 
 	_rawJSON json.RawMessage
@@ -29,12 +29,16 @@ func (b *BaseCheck) Type() string {
 }
 
 func (b *BaseCheck) UnmarshalJSON(data []byte) error {
-	type unmarshaler BaseCheck
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed BaseCheck
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*b),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*b = BaseCheck(value)
+	*b = BaseCheck(unmarshaler.embed)
 	b.type_ = "custom"
 	b._rawJSON = json.RawMessage(data)
 	return nil
@@ -65,13 +69,13 @@ func (b *BaseCheck) String() string {
 }
 
 type NotificationBlock struct {
-	Alias    *string                         `json:"alias,omitempty"`
-	Context  *string                         `json:"context,omitempty"`
-	Id       string                          `json:"id"`
-	Type     BlockType                       `json:"type,omitempty"`
-	Content  *NotificationContent            `json:"content,omitempty"`
-	Locales  map[string]*NotificationContent `json:"locales,omitempty"`
-	Checksum *string                         `json:"checksum,omitempty"`
+	Alias    *string                         `json:"alias,omitempty" url:"alias,omitempty"`
+	Context  *string                         `json:"context,omitempty" url:"context,omitempty"`
+	Id       string                          `json:"id" url:"id"`
+	Type     BlockType                       `json:"type,omitempty" url:"type,omitempty"`
+	Content  *NotificationContent            `json:"content,omitempty" url:"content,omitempty"`
+	Locales  map[string]*NotificationContent `json:"locales,omitempty" url:"locales,omitempty"`
+	Checksum *string                         `json:"checksum,omitempty" url:"checksum,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -100,11 +104,11 @@ func (n *NotificationBlock) String() string {
 }
 
 type NotificationChannel struct {
-	Id       string                                 `json:"id"`
-	Type     *string                                `json:"type,omitempty"`
-	Content  *NotificationChannelContent            `json:"content,omitempty"`
-	Locales  map[string]*NotificationChannelContent `json:"locales,omitempty"`
-	Checksum *string                                `json:"checksum,omitempty"`
+	Id       string                                 `json:"id" url:"id"`
+	Type     *string                                `json:"type,omitempty" url:"type,omitempty"`
+	Content  *NotificationChannelContent            `json:"content,omitempty" url:"content,omitempty"`
+	Locales  map[string]*NotificationChannelContent `json:"locales,omitempty" url:"locales,omitempty"`
+	Checksum *string                                `json:"checksum,omitempty" url:"checksum,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -133,9 +137,9 @@ func (n *NotificationChannel) String() string {
 }
 
 type NotificationGetContentResponse struct {
-	Blocks   []*NotificationBlock   `json:"blocks,omitempty"`
-	Channels []*NotificationChannel `json:"channels,omitempty"`
-	Checksum *string                `json:"checksum,omitempty"`
+	Blocks   []*NotificationBlock   `json:"blocks,omitempty" url:"blocks,omitempty"`
+	Channels []*NotificationChannel `json:"channels,omitempty" url:"channels,omitempty"`
+	Checksum *string                `json:"checksum,omitempty" url:"checksum,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -164,8 +168,8 @@ func (n *NotificationGetContentResponse) String() string {
 }
 
 type NotificationListResponse struct {
-	Paging  *Paging         `json:"paging,omitempty"`
-	Results []*Notification `json:"results,omitempty"`
+	Paging  *Paging         `json:"paging,omitempty" url:"paging,omitempty"`
+	Results []*Notification `json:"results,omitempty" url:"results,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -194,7 +198,7 @@ func (n *NotificationListResponse) String() string {
 }
 
 type SubmissionChecksGetResponse struct {
-	Checks []*Check `json:"checks,omitempty"`
+	Checks []*Check `json:"checks,omitempty" url:"checks,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -223,7 +227,7 @@ func (s *SubmissionChecksGetResponse) String() string {
 }
 
 type SubmissionChecksReplaceResponse struct {
-	Checks []*Check `json:"checks,omitempty"`
+	Checks []*Check `json:"checks,omitempty" url:"checks,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -252,11 +256,11 @@ func (s *SubmissionChecksReplaceResponse) String() string {
 }
 
 type NotificationDraftUpdateVariationsParams struct {
-	Blocks   []*NotificationBlock   `json:"blocks,omitempty"`
-	Channels []*NotificationChannel `json:"channels,omitempty"`
+	Blocks   []*NotificationBlock   `json:"blocks,omitempty" url:"blocks,omitempty"`
+	Channels []*NotificationChannel `json:"channels,omitempty" url:"channels,omitempty"`
 }
 
 type NotificationUpdateVariationsParams struct {
-	Blocks   []*NotificationBlock   `json:"blocks,omitempty"`
-	Channels []*NotificationChannel `json:"channels,omitempty"`
+	Blocks   []*NotificationBlock   `json:"blocks,omitempty" url:"blocks,omitempty"`
+	Channels []*NotificationChannel `json:"channels,omitempty" url:"channels,omitempty"`
 }
