@@ -10,31 +10,31 @@ import (
 )
 
 type AddUserToSingleTenantsParams struct {
-	Profile *AddUserToSingleTenantsParamsProfile `json:"profile,omitempty"`
+	Profile *AddUserToSingleTenantsParamsProfile `json:"profile,omitempty" url:"profile,omitempty"`
 }
 
 type AddUserToMultipleTenantsParams struct {
-	Tenants []*v3.UserTenantAssociation `json:"tenants,omitempty"`
+	Tenants []*v3.UserTenantAssociation `json:"tenants,omitempty" url:"tenants,omitempty"`
 }
 
 type ListTenantsForUserParams struct {
 	// The number of accounts to return
 	// (defaults to 20, maximum value of 100)
-	Limit *int `json:"-"`
+	Limit *int `json:"-" url:"limit,omitempty"`
 	// Continue the pagination with the next cursor
-	Cursor *string `json:"-"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
 }
 
 type AddUserToSingleTenantsParamsProfile struct {
-	Title string `json:"title"`
+	Title string `json:"title" url:"title"`
 	// Email Address
-	Email string `json:"email"`
+	Email string `json:"email" url:"email"`
 	// A valid phone number
-	PhoneNumber string `json:"phone_number"`
+	PhoneNumber string `json:"phone_number" url:"phone_number"`
 	// The user's preferred ISO 639-1 language code.
-	Locale string `json:"locale"`
+	Locale string `json:"locale" url:"locale"`
 	// Additional provider specific fields may be specified.
-	AdditionalFields map[string]interface{} `json:"additional_fields,omitempty"`
+	AdditionalFields map[string]interface{} `json:"additional_fields,omitempty" url:"additional_fields,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -63,17 +63,17 @@ func (a *AddUserToSingleTenantsParamsProfile) String() string {
 }
 
 type ListTenantsForUserResponse struct {
-	Items []*v3.UserTenantAssociation `json:"items,omitempty"`
+	Items []*v3.UserTenantAssociation `json:"items,omitempty" url:"items,omitempty"`
 	// Set to true when there are more pages that can be retrieved.
-	HasMore bool `json:"has_more"`
+	HasMore bool `json:"has_more" url:"has_more"`
 	// A url that may be used to generate these results.
-	Url string `json:"url"`
+	Url string `json:"url" url:"url"`
 	// A url that may be used to generate fetch the next set of results.
 	// Defined only when `has_more` is set to true
-	NextUrl *string `json:"next_url,omitempty"`
+	NextUrl *string `json:"next_url,omitempty" url:"next_url,omitempty"`
 	// A pointer to the next page of results. Defined
 	// only when `has_more` is set to true
-	Cursor *string `json:"cursor,omitempty"`
+	Cursor *string `json:"cursor,omitempty" url:"cursor,omitempty"`
 	// Always set to `list`. Represents the type of this object.
 	type_ string
 
@@ -85,12 +85,16 @@ func (l *ListTenantsForUserResponse) Type() string {
 }
 
 func (l *ListTenantsForUserResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ListTenantsForUserResponse
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed ListTenantsForUserResponse
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*l),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*l = ListTenantsForUserResponse(value)
+	*l = ListTenantsForUserResponse(unmarshaler.embed)
 	l.type_ = "list"
 	l._rawJSON = json.RawMessage(data)
 	return nil

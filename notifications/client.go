@@ -7,8 +7,8 @@ import (
 	fmt "fmt"
 	v3 "github.com/trycourier/courier-go/v3"
 	core "github.com/trycourier/courier-go/v3/core"
+	option "github.com/trycourier/courier-go/v3/option"
 	http "net/http"
-	url "net/url"
 )
 
 type Client struct {
@@ -17,41 +17,56 @@ type Client struct {
 	header  http.Header
 }
 
-func NewClient(opts ...core.ClientOption) *Client {
-	options := core.NewClientOptions()
-	for _, opt := range opts {
-		opt(options)
-	}
+func NewClient(opts ...option.RequestOption) *Client {
+	options := core.NewRequestOptions(opts...)
 	return &Client{
 		baseURL: options.BaseURL,
-		caller:  core.NewCaller(options.HTTPClient),
-		header:  options.ToHeader(),
+		caller: core.NewCaller(
+			&core.CallerParams{
+				Client:      options.HTTPClient,
+				MaxAttempts: options.MaxAttempts,
+			},
+		),
+		header: options.ToHeader(),
 	}
 }
 
-func (c *Client) List(ctx context.Context, request *v3.NotificationListParams) (*v3.NotificationListResponse, error) {
+func (c *Client) List(
+	ctx context.Context,
+	request *v3.NotificationListParams,
+	opts ...option.RequestOption,
+) (*v3.NotificationListResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := baseURL + "/" + "notifications"
 
-	queryParams := make(url.Values)
-	if request.Cursor != nil {
-		queryParams.Add("cursor", fmt.Sprintf("%v", *request.Cursor))
+	queryParams, err := core.QueryValues(request)
+	if err != nil {
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
 	}
 
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+
 	var response *v3.NotificationListResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
-			URL:      endpointURL,
-			Method:   http.MethodGet,
-			Headers:  c.header,
-			Response: &response,
+			URL:         endpointURL,
+			Method:      http.MethodGet,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
 		return nil, err
@@ -59,21 +74,34 @@ func (c *Client) List(ctx context.Context, request *v3.NotificationListParams) (
 	return response, nil
 }
 
-func (c *Client) GetContent(ctx context.Context, id string) (*v3.NotificationGetContentResponse, error) {
+func (c *Client) GetContent(
+	ctx context.Context,
+	id string,
+	opts ...option.RequestOption,
+) (*v3.NotificationGetContentResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
+	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
 	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"notifications/%v/content", id)
 
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+
 	var response *v3.NotificationGetContentResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
-			URL:      endpointURL,
-			Method:   http.MethodGet,
-			Headers:  c.header,
-			Response: &response,
+			URL:         endpointURL,
+			Method:      http.MethodGet,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
 		return nil, err
@@ -81,21 +109,34 @@ func (c *Client) GetContent(ctx context.Context, id string) (*v3.NotificationGet
 	return response, nil
 }
 
-func (c *Client) GetDraftContent(ctx context.Context, id string) (*v3.NotificationGetContentResponse, error) {
+func (c *Client) GetDraftContent(
+	ctx context.Context,
+	id string,
+	opts ...option.RequestOption,
+) (*v3.NotificationGetContentResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
+	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
 	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"notifications/%v/draft/content", id)
 
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+
 	var response *v3.NotificationGetContentResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
-			URL:      endpointURL,
-			Method:   http.MethodGet,
-			Headers:  c.header,
-			Response: &response,
+			URL:         endpointURL,
+			Method:      http.MethodGet,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
 		return nil, err
@@ -103,20 +144,34 @@ func (c *Client) GetDraftContent(ctx context.Context, id string) (*v3.Notificati
 	return response, nil
 }
 
-func (c *Client) UpdateVariations(ctx context.Context, id string, request *v3.NotificationUpdateVariationsParams) error {
+func (c *Client) UpdateVariations(
+	ctx context.Context,
+	id string,
+	request *v3.NotificationUpdateVariationsParams,
+	opts ...option.RequestOption,
+) error {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
+	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
 	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"notifications/%v/variations", id)
 
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
-			URL:     endpointURL,
-			Method:  http.MethodPost,
-			Headers: c.header,
-			Request: request,
+			URL:         endpointURL,
+			Method:      http.MethodPost,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
+			Request:     request,
 		},
 	); err != nil {
 		return err
@@ -124,20 +179,34 @@ func (c *Client) UpdateVariations(ctx context.Context, id string, request *v3.No
 	return nil
 }
 
-func (c *Client) UpdateDraftVariations(ctx context.Context, id string, request *v3.NotificationDraftUpdateVariationsParams) error {
+func (c *Client) UpdateDraftVariations(
+	ctx context.Context,
+	id string,
+	request *v3.NotificationDraftUpdateVariationsParams,
+	opts ...option.RequestOption,
+) error {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
+	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
 	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"notifications/%v/draft/variations", id)
 
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
-			URL:     endpointURL,
-			Method:  http.MethodPost,
-			Headers: c.header,
-			Request: request,
+			URL:         endpointURL,
+			Method:      http.MethodPost,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
+			Request:     request,
 		},
 	); err != nil {
 		return err
@@ -145,21 +214,35 @@ func (c *Client) UpdateDraftVariations(ctx context.Context, id string, request *
 	return nil
 }
 
-func (c *Client) GetSubmissionChecks(ctx context.Context, id string, submissionId string) (*v3.SubmissionChecksGetResponse, error) {
+func (c *Client) GetSubmissionChecks(
+	ctx context.Context,
+	id string,
+	submissionId string,
+	opts ...option.RequestOption,
+) (*v3.SubmissionChecksGetResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"notifications/%v/%v/checks", id, submissionId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	var response *v3.SubmissionChecksGetResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
-			URL:      endpointURL,
-			Method:   http.MethodGet,
-			Headers:  c.header,
-			Response: &response,
+			URL:         endpointURL,
+			Method:      http.MethodGet,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
 		return nil, err
@@ -167,22 +250,37 @@ func (c *Client) GetSubmissionChecks(ctx context.Context, id string, submissionI
 	return response, nil
 }
 
-func (c *Client) ReplaceSubmissionChecks(ctx context.Context, id string, submissionId string, request *v3.SubmissionChecksReplaceParams) (*v3.SubmissionChecksReplaceResponse, error) {
+func (c *Client) ReplaceSubmissionChecks(
+	ctx context.Context,
+	id string,
+	submissionId string,
+	request *v3.SubmissionChecksReplaceParams,
+	opts ...option.RequestOption,
+) (*v3.SubmissionChecksReplaceResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"notifications/%v/%v/checks", id, submissionId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	var response *v3.SubmissionChecksReplaceResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
-			URL:      endpointURL,
-			Method:   http.MethodPut,
-			Headers:  c.header,
-			Request:  request,
-			Response: &response,
+			URL:         endpointURL,
+			Method:      http.MethodPut,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
+			Request:     request,
+			Response:    &response,
 		},
 	); err != nil {
 		return nil, err
@@ -190,19 +288,33 @@ func (c *Client) ReplaceSubmissionChecks(ctx context.Context, id string, submiss
 	return response, nil
 }
 
-func (c *Client) CancelSubmission(ctx context.Context, id string, submissionId string) error {
+func (c *Client) CancelSubmission(
+	ctx context.Context,
+	id string,
+	submissionId string,
+	opts ...option.RequestOption,
+) error {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"notifications/%v/%v/checks", id, submissionId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
-			URL:     endpointURL,
-			Method:  http.MethodDelete,
-			Headers: c.header,
+			URL:         endpointURL,
+			Method:      http.MethodDelete,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
 		},
 	); err != nil {
 		return err

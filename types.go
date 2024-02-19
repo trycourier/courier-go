@@ -10,7 +10,7 @@ import (
 
 type SendMessageRequest struct {
 	// Defines the message to be delivered
-	Message *Message `json:"message,omitempty"`
+	Message *Message `json:"message,omitempty" url:"message,omitempty"`
 }
 
 type SendMessageResponse struct {
@@ -19,7 +19,7 @@ type SendMessageResponse struct {
 	// For send requests that have a single recipient, the `requestId` is assigned to the derived message as its message_id. Therefore the `requestId` can be supplied to the Message's API for single recipient messages.
 	//
 	// For send requests that have multiple recipients (accounts, audiences, lists, etc.), Courier assigns a unique id to each derived message as its `message_id`. Therefore the `requestId` cannot be supplied to the Message's API for single-recipient messages.
-	RequestId string `json:"requestId"`
+	RequestId string `json:"requestId" url:"requestId"`
 
 	_rawJSON json.RawMessage
 }
@@ -48,11 +48,11 @@ func (s *SendMessageResponse) String() string {
 }
 
 type AudienceMember struct {
-	AddedAt         string `json:"added_at"`
-	AudienceId      string `json:"audience_id"`
-	AudienceVersion int    `json:"audience_version"`
-	MemberId        string `json:"member_id"`
-	Reason          string `json:"reason"`
+	AddedAt         string `json:"added_at" url:"added_at"`
+	AudienceId      string `json:"audience_id" url:"audience_id"`
+	AudienceVersion int    `json:"audience_version" url:"audience_version"`
+	MemberId        string `json:"member_id" url:"member_id"`
+	Reason          string `json:"reason" url:"reason"`
 
 	_rawJSON json.RawMessage
 }
@@ -81,7 +81,7 @@ func (a *AudienceMember) String() string {
 }
 
 type AudienceMemberGetResponse struct {
-	AudienceMember *AudienceMember `json:"audienceMember,omitempty"`
+	AudienceMember *AudienceMember `json:"audienceMember,omitempty" url:"audienceMember,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -111,7 +111,7 @@ func (a *AudienceMemberGetResponse) String() string {
 
 type BaseFilterConfig struct {
 	// The operator to use for filtering
-	Operator *Operator `json:"operator,omitempty"`
+	Operator *Operator `json:"operator,omitempty" url:"operator,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -276,8 +276,8 @@ func (l LogicalOperator) Ptr() *LogicalOperator {
 // The operator to use for filtering
 type NestedFilterConfig struct {
 	// The operator to use for filtering
-	Operator *Operator       `json:"operator,omitempty"`
-	Rules    []*FilterConfig `json:"rules,omitempty"`
+	Operator *Operator       `json:"operator,omitempty" url:"operator,omitempty"`
+	Rules    []*FilterConfig `json:"rules,omitempty" url:"rules,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -365,11 +365,11 @@ func (o *Operator) Accept(visitor OperatorVisitor) error {
 // A single filter to use for filtering
 type SingleFilterConfig struct {
 	// The operator to use for filtering
-	Operator *Operator `json:"operator,omitempty"`
+	Operator *Operator `json:"operator,omitempty" url:"operator,omitempty"`
 	// The value to use for filtering
-	Value string `json:"value"`
+	Value string `json:"value" url:"value"`
 	// The attribe name from profile whose value will be operated against the filter value
-	Path string `json:"path"`
+	Path string `json:"path" url:"path"`
 
 	_rawJSON json.RawMessage
 }
@@ -398,8 +398,8 @@ func (s *SingleFilterConfig) String() string {
 }
 
 type Actor struct {
-	Id    *string `json:"id,omitempty"`
-	Email *string `json:"email,omitempty"`
+	Id    *string `json:"id,omitempty" url:"id,omitempty"`
+	Email *string `json:"email,omitempty" url:"email,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -428,7 +428,7 @@ func (a *Actor) String() string {
 }
 
 type GetAuditEventParams struct {
-	AuditEventId string `json:"auditEventId"`
+	AuditEventId string `json:"auditEventId" url:"auditEventId"`
 
 	_rawJSON json.RawMessage
 }
@@ -457,7 +457,7 @@ func (g *GetAuditEventParams) String() string {
 }
 
 type ListAuditEventsParams struct {
-	Cursor *string `json:"cursor,omitempty"`
+	Cursor *string `json:"cursor,omitempty" url:"cursor,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -486,8 +486,8 @@ func (l *ListAuditEventsParams) String() string {
 }
 
 type Target struct {
-	Id    *string `json:"id,omitempty"`
-	Email *string `json:"email,omitempty"`
+	Id    *string `json:"id,omitempty" url:"id,omitempty"`
+	Email *string `json:"email,omitempty" url:"email,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -516,8 +516,8 @@ func (t *Target) String() string {
 }
 
 type Automation struct {
-	CancelationToken *string                 `json:"cancelation_token,omitempty"`
-	Steps            []*AutomationStepOption `json:"steps,omitempty"`
+	CancelationToken *string                 `json:"cancelation_token,omitempty" url:"cancelation_token,omitempty"`
+	Steps            []*AutomationStepOption `json:"steps,omitempty" url:"steps,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -546,9 +546,9 @@ func (a *Automation) String() string {
 }
 
 type AutomationCancelStep struct {
-	If               *string `json:"if,omitempty"`
-	Ref              *string `json:"ref,omitempty"`
-	CancelationToken *string `json:"cancelation_token,omitempty"`
+	If               *string `json:"if,omitempty" url:"if,omitempty"`
+	Ref              *string `json:"ref,omitempty" url:"ref,omitempty"`
+	CancelationToken *string `json:"cancelation_token,omitempty" url:"cancelation_token,omitempty"`
 	action           string
 
 	_rawJSON json.RawMessage
@@ -559,12 +559,16 @@ func (a *AutomationCancelStep) Action() string {
 }
 
 func (a *AutomationCancelStep) UnmarshalJSON(data []byte) error {
-	type unmarshaler AutomationCancelStep
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed AutomationCancelStep
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*a = AutomationCancelStep(value)
+	*a = AutomationCancelStep(unmarshaler.embed)
 	a.action = "cancel"
 	a._rawJSON = json.RawMessage(data)
 	return nil
@@ -595,9 +599,9 @@ func (a *AutomationCancelStep) String() string {
 }
 
 type AutomationDelayStep struct {
-	If     *string `json:"if,omitempty"`
-	Ref    *string `json:"ref,omitempty"`
-	Until  *string `json:"until,omitempty"`
+	If     *string `json:"if,omitempty" url:"if,omitempty"`
+	Ref    *string `json:"ref,omitempty" url:"ref,omitempty"`
+	Until  *string `json:"until,omitempty" url:"until,omitempty"`
 	action string
 
 	_rawJSON json.RawMessage
@@ -608,12 +612,16 @@ func (a *AutomationDelayStep) Action() string {
 }
 
 func (a *AutomationDelayStep) UnmarshalJSON(data []byte) error {
-	type unmarshaler AutomationDelayStep
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed AutomationDelayStep
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*a = AutomationDelayStep(value)
+	*a = AutomationDelayStep(unmarshaler.embed)
 	a.action = "delay"
 	a._rawJSON = json.RawMessage(data)
 	return nil
@@ -644,9 +652,9 @@ func (a *AutomationDelayStep) String() string {
 }
 
 type AutomationInvokeStep struct {
-	If       *string `json:"if,omitempty"`
-	Ref      *string `json:"ref,omitempty"`
-	Template string  `json:"template"`
+	If       *string `json:"if,omitempty" url:"if,omitempty"`
+	Ref      *string `json:"ref,omitempty" url:"ref,omitempty"`
+	Template string  `json:"template" url:"template"`
 	action   string
 
 	_rawJSON json.RawMessage
@@ -657,12 +665,16 @@ func (a *AutomationInvokeStep) Action() string {
 }
 
 func (a *AutomationInvokeStep) UnmarshalJSON(data []byte) error {
-	type unmarshaler AutomationInvokeStep
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed AutomationInvokeStep
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*a = AutomationInvokeStep(value)
+	*a = AutomationInvokeStep(unmarshaler.embed)
 	a.action = "invoke"
 	a._rawJSON = json.RawMessage(data)
 	return nil
@@ -693,12 +705,12 @@ func (a *AutomationInvokeStep) String() string {
 }
 
 type AutomationInvokeTemplateParams struct {
-	Brand      *string                `json:"brand,omitempty"`
-	Data       map[string]interface{} `json:"data,omitempty"`
-	Profile    *Profile               `json:"profile,omitempty"`
-	Recipient  *string                `json:"recipient,omitempty"`
-	Template   *string                `json:"template,omitempty"`
-	TemplateId string                 `json:"templateId"`
+	Brand      *string                `json:"brand,omitempty" url:"brand,omitempty"`
+	Data       map[string]interface{} `json:"data,omitempty" url:"data,omitempty"`
+	Profile    *Profile               `json:"profile,omitempty" url:"profile,omitempty"`
+	Recipient  *string                `json:"recipient,omitempty" url:"recipient,omitempty"`
+	Template   *string                `json:"template,omitempty" url:"template,omitempty"`
+	TemplateId string                 `json:"templateId" url:"templateId"`
 
 	_rawJSON json.RawMessage
 }
@@ -727,11 +739,11 @@ func (a *AutomationInvokeTemplateParams) String() string {
 }
 
 type AutomationRunContext struct {
-	Brand     *string     `json:"brand,omitempty"`
-	Data      interface{} `json:"data,omitempty"`
-	Profile   *Profile    `json:"profile,omitempty"`
-	Template  *string     `json:"template,omitempty"`
-	Recipient *string     `json:"recipient,omitempty"`
+	Brand     *string     `json:"brand,omitempty" url:"brand,omitempty"`
+	Data      interface{} `json:"data,omitempty" url:"data,omitempty"`
+	Profile   *Profile    `json:"profile,omitempty" url:"profile,omitempty"`
+	Template  *string     `json:"template,omitempty" url:"template,omitempty"`
+	Recipient *string     `json:"recipient,omitempty" url:"recipient,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -760,13 +772,13 @@ func (a *AutomationRunContext) String() string {
 }
 
 type AutomationSendListStep struct {
-	If       *string                `json:"if,omitempty"`
-	Ref      *string                `json:"ref,omitempty"`
-	Brand    *string                `json:"brand,omitempty"`
-	Data     map[string]interface{} `json:"data,omitempty"`
-	List     string                 `json:"list"`
-	Override map[string]interface{} `json:"override,omitempty"`
-	Template *string                `json:"template,omitempty"`
+	If       *string                `json:"if,omitempty" url:"if,omitempty"`
+	Ref      *string                `json:"ref,omitempty" url:"ref,omitempty"`
+	Brand    *string                `json:"brand,omitempty" url:"brand,omitempty"`
+	Data     map[string]interface{} `json:"data,omitempty" url:"data,omitempty"`
+	List     string                 `json:"list" url:"list"`
+	Override map[string]interface{} `json:"override,omitempty" url:"override,omitempty"`
+	Template *string                `json:"template,omitempty" url:"template,omitempty"`
 	action   string
 
 	_rawJSON json.RawMessage
@@ -777,12 +789,16 @@ func (a *AutomationSendListStep) Action() string {
 }
 
 func (a *AutomationSendListStep) UnmarshalJSON(data []byte) error {
-	type unmarshaler AutomationSendListStep
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed AutomationSendListStep
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*a = AutomationSendListStep(value)
+	*a = AutomationSendListStep(unmarshaler.embed)
 	a.action = "send-list"
 	a._rawJSON = json.RawMessage(data)
 	return nil
@@ -813,14 +829,14 @@ func (a *AutomationSendListStep) String() string {
 }
 
 type AutomationSendStep struct {
-	If        *string                `json:"if,omitempty"`
-	Ref       *string                `json:"ref,omitempty"`
-	Brand     *string                `json:"brand,omitempty"`
-	Data      map[string]interface{} `json:"data,omitempty"`
-	Override  map[string]interface{} `json:"override,omitempty"`
-	Profile   interface{}            `json:"profile,omitempty"`
-	Recipient *string                `json:"recipient,omitempty"`
-	Template  *string                `json:"template,omitempty"`
+	If        *string                `json:"if,omitempty" url:"if,omitempty"`
+	Ref       *string                `json:"ref,omitempty" url:"ref,omitempty"`
+	Brand     *string                `json:"brand,omitempty" url:"brand,omitempty"`
+	Data      map[string]interface{} `json:"data,omitempty" url:"data,omitempty"`
+	Override  map[string]interface{} `json:"override,omitempty" url:"override,omitempty"`
+	Profile   interface{}            `json:"profile,omitempty" url:"profile,omitempty"`
+	Recipient *string                `json:"recipient,omitempty" url:"recipient,omitempty"`
+	Template  *string                `json:"template,omitempty" url:"template,omitempty"`
 	action    string
 
 	_rawJSON json.RawMessage
@@ -831,12 +847,16 @@ func (a *AutomationSendStep) Action() string {
 }
 
 func (a *AutomationSendStep) UnmarshalJSON(data []byte) error {
-	type unmarshaler AutomationSendStep
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed AutomationSendStep
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*a = AutomationSendStep(value)
+	*a = AutomationSendStep(unmarshaler.embed)
 	a.action = "send"
 	a._rawJSON = json.RawMessage(data)
 	return nil
@@ -867,8 +887,8 @@ func (a *AutomationSendStep) String() string {
 }
 
 type AutomationStep struct {
-	If  *string `json:"if,omitempty"`
-	Ref *string `json:"ref,omitempty"`
+	If  *string `json:"if,omitempty" url:"if,omitempty"`
+	Ref *string `json:"ref,omitempty" url:"ref,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -1068,9 +1088,9 @@ func (a *AutomationStepOption) Accept(visitor AutomationStepOptionVisitor) error
 }
 
 type AutomationUpdateProfileStep struct {
-	RecipientId string         `json:"recipient_id"`
-	Profile     Profile        `json:"profile,omitempty"`
-	Merge       MergeAlgorithm `json:"merge,omitempty"`
+	RecipientId string         `json:"recipient_id" url:"recipient_id"`
+	Profile     Profile        `json:"profile,omitempty" url:"profile,omitempty"`
+	Merge       MergeAlgorithm `json:"merge,omitempty" url:"merge,omitempty"`
 	action      string
 
 	_rawJSON json.RawMessage
@@ -1081,12 +1101,16 @@ func (a *AutomationUpdateProfileStep) Action() string {
 }
 
 func (a *AutomationUpdateProfileStep) UnmarshalJSON(data []byte) error {
-	type unmarshaler AutomationUpdateProfileStep
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed AutomationUpdateProfileStep
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*a = AutomationUpdateProfileStep(value)
+	*a = AutomationUpdateProfileStep(unmarshaler.embed)
 	a.action = "update-profile"
 	a._rawJSON = json.RawMessage(data)
 	return nil
@@ -1117,9 +1141,9 @@ func (a *AutomationUpdateProfileStep) String() string {
 }
 
 type AutomationV2SendStep struct {
-	If      *string  `json:"if,omitempty"`
-	Ref     *string  `json:"ref,omitempty"`
-	Message *Message `json:"message,omitempty"`
+	If      *string  `json:"if,omitempty" url:"if,omitempty"`
+	Ref     *string  `json:"ref,omitempty" url:"ref,omitempty"`
+	Message *Message `json:"message,omitempty" url:"message,omitempty"`
 	action  string
 
 	_rawJSON json.RawMessage
@@ -1130,12 +1154,16 @@ func (a *AutomationV2SendStep) Action() string {
 }
 
 func (a *AutomationV2SendStep) UnmarshalJSON(data []byte) error {
-	type unmarshaler AutomationV2SendStep
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed AutomationV2SendStep
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*a = AutomationV2SendStep(value)
+	*a = AutomationV2SendStep(unmarshaler.embed)
 	a.action = "send"
 	a._rawJSON = json.RawMessage(data)
 	return nil
@@ -1196,9 +1224,9 @@ func (m MergeAlgorithm) Ptr() *MergeAlgorithm {
 type Profile = interface{}
 
 type BrandColors struct {
-	Primary   *string `json:"primary,omitempty"`
-	Secondary *string `json:"secondary,omitempty"`
-	Tertiary  *string `json:"tertiary,omitempty"`
+	Primary   *string `json:"primary,omitempty" url:"primary,omitempty"`
+	Secondary *string `json:"secondary,omitempty" url:"secondary,omitempty"`
+	Tertiary  *string `json:"tertiary,omitempty" url:"tertiary,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -1227,8 +1255,8 @@ func (b *BrandColors) String() string {
 }
 
 type BrandGetAllResponse struct {
-	Paging  *Paging  `json:"paging,omitempty"`
-	Results []*Brand `json:"results,omitempty"`
+	Paging  *Paging  `json:"paging,omitempty" url:"paging,omitempty"`
+	Results []*Brand `json:"results,omitempty" url:"results,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -1257,8 +1285,8 @@ func (b *BrandGetAllResponse) String() string {
 }
 
 type BrandSnippet struct {
-	Name   string `json:"name"`
-	Value  string `json:"value"`
+	Name   string `json:"name" url:"name"`
+	Value  string `json:"value" url:"value"`
 	format string
 
 	_rawJSON json.RawMessage
@@ -1269,12 +1297,16 @@ func (b *BrandSnippet) Format() string {
 }
 
 func (b *BrandSnippet) UnmarshalJSON(data []byte) error {
-	type unmarshaler BrandSnippet
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed BrandSnippet
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*b),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*b = BrandSnippet(value)
+	*b = BrandSnippet(unmarshaler.embed)
 	b.format = "handlebars"
 	b._rawJSON = json.RawMessage(data)
 	return nil
@@ -1305,7 +1337,7 @@ func (b *BrandSnippet) String() string {
 }
 
 type BulkGetJobParams struct {
-	JobId string `json:"jobId"`
+	JobId string `json:"jobId" url:"jobId"`
 
 	_rawJSON json.RawMessage
 }
@@ -1334,8 +1366,8 @@ func (b *BulkGetJobParams) String() string {
 }
 
 type BulkGetJobUsersParams struct {
-	JobId  string  `json:"jobId"`
-	Cursor *string `json:"cursor,omitempty"`
+	JobId  string  `json:"jobId" url:"jobId"`
+	Cursor *string `json:"cursor,omitempty" url:"cursor,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -1364,8 +1396,8 @@ func (b *BulkGetJobUsersParams) String() string {
 }
 
 type BulkIngestError struct {
-	User  interface{} `json:"user,omitempty"`
-	Error interface{} `json:"error,omitempty"`
+	User  interface{} `json:"user,omitempty" url:"user,omitempty"`
+	Error interface{} `json:"error,omitempty" url:"error,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -1394,8 +1426,8 @@ func (b *BulkIngestError) String() string {
 }
 
 type BulkIngestUsersResponse struct {
-	Total  int                `json:"total"`
-	Errors []*BulkIngestError `json:"errors,omitempty"`
+	Total  int                `json:"total" url:"total"`
+	Errors []*BulkIngestError `json:"errors,omitempty" url:"errors,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -1477,13 +1509,13 @@ func (b BulkJobUserStatus) Ptr() *BulkJobUserStatus {
 }
 
 type BulkMessageUserResponse struct {
-	Preferences *RecipientPreferences `json:"preferences,omitempty"`
-	Profile     interface{}           `json:"profile,omitempty"`
-	Recipient   *string               `json:"recipient,omitempty"`
-	Data        interface{}           `json:"data,omitempty"`
-	To          *UserRecipient        `json:"to,omitempty"`
-	Status      BulkJobUserStatus     `json:"status,omitempty"`
-	MessageId   *string               `json:"messageId,omitempty"`
+	Preferences *RecipientPreferences `json:"preferences,omitempty" url:"preferences,omitempty"`
+	Profile     interface{}           `json:"profile,omitempty" url:"profile,omitempty"`
+	Recipient   *string               `json:"recipient,omitempty" url:"recipient,omitempty"`
+	Data        interface{}           `json:"data,omitempty" url:"data,omitempty"`
+	To          *UserRecipient        `json:"to,omitempty" url:"to,omitempty"`
+	Status      BulkJobUserStatus     `json:"status,omitempty" url:"status,omitempty"`
+	MessageId   *string               `json:"messageId,omitempty" url:"messageId,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -1516,27 +1548,27 @@ func (b *BulkMessageUserResponse) String() string {
 type InboundBulkContentMessage struct {
 	// An arbitrary object that includes any data you want to pass to the message.
 	// The data will populate the corresponding template or elements variables.
-	Data    *MessageData `json:"data,omitempty"`
-	BrandId *string      `json:"brand_id,omitempty"`
+	Data    *MessageData `json:"data,omitempty" url:"data,omitempty"`
+	BrandId *string      `json:"brand_id,omitempty" url:"brand_id,omitempty"`
 	// "Define run-time configuration for one or more channels. If you don't specify channels, the default configuration for each channel will be used. Valid ChannelId's are: email, sms, push, inbox, direct_message, banner, and webhook."
-	Channels *MessageChannels `json:"channels,omitempty"`
+	Channels *MessageChannels `json:"channels,omitempty" url:"channels,omitempty"`
 	// Context to load with this recipient. Will override any context set on message.context.
-	Context *MessageContext `json:"context,omitempty"`
+	Context *MessageContext `json:"context,omitempty" url:"context,omitempty"`
 	// Metadata such as utm tracking attached with the notification through this channel.
-	Metadata *MessageMetadata `json:"metadata,omitempty"`
+	Metadata *MessageMetadata `json:"metadata,omitempty" url:"metadata,omitempty"`
 	// An object whose keys are valid provider identifiers which map to an object.
-	Providers *MessageProviders `json:"providers,omitempty"`
-	Routing   *Routing          `json:"routing,omitempty"`
+	Providers *MessageProviders `json:"providers,omitempty" url:"providers,omitempty"`
+	Routing   *Routing          `json:"routing,omitempty" url:"routing,omitempty"`
 	// Time in ms to attempt the channel before failing over to the next available channel.
-	Timeout *Timeout `json:"timeout,omitempty"`
+	Timeout *Timeout `json:"timeout,omitempty" url:"timeout,omitempty"`
 	// Defines the time to wait before delivering the message.
-	Delay *Delay `json:"delay,omitempty"`
+	Delay *Delay `json:"delay,omitempty" url:"delay,omitempty"`
 	// "Expiry allows you to set an absolute or relative time in which a message expires.
 	// Note: This is only valid for the Courier Inbox channel as of 12-08-2022."
-	Expiry *Expiry `json:"expiry,omitempty"`
+	Expiry *Expiry `json:"expiry,omitempty" url:"expiry,omitempty"`
 	// Describes the content of the message in a way that will work for email, push,
 	// chat, or any channel. Either this or template must be specified.
-	Content *Content `json:"content,omitempty"`
+	Content *Content `json:"content,omitempty" url:"content,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -1565,11 +1597,11 @@ func (i *InboundBulkContentMessage) String() string {
 }
 
 type InboundBulkMessageUser struct {
-	Preferences *RecipientPreferences `json:"preferences,omitempty"`
-	Profile     interface{}           `json:"profile,omitempty"`
-	Recipient   *string               `json:"recipient,omitempty"`
-	Data        interface{}           `json:"data,omitempty"`
-	To          *UserRecipient        `json:"to,omitempty"`
+	Preferences *RecipientPreferences `json:"preferences,omitempty" url:"preferences,omitempty"`
+	Profile     interface{}           `json:"profile,omitempty" url:"profile,omitempty"`
+	Recipient   *string               `json:"recipient,omitempty" url:"recipient,omitempty"`
+	Data        interface{}           `json:"data,omitempty" url:"data,omitempty"`
+	To          *UserRecipient        `json:"to,omitempty" url:"to,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -1600,16 +1632,16 @@ func (i *InboundBulkMessageUser) String() string {
 type InboundBulkMessageV1 struct {
 	// A unique identifier that represents the brand that should be used
 	// for rendering the notification.
-	Brand *string `json:"brand,omitempty"`
+	Brand *string `json:"brand,omitempty" url:"brand,omitempty"`
 	// JSON that includes any data you want to pass to a message template.
 	// The data will populate the corresponding template variables.
-	Data   map[string]interface{} `json:"data,omitempty"`
-	Event  *string                `json:"event,omitempty"`
-	Locale map[string]interface{} `json:"locale,omitempty"`
+	Data   map[string]interface{} `json:"data,omitempty" url:"data,omitempty"`
+	Event  *string                `json:"event,omitempty" url:"event,omitempty"`
+	Locale map[string]interface{} `json:"locale,omitempty" url:"locale,omitempty"`
 	// JSON that is merged into the request sent by Courier to the provider
 	// to override properties or to gain access to features in the provider
 	// API that are not natively supported by Courier.
-	Override interface{} `json:"override,omitempty"`
+	Override interface{} `json:"override,omitempty" url:"override,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -1702,27 +1734,27 @@ func (i *InboundBulkMessageV2) Accept(visitor InboundBulkMessageV2Visitor) error
 type InboundBulkTemplateMessage struct {
 	// An arbitrary object that includes any data you want to pass to the message.
 	// The data will populate the corresponding template or elements variables.
-	Data    *MessageData `json:"data,omitempty"`
-	BrandId *string      `json:"brand_id,omitempty"`
+	Data    *MessageData `json:"data,omitempty" url:"data,omitempty"`
+	BrandId *string      `json:"brand_id,omitempty" url:"brand_id,omitempty"`
 	// "Define run-time configuration for one or more channels. If you don't specify channels, the default configuration for each channel will be used. Valid ChannelId's are: email, sms, push, inbox, direct_message, banner, and webhook."
-	Channels *MessageChannels `json:"channels,omitempty"`
+	Channels *MessageChannels `json:"channels,omitempty" url:"channels,omitempty"`
 	// Context to load with this recipient. Will override any context set on message.context.
-	Context *MessageContext `json:"context,omitempty"`
+	Context *MessageContext `json:"context,omitempty" url:"context,omitempty"`
 	// Metadata such as utm tracking attached with the notification through this channel.
-	Metadata *MessageMetadata `json:"metadata,omitempty"`
+	Metadata *MessageMetadata `json:"metadata,omitempty" url:"metadata,omitempty"`
 	// An object whose keys are valid provider identifiers which map to an object.
-	Providers *MessageProviders `json:"providers,omitempty"`
-	Routing   *Routing          `json:"routing,omitempty"`
+	Providers *MessageProviders `json:"providers,omitempty" url:"providers,omitempty"`
+	Routing   *Routing          `json:"routing,omitempty" url:"routing,omitempty"`
 	// Time in ms to attempt the channel before failing over to the next available channel.
-	Timeout *Timeout `json:"timeout,omitempty"`
+	Timeout *Timeout `json:"timeout,omitempty" url:"timeout,omitempty"`
 	// Defines the time to wait before delivering the message.
-	Delay *Delay `json:"delay,omitempty"`
+	Delay *Delay `json:"delay,omitempty" url:"delay,omitempty"`
 	// "Expiry allows you to set an absolute or relative time in which a message expires.
 	// Note: This is only valid for the Courier Inbox channel as of 12-08-2022."
-	Expiry *Expiry `json:"expiry,omitempty"`
+	Expiry *Expiry `json:"expiry,omitempty" url:"expiry,omitempty"`
 	// The id of the notification template to be rendered and sent to the recipient(s).
 	// This field or the content field must be supplied.
-	Template string `json:"template"`
+	Template string `json:"template" url:"template"`
 
 	_rawJSON json.RawMessage
 }
@@ -1751,11 +1783,11 @@ func (i *InboundBulkTemplateMessage) String() string {
 }
 
 type JobDetails struct {
-	Definition *InboundBulkMessage `json:"definition,omitempty"`
-	Enqueued   int                 `json:"enqueued"`
-	Failures   int                 `json:"failures"`
-	Received   int                 `json:"received"`
-	Status     BulkJobStatus       `json:"status,omitempty"`
+	Definition *InboundBulkMessage `json:"definition,omitempty" url:"definition,omitempty"`
+	Enqueued   int                 `json:"enqueued" url:"enqueued"`
+	Failures   int                 `json:"failures" url:"failures"`
+	Received   int                 `json:"received" url:"received"`
+	Status     BulkJobStatus       `json:"status,omitempty" url:"status,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -1785,7 +1817,7 @@ func (j *JobDetails) String() string {
 
 type AlreadyExists struct {
 	// A message describing the error that occurred.
-	Message string `json:"message"`
+	Message string `json:"message" url:"message"`
 	type_   string
 
 	_rawJSON json.RawMessage
@@ -1796,12 +1828,16 @@ func (a *AlreadyExists) Type() string {
 }
 
 func (a *AlreadyExists) UnmarshalJSON(data []byte) error {
-	type unmarshaler AlreadyExists
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed AlreadyExists
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*a = AlreadyExists(value)
+	*a = AlreadyExists(unmarshaler.embed)
 	a.type_ = "invalid_request_error"
 	a._rawJSON = json.RawMessage(data)
 	return nil
@@ -1833,7 +1869,7 @@ func (a *AlreadyExists) String() string {
 
 type BadRequest struct {
 	// A message describing the error that occurred.
-	Message string `json:"message"`
+	Message string `json:"message" url:"message"`
 	type_   string
 
 	_rawJSON json.RawMessage
@@ -1844,12 +1880,16 @@ func (b *BadRequest) Type() string {
 }
 
 func (b *BadRequest) UnmarshalJSON(data []byte) error {
-	type unmarshaler BadRequest
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed BadRequest
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*b),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*b = BadRequest(value)
+	*b = BadRequest(unmarshaler.embed)
 	b.type_ = "invalid_request_error"
 	b._rawJSON = json.RawMessage(data)
 	return nil
@@ -1881,7 +1921,7 @@ func (b *BadRequest) String() string {
 
 type BaseError struct {
 	// A message describing the error that occurred.
-	Message string `json:"message"`
+	Message string `json:"message" url:"message"`
 
 	_rawJSON json.RawMessage
 }
@@ -1944,7 +1984,7 @@ func (c ChannelClassification) Ptr() *ChannelClassification {
 }
 
 type ChannelPreference struct {
-	Channel ChannelClassification `json:"channel,omitempty"`
+	Channel ChannelClassification `json:"channel,omitempty" url:"channel,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -1974,7 +2014,7 @@ func (c *ChannelPreference) String() string {
 
 type Conflict struct {
 	// A message describing the error that occurred.
-	Message string `json:"message"`
+	Message string `json:"message" url:"message"`
 	type_   string
 
 	_rawJSON json.RawMessage
@@ -1985,12 +2025,16 @@ func (c *Conflict) Type() string {
 }
 
 func (c *Conflict) UnmarshalJSON(data []byte) error {
-	type unmarshaler Conflict
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed Conflict
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*c = Conflict(value)
+	*c = Conflict(unmarshaler.embed)
 	c.type_ = "invalid_request_error"
 	c._rawJSON = json.RawMessage(data)
 	return nil
@@ -2021,8 +2065,8 @@ func (c *Conflict) String() string {
 }
 
 type Email struct {
-	Footer interface{} `json:"footer,omitempty"`
-	Header interface{} `json:"header,omitempty"`
+	Footer interface{} `json:"footer,omitempty" url:"footer,omitempty"`
+	Header interface{} `json:"header,omitempty" url:"header,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -2052,7 +2096,7 @@ func (e *Email) String() string {
 
 type MessageNotFound struct {
 	// A message describing the error that occurred.
-	Message string `json:"message"`
+	Message string `json:"message" url:"message"`
 	type_   string
 
 	_rawJSON json.RawMessage
@@ -2063,12 +2107,16 @@ func (m *MessageNotFound) Type() string {
 }
 
 func (m *MessageNotFound) UnmarshalJSON(data []byte) error {
-	type unmarshaler MessageNotFound
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed MessageNotFound
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*m),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*m = MessageNotFound(value)
+	*m = MessageNotFound(unmarshaler.embed)
 	m.type_ = "invalid_request_error"
 	m._rawJSON = json.RawMessage(data)
 	return nil
@@ -2100,7 +2148,7 @@ func (m *MessageNotFound) String() string {
 
 type NotFound struct {
 	// A message describing the error that occurred.
-	Message string `json:"message"`
+	Message string `json:"message" url:"message"`
 	type_   string
 
 	_rawJSON json.RawMessage
@@ -2111,12 +2159,16 @@ func (n *NotFound) Type() string {
 }
 
 func (n *NotFound) UnmarshalJSON(data []byte) error {
-	type unmarshaler NotFound
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed NotFound
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*n),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*n = NotFound(value)
+	*n = NotFound(unmarshaler.embed)
 	n.type_ = "invalid_request_error"
 	n._rawJSON = json.RawMessage(data)
 	return nil
@@ -2147,9 +2199,9 @@ func (n *NotFound) String() string {
 }
 
 type NotificationPreferenceDetails struct {
-	Status             PreferenceStatus     `json:"status,omitempty"`
-	Rules              []*Rule              `json:"rules,omitempty"`
-	ChannelPreferences []*ChannelPreference `json:"channel_preferences,omitempty"`
+	Status             PreferenceStatus     `json:"status,omitempty" url:"status,omitempty"`
+	Rules              []*Rule              `json:"rules,omitempty" url:"rules,omitempty"`
+	ChannelPreferences []*ChannelPreference `json:"channel_preferences,omitempty" url:"channel_preferences,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -2180,8 +2232,8 @@ func (n *NotificationPreferenceDetails) String() string {
 type NotificationPreferences = map[string]*NotificationPreferenceDetails
 
 type Paging struct {
-	Cursor *string `json:"cursor,omitempty"`
-	More   bool    `json:"more"`
+	Cursor *string `json:"cursor,omitempty" url:"cursor,omitempty"`
+	More   bool    `json:"more" url:"more"`
 
 	_rawJSON json.RawMessage
 }
@@ -2211,7 +2263,7 @@ func (p *Paging) String() string {
 
 type PaymentRequired struct {
 	// A message describing the error that occurred.
-	Message string `json:"message"`
+	Message string `json:"message" url:"message"`
 	type_   string
 
 	_rawJSON json.RawMessage
@@ -2222,12 +2274,16 @@ func (p *PaymentRequired) Type() string {
 }
 
 func (p *PaymentRequired) UnmarshalJSON(data []byte) error {
-	type unmarshaler PaymentRequired
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed PaymentRequired
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*p),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*p = PaymentRequired(value)
+	*p = PaymentRequired(unmarshaler.embed)
 	p.type_ = "authorization_error"
 	p._rawJSON = json.RawMessage(data)
 	return nil
@@ -2283,8 +2339,8 @@ func (p PreferenceStatus) Ptr() *PreferenceStatus {
 }
 
 type Rule struct {
-	Start *string `json:"start,omitempty"`
-	Until string  `json:"until"`
+	Start *string `json:"start,omitempty" url:"start,omitempty"`
+	Until string  `json:"until" url:"until"`
 
 	_rawJSON json.RawMessage
 }
@@ -2314,10 +2370,10 @@ func (r *Rule) String() string {
 
 type UserTenantAssociation struct {
 	// User ID for the assocation between tenant and user
-	UserId string `json:"user_id"`
+	UserId string `json:"user_id" url:"user_id"`
 	// Tenant ID for the assocation between tenant and user
-	TenantId string                 `json:"tenant_id"`
-	Profile  map[string]interface{} `json:"profile,omitempty"`
+	TenantId string                 `json:"tenant_id" url:"tenant_id"`
+	Profile  map[string]interface{} `json:"profile,omitempty" url:"profile,omitempty"`
 	type_    string
 
 	_rawJSON json.RawMessage
@@ -2328,12 +2384,16 @@ func (u *UserTenantAssociation) Type() string {
 }
 
 func (u *UserTenantAssociation) UnmarshalJSON(data []byte) error {
-	type unmarshaler UserTenantAssociation
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed UserTenantAssociation
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*u),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*u = UserTenantAssociation(value)
+	*u = UserTenantAssociation(unmarshaler.embed)
 	u.type_ = "user"
 	u._rawJSON = json.RawMessage(data)
 	return nil
@@ -2364,9 +2424,9 @@ func (u *UserTenantAssociation) String() string {
 }
 
 type ListSubscriptionRecipient struct {
-	RecipientId string                `json:"recipientId"`
-	Created     *string               `json:"created,omitempty"`
-	Preferences *RecipientPreferences `json:"preferences,omitempty"`
+	RecipientId string                `json:"recipientId" url:"recipientId"`
+	Created     *string               `json:"created,omitempty" url:"created,omitempty"`
+	Preferences *RecipientPreferences `json:"preferences,omitempty" url:"preferences,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -2488,11 +2548,11 @@ func (r Reason) Ptr() *Reason {
 
 type RenderOutput struct {
 	// The channel used for rendering the message.
-	Channel string `json:"channel"`
+	Channel string `json:"channel" url:"channel"`
 	// The ID of channel used for rendering the message.
-	ChannelId string `json:"channel_id"`
+	ChannelId string `json:"channel_id" url:"channel_id"`
 	// Content details of the rendered message.
-	Content *RenderedMessageContent `json:"content,omitempty"`
+	Content *RenderedMessageContent `json:"content,omitempty" url:"content,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -2522,9 +2582,9 @@ func (r *RenderOutput) String() string {
 
 type RenderedMessageBlock struct {
 	// The block type of the rendered message block.
-	Type string `json:"type"`
+	Type string `json:"type" url:"type"`
 	// The block text of the rendered message block.
-	Text string `json:"text"`
+	Text string `json:"text" url:"text"`
 
 	_rawJSON json.RawMessage
 }
@@ -2554,17 +2614,17 @@ func (r *RenderedMessageBlock) String() string {
 
 type RenderedMessageContent struct {
 	// The html content of the rendered message.
-	Html string `json:"html"`
+	Html string `json:"html" url:"html"`
 	// The title of the rendered message.
-	Title string `json:"title"`
+	Title string `json:"title" url:"title"`
 	// The body of the rendered message.
-	Body string `json:"body"`
+	Body string `json:"body" url:"body"`
 	// The subject of the rendered message.
-	Subject string `json:"subject"`
+	Subject string `json:"subject" url:"subject"`
 	// The text of the rendered message.
-	Text string `json:"text"`
+	Text string `json:"text" url:"text"`
 	// The blocks of the rendered message.
-	Blocks []*RenderedMessageBlock `json:"blocks,omitempty"`
+	Blocks []*RenderedMessageBlock `json:"blocks,omitempty" url:"blocks,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -2636,9 +2696,9 @@ func (b BlockType) Ptr() *BlockType {
 }
 
 type Check struct {
-	Id      string      `json:"id"`
-	Status  CheckStatus `json:"status,omitempty"`
-	Updated int64       `json:"updated"`
+	Id      string      `json:"id" url:"id"`
+	Status  CheckStatus `json:"status,omitempty" url:"status,omitempty"`
+	Updated int64       `json:"updated" url:"updated"`
 	type_   string
 
 	_rawJSON json.RawMessage
@@ -2649,12 +2709,16 @@ func (c *Check) Type() string {
 }
 
 func (c *Check) UnmarshalJSON(data []byte) error {
-	type unmarshaler Check
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed Check
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*c = Check(value)
+	*c = Check(unmarshaler.embed)
 	c.type_ = "custom"
 	c._rawJSON = json.RawMessage(data)
 	return nil
@@ -2710,8 +2774,8 @@ func (c CheckStatus) Ptr() *CheckStatus {
 }
 
 type MessageRouting struct {
-	Method   MessageRoutingMethod     `json:"method,omitempty"`
-	Channels []*MessageRoutingChannel `json:"channels,omitempty"`
+	Method   MessageRoutingMethod     `json:"method,omitempty" url:"method,omitempty"`
+	Channels []*MessageRoutingChannel `json:"channels,omitempty" url:"channels,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -2819,9 +2883,9 @@ func (m MessageRoutingMethod) Ptr() *MessageRoutingMethod {
 }
 
 type Notification struct {
-	CreatedAt int64           `json:"created_at"`
-	Id        string          `json:"id"`
-	Routing   *MessageRouting `json:"routing,omitempty"`
+	CreatedAt int64           `json:"created_at" url:"created_at"`
+	Id        string          `json:"id" url:"id"`
+	Routing   *MessageRouting `json:"routing,omitempty" url:"routing,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -2850,8 +2914,8 @@ func (n *Notification) String() string {
 }
 
 type NotificationChannelContent struct {
-	Subject *string `json:"subject,omitempty"`
-	Title   *string `json:"title,omitempty"`
+	Subject *string `json:"subject,omitempty" url:"subject,omitempty"`
+	Title   *string `json:"title,omitempty" url:"title,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -2937,8 +3001,8 @@ func (n *NotificationContent) Accept(visitor NotificationContentVisitor) error {
 }
 
 type NotificationContentHierarchy struct {
-	Parent   *string `json:"parent,omitempty"`
-	Children *string `json:"children,omitempty"`
+	Parent   *string `json:"parent,omitempty" url:"parent,omitempty"`
+	Children *string `json:"children,omitempty" url:"children,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -2967,12 +3031,12 @@ func (n *NotificationContentHierarchy) String() string {
 }
 
 type Address struct {
-	Formatted     string `json:"formatted"`
-	StreetAddress string `json:"street_address"`
-	Locality      string `json:"locality"`
-	Region        string `json:"region"`
-	PostalCode    string `json:"postal_code"`
-	Country       string `json:"country"`
+	Formatted     string `json:"formatted" url:"formatted"`
+	StreetAddress string `json:"street_address" url:"street_address"`
+	Locality      string `json:"locality" url:"locality"`
+	Region        string `json:"region" url:"region"`
+	PostalCode    string `json:"postal_code" url:"postal_code"`
+	Country       string `json:"country" url:"country"`
 
 	_rawJSON json.RawMessage
 }
@@ -3001,8 +3065,8 @@ func (a *Address) String() string {
 }
 
 type AirshipProfile struct {
-	Audience    *AirshipProfileAudience `json:"audience,omitempty"`
-	DeviceTypes []DeviceType            `json:"device_types,omitempty"`
+	Audience    *AirshipProfileAudience `json:"audience,omitempty" url:"audience,omitempty"`
+	DeviceTypes []DeviceType            `json:"device_types,omitempty" url:"device_types,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -3031,7 +3095,7 @@ func (a *AirshipProfile) String() string {
 }
 
 type AirshipProfileAudience struct {
-	NamedUser string `json:"named_user"`
+	NamedUser string `json:"named_user" url:"named_user"`
 
 	_rawJSON json.RawMessage
 }
@@ -3176,14 +3240,14 @@ func (e *Expo) Accept(visitor ExpoVisitor) error {
 }
 
 type GetListSubscriptionsList struct {
-	Id string `json:"id"`
+	Id string `json:"id" url:"id"`
 	// List name
-	Name string `json:"name"`
+	Name string `json:"name" url:"name"`
 	// The date/time of when the list was created. Represented as a string in ISO format.
-	Created string `json:"created"`
+	Created string `json:"created" url:"created"`
 	// The date/time of when the list was updated. Represented as a string in ISO format.
-	Updated     string                `json:"updated"`
-	Preferences *RecipientPreferences `json:"preferences,omitempty"`
+	Updated     string                `json:"updated" url:"updated"`
+	Preferences *RecipientPreferences `json:"preferences,omitempty" url:"preferences,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -3212,8 +3276,8 @@ func (g *GetListSubscriptionsList) String() string {
 }
 
 type Intercom struct {
-	From string             `json:"from"`
-	To   *IntercomRecipient `json:"to,omitempty"`
+	From string             `json:"from" url:"from"`
+	To   *IntercomRecipient `json:"to,omitempty" url:"to,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -3242,7 +3306,7 @@ func (i *Intercom) String() string {
 }
 
 type IntercomRecipient struct {
-	Id string `json:"id"`
+	Id string `json:"id" url:"id"`
 
 	_rawJSON json.RawMessage
 }
@@ -3376,8 +3440,8 @@ func (m *MsTeams) Accept(visitor MsTeamsVisitor) error {
 }
 
 type MsTeamsBaseProperties struct {
-	TenantId   string `json:"tenant_id"`
-	ServiceUrl string `json:"service_url"`
+	TenantId   string `json:"tenant_id" url:"tenant_id"`
+	ServiceUrl string `json:"service_url" url:"service_url"`
 
 	_rawJSON json.RawMessage
 }
@@ -3406,7 +3470,7 @@ func (m *MsTeamsBaseProperties) String() string {
 }
 
 type MultipleTokens struct {
-	Tokens []*Token `json:"tokens,omitempty"`
+	Tokens []*Token `json:"tokens,omitempty" url:"tokens,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -3435,7 +3499,7 @@ func (m *MultipleTokens) String() string {
 }
 
 type ProfileGetParameters struct {
-	RecipientId string `json:"recipientId"`
+	RecipientId string `json:"recipientId" url:"recipientId"`
 
 	_rawJSON json.RawMessage
 }
@@ -3464,7 +3528,7 @@ func (p *ProfileGetParameters) String() string {
 }
 
 type SendDirectMessage struct {
-	UserId string `json:"user_id"`
+	UserId string `json:"user_id" url:"user_id"`
 
 	_rawJSON json.RawMessage
 }
@@ -3493,7 +3557,7 @@ func (s *SendDirectMessage) String() string {
 }
 
 type SendToChannel struct {
-	ChannelId string `json:"channel_id"`
+	ChannelId string `json:"channel_id" url:"channel_id"`
 
 	_rawJSON json.RawMessage
 }
@@ -3522,9 +3586,9 @@ func (s *SendToChannel) String() string {
 }
 
 type SendToMsTeamsChannelId struct {
-	TenantId   string `json:"tenant_id"`
-	ServiceUrl string `json:"service_url"`
-	ChannelId  string `json:"channel_id"`
+	TenantId   string `json:"tenant_id" url:"tenant_id"`
+	ServiceUrl string `json:"service_url" url:"service_url"`
+	ChannelId  string `json:"channel_id" url:"channel_id"`
 
 	_rawJSON json.RawMessage
 }
@@ -3553,10 +3617,10 @@ func (s *SendToMsTeamsChannelId) String() string {
 }
 
 type SendToMsTeamsChannelName struct {
-	TenantId    string `json:"tenant_id"`
-	ServiceUrl  string `json:"service_url"`
-	ChannelName string `json:"channel_name"`
-	TeamId      string `json:"team_id"`
+	TenantId    string `json:"tenant_id" url:"tenant_id"`
+	ServiceUrl  string `json:"service_url" url:"service_url"`
+	ChannelName string `json:"channel_name" url:"channel_name"`
+	TeamId      string `json:"team_id" url:"team_id"`
 
 	_rawJSON json.RawMessage
 }
@@ -3585,9 +3649,9 @@ func (s *SendToMsTeamsChannelName) String() string {
 }
 
 type SendToMsTeamsConversationId struct {
-	TenantId       string `json:"tenant_id"`
-	ServiceUrl     string `json:"service_url"`
-	ConversationId string `json:"conversation_id"`
+	TenantId       string `json:"tenant_id" url:"tenant_id"`
+	ServiceUrl     string `json:"service_url" url:"service_url"`
+	ConversationId string `json:"conversation_id" url:"conversation_id"`
 
 	_rawJSON json.RawMessage
 }
@@ -3616,9 +3680,9 @@ func (s *SendToMsTeamsConversationId) String() string {
 }
 
 type SendToMsTeamsEmail struct {
-	TenantId   string `json:"tenant_id"`
-	ServiceUrl string `json:"service_url"`
-	Email      string `json:"email"`
+	TenantId   string `json:"tenant_id" url:"tenant_id"`
+	ServiceUrl string `json:"service_url" url:"service_url"`
+	Email      string `json:"email" url:"email"`
 
 	_rawJSON json.RawMessage
 }
@@ -3647,9 +3711,9 @@ func (s *SendToMsTeamsEmail) String() string {
 }
 
 type SendToMsTeamsUserId struct {
-	TenantId   string `json:"tenant_id"`
-	ServiceUrl string `json:"service_url"`
-	UserId     string `json:"user_id"`
+	TenantId   string `json:"tenant_id" url:"tenant_id"`
+	ServiceUrl string `json:"service_url" url:"service_url"`
+	UserId     string `json:"user_id" url:"user_id"`
 
 	_rawJSON json.RawMessage
 }
@@ -3678,8 +3742,8 @@ func (s *SendToMsTeamsUserId) String() string {
 }
 
 type SendToSlackChannel struct {
-	AccessToken string `json:"access_token"`
-	Channel     string `json:"channel"`
+	AccessToken string `json:"access_token" url:"access_token"`
+	Channel     string `json:"channel" url:"channel"`
 
 	_rawJSON json.RawMessage
 }
@@ -3708,8 +3772,8 @@ func (s *SendToSlackChannel) String() string {
 }
 
 type SendToSlackEmail struct {
-	AccessToken string `json:"access_token"`
-	Email       string `json:"email"`
+	AccessToken string `json:"access_token" url:"access_token"`
+	Email       string `json:"email" url:"email"`
 
 	_rawJSON json.RawMessage
 }
@@ -3738,8 +3802,8 @@ func (s *SendToSlackEmail) String() string {
 }
 
 type SendToSlackUserId struct {
-	AccessToken string `json:"access_token"`
-	UserId      string `json:"user_id"`
+	AccessToken string `json:"access_token" url:"access_token"`
+	UserId      string `json:"user_id" url:"user_id"`
 
 	_rawJSON json.RawMessage
 }
@@ -3841,7 +3905,7 @@ func (s *Slack) Accept(visitor SlackVisitor) error {
 }
 
 type SlackBaseProperties struct {
-	AccessToken string `json:"access_token"`
+	AccessToken string `json:"access_token" url:"access_token"`
 
 	_rawJSON json.RawMessage
 }
@@ -3870,9 +3934,9 @@ func (s *SlackBaseProperties) String() string {
 }
 
 type SnoozeRule struct {
-	Type  SnoozeRuleType `json:"type,omitempty"`
-	Start string         `json:"start"`
-	Until string         `json:"until"`
+	Type  SnoozeRuleType `json:"type,omitempty" url:"type,omitempty"`
+	Start string         `json:"start" url:"start"`
+	Until string         `json:"until" url:"until"`
 
 	_rawJSON json.RawMessage
 }
@@ -3920,8 +3984,8 @@ func (s SnoozeRuleType) Ptr() *SnoozeRuleType {
 }
 
 type SubscribeToListsRequestListObject struct {
-	ListId      string                `json:"listId"`
-	Preferences *RecipientPreferences `json:"preferences,omitempty"`
+	ListId      string                `json:"listId" url:"listId"`
+	Preferences *RecipientPreferences `json:"preferences,omitempty" url:"preferences,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -3950,7 +4014,7 @@ func (s *SubscribeToListsRequestListObject) String() string {
 }
 
 type Token struct {
-	Token string `json:"token"`
+	Token string `json:"token" url:"token"`
 
 	_rawJSON json.RawMessage
 }
@@ -3979,38 +4043,38 @@ func (t *Token) String() string {
 }
 
 type UserProfile struct {
-	Address             *Address `json:"address,omitempty"`
-	Birthdate           string   `json:"birthdate"`
-	Email               string   `json:"email"`
-	EmailVerified       bool     `json:"email_verified"`
-	FamilyName          string   `json:"family_name"`
-	Gender              string   `json:"gender"`
-	GivenName           string   `json:"given_name"`
-	Locale              string   `json:"locale"`
-	MiddleName          string   `json:"middle_name"`
-	Name                string   `json:"name"`
-	Nickname            string   `json:"nickname"`
-	PhoneNumber         string   `json:"phone_number"`
-	PhoneNumberVerified bool     `json:"phone_number_verified"`
-	Picture             string   `json:"picture"`
-	PreferredName       string   `json:"preferred_name"`
-	Profile             string   `json:"profile"`
-	Sub                 string   `json:"sub"`
-	UpdatedAt           string   `json:"updated_at"`
-	Website             string   `json:"website"`
-	Zoneinfo            string   `json:"zoneinfo"`
+	Address             *Address `json:"address,omitempty" url:"address,omitempty"`
+	Birthdate           string   `json:"birthdate" url:"birthdate"`
+	Email               string   `json:"email" url:"email"`
+	EmailVerified       bool     `json:"email_verified" url:"email_verified"`
+	FamilyName          string   `json:"family_name" url:"family_name"`
+	Gender              string   `json:"gender" url:"gender"`
+	GivenName           string   `json:"given_name" url:"given_name"`
+	Locale              string   `json:"locale" url:"locale"`
+	MiddleName          string   `json:"middle_name" url:"middle_name"`
+	Name                string   `json:"name" url:"name"`
+	Nickname            string   `json:"nickname" url:"nickname"`
+	PhoneNumber         string   `json:"phone_number" url:"phone_number"`
+	PhoneNumberVerified bool     `json:"phone_number_verified" url:"phone_number_verified"`
+	Picture             string   `json:"picture" url:"picture"`
+	PreferredName       string   `json:"preferred_name" url:"preferred_name"`
+	Profile             string   `json:"profile" url:"profile"`
+	Sub                 string   `json:"sub" url:"sub"`
+	UpdatedAt           string   `json:"updated_at" url:"updated_at"`
+	Website             string   `json:"website" url:"website"`
+	Zoneinfo            string   `json:"zoneinfo" url:"zoneinfo"`
 	// A free form object. Due to a limitation of the API Explorer, you can only enter string key/values below, but this API accepts more complex object structures.
-	Custom        interface{}     `json:"custom,omitempty"`
-	Airship       *AirshipProfile `json:"airship,omitempty"`
-	Apn           string          `json:"apn"`
-	TargetArn     string          `json:"target_arn"`
-	Discord       *Discord        `json:"discord,omitempty"`
-	Expo          *Expo           `json:"expo,omitempty"`
-	FacebookPsid  string          `json:"facebookPSID"`
-	FirebaseToken string          `json:"firebaseToken"`
-	Intercom      *Intercom       `json:"intercom,omitempty"`
-	Slack         *Slack          `json:"slack,omitempty"`
-	MsTeams       *MsTeams        `json:"ms_teams,omitempty"`
+	Custom        interface{}     `json:"custom,omitempty" url:"custom,omitempty"`
+	Airship       *AirshipProfile `json:"airship,omitempty" url:"airship,omitempty"`
+	Apn           string          `json:"apn" url:"apn"`
+	TargetArn     string          `json:"target_arn" url:"target_arn"`
+	Discord       *Discord        `json:"discord,omitempty" url:"discord,omitempty"`
+	Expo          *Expo           `json:"expo,omitempty" url:"expo,omitempty"`
+	FacebookPsid  string          `json:"facebookPSID" url:"facebookPSID"`
+	FirebaseToken string          `json:"firebaseToken" url:"firebaseToken"`
+	Intercom      *Intercom       `json:"intercom,omitempty" url:"intercom,omitempty"`
+	Slack         *Slack          `json:"slack,omitempty" url:"slack,omitempty"`
+	MsTeams       *MsTeams        `json:"ms_teams,omitempty" url:"ms_teams,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -4042,7 +4106,7 @@ type Attachment = map[string]interface{}
 
 type AudienceFilter struct {
 	// Send to users only if they are member of the account
-	Value    string `json:"value"`
+	Value    string `json:"value" url:"value"`
 	operator string
 	path     string
 
@@ -4058,12 +4122,16 @@ func (a *AudienceFilter) Path() string {
 }
 
 func (a *AudienceFilter) UnmarshalJSON(data []byte) error {
-	type unmarshaler AudienceFilter
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed AudienceFilter
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*a = AudienceFilter(value)
+	*a = AudienceFilter(unmarshaler.embed)
 	a.operator = "MEMBER_OF"
 	a.path = "account_id"
 	a._rawJSON = json.RawMessage(data)
@@ -4098,9 +4166,9 @@ func (a *AudienceFilter) String() string {
 
 type AudienceRecipient struct {
 	// A unique identifier associated with an Audience. A message will be sent to each user in the audience.
-	AudienceId string            `json:"audience_id"`
-	Data       *MessageData      `json:"data,omitempty"`
-	Filters    []*AudienceFilter `json:"filters,omitempty"`
+	AudienceId string            `json:"audience_id" url:"audience_id"`
+	Data       *MessageData      `json:"data,omitempty" url:"data,omitempty"`
+	Filters    []*AudienceFilter `json:"filters,omitempty" url:"filters,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -4131,24 +4199,24 @@ func (a *AudienceRecipient) String() string {
 type BaseMessage struct {
 	// An arbitrary object that includes any data you want to pass to the message.
 	// The data will populate the corresponding template or elements variables.
-	Data    *MessageData `json:"data,omitempty"`
-	BrandId *string      `json:"brand_id,omitempty"`
+	Data    *MessageData `json:"data,omitempty" url:"data,omitempty"`
+	BrandId *string      `json:"brand_id,omitempty" url:"brand_id,omitempty"`
 	// "Define run-time configuration for one or more channels. If you don't specify channels, the default configuration for each channel will be used. Valid ChannelId's are: email, sms, push, inbox, direct_message, banner, and webhook."
-	Channels *MessageChannels `json:"channels,omitempty"`
+	Channels *MessageChannels `json:"channels,omitempty" url:"channels,omitempty"`
 	// Context to load with this recipient. Will override any context set on message.context.
-	Context *MessageContext `json:"context,omitempty"`
+	Context *MessageContext `json:"context,omitempty" url:"context,omitempty"`
 	// Metadata such as utm tracking attached with the notification through this channel.
-	Metadata *MessageMetadata `json:"metadata,omitempty"`
+	Metadata *MessageMetadata `json:"metadata,omitempty" url:"metadata,omitempty"`
 	// An object whose keys are valid provider identifiers which map to an object.
-	Providers *MessageProviders `json:"providers,omitempty"`
-	Routing   *Routing          `json:"routing,omitempty"`
+	Providers *MessageProviders `json:"providers,omitempty" url:"providers,omitempty"`
+	Routing   *Routing          `json:"routing,omitempty" url:"routing,omitempty"`
 	// Time in ms to attempt the channel before failing over to the next available channel.
-	Timeout *Timeout `json:"timeout,omitempty"`
+	Timeout *Timeout `json:"timeout,omitempty" url:"timeout,omitempty"`
 	// Defines the time to wait before delivering the message.
-	Delay *Delay `json:"delay,omitempty"`
+	Delay *Delay `json:"delay,omitempty" url:"delay,omitempty"`
 	// "Expiry allows you to set an absolute or relative time in which a message expires.
 	// Note: This is only valid for the Courier Inbox channel as of 12-08-2022."
-	Expiry *Expiry `json:"expiry,omitempty"`
+	Expiry *Expiry `json:"expiry,omitempty" url:"expiry,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -4177,7 +4245,7 @@ func (b *BaseMessage) String() string {
 }
 
 type BaseSocialPresence struct {
-	Url string `json:"url"`
+	Url string `json:"url" url:"url"`
 
 	_rawJSON json.RawMessage
 }
@@ -4206,10 +4274,10 @@ func (b *BaseSocialPresence) String() string {
 }
 
 type BrandSettingsEmail struct {
-	TemplateOverride *BrandTemplateOverride `json:"templateOverride,omitempty"`
-	Head             *EmailHead             `json:"head,omitempty"`
-	Footer           *EmailFooter           `json:"footer,omitempty"`
-	Header           *EmailHeader           `json:"header,omitempty"`
+	TemplateOverride *BrandTemplateOverride `json:"templateOverride,omitempty" url:"templateOverride,omitempty"`
+	Head             *EmailHead             `json:"head,omitempty" url:"head,omitempty"`
+	Footer           *EmailFooter           `json:"footer,omitempty" url:"footer,omitempty"`
+	Header           *EmailHeader           `json:"header,omitempty" url:"header,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -4238,14 +4306,14 @@ func (b *BrandSettingsEmail) String() string {
 }
 
 type BrandSettingsInApp struct {
-	BorderRadius       *string           `json:"borderRadius,omitempty"`
-	DisableMessageIcon *bool             `json:"disableMessageIcon,omitempty"`
-	FontFamily         *string           `json:"fontFamily,omitempty"`
-	Placement          *InAppPlacement   `json:"placement,omitempty"`
-	WidgetBackground   *WidgetBackground `json:"widgetBackground,omitempty"`
-	Colors             *BrandColors      `json:"colors,omitempty"`
-	Icons              *Icons            `json:"icons,omitempty"`
-	Preferences        *Preferences      `json:"preferences,omitempty"`
+	BorderRadius       *string           `json:"borderRadius,omitempty" url:"borderRadius,omitempty"`
+	DisableMessageIcon *bool             `json:"disableMessageIcon,omitempty" url:"disableMessageIcon,omitempty"`
+	FontFamily         *string           `json:"fontFamily,omitempty" url:"fontFamily,omitempty"`
+	Placement          *InAppPlacement   `json:"placement,omitempty" url:"placement,omitempty"`
+	WidgetBackground   *WidgetBackground `json:"widgetBackground,omitempty" url:"widgetBackground,omitempty"`
+	Colors             *BrandColors      `json:"colors,omitempty" url:"colors,omitempty"`
+	Icons              *Icons            `json:"icons,omitempty" url:"icons,omitempty"`
+	Preferences        *Preferences      `json:"preferences,omitempty" url:"preferences,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -4274,12 +4342,12 @@ func (b *BrandSettingsInApp) String() string {
 }
 
 type BrandSettingsSocialPresence struct {
-	InheritDefault *bool               `json:"inheritDefault,omitempty"`
-	Facebook       *BaseSocialPresence `json:"facebook,omitempty"`
-	Instagram      *BaseSocialPresence `json:"instagram,omitempty"`
-	Linkedin       *BaseSocialPresence `json:"linkedin,omitempty"`
-	Medium         *BaseSocialPresence `json:"medium,omitempty"`
-	Twitter        *BaseSocialPresence `json:"twitter,omitempty"`
+	InheritDefault *bool               `json:"inheritDefault,omitempty" url:"inheritDefault,omitempty"`
+	Facebook       *BaseSocialPresence `json:"facebook,omitempty" url:"facebook,omitempty"`
+	Instagram      *BaseSocialPresence `json:"instagram,omitempty" url:"instagram,omitempty"`
+	Linkedin       *BaseSocialPresence `json:"linkedin,omitempty" url:"linkedin,omitempty"`
+	Medium         *BaseSocialPresence `json:"medium,omitempty" url:"medium,omitempty"`
+	Twitter        *BaseSocialPresence `json:"twitter,omitempty" url:"twitter,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -4308,13 +4376,13 @@ func (b *BrandSettingsSocialPresence) String() string {
 }
 
 type BrandTemplate struct {
-	BackgroundColor       *string `json:"backgroundColor,omitempty"`
-	BlocksBackgroundColor *string `json:"blocksBackgroundColor,omitempty"`
-	Enabled               bool    `json:"enabled"`
-	Footer                *string `json:"footer,omitempty"`
-	Head                  *string `json:"head,omitempty"`
-	Header                *string `json:"header,omitempty"`
-	Width                 *string `json:"width,omitempty"`
+	BackgroundColor       *string `json:"backgroundColor,omitempty" url:"backgroundColor,omitempty"`
+	BlocksBackgroundColor *string `json:"blocksBackgroundColor,omitempty" url:"blocksBackgroundColor,omitempty"`
+	Enabled               bool    `json:"enabled" url:"enabled"`
+	Footer                *string `json:"footer,omitempty" url:"footer,omitempty"`
+	Head                  *string `json:"head,omitempty" url:"head,omitempty"`
+	Header                *string `json:"header,omitempty" url:"header,omitempty"`
+	Width                 *string `json:"width,omitempty" url:"width,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -4343,16 +4411,16 @@ func (b *BrandTemplate) String() string {
 }
 
 type BrandTemplateOverride struct {
-	BackgroundColor       *string        `json:"backgroundColor,omitempty"`
-	BlocksBackgroundColor *string        `json:"blocksBackgroundColor,omitempty"`
-	Enabled               bool           `json:"enabled"`
-	Footer                *string        `json:"footer,omitempty"`
-	Head                  *string        `json:"head,omitempty"`
-	Header                *string        `json:"header,omitempty"`
-	Width                 *string        `json:"width,omitempty"`
-	Mjml                  *BrandTemplate `json:"mjml,omitempty"`
-	FooterBackgroundColor *string        `json:"footerBackgroundColor,omitempty"`
-	FooterFullWidth       *bool          `json:"footerFullWidth,omitempty"`
+	BackgroundColor       *string        `json:"backgroundColor,omitempty" url:"backgroundColor,omitempty"`
+	BlocksBackgroundColor *string        `json:"blocksBackgroundColor,omitempty" url:"blocksBackgroundColor,omitempty"`
+	Enabled               bool           `json:"enabled" url:"enabled"`
+	Footer                *string        `json:"footer,omitempty" url:"footer,omitempty"`
+	Head                  *string        `json:"head,omitempty" url:"head,omitempty"`
+	Header                *string        `json:"header,omitempty" url:"header,omitempty"`
+	Width                 *string        `json:"width,omitempty" url:"width,omitempty"`
+	Mjml                  *BrandTemplate `json:"mjml,omitempty" url:"mjml,omitempty"`
+	FooterBackgroundColor *string        `json:"footerBackgroundColor,omitempty" url:"footerBackgroundColor,omitempty"`
+	FooterFullWidth       *bool          `json:"footerFullWidth,omitempty" url:"footerFullWidth,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -4383,22 +4451,22 @@ func (b *BrandTemplateOverride) String() string {
 type Channel struct {
 	// Id of the brand that should be used for rendering the message.
 	// If not specified, the brand configured as default brand will be used.
-	BrandId *string `json:"brand_id,omitempty"`
+	BrandId *string `json:"brand_id,omitempty" url:"brand_id,omitempty"`
 	// A list of providers enabled for this channel. Courier will select
 	// one provider to send through unless routing_method is set to all.
-	Providers []string `json:"providers,omitempty"`
+	Providers []string `json:"providers,omitempty" url:"providers,omitempty"`
 	// The method for selecting the providers to send the message with.
 	// Single will send to one of the available providers for this channel,
 	// all will send the message through all channels. Defaults to `single`.
-	RoutingMethod *RoutingMethod `json:"routing_method,omitempty"`
+	RoutingMethod *RoutingMethod `json:"routing_method,omitempty" url:"routing_method,omitempty"`
 	// A JavaScript conditional expression to determine if the message should
 	// be sent through the channel. Has access to the data and profile object.
 	// For example, `data.name === profile.name`
-	If       *string   `json:"if,omitempty"`
-	Timeouts *Timeouts `json:"timeouts,omitempty"`
+	If       *string   `json:"if,omitempty" url:"if,omitempty"`
+	Timeouts *Timeouts `json:"timeouts,omitempty" url:"timeouts,omitempty"`
 	// Channel specific overrides.
-	Override *Override        `json:"override,omitempty"`
-	Metadata *ChannelMetadata `json:"metadata,omitempty"`
+	Override *Override        `json:"override,omitempty" url:"override,omitempty"`
+	Metadata *ChannelMetadata `json:"metadata,omitempty" url:"metadata,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -4427,7 +4495,7 @@ func (c *Channel) String() string {
 }
 
 type ChannelMetadata struct {
-	Utm *Utm `json:"utm,omitempty"`
+	Utm *Utm `json:"utm,omitempty" url:"utm,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -4542,29 +4610,29 @@ func (c *Content) Accept(visitor ContentVisitor) error {
 type ContentMessage struct {
 	// An arbitrary object that includes any data you want to pass to the message.
 	// The data will populate the corresponding template or elements variables.
-	Data    *MessageData `json:"data,omitempty"`
-	BrandId *string      `json:"brand_id,omitempty"`
+	Data    *MessageData `json:"data,omitempty" url:"data,omitempty"`
+	BrandId *string      `json:"brand_id,omitempty" url:"brand_id,omitempty"`
 	// "Define run-time configuration for one or more channels. If you don't specify channels, the default configuration for each channel will be used. Valid ChannelId's are: email, sms, push, inbox, direct_message, banner, and webhook."
-	Channels *MessageChannels `json:"channels,omitempty"`
+	Channels *MessageChannels `json:"channels,omitempty" url:"channels,omitempty"`
 	// Context to load with this recipient. Will override any context set on message.context.
-	Context *MessageContext `json:"context,omitempty"`
+	Context *MessageContext `json:"context,omitempty" url:"context,omitempty"`
 	// Metadata such as utm tracking attached with the notification through this channel.
-	Metadata *MessageMetadata `json:"metadata,omitempty"`
+	Metadata *MessageMetadata `json:"metadata,omitempty" url:"metadata,omitempty"`
 	// An object whose keys are valid provider identifiers which map to an object.
-	Providers *MessageProviders `json:"providers,omitempty"`
-	Routing   *Routing          `json:"routing,omitempty"`
+	Providers *MessageProviders `json:"providers,omitempty" url:"providers,omitempty"`
+	Routing   *Routing          `json:"routing,omitempty" url:"routing,omitempty"`
 	// Time in ms to attempt the channel before failing over to the next available channel.
-	Timeout *Timeout `json:"timeout,omitempty"`
+	Timeout *Timeout `json:"timeout,omitempty" url:"timeout,omitempty"`
 	// Defines the time to wait before delivering the message.
-	Delay *Delay `json:"delay,omitempty"`
+	Delay *Delay `json:"delay,omitempty" url:"delay,omitempty"`
 	// "Expiry allows you to set an absolute or relative time in which a message expires.
 	// Note: This is only valid for the Courier Inbox channel as of 12-08-2022."
-	Expiry *Expiry `json:"expiry,omitempty"`
+	Expiry *Expiry `json:"expiry,omitempty" url:"expiry,omitempty"`
 	// Describes the content of the message in a way that will work for email, push,
 	// chat, or any channel. Either this or template must be specified.
-	Content *Content `json:"content,omitempty"`
+	Content *Content `json:"content,omitempty" url:"content,omitempty"`
 	// The recipient or a list of recipients of the message
-	To *MessageRecipient `json:"to,omitempty"`
+	To *MessageRecipient `json:"to,omitempty" url:"to,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -4622,7 +4690,7 @@ func (c Criteria) Ptr() *Criteria {
 
 type Delay struct {
 	// The duration of the delay in milliseconds.
-	Duration int `json:"duration"`
+	Duration int `json:"duration" url:"duration"`
 
 	_rawJSON json.RawMessage
 }
@@ -4652,24 +4720,24 @@ func (d *Delay) String() string {
 
 // Allows the user to execute an action. Can be a button or a link.
 type ElementalActionNode struct {
-	Channels []string `json:"channels,omitempty"`
-	Ref      *string  `json:"ref,omitempty"`
-	If       *string  `json:"if,omitempty"`
-	Loop     *string  `json:"loop,omitempty"`
+	Channels []string `json:"channels,omitempty" url:"channels,omitempty"`
+	Ref      *string  `json:"ref,omitempty" url:"ref,omitempty"`
+	If       *string  `json:"if,omitempty" url:"if,omitempty"`
+	Loop     *string  `json:"loop,omitempty" url:"loop,omitempty"`
 	// The text content of the action shown to the user.
-	Content string `json:"content"`
+	Content string `json:"content" url:"content"`
 	// The target URL of the action.
-	Href string `json:"href"`
+	Href string `json:"href" url:"href"`
 	// A unique id used to identify the action when it is executed.
-	ActionId *string `json:"action_id,omitempty"`
+	ActionId *string `json:"action_id,omitempty" url:"action_id,omitempty"`
 	// The alignment of the action button. Defaults to "center".
-	Align *IAlignment `json:"align,omitempty"`
+	Align *IAlignment `json:"align,omitempty" url:"align,omitempty"`
 	// The background color of the action button.
-	BackgroundColor *string `json:"background_color,omitempty"`
+	BackgroundColor *string `json:"background_color,omitempty" url:"background_color,omitempty"`
 	// Defaults to `button`.
-	Style *IActionButtonStyle `json:"style,omitempty"`
+	Style *IActionButtonStyle `json:"style,omitempty" url:"style,omitempty"`
 	// Region specific content. See [locales docs](https://www.courier.com/docs/platform/content/elemental/locales/) for more details.
-	Locales Locales `json:"locales,omitempty"`
+	Locales Locales `json:"locales,omitempty" url:"locales,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -4698,10 +4766,10 @@ func (e *ElementalActionNode) String() string {
 }
 
 type ElementalBaseNode struct {
-	Channels []string `json:"channels,omitempty"`
-	Ref      *string  `json:"ref,omitempty"`
-	If       *string  `json:"if,omitempty"`
-	Loop     *string  `json:"loop,omitempty"`
+	Channels []string `json:"channels,omitempty" url:"channels,omitempty"`
+	Ref      *string  `json:"ref,omitempty" url:"ref,omitempty"`
+	If       *string  `json:"if,omitempty" url:"if,omitempty"`
+	Loop     *string  `json:"loop,omitempty" url:"loop,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -4738,19 +4806,19 @@ func (e *ElementalBaseNode) String() string {
 // display an individual element on a per channel basis. See the
 // [control flow docs](https://www.courier.com/docs/platform/content/elemental/control-flow/) for more details.
 type ElementalChannelNode struct {
-	Channels []string `json:"channels,omitempty"`
-	Ref      *string  `json:"ref,omitempty"`
-	If       *string  `json:"if,omitempty"`
-	Loop     *string  `json:"loop,omitempty"`
+	Channels []string `json:"channels,omitempty" url:"channels,omitempty"`
+	Ref      *string  `json:"ref,omitempty" url:"ref,omitempty"`
+	If       *string  `json:"if,omitempty" url:"if,omitempty"`
+	Loop     *string  `json:"loop,omitempty" url:"loop,omitempty"`
 	// The channel the contents of this element should be applied to. Can be `email`,
 	// `push`, `direct_message`, `sms` or a provider such as slack
-	Channel string `json:"channel"`
+	Channel string `json:"channel" url:"channel"`
 	// An array of elements to apply to the channel. If `raw` has not been
 	// specified, `elements` is `required`.
-	Elements []*ElementalNode `json:"elements,omitempty"`
+	Elements []*ElementalNode `json:"elements,omitempty" url:"elements,omitempty"`
 	// Raw data to apply to the channel. If `elements` has not been
 	// specified, `raw` is `required`.
-	Raw map[string]interface{} `json:"raw,omitempty"`
+	Raw map[string]interface{} `json:"raw,omitempty" url:"raw,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -4780,9 +4848,9 @@ func (e *ElementalChannelNode) String() string {
 
 type ElementalContent struct {
 	// For example, "2022-01-01"
-	Version  string           `json:"version"`
-	Brand    interface{}      `json:"brand,omitempty"`
-	Elements []*ElementalNode `json:"elements,omitempty"`
+	Version  string           `json:"version" url:"version"`
+	Brand    interface{}      `json:"brand,omitempty" url:"brand,omitempty"`
+	Elements []*ElementalNode `json:"elements,omitempty" url:"elements,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -4813,9 +4881,9 @@ func (e *ElementalContent) String() string {
 // Syntatic Sugar to provide a fast shorthand for Courier Elemental Blocks.
 type ElementalContentSugar struct {
 	// The title to be displayed by supported channels i.e. push, email (as subject)
-	Title string `json:"title"`
+	Title string `json:"title" url:"title"`
 	// The text content displayed in the notification.
-	Body string `json:"body"`
+	Body string `json:"body" url:"body"`
 
 	_rawJSON json.RawMessage
 }
@@ -4845,12 +4913,12 @@ func (e *ElementalContentSugar) String() string {
 
 // Renders a dividing line between elements.
 type ElementalDividerNode struct {
-	Channels []string `json:"channels,omitempty"`
-	Ref      *string  `json:"ref,omitempty"`
-	If       *string  `json:"if,omitempty"`
-	Loop     *string  `json:"loop,omitempty"`
+	Channels []string `json:"channels,omitempty" url:"channels,omitempty"`
+	Ref      *string  `json:"ref,omitempty" url:"ref,omitempty"`
+	If       *string  `json:"if,omitempty" url:"if,omitempty"`
+	Loop     *string  `json:"loop,omitempty" url:"loop,omitempty"`
 	// The CSS color to render the line with. For example, `#fff`
-	Color *string `json:"color,omitempty"`
+	Color *string `json:"color,omitempty" url:"color,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -4880,12 +4948,12 @@ func (e *ElementalDividerNode) String() string {
 
 // Allows you to group elements together. This can be useful when used in combination with "if" or "loop". See [control flow docs](https://www.courier.com/docs/platform/content/elemental/control-flow/) for more details.
 type ElementalGroupNode struct {
-	Channels []string `json:"channels,omitempty"`
-	Ref      *string  `json:"ref,omitempty"`
-	If       *string  `json:"if,omitempty"`
-	Loop     *string  `json:"loop,omitempty"`
+	Channels []string `json:"channels,omitempty" url:"channels,omitempty"`
+	Ref      *string  `json:"ref,omitempty" url:"ref,omitempty"`
+	If       *string  `json:"if,omitempty" url:"if,omitempty"`
+	Loop     *string  `json:"loop,omitempty" url:"loop,omitempty"`
 	// Sub elements to render.
-	Elements []*ElementalNode `json:"elements,omitempty"`
+	Elements []*ElementalNode `json:"elements,omitempty" url:"elements,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -4915,20 +4983,20 @@ func (e *ElementalGroupNode) String() string {
 
 // Used to embed an image into the notification.
 type ElementalImageNode struct {
-	Channels []string `json:"channels,omitempty"`
-	Ref      *string  `json:"ref,omitempty"`
-	If       *string  `json:"if,omitempty"`
-	Loop     *string  `json:"loop,omitempty"`
+	Channels []string `json:"channels,omitempty" url:"channels,omitempty"`
+	Ref      *string  `json:"ref,omitempty" url:"ref,omitempty"`
+	If       *string  `json:"if,omitempty" url:"if,omitempty"`
+	Loop     *string  `json:"loop,omitempty" url:"loop,omitempty"`
 	// The source of the image.
-	Src string `json:"src"`
+	Src string `json:"src" url:"src"`
 	// A URL to link to when the image is clicked.
-	Href *string `json:"href,omitempty"`
+	Href *string `json:"href,omitempty" url:"href,omitempty"`
 	// The alignment of the image.
-	Align *IAlignment `json:"align,omitempty"`
+	Align *IAlignment `json:"align,omitempty" url:"align,omitempty"`
 	// Alternate text for the image.
-	AltText *string `json:"altText,omitempty"`
+	AltText *string `json:"altText,omitempty" url:"altText,omitempty"`
 	// CSS width properties to apply to the image. For example, 50px
-	Width *string `json:"width,omitempty"`
+	Width *string `json:"width,omitempty" url:"width,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -4960,12 +5028,12 @@ func (e *ElementalImageNode) String() string {
 // be used by a particular channel or provider. One important field is the title
 // field which will be used as the title for channels that support it.
 type ElementalMetaNode struct {
-	Channels []string `json:"channels,omitempty"`
-	Ref      *string  `json:"ref,omitempty"`
-	If       *string  `json:"if,omitempty"`
-	Loop     *string  `json:"loop,omitempty"`
+	Channels []string `json:"channels,omitempty" url:"channels,omitempty"`
+	Ref      *string  `json:"ref,omitempty" url:"ref,omitempty"`
+	If       *string  `json:"if,omitempty" url:"if,omitempty"`
+	Loop     *string  `json:"loop,omitempty" url:"loop,omitempty"`
 	// The title to be displayed by supported channels. For example, the email subject.
-	Title *string `json:"title,omitempty"`
+	Title *string `json:"title,omitempty" url:"title,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -5213,19 +5281,19 @@ func (e *ElementalNode) Accept(visitor ElementalNodeVisitor) error {
 
 // Renders a quote block.
 type ElementalQuoteNode struct {
-	Channels []string `json:"channels,omitempty"`
-	Ref      *string  `json:"ref,omitempty"`
-	If       *string  `json:"if,omitempty"`
-	Loop     *string  `json:"loop,omitempty"`
+	Channels []string `json:"channels,omitempty" url:"channels,omitempty"`
+	Ref      *string  `json:"ref,omitempty" url:"ref,omitempty"`
+	If       *string  `json:"if,omitempty" url:"if,omitempty"`
+	Loop     *string  `json:"loop,omitempty" url:"loop,omitempty"`
 	// The text value of the quote.
-	Content string `json:"content"`
+	Content string `json:"content" url:"content"`
 	// Alignment of the quote.
-	Align *IAlignment `json:"align,omitempty"`
+	Align *IAlignment `json:"align,omitempty" url:"align,omitempty"`
 	// CSS border color property. For example, `#fff`
-	BorderColor *string   `json:"borderColor,omitempty"`
-	TextStyle   TextStyle `json:"text_style,omitempty"`
+	BorderColor *string   `json:"borderColor,omitempty" url:"borderColor,omitempty"`
+	TextStyle   TextStyle `json:"text_style,omitempty" url:"text_style,omitempty"`
 	// Region specific content. See [locales docs](https://www.courier.com/docs/platform/content/elemental/locales/) for more details.
-	Locales Locales `json:"locales,omitempty"`
+	Locales Locales `json:"locales,omitempty" url:"locales,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -5255,30 +5323,30 @@ func (e *ElementalQuoteNode) String() string {
 
 // Represents a body of text to be rendered inside of the notification.
 type ElementalTextNode struct {
-	Channels []string `json:"channels,omitempty"`
-	Ref      *string  `json:"ref,omitempty"`
-	If       *string  `json:"if,omitempty"`
-	Loop     *string  `json:"loop,omitempty"`
+	Channels []string `json:"channels,omitempty" url:"channels,omitempty"`
+	Ref      *string  `json:"ref,omitempty" url:"ref,omitempty"`
+	If       *string  `json:"if,omitempty" url:"if,omitempty"`
+	Loop     *string  `json:"loop,omitempty" url:"loop,omitempty"`
 	// The text content displayed in the notification. Either this
 	// field must be specified, or the elements field
-	Content string `json:"content"`
+	Content string `json:"content" url:"content"`
 	// Text alignment.
-	Align TextAlign `json:"align,omitempty"`
+	Align TextAlign `json:"align,omitempty" url:"align,omitempty"`
 	// Allows the text to be rendered as a heading level.
-	TextStyle *TextStyle `json:"text_style,omitempty"`
+	TextStyle *TextStyle `json:"text_style,omitempty" url:"text_style,omitempty"`
 	// Specifies the color of text. Can be any valid css color value
-	Color *string `json:"color,omitempty"`
+	Color *string `json:"color,omitempty" url:"color,omitempty"`
 	// Apply bold to the text
-	Bold *string `json:"bold,omitempty"`
+	Bold *string `json:"bold,omitempty" url:"bold,omitempty"`
 	// Apply italics to the text
-	Italic *string `json:"italic,omitempty"`
+	Italic *string `json:"italic,omitempty" url:"italic,omitempty"`
 	// Apply a strike through the text
-	Strikethrough *string `json:"strikethrough,omitempty"`
+	Strikethrough *string `json:"strikethrough,omitempty" url:"strikethrough,omitempty"`
 	// Apply an underline to the text
-	Underline *string `json:"underline,omitempty"`
+	Underline *string `json:"underline,omitempty" url:"underline,omitempty"`
 	// Region specific content. See [locales docs](https://www.courier.com/docs/platform/content/elemental/locales/) for more details.
-	Locales *Locales `json:"locales,omitempty"`
-	Format  *string  `json:"format,omitempty"`
+	Locales *Locales `json:"locales,omitempty" url:"locales,omitempty"`
+	Format  *string  `json:"format,omitempty" url:"format,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -5307,8 +5375,8 @@ func (e *ElementalTextNode) String() string {
 }
 
 type EmailFooter struct {
-	Content        interface{} `json:"content,omitempty"`
-	InheritDefault *bool       `json:"inheritDefault,omitempty"`
+	Content        interface{} `json:"content,omitempty" url:"content,omitempty"`
+	InheritDefault *bool       `json:"inheritDefault,omitempty" url:"inheritDefault,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -5337,8 +5405,8 @@ func (e *EmailFooter) String() string {
 }
 
 type EmailHead struct {
-	InheritDefault bool    `json:"inheritDefault"`
-	Content        *string `json:"content,omitempty"`
+	InheritDefault bool    `json:"inheritDefault" url:"inheritDefault"`
+	Content        *string `json:"content,omitempty" url:"content,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -5367,9 +5435,9 @@ func (e *EmailHead) String() string {
 }
 
 type EmailHeader struct {
-	InheritDefault *bool   `json:"inheritDefault,omitempty"`
-	BarColor       *string `json:"barColor,omitempty"`
-	Logo           *Logo   `json:"logo,omitempty"`
+	InheritDefault *bool   `json:"inheritDefault,omitempty" url:"inheritDefault,omitempty"`
+	BarColor       *string `json:"barColor,omitempty" url:"barColor,omitempty"`
+	Logo           *Logo   `json:"logo,omitempty" url:"logo,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -5456,9 +5524,9 @@ func (e *ExpiresInType) Accept(visitor ExpiresInTypeVisitor) error {
 
 type Expiry struct {
 	// An epoch timestamp or ISO8601 timestamp with timezone `(YYYY-MM-DDThh:mm:ss.sTZD)` that describes the time in which a message expires.
-	ExpiresAt *string `json:"expires_at,omitempty"`
+	ExpiresAt *string `json:"expires_at,omitempty" url:"expires_at,omitempty"`
 	// A duration in the form of milliseconds or an ISO8601 Duration format (i.e. P1DT4H).
-	ExpiresIn *ExpiresInType `json:"expires_in,omitempty"`
+	ExpiresIn *ExpiresInType `json:"expires_in,omitempty" url:"expires_in,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -5539,9 +5607,9 @@ func (i IAlignment) Ptr() *IAlignment {
 type IPreferences = map[string]*Preference
 
 type IProfilePreferences struct {
-	Categories    *IPreferences `json:"categories,omitempty"`
-	Notifications IPreferences  `json:"notifications,omitempty"`
-	TemplateId    *string       `json:"templateId,omitempty"`
+	Categories    *IPreferences `json:"categories,omitempty" url:"categories,omitempty"`
+	Notifications IPreferences  `json:"notifications,omitempty" url:"notifications,omitempty"`
+	TemplateId    *string       `json:"templateId,omitempty" url:"templateId,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -5570,8 +5638,8 @@ func (i *IProfilePreferences) String() string {
 }
 
 type Icons struct {
-	Bell    *string `json:"bell,omitempty"`
-	Message *string `json:"message,omitempty"`
+	Bell    *string `json:"bell,omitempty" url:"bell,omitempty"`
+	Message *string `json:"message,omitempty" url:"message,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -5628,8 +5696,8 @@ func (i InAppPlacement) Ptr() *InAppPlacement {
 }
 
 type InvalidListPatternRecipient struct {
-	UserId string `json:"user_id"`
-	ListId string `json:"list_id"`
+	UserId string `json:"user_id" url:"user_id"`
+	ListId string `json:"list_id" url:"list_id"`
 
 	_rawJSON json.RawMessage
 }
@@ -5658,8 +5726,8 @@ func (i *InvalidListPatternRecipient) String() string {
 }
 
 type InvalidListRecipient struct {
-	UserId      string `json:"user_id"`
-	ListPattern string `json:"list_pattern"`
+	UserId      string `json:"user_id" url:"user_id"`
+	ListPattern string `json:"list_pattern" url:"list_pattern"`
 
 	_rawJSON json.RawMessage
 }
@@ -5688,8 +5756,8 @@ func (i *InvalidListRecipient) String() string {
 }
 
 type InvalidUserRecipient struct {
-	ListId      string `json:"list_id"`
-	ListPattern string `json:"list_pattern"`
+	ListId      string `json:"list_id" url:"list_id"`
+	ListPattern string `json:"list_pattern" url:"list_pattern"`
 
 	_rawJSON json.RawMessage
 }
@@ -5719,7 +5787,7 @@ func (i *InvalidUserRecipient) String() string {
 
 type ListFilter struct {
 	// Send to users only if they are member of the account
-	Value    string `json:"value"`
+	Value    string `json:"value" url:"value"`
 	operator string
 	path     string
 
@@ -5735,12 +5803,16 @@ func (l *ListFilter) Path() string {
 }
 
 func (l *ListFilter) UnmarshalJSON(data []byte) error {
-	type unmarshaler ListFilter
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed ListFilter
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*l),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*l = ListFilter(value)
+	*l = ListFilter(unmarshaler.embed)
 	l.operator = "MEMBER_OF"
 	l.path = "account_id"
 	l._rawJSON = json.RawMessage(data)
@@ -5774,8 +5846,8 @@ func (l *ListFilter) String() string {
 }
 
 type ListPatternRecipient struct {
-	ListPattern *string      `json:"list_pattern,omitempty"`
-	Data        *MessageData `json:"data,omitempty"`
+	ListPattern *string      `json:"list_pattern,omitempty" url:"list_pattern,omitempty"`
+	Data        *MessageData `json:"data,omitempty" url:"data,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -5831,9 +5903,9 @@ func (l *ListPatternRecipientType) String() string {
 }
 
 type ListRecipient struct {
-	ListId  *string       `json:"list_id,omitempty"`
-	Data    *MessageData  `json:"data,omitempty"`
-	Filters []*ListFilter `json:"filters,omitempty"`
+	ListId  *string       `json:"list_id,omitempty" url:"list_id,omitempty"`
+	Data    *MessageData  `json:"data,omitempty" url:"data,omitempty"`
+	Filters []*ListFilter `json:"filters,omitempty" url:"filters,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -5889,7 +5961,7 @@ func (l *ListRecipientType) String() string {
 }
 
 type Locale struct {
-	Content string `json:"content"`
+	Content string `json:"content" url:"content"`
 
 	_rawJSON json.RawMessage
 }
@@ -5920,8 +5992,8 @@ func (l *Locale) String() string {
 type Locales = map[string]*Locale
 
 type Logo struct {
-	Href  *string `json:"href,omitempty"`
-	Image *string `json:"image,omitempty"`
+	Href  *string `json:"href,omitempty" url:"href,omitempty"`
+	Image *string `json:"image,omitempty" url:"image,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -6009,16 +6081,16 @@ func (m *Message) Accept(visitor MessageVisitor) error {
 }
 
 type MessageChannelEmailOverride struct {
-	Attachments []Attachment      `json:"attachments,omitempty"`
-	Bcc         *string           `json:"bcc,omitempty"`
-	Brand       *Brand            `json:"brand,omitempty"`
-	Cc          *string           `json:"cc,omitempty"`
-	From        *string           `json:"from,omitempty"`
-	Html        *string           `json:"html,omitempty"`
-	ReplyTo     *string           `json:"reply_to,omitempty"`
-	Subject     *string           `json:"subject,omitempty"`
-	Text        *string           `json:"text,omitempty"`
-	Tracking    *TrackingOverride `json:"tracking,omitempty"`
+	Attachments []Attachment      `json:"attachments,omitempty" url:"attachments,omitempty"`
+	Bcc         *string           `json:"bcc,omitempty" url:"bcc,omitempty"`
+	Brand       *Brand            `json:"brand,omitempty" url:"brand,omitempty"`
+	Cc          *string           `json:"cc,omitempty" url:"cc,omitempty"`
+	From        *string           `json:"from,omitempty" url:"from,omitempty"`
+	Html        *string           `json:"html,omitempty" url:"html,omitempty"`
+	ReplyTo     *string           `json:"reply_to,omitempty" url:"reply_to,omitempty"`
+	Subject     *string           `json:"subject,omitempty" url:"subject,omitempty"`
+	Text        *string           `json:"text,omitempty" url:"text,omitempty"`
+	Tracking    *TrackingOverride `json:"tracking,omitempty" url:"tracking,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -6051,7 +6123,7 @@ type MessageChannels = map[string]*Channel
 type MessageContext struct {
 	// An id of a tenant, see [tenants api docs](https://www.courier.com/docs/reference/tenants/).
 	// Will load brand, default preferences and any other base context data associated with this tenant.
-	TenantId *string `json:"tenant_id,omitempty"`
+	TenantId *string `json:"tenant_id,omitempty" url:"tenant_id,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -6083,13 +6155,13 @@ type MessageData = map[string]interface{}
 
 type MessageMetadata struct {
 	// An arbitrary string to tracks the event that generated this request (e.g. 'signup').
-	Event *string `json:"event,omitempty"`
+	Event *string `json:"event,omitempty" url:"event,omitempty"`
 	// An array of up to 9 tags you wish to associate with this request (and corresponding messages) for later analysis. Individual tags cannot be more than 30 characters in length.
-	Tags []string `json:"tags,omitempty"`
+	Tags []string `json:"tags,omitempty" url:"tags,omitempty"`
 	// Identify the campaign that refers traffic to a specific website, and attributes the browser's website session.
-	Utm *Utm `json:"utm,omitempty"`
+	Utm *Utm `json:"utm,omitempty" url:"utm,omitempty"`
 	// A unique ID used to correlate this request to processing on your servers. Note: Courier does not verify the uniqueness of this ID.
-	TraceId *string `json:"trace_id,omitempty"`
+	TraceId *string `json:"trace_id,omitempty" url:"trace_id,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -6121,13 +6193,13 @@ type MessageProviders = map[string]*MessageProvidersType
 
 type MessageProvidersType struct {
 	// Provider specific overrides.
-	Override map[string]interface{} `json:"override,omitempty"`
+	Override map[string]interface{} `json:"override,omitempty" url:"override,omitempty"`
 	// A JavaScript conditional expression to determine if the message should be sent
 	// through the channel. Has access to the data and profile object. For example,
 	// `data.name === profile.name`
-	If       *string   `json:"if,omitempty"`
-	Timeouts *int      `json:"timeouts,omitempty"`
-	Metadata *Metadata `json:"metadata,omitempty"`
+	If       *string   `json:"if,omitempty" url:"if,omitempty"`
+	Timeouts *int      `json:"timeouts,omitempty" url:"timeouts,omitempty"`
+	Metadata *Metadata `json:"metadata,omitempty" url:"metadata,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -6213,7 +6285,7 @@ func (m *MessageRecipient) Accept(visitor MessageRecipientVisitor) error {
 }
 
 type Metadata struct {
-	Utm *Utm `json:"utm,omitempty"`
+	Utm *Utm `json:"utm,omitempty" url:"utm,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -6242,7 +6314,7 @@ func (m *Metadata) String() string {
 }
 
 type MsTeamsRecipient struct {
-	MsTeams *MsTeams `json:"ms_teams,omitempty"`
+	MsTeams *MsTeams `json:"ms_teams,omitempty" url:"ms_teams,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -6293,10 +6365,10 @@ func (o Override) Ptr() *Override {
 }
 
 type Preference struct {
-	Status             PreferenceStatus     `json:"status,omitempty"`
-	Rules              []*Rule              `json:"rules,omitempty"`
-	ChannelPreferences []*ChannelPreference `json:"channel_preferences,omitempty"`
-	Source             *ChannelSource       `json:"source,omitempty"`
+	Status             PreferenceStatus     `json:"status,omitempty" url:"status,omitempty"`
+	Rules              []*Rule              `json:"rules,omitempty" url:"rules,omitempty"`
+	ChannelPreferences []*ChannelPreference `json:"channel_preferences,omitempty" url:"channel_preferences,omitempty"`
+	Source             *ChannelSource       `json:"source,omitempty" url:"source,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -6325,7 +6397,7 @@ func (p *Preference) String() string {
 }
 
 type Preferences struct {
-	TemplateIds []string `json:"templateIds,omitempty"`
+	TemplateIds []string `json:"templateIds,omitempty" url:"templateIds,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -6478,11 +6550,11 @@ func (r *Recipient) Accept(visitor RecipientVisitor) error {
 // If no routing key is specified, Courier will use the default routing configuration or
 // routing defined by the template.
 type Routing struct {
-	Method RoutingMethod `json:"method,omitempty"`
+	Method RoutingMethod `json:"method,omitempty" url:"method,omitempty"`
 	// A list of channels or providers to send the message through. Can also recursively define
 	// sub-routing methods, which can be useful for defining advanced push notification
 	// delivery strategies.
-	Channels []*RoutingChannel `json:"channels,omitempty"`
+	Channels []*RoutingChannel `json:"channels,omitempty" url:"channels,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -6606,11 +6678,11 @@ func (r RoutingMethod) Ptr() *RoutingMethod {
 }
 
 type RoutingStrategyChannel struct {
-	Channel   string                 `json:"channel"`
-	Config    map[string]interface{} `json:"config,omitempty"`
-	Method    *RoutingMethod         `json:"method,omitempty"`
-	Providers *MessageProviders      `json:"providers,omitempty"`
-	If        *string                `json:"if,omitempty"`
+	Channel   string                 `json:"channel" url:"channel"`
+	Config    map[string]interface{} `json:"config,omitempty" url:"config,omitempty"`
+	Method    *RoutingMethod         `json:"method,omitempty" url:"method,omitempty"`
+	Providers *MessageProviders      `json:"providers,omitempty" url:"providers,omitempty"`
+	If        *string                `json:"if,omitempty" url:"if,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -6639,10 +6711,10 @@ func (r *RoutingStrategyChannel) String() string {
 }
 
 type RoutingStrategyProvider struct {
-	Name     string                 `json:"name"`
-	Config   map[string]interface{} `json:"config,omitempty"`
-	If       *string                `json:"if,omitempty"`
-	Metadata *Metadata              `json:"metadata,omitempty"`
+	Name     string                 `json:"name" url:"name"`
+	Config   map[string]interface{} `json:"config,omitempty" url:"config,omitempty"`
+	If       *string                `json:"if,omitempty" url:"if,omitempty"`
+	Metadata *Metadata              `json:"metadata,omitempty" url:"metadata,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -6696,7 +6768,7 @@ func (r RuleType) Ptr() *RuleType {
 }
 
 type SlackRecipient struct {
-	Slack *Slack `json:"slack,omitempty"`
+	Slack *Slack `json:"slack,omitempty" url:"slack,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -6727,29 +6799,29 @@ func (s *SlackRecipient) String() string {
 type TemplateMessage struct {
 	// An arbitrary object that includes any data you want to pass to the message.
 	// The data will populate the corresponding template or elements variables.
-	Data    *MessageData `json:"data,omitempty"`
-	BrandId *string      `json:"brand_id,omitempty"`
+	Data    *MessageData `json:"data,omitempty" url:"data,omitempty"`
+	BrandId *string      `json:"brand_id,omitempty" url:"brand_id,omitempty"`
 	// "Define run-time configuration for one or more channels. If you don't specify channels, the default configuration for each channel will be used. Valid ChannelId's are: email, sms, push, inbox, direct_message, banner, and webhook."
-	Channels *MessageChannels `json:"channels,omitempty"`
+	Channels *MessageChannels `json:"channels,omitempty" url:"channels,omitempty"`
 	// Context to load with this recipient. Will override any context set on message.context.
-	Context *MessageContext `json:"context,omitempty"`
+	Context *MessageContext `json:"context,omitempty" url:"context,omitempty"`
 	// Metadata such as utm tracking attached with the notification through this channel.
-	Metadata *MessageMetadata `json:"metadata,omitempty"`
+	Metadata *MessageMetadata `json:"metadata,omitempty" url:"metadata,omitempty"`
 	// An object whose keys are valid provider identifiers which map to an object.
-	Providers *MessageProviders `json:"providers,omitempty"`
-	Routing   *Routing          `json:"routing,omitempty"`
+	Providers *MessageProviders `json:"providers,omitempty" url:"providers,omitempty"`
+	Routing   *Routing          `json:"routing,omitempty" url:"routing,omitempty"`
 	// Time in ms to attempt the channel before failing over to the next available channel.
-	Timeout *Timeout `json:"timeout,omitempty"`
+	Timeout *Timeout `json:"timeout,omitempty" url:"timeout,omitempty"`
 	// Defines the time to wait before delivering the message.
-	Delay *Delay `json:"delay,omitempty"`
+	Delay *Delay `json:"delay,omitempty" url:"delay,omitempty"`
 	// "Expiry allows you to set an absolute or relative time in which a message expires.
 	// Note: This is only valid for the Courier Inbox channel as of 12-08-2022."
-	Expiry *Expiry `json:"expiry,omitempty"`
+	Expiry *Expiry `json:"expiry,omitempty" url:"expiry,omitempty"`
 	// The id of the notification template to be rendered and sent to the recipient(s).
 	// This field or the content field must be supplied.
-	Template string `json:"template"`
+	Template string `json:"template" url:"template"`
 	// The recipient or a list of recipients of the message
-	To *MessageRecipient `json:"to,omitempty"`
+	To *MessageRecipient `json:"to,omitempty" url:"to,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -6831,11 +6903,11 @@ func (t TextStyle) Ptr() *TextStyle {
 }
 
 type Timeout struct {
-	Provider   map[string]int `json:"provider,omitempty"`
-	Channel    map[string]int `json:"channel,omitempty"`
-	Message    *int           `json:"message,omitempty"`
-	Escalation *int           `json:"escalation,omitempty"`
-	Criteria   *Criteria      `json:"criteria,omitempty"`
+	Provider   map[string]int `json:"provider,omitempty" url:"provider,omitempty"`
+	Channel    map[string]int `json:"channel,omitempty" url:"channel,omitempty"`
+	Message    *int           `json:"message,omitempty" url:"message,omitempty"`
+	Escalation *int           `json:"escalation,omitempty" url:"escalation,omitempty"`
+	Criteria   *Criteria      `json:"criteria,omitempty" url:"criteria,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -6864,8 +6936,8 @@ func (t *Timeout) String() string {
 }
 
 type Timeouts struct {
-	Provider *int `json:"provider,omitempty"`
-	Channel  *int `json:"channel,omitempty"`
+	Provider *int `json:"provider,omitempty" url:"provider,omitempty"`
+	Channel  *int `json:"channel,omitempty" url:"channel,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -6894,7 +6966,7 @@ func (t *Timeouts) String() string {
 }
 
 type TrackingOverride struct {
-	Open bool `json:"open"`
+	Open bool `json:"open" url:"open"`
 
 	_rawJSON json.RawMessage
 }
@@ -6923,11 +6995,11 @@ func (t *TrackingOverride) String() string {
 }
 
 type Utm struct {
-	Source   *string `json:"source,omitempty"`
-	Medium   *string `json:"medium,omitempty"`
-	Campaign *string `json:"campaign,omitempty"`
-	Term     *string `json:"term,omitempty"`
-	Content  *string `json:"content,omitempty"`
+	Source   *string `json:"source,omitempty" url:"source,omitempty"`
+	Medium   *string `json:"medium,omitempty" url:"medium,omitempty"`
+	Campaign *string `json:"campaign,omitempty" url:"campaign,omitempty"`
+	Term     *string `json:"term,omitempty" url:"term,omitempty"`
+	Content  *string `json:"content,omitempty" url:"content,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -6957,19 +7029,19 @@ func (u *Utm) String() string {
 
 type UserRecipient struct {
 	// Use `tenant_id` instad.
-	AccountId *string `json:"account_id,omitempty"`
+	AccountId *string `json:"account_id,omitempty" url:"account_id,omitempty"`
 	// Context information such as tenant_id to send the notification with.
-	Context *MessageContext `json:"context,omitempty"`
-	Data    *MessageData    `json:"data,omitempty"`
-	Email   *string         `json:"email,omitempty"`
+	Context *MessageContext `json:"context,omitempty" url:"context,omitempty"`
+	Data    *MessageData    `json:"data,omitempty" url:"data,omitempty"`
+	Email   *string         `json:"email,omitempty" url:"email,omitempty"`
 	// The user's preferred ISO 639-1 language code.
-	Locale      *string              `json:"locale,omitempty"`
-	UserId      *string              `json:"user_id,omitempty"`
-	PhoneNumber *string              `json:"phone_number,omitempty"`
-	Preferences *IProfilePreferences `json:"preferences,omitempty"`
+	Locale      *string              `json:"locale,omitempty" url:"locale,omitempty"`
+	UserId      *string              `json:"user_id,omitempty" url:"user_id,omitempty"`
+	PhoneNumber *string              `json:"phone_number,omitempty" url:"phone_number,omitempty"`
+	Preferences *IProfilePreferences `json:"preferences,omitempty" url:"preferences,omitempty"`
 	// An id of a tenant, [see tenants api docs](https://www.courier.com/docs/reference/tenants).
 	// Will load brand, default preferences and any other base context data associated with this tenant.
-	TenantId *string `json:"tenant_id,omitempty"`
+	TenantId *string `json:"tenant_id,omitempty" url:"tenant_id,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -7025,8 +7097,8 @@ func (u *UserRecipientType) String() string {
 }
 
 type WidgetBackground struct {
-	TopColor    *string `json:"topColor,omitempty"`
-	BottomColor *string `json:"bottomColor,omitempty"`
+	TopColor    *string `json:"topColor,omitempty" url:"topColor,omitempty"`
+	BottomColor *string `json:"bottomColor,omitempty" url:"bottomColor,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -7058,17 +7130,17 @@ type ChannelIdentifier = string
 
 type NotificationTemplates struct {
 	// A UTC timestamp at which notification was created. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970).
-	CreatedAt int `json:"created_at"`
+	CreatedAt int `json:"created_at" url:"created_at"`
 	// A unique identifier associated with the notification.
-	Id string `json:"id"`
+	Id string `json:"id" url:"id"`
 	// Routing strategy used by this notification.
-	Routing *RoutingStrategy `json:"routing,omitempty"`
+	Routing *RoutingStrategy `json:"routing,omitempty" url:"routing,omitempty"`
 	// A list of tags attached to the notification.
-	Tags []*Tag `json:"tags,omitempty"`
+	Tags []*Tag `json:"tags,omitempty" url:"tags,omitempty"`
 	// The title of the notification.
-	Title string `json:"title"`
+	Title string `json:"title" url:"title"`
 	// A UTC timestamp at which notification was updated. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970).
-	UpdatedAt int `json:"updated_at"`
+	UpdatedAt int `json:"updated_at" url:"updated_at"`
 
 	_rawJSON json.RawMessage
 }
@@ -7098,9 +7170,9 @@ func (n *NotificationTemplates) String() string {
 
 type RoutingStrategy struct {
 	// The method for selecting channels to send the message with. Value can be either 'single' or 'all'. If not provided will default to 'single'
-	Method RoutingStrategyMethod `json:"method,omitempty"`
+	Method RoutingStrategyMethod `json:"method,omitempty" url:"method,omitempty"`
 	// An array of valid channel identifiers (like email, push, sms, etc.) and additional routing nodes.
-	Channels []ChannelIdentifier `json:"channels,omitempty"`
+	Channels []ChannelIdentifier `json:"channels,omitempty" url:"channels,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -7151,7 +7223,7 @@ func (r RoutingStrategyMethod) Ptr() *RoutingStrategyMethod {
 }
 
 type Tag struct {
-	Data []*TagData `json:"data,omitempty"`
+	Data []*TagData `json:"data,omitempty" url:"data,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -7181,9 +7253,9 @@ func (t *Tag) String() string {
 
 type TagData struct {
 	// A unique identifier of the tag.
-	Id string `json:"id"`
+	Id string `json:"id" url:"id"`
 	// Name of the tag.
-	Name string `json:"name"`
+	Name string `json:"name" url:"name"`
 
 	_rawJSON json.RawMessage
 }
@@ -7213,8 +7285,8 @@ func (t *TagData) String() string {
 
 type SubscriptionTopic struct {
 	// Topic ID
-	Id     string                  `json:"id"`
-	Status SubscriptionTopicStatus `json:"status,omitempty"`
+	Id     string                  `json:"id" url:"id"`
+	Status SubscriptionTopicStatus `json:"status,omitempty" url:"status,omitempty"`
 
 	_rawJSON json.RawMessage
 }

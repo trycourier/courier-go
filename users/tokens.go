@@ -13,19 +13,19 @@ type GetAllTokensResponse = []*UserToken
 
 type GetUserTokenResponse struct {
 	// Full body of the token. Must match token in URL.
-	Token       *string     `json:"token,omitempty"`
-	ProviderKey ProviderKey `json:"provider_key,omitempty"`
+	Token       *string     `json:"token,omitempty" url:"token,omitempty"`
+	ProviderKey ProviderKey `json:"provider_key,omitempty" url:"provider_key,omitempty"`
 	// ISO 8601 formatted date the token expires. Defaults to 2 months. Set to false to disable expiration.
-	ExpiryDate *ExpiryDate `json:"expiry_date,omitempty"`
+	ExpiryDate *ExpiryDate `json:"expiry_date,omitempty" url:"expiry_date,omitempty"`
 	// Properties sent to the provider along with the token
-	Properties interface{} `json:"properties,omitempty"`
+	Properties interface{} `json:"properties,omitempty" url:"properties,omitempty"`
 	// Information about the device the token is associated with.
-	Device *Device `json:"device,omitempty"`
+	Device *Device `json:"device,omitempty" url:"device,omitempty"`
 	// Information about the device the token is associated with.
-	Tracking *Tracking    `json:"tracking,omitempty"`
-	Status   *TokenStatus `json:"status,omitempty"`
+	Tracking *Tracking    `json:"tracking,omitempty" url:"tracking,omitempty"`
+	Status   *TokenStatus `json:"status,omitempty" url:"status,omitempty"`
 	// The reason for the token status.
-	StatusReason *string `json:"status_reason,omitempty"`
+	StatusReason *string `json:"status_reason,omitempty" url:"status_reason,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -54,7 +54,7 @@ func (g *GetUserTokenResponse) String() string {
 }
 
 type PatchUserTokenOpts struct {
-	Patch []*PatchOperation `json:"patch,omitempty"`
+	Patch []*PatchOperation `json:"patch,omitempty" url:"patch,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -84,16 +84,16 @@ func (p *PatchUserTokenOpts) String() string {
 
 type UserToken struct {
 	// Full body of the token. Must match token in URL.
-	Token       *string     `json:"token,omitempty"`
-	ProviderKey ProviderKey `json:"provider_key,omitempty"`
+	Token       *string     `json:"token,omitempty" url:"token,omitempty"`
+	ProviderKey ProviderKey `json:"provider_key,omitempty" url:"provider_key,omitempty"`
 	// ISO 8601 formatted date the token expires. Defaults to 2 months. Set to false to disable expiration.
-	ExpiryDate *ExpiryDate `json:"expiry_date,omitempty"`
+	ExpiryDate *ExpiryDate `json:"expiry_date,omitempty" url:"expiry_date,omitempty"`
 	// Properties sent to the provider along with the token
-	Properties interface{} `json:"properties,omitempty"`
+	Properties interface{} `json:"properties,omitempty" url:"properties,omitempty"`
 	// Information about the device the token is associated with.
-	Device *Device `json:"device,omitempty"`
+	Device *Device `json:"device,omitempty" url:"device,omitempty"`
 	// Information about the device the token is associated with.
-	Tracking *Tracking `json:"tracking,omitempty"`
+	Tracking *Tracking `json:"tracking,omitempty" url:"tracking,omitempty"`
 
 	_rawJSON json.RawMessage
 }

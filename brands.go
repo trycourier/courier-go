@@ -10,31 +10,31 @@ import (
 
 type ListBrandsRequest struct {
 	// A unique identifier that allows for fetching the next set of brands.
-	Cursor *string `json:"-"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
 }
 
 type BrandUpdateParameters struct {
 	// The name of the brand.
-	Name     string         `json:"name"`
-	Settings *BrandSettings `json:"settings,omitempty"`
-	Snippets *BrandSnippets `json:"snippets,omitempty"`
+	Name     string         `json:"name" url:"name"`
+	Settings *BrandSettings `json:"settings,omitempty" url:"settings,omitempty"`
+	Snippets *BrandSnippets `json:"snippets,omitempty" url:"snippets,omitempty"`
 }
 
 type Brand struct {
 	// The date/time of when the brand was created. Represented in milliseconds since Unix epoch.
-	Created int `json:"created"`
+	Created int `json:"created" url:"created"`
 	// Brand Identifier
-	Id *string `json:"id,omitempty"`
+	Id *string `json:"id,omitempty" url:"id,omitempty"`
 	// Brand name
-	Name string `json:"name"`
+	Name string `json:"name" url:"name"`
 	// The date/time of when the brand was published. Represented in milliseconds since Unix epoch.
-	Published int            `json:"published"`
-	Settings  *BrandSettings `json:"settings,omitempty"`
+	Published int            `json:"published" url:"published"`
+	Settings  *BrandSettings `json:"settings,omitempty" url:"settings,omitempty"`
 	// The date/time of when the brand was updated. Represented in milliseconds since Unix epoch.
-	Updated  int            `json:"updated"`
-	Snippets *BrandSnippets `json:"snippets,omitempty"`
+	Updated  int            `json:"updated" url:"updated"`
+	Snippets *BrandSnippets `json:"snippets,omitempty" url:"snippets,omitempty"`
 	// The version identifier for the brand
-	Version string `json:"version"`
+	Version string `json:"version" url:"version"`
 
 	_rawJSON json.RawMessage
 }
@@ -63,11 +63,11 @@ func (b *Brand) String() string {
 }
 
 type BrandParameters struct {
-	Id *string `json:"id,omitempty"`
+	Id *string `json:"id,omitempty" url:"id,omitempty"`
 	// The name of the brand.
-	Name     string         `json:"name"`
-	Settings *BrandSettings `json:"settings,omitempty"`
-	Snippets *BrandSnippets `json:"snippets,omitempty"`
+	Name     string         `json:"name" url:"name"`
+	Settings *BrandSettings `json:"settings,omitempty" url:"settings,omitempty"`
+	Snippets *BrandSnippets `json:"snippets,omitempty" url:"snippets,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -96,9 +96,9 @@ func (b *BrandParameters) String() string {
 }
 
 type BrandSettings struct {
-	Colors *BrandColors `json:"colors,omitempty"`
-	Inapp  interface{}  `json:"inapp,omitempty"`
-	Email  *Email       `json:"email,omitempty"`
+	Colors *BrandColors `json:"colors,omitempty" url:"colors,omitempty"`
+	Inapp  interface{}  `json:"inapp,omitempty" url:"inapp,omitempty"`
+	Email  *Email       `json:"email,omitempty" url:"email,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -127,7 +127,7 @@ func (b *BrandSettings) String() string {
 }
 
 type BrandSnippets struct {
-	Items []*BrandSnippet `json:"items,omitempty"`
+	Items []*BrandSnippet `json:"items,omitempty" url:"items,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -156,8 +156,8 @@ func (b *BrandSnippets) String() string {
 }
 
 type BrandsResponse struct {
-	Paging  *Paging  `json:"paging,omitempty"`
-	Results []*Brand `json:"results,omitempty"`
+	Paging  *Paging  `json:"paging,omitempty" url:"paging,omitempty"`
+	Results []*Brand `json:"results,omitempty" url:"results,omitempty"`
 
 	_rawJSON json.RawMessage
 }

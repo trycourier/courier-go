@@ -10,9 +10,9 @@ import (
 	fmt "fmt"
 	v3 "github.com/trycourier/courier-go/v3"
 	core "github.com/trycourier/courier-go/v3/core"
+	option "github.com/trycourier/courier-go/v3/option"
 	io "io"
 	http "net/http"
-	url "net/url"
 )
 
 type Client struct {
@@ -21,24 +21,37 @@ type Client struct {
 	header  http.Header
 }
 
-func NewClient(opts ...core.ClientOption) *Client {
-	options := core.NewClientOptions()
-	for _, opt := range opts {
-		opt(options)
-	}
+func NewClient(opts ...option.RequestOption) *Client {
+	options := core.NewRequestOptions(opts...)
 	return &Client{
 		baseURL: options.BaseURL,
-		caller:  core.NewCaller(options.HTTPClient),
-		header:  options.ToHeader(),
+		caller: core.NewCaller(
+			&core.CallerParams{
+				Client:      options.HTTPClient,
+				MaxAttempts: options.MaxAttempts,
+			},
+		),
+		header: options.ToHeader(),
 	}
 }
 
-func (c *Client) Create(ctx context.Context, request *v3.BrandParameters) (*v3.Brand, error) {
+func (c *Client) Create(
+	ctx context.Context,
+	request *v3.BrandParameters,
+	opts ...option.IdempotentRequestOption,
+) (*v3.Brand, error) {
+	options := core.NewIdempotentRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := baseURL + "/" + "brands"
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -79,7 +92,9 @@ func (c *Client) Create(ctx context.Context, request *v3.BrandParameters) (*v3.B
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodPost,
-			Headers:      c.header,
+			MaxAttempts:  options.MaxAttempts,
+			Headers:      headers,
+			Client:       options.HTTPClient,
 			Request:      request,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
@@ -91,23 +106,35 @@ func (c *Client) Create(ctx context.Context, request *v3.BrandParameters) (*v3.B
 }
 
 // Fetch a specific brand by brand ID.
-//
-// A unique identifier associated with the brand you wish to retrieve.
-func (c *Client) Get(ctx context.Context, brandId string) (*v3.Brand, error) {
+func (c *Client) Get(
+	ctx context.Context,
+	// A unique identifier associated with the brand you wish to retrieve.
+	brandId string,
+	opts ...option.RequestOption,
+) (*v3.Brand, error) {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"brands/%v", brandId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	var response *v3.Brand
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
-			URL:      endpointURL,
-			Method:   http.MethodGet,
-			Headers:  c.header,
-			Response: &response,
+			URL:         endpointURL,
+			Method:      http.MethodGet,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
 		return nil, err
@@ -116,29 +143,42 @@ func (c *Client) Get(ctx context.Context, brandId string) (*v3.Brand, error) {
 }
 
 // Get the list of brands.
-func (c *Client) List(ctx context.Context, request *v3.ListBrandsRequest) (*v3.BrandsResponse, error) {
+func (c *Client) List(
+	ctx context.Context,
+	request *v3.ListBrandsRequest,
+	opts ...option.RequestOption,
+) (*v3.BrandsResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := baseURL + "/" + "brands"
 
-	queryParams := make(url.Values)
-	if request.Cursor != nil {
-		queryParams.Add("cursor", fmt.Sprintf("%v", *request.Cursor))
+	queryParams, err := core.QueryValues(request)
+	if err != nil {
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
 	}
 
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+
 	var response *v3.BrandsResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
-			URL:      endpointURL,
-			Method:   http.MethodGet,
-			Headers:  c.header,
-			Response: &response,
+			URL:         endpointURL,
+			Method:      http.MethodGet,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
 		return nil, err
@@ -147,14 +187,24 @@ func (c *Client) List(ctx context.Context, request *v3.ListBrandsRequest) (*v3.B
 }
 
 // Delete a brand by brand ID.
-//
-// A unique identifier associated with the brand you wish to retrieve.
-func (c *Client) Delete(ctx context.Context, brandId string) error {
+func (c *Client) Delete(
+	ctx context.Context,
+	// A unique identifier associated with the brand you wish to retrieve.
+	brandId string,
+	opts ...option.RequestOption,
+) error {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"brands/%v", brandId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -180,7 +230,9 @@ func (c *Client) Delete(ctx context.Context, brandId string) error {
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodDelete,
-			Headers:      c.header,
+			MaxAttempts:  options.MaxAttempts,
+			Headers:      headers,
+			Client:       options.HTTPClient,
 			ErrorDecoder: errorDecoder,
 		},
 	); err != nil {
@@ -190,24 +242,37 @@ func (c *Client) Delete(ctx context.Context, brandId string) error {
 }
 
 // Replace an existing brand with the supplied values.
-//
-// A unique identifier associated with the brand you wish to update.
-func (c *Client) Replace(ctx context.Context, brandId string, request *v3.BrandUpdateParameters) (*v3.Brand, error) {
+func (c *Client) Replace(
+	ctx context.Context,
+	// A unique identifier associated with the brand you wish to update.
+	brandId string,
+	request *v3.BrandUpdateParameters,
+	opts ...option.RequestOption,
+) (*v3.Brand, error) {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"brands/%v", brandId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	var response *v3.Brand
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
-			URL:      endpointURL,
-			Method:   http.MethodPut,
-			Headers:  c.header,
-			Request:  request,
-			Response: &response,
+			URL:         endpointURL,
+			Method:      http.MethodPut,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
+			Request:     request,
+			Response:    &response,
 		},
 	); err != nil {
 		return nil, err

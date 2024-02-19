@@ -10,24 +10,24 @@ import (
 
 type AudiencesListParams struct {
 	// A unique identifier that allows for fetching the next set of audiences
-	Cursor *string `json:"-"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
 }
 
 type AudienceMembersListParams struct {
 	// A unique identifier that allows for fetching the next set of members
-	Cursor *string `json:"-"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
 }
 
 type Audience struct {
 	// A unique identifier representing the audience_id
-	Id string `json:"id"`
+	Id string `json:"id" url:"id"`
 	// The name of the audience
-	Name string `json:"name"`
+	Name string `json:"name" url:"name"`
 	// A description of the audience
-	Description string  `json:"description"`
-	Filter      *Filter `json:"filter,omitempty"`
-	CreatedAt   string  `json:"created_at"`
-	UpdatedAt   string  `json:"updated_at"`
+	Description string  `json:"description" url:"description"`
+	Filter      *Filter `json:"filter,omitempty" url:"filter,omitempty"`
+	CreatedAt   string  `json:"created_at" url:"created_at"`
+	UpdatedAt   string  `json:"updated_at" url:"updated_at"`
 
 	_rawJSON json.RawMessage
 }
@@ -56,8 +56,8 @@ func (a *Audience) String() string {
 }
 
 type AudienceListResponse struct {
-	Items  []*Audience `json:"items,omitempty"`
-	Paging *Paging     `json:"paging,omitempty"`
+	Items  []*Audience `json:"items,omitempty" url:"items,omitempty"`
+	Paging *Paging     `json:"paging,omitempty" url:"paging,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -86,8 +86,8 @@ func (a *AudienceListResponse) String() string {
 }
 
 type AudienceMemberListResponse struct {
-	Items  []*AudienceMember `json:"items,omitempty"`
-	Paging *Paging           `json:"paging,omitempty"`
+	Items  []*AudienceMember `json:"items,omitempty" url:"items,omitempty"`
+	Paging *Paging           `json:"paging,omitempty" url:"paging,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -116,7 +116,7 @@ func (a *AudienceMemberListResponse) String() string {
 }
 
 type AudienceUpdateResponse struct {
-	Audience *Audience `json:"audience,omitempty"`
+	Audience *Audience `json:"audience,omitempty" url:"audience,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -203,8 +203,8 @@ func (f *Filter) Accept(visitor FilterVisitor) error {
 
 type AudienceUpdateParams struct {
 	// The name of the audience
-	Name *string `json:"name,omitempty"`
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
 	// A description of the audience
-	Description *string `json:"description,omitempty"`
-	Filter      *Filter `json:"filter,omitempty"`
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	Filter      *Filter `json:"filter,omitempty" url:"filter,omitempty"`
 }

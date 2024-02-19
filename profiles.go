@@ -9,16 +9,16 @@ import (
 )
 
 type MergeProfileRequest struct {
-	Profile map[string]interface{} `json:"profile,omitempty"`
+	Profile map[string]interface{} `json:"profile,omitempty" url:"profile,omitempty"`
 }
 
 type GetListSubscriptionsRequest struct {
 	// A unique identifier that allows for fetching the next set of message statuses.
-	Cursor *string `json:"-"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
 }
 
 type ReplaceProfileRequest struct {
-	Profile map[string]interface{} `json:"profile,omitempty"`
+	Profile map[string]interface{} `json:"profile,omitempty" url:"profile,omitempty"`
 }
 
 type DeleteListSubscriptionResponse struct {
@@ -32,12 +32,16 @@ func (d *DeleteListSubscriptionResponse) Status() string {
 }
 
 func (d *DeleteListSubscriptionResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler DeleteListSubscriptionResponse
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed DeleteListSubscriptionResponse
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*d),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*d = DeleteListSubscriptionResponse(value)
+	*d = DeleteListSubscriptionResponse(unmarshaler.embed)
 	d.status = "SUCCESS"
 	d._rawJSON = json.RawMessage(data)
 	return nil
@@ -68,9 +72,9 @@ func (d *DeleteListSubscriptionResponse) String() string {
 }
 
 type GetListSubscriptionsResponse struct {
-	Paging *Paging `json:"paging,omitempty"`
+	Paging *Paging `json:"paging,omitempty" url:"paging,omitempty"`
 	// An array of lists
-	Results []*GetListSubscriptionsList `json:"results,omitempty"`
+	Results []*GetListSubscriptionsList `json:"results,omitempty" url:"results,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -109,12 +113,16 @@ func (m *MergeProfileResponse) Status() string {
 }
 
 func (m *MergeProfileResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler MergeProfileResponse
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed MergeProfileResponse
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*m),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*m = MergeProfileResponse(value)
+	*m = MergeProfileResponse(unmarshaler.embed)
 	m.status = "SUCCESS"
 	m._rawJSON = json.RawMessage(data)
 	return nil
@@ -145,8 +153,8 @@ func (m *MergeProfileResponse) String() string {
 }
 
 type ProfileGetResponse struct {
-	Profile     map[string]interface{} `json:"profile,omitempty"`
-	Preferences *RecipientPreferences  `json:"preferences,omitempty"`
+	Profile     map[string]interface{} `json:"profile,omitempty" url:"profile,omitempty"`
+	Preferences *RecipientPreferences  `json:"preferences,omitempty" url:"preferences,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -185,12 +193,16 @@ func (r *ReplaceProfileResponse) Status() string {
 }
 
 func (r *ReplaceProfileResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler ReplaceProfileResponse
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed ReplaceProfileResponse
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*r),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*r = ReplaceProfileResponse(value)
+	*r = ReplaceProfileResponse(unmarshaler.embed)
 	r.status = "SUCCESS"
 	r._rawJSON = json.RawMessage(data)
 	return nil
@@ -221,7 +233,7 @@ func (r *ReplaceProfileResponse) String() string {
 }
 
 type SubscribeToListsRequest struct {
-	Lists []*SubscribeToListsRequestListObject `json:"lists,omitempty"`
+	Lists []*SubscribeToListsRequestListObject `json:"lists,omitempty" url:"lists,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -260,12 +272,16 @@ func (s *SubscribeToListsResponse) Status() string {
 }
 
 func (s *SubscribeToListsResponse) UnmarshalJSON(data []byte) error {
-	type unmarshaler SubscribeToListsResponse
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
+	type embed SubscribeToListsResponse
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*s),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
 		return err
 	}
-	*s = SubscribeToListsResponse(value)
+	*s = SubscribeToListsResponse(unmarshaler.embed)
 	s.status = "SUCCESS"
 	s._rawJSON = json.RawMessage(data)
 	return nil

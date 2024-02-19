@@ -10,9 +10,9 @@ import (
 	fmt "fmt"
 	v3 "github.com/trycourier/courier-go/v3"
 	core "github.com/trycourier/courier-go/v3/core"
+	option "github.com/trycourier/courier-go/v3/option"
 	io "io"
 	http "net/http"
-	url "net/url"
 )
 
 type Client struct {
@@ -21,36 +21,50 @@ type Client struct {
 	header  http.Header
 }
 
-func NewClient(opts ...core.ClientOption) *Client {
-	options := core.NewClientOptions()
-	for _, opt := range opts {
-		opt(options)
-	}
+func NewClient(opts ...option.RequestOption) *Client {
+	options := core.NewRequestOptions(opts...)
 	return &Client{
 		baseURL: options.BaseURL,
-		caller:  core.NewCaller(options.HTTPClient),
-		header:  options.ToHeader(),
+		caller: core.NewCaller(
+			&core.CallerParams{
+				Client:      options.HTTPClient,
+				MaxAttempts: options.MaxAttempts,
+			},
+		),
+		header: options.ToHeader(),
 	}
 }
 
 // Returns the specified audience by id.
-//
-// A unique identifier representing the audience_id
-func (c *Client) Get(ctx context.Context, audienceId string) (*v3.Audience, error) {
+func (c *Client) Get(
+	ctx context.Context,
+	// A unique identifier representing the audience_id
+	audienceId string,
+	opts ...option.RequestOption,
+) (*v3.Audience, error) {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"audiences/%v", audienceId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	var response *v3.Audience
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
-			URL:      endpointURL,
-			Method:   http.MethodGet,
-			Headers:  c.header,
-			Response: &response,
+			URL:         endpointURL,
+			Method:      http.MethodGet,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
 		return nil, err
@@ -59,24 +73,37 @@ func (c *Client) Get(ctx context.Context, audienceId string) (*v3.Audience, erro
 }
 
 // Creates or updates audience.
-//
-// A unique identifier representing the audience id
-func (c *Client) Update(ctx context.Context, audienceId string, request *v3.AudienceUpdateParams) (*v3.AudienceUpdateResponse, error) {
+func (c *Client) Update(
+	ctx context.Context,
+	// A unique identifier representing the audience id
+	audienceId string,
+	request *v3.AudienceUpdateParams,
+	opts ...option.RequestOption,
+) (*v3.AudienceUpdateResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"audiences/%v", audienceId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	var response *v3.AudienceUpdateResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
-			URL:      endpointURL,
-			Method:   http.MethodPut,
-			Headers:  c.header,
-			Request:  request,
-			Response: &response,
+			URL:         endpointURL,
+			Method:      http.MethodPut,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
+			Request:     request,
+			Response:    &response,
 		},
 	); err != nil {
 		return nil, err
@@ -85,21 +112,33 @@ func (c *Client) Update(ctx context.Context, audienceId string, request *v3.Audi
 }
 
 // Deletes the specified audience.
-//
-// A unique identifier representing the audience id
-func (c *Client) Delete(ctx context.Context, audienceId string) error {
+func (c *Client) Delete(
+	ctx context.Context,
+	// A unique identifier representing the audience id
+	audienceId string,
+	opts ...option.RequestOption,
+) error {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"audiences/%v", audienceId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
-			URL:     endpointURL,
-			Method:  http.MethodDelete,
-			Headers: c.header,
+			URL:         endpointURL,
+			Method:      http.MethodDelete,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
 		},
 	); err != nil {
 		return err
@@ -108,22 +147,33 @@ func (c *Client) Delete(ctx context.Context, audienceId string) error {
 }
 
 // Get list of members of an audience.
-//
-// A unique identifier representing the audience id
-func (c *Client) ListMembers(ctx context.Context, audienceId string, request *v3.AudienceMembersListParams) (*v3.AudienceMemberListResponse, error) {
+func (c *Client) ListMembers(
+	ctx context.Context,
+	// A unique identifier representing the audience id
+	audienceId string,
+	request *v3.AudienceMembersListParams,
+	opts ...option.RequestOption,
+) (*v3.AudienceMemberListResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"audiences/%v/members", audienceId)
 
-	queryParams := make(url.Values)
-	if request.Cursor != nil {
-		queryParams.Add("cursor", fmt.Sprintf("%v", *request.Cursor))
+	queryParams, err := core.QueryValues(request)
+	if err != nil {
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
 	}
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -150,7 +200,9 @@ func (c *Client) ListMembers(ctx context.Context, audienceId string, request *v3
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodGet,
-			Headers:      c.header,
+			MaxAttempts:  options.MaxAttempts,
+			Headers:      headers,
+			Client:       options.HTTPClient,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
@@ -161,20 +213,31 @@ func (c *Client) ListMembers(ctx context.Context, audienceId string, request *v3
 }
 
 // Get the audiences associated with the authorization token.
-func (c *Client) ListAudiences(ctx context.Context, request *v3.AudiencesListParams) (*v3.AudienceListResponse, error) {
+func (c *Client) ListAudiences(
+	ctx context.Context,
+	request *v3.AudiencesListParams,
+	opts ...option.RequestOption,
+) (*v3.AudienceListResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := baseURL + "/" + "audiences"
 
-	queryParams := make(url.Values)
-	if request.Cursor != nil {
-		queryParams.Add("cursor", fmt.Sprintf("%v", *request.Cursor))
+	queryParams, err := core.QueryValues(request)
+	if err != nil {
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
 	}
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -201,7 +264,9 @@ func (c *Client) ListAudiences(ctx context.Context, request *v3.AudiencesListPar
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodGet,
-			Headers:      c.header,
+			MaxAttempts:  options.MaxAttempts,
+			Headers:      headers,
+			Client:       options.HTTPClient,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},

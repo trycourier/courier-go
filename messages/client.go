@@ -10,9 +10,9 @@ import (
 	fmt "fmt"
 	v3 "github.com/trycourier/courier-go/v3"
 	core "github.com/trycourier/courier-go/v3/core"
+	option "github.com/trycourier/courier-go/v3/option"
 	io "io"
 	http "net/http"
-	url "net/url"
 )
 
 type Client struct {
@@ -21,72 +21,57 @@ type Client struct {
 	header  http.Header
 }
 
-func NewClient(opts ...core.ClientOption) *Client {
-	options := core.NewClientOptions()
-	for _, opt := range opts {
-		opt(options)
-	}
+func NewClient(opts ...option.RequestOption) *Client {
+	options := core.NewRequestOptions(opts...)
 	return &Client{
 		baseURL: options.BaseURL,
-		caller:  core.NewCaller(options.HTTPClient),
-		header:  options.ToHeader(),
+		caller: core.NewCaller(
+			&core.CallerParams{
+				Client:      options.HTTPClient,
+				MaxAttempts: options.MaxAttempts,
+			},
+		),
+		header: options.ToHeader(),
 	}
 }
 
 // Fetch the statuses of messages you've previously sent.
-func (c *Client) List(ctx context.Context, request *v3.ListMessagesRequest) (*v3.ListMessagesResponse, error) {
+func (c *Client) List(
+	ctx context.Context,
+	request *v3.ListMessagesRequest,
+	opts ...option.RequestOption,
+) (*v3.ListMessagesResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := baseURL + "/" + "messages"
 
-	queryParams := make(url.Values)
-	if request.Archived != nil {
-		queryParams.Add("archived", fmt.Sprintf("%v", *request.Archived))
-	}
-	if request.Cursor != nil {
-		queryParams.Add("cursor", fmt.Sprintf("%v", *request.Cursor))
-	}
-	if request.Event != nil {
-		queryParams.Add("event", fmt.Sprintf("%v", *request.Event))
-	}
-	if request.List != nil {
-		queryParams.Add("list", fmt.Sprintf("%v", *request.List))
-	}
-	if request.MessageId != nil {
-		queryParams.Add("messageId", fmt.Sprintf("%v", *request.MessageId))
-	}
-	if request.Notification != nil {
-		queryParams.Add("notification", fmt.Sprintf("%v", *request.Notification))
-	}
-	if request.Recipient != nil {
-		queryParams.Add("recipient", fmt.Sprintf("%v", *request.Recipient))
-	}
-	for _, value := range request.Status {
-		queryParams.Add("status", fmt.Sprintf("%v", *value))
-	}
-	if request.Tags != nil {
-		queryParams.Add("tags", fmt.Sprintf("%v", *request.Tags))
-	}
-	if request.EnqueuedAfter != nil {
-		queryParams.Add("enqueued_after", fmt.Sprintf("%v", *request.EnqueuedAfter))
-	}
-	if request.TraceId != nil {
-		queryParams.Add("traceId", fmt.Sprintf("%v", *request.TraceId))
+	queryParams, err := core.QueryValues(request)
+	if err != nil {
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
 	}
 
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+
 	var response *v3.ListMessagesResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
-			URL:      endpointURL,
-			Method:   http.MethodGet,
-			Headers:  c.header,
-			Response: &response,
+			URL:         endpointURL,
+			Method:      http.MethodGet,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
 		return nil, err
@@ -95,14 +80,24 @@ func (c *Client) List(ctx context.Context, request *v3.ListMessagesRequest) (*v3
 }
 
 // Fetch the status of a message you've previously sent.
-//
-// A unique identifier associated with the message you wish to retrieve (results from a send).
-func (c *Client) Get(ctx context.Context, messageId string) (*v3.MessageDetails, error) {
+func (c *Client) Get(
+	ctx context.Context,
+	// A unique identifier associated with the message you wish to retrieve (results from a send).
+	messageId string,
+	opts ...option.RequestOption,
+) (*v3.MessageDetails, error) {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"messages/%v", messageId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -136,7 +131,9 @@ func (c *Client) Get(ctx context.Context, messageId string) (*v3.MessageDetails,
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodGet,
-			Headers:      c.header,
+			MaxAttempts:  options.MaxAttempts,
+			Headers:      headers,
+			Client:       options.HTTPClient,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
@@ -147,23 +144,35 @@ func (c *Client) Get(ctx context.Context, messageId string) (*v3.MessageDetails,
 }
 
 // Cancel a message that is currently in the process of being delivered. A well-formatted API call to the cancel message API will return either `200` status code for a successful cancellation or `409` status code for an unsuccessful cancellation. Both cases will include the actual message record in the response body (see details below).
-//
-// A unique identifier representing the message ID
-func (c *Client) Cancel(ctx context.Context, messageId string) (*v3.MessageDetails, error) {
+func (c *Client) Cancel(
+	ctx context.Context,
+	// A unique identifier representing the message ID
+	messageId string,
+	opts ...option.IdempotentRequestOption,
+) (*v3.MessageDetails, error) {
+	options := core.NewIdempotentRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"messages/%v/cancel", messageId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	var response *v3.MessageDetails
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
-			URL:      endpointURL,
-			Method:   http.MethodPost,
-			Headers:  c.header,
-			Response: &response,
+			URL:         endpointURL,
+			Method:      http.MethodPost,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
 		return nil, err
@@ -172,22 +181,33 @@ func (c *Client) Cancel(ctx context.Context, messageId string) (*v3.MessageDetai
 }
 
 // Fetch the array of events of a message you've previously sent.
-//
-// A unique identifier representing the message ID
-func (c *Client) GetHistory(ctx context.Context, messageId string, request *v3.GetMessageHistoryRequest) (*v3.MessageHistoryResponse, error) {
+func (c *Client) GetHistory(
+	ctx context.Context,
+	// A unique identifier representing the message ID
+	messageId string,
+	request *v3.GetMessageHistoryRequest,
+	opts ...option.RequestOption,
+) (*v3.MessageHistoryResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"messages/%v/history", messageId)
 
-	queryParams := make(url.Values)
-	if request.Type != nil {
-		queryParams.Add("type", fmt.Sprintf("%v", *request.Type))
+	queryParams, err := core.QueryValues(request)
+	if err != nil {
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
 	}
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -221,7 +241,9 @@ func (c *Client) GetHistory(ctx context.Context, messageId string, request *v3.G
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodGet,
-			Headers:      c.header,
+			MaxAttempts:  options.MaxAttempts,
+			Headers:      headers,
+			Client:       options.HTTPClient,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
@@ -231,13 +253,24 @@ func (c *Client) GetHistory(ctx context.Context, messageId string, request *v3.G
 	return response, nil
 }
 
-// A unique identifier associated with the message you wish to retrieve (results from a send).
-func (c *Client) GetContent(ctx context.Context, messageId string) (*v3.RenderOutputResponse, error) {
+func (c *Client) GetContent(
+	ctx context.Context,
+	// A unique identifier associated with the message you wish to retrieve (results from a send).
+	messageId string,
+	opts ...option.RequestOption,
+) (*v3.RenderOutputResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"messages/%v/output", messageId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	errorDecoder := func(statusCode int, body io.Reader) error {
 		raw, err := io.ReadAll(body)
@@ -271,7 +304,9 @@ func (c *Client) GetContent(ctx context.Context, messageId string) (*v3.RenderOu
 		&core.CallParams{
 			URL:          endpointURL,
 			Method:       http.MethodGet,
-			Headers:      c.header,
+			MaxAttempts:  options.MaxAttempts,
+			Headers:      headers,
+			Client:       options.HTTPClient,
 			Response:     &response,
 			ErrorDecoder: errorDecoder,
 		},
@@ -281,20 +316,33 @@ func (c *Client) GetContent(ctx context.Context, messageId string) (*v3.RenderOu
 	return response, nil
 }
 
-// A unique identifier representing the request ID
-func (c *Client) Archive(ctx context.Context, requestId string) error {
+func (c *Client) Archive(
+	ctx context.Context,
+	// A unique identifier representing the request ID
+	requestId string,
+	opts ...option.RequestOption,
+) error {
+	options := core.NewRequestOptions(opts...)
+
 	baseURL := "https://api.courier.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"requests/%v/archive", requestId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
-			URL:     endpointURL,
-			Method:  http.MethodPut,
-			Headers: c.header,
+			URL:         endpointURL,
+			Method:      http.MethodPut,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
 		},
 	); err != nil {
 		return err

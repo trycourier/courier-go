@@ -10,39 +10,39 @@ import (
 
 type GetMessageHistoryRequest struct {
 	// A supported Message History type that will filter the events returned.
-	Type *string `json:"-"`
+	Type *string `json:"-" url:"type,omitempty"`
 }
 
 type ListMessagesRequest struct {
 	// A boolean value that indicates whether archived messages should be included in the response.
-	Archived *bool `json:"-"`
+	Archived *bool `json:"-" url:"archived,omitempty"`
 	// A unique identifier that allows for fetching the next set of message statuses.
-	Cursor *string `json:"-"`
+	Cursor *string `json:"-" url:"cursor,omitempty"`
 	// A unique identifier representing the event that was used to send the event.
-	Event *string `json:"-"`
+	Event *string `json:"-" url:"event,omitempty"`
 	// A unique identifier representing the list the message was sent to.
-	List *string `json:"-"`
+	List *string `json:"-" url:"list,omitempty"`
 	// A unique identifier representing the message_id returned from either /send or /send/list.
-	MessageId *string `json:"-"`
+	MessageId *string `json:"-" url:"messageId,omitempty"`
 	// A unique identifier representing the notification that was used to send the event.
-	Notification *string `json:"-"`
+	Notification *string `json:"-" url:"notification,omitempty"`
 	// A unique identifier representing the recipient associated with the requested profile.
-	Recipient *string `json:"-"`
+	Recipient *string `json:"-" url:"recipient,omitempty"`
 	// An indicator of the current status of the message. Multiple status values can be passed in.
-	Status []*string `json:"-"`
+	Status []*string `json:"-" url:"status,omitempty"`
 	// A comma delimited list of 'tags'. Messages will be returned if they match any of the tags passed in.
-	Tags *string `json:"-"`
+	Tags *string `json:"-" url:"tags,omitempty"`
 	// The enqueued datetime of a message to filter out messages received before.
-	EnqueuedAfter *string `json:"-"`
+	EnqueuedAfter *string `json:"-" url:"enqueued_after,omitempty"`
 	// The unique identifier used to trace the requests
-	TraceId *string `json:"-"`
+	TraceId *string `json:"-" url:"traceId,omitempty"`
 }
 
 type ListMessagesResponse struct {
 	// Paging information for the result set.
-	Paging *Paging `json:"paging,omitempty"`
+	Paging *Paging `json:"paging,omitempty" url:"paging,omitempty"`
 	// An array of messages with their details.
-	Results []*MessageDetails `json:"results,omitempty"`
+	Results []*MessageDetails `json:"results,omitempty" url:"results,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -72,29 +72,29 @@ func (l *ListMessagesResponse) String() string {
 
 type MessageDetails struct {
 	// A unique identifier associated with the message you wish to retrieve (results from a send).
-	Id string `json:"id"`
+	Id string `json:"id" url:"id"`
 	// The current status of the message.
-	Status MessageStatus `json:"status,omitempty"`
+	Status MessageStatus `json:"status,omitempty" url:"status,omitempty"`
 	// A UTC timestamp at which Courier received the message request. Stored as a millisecond representation of the Unix epoch.
-	Enqueued int `json:"enqueued"`
+	Enqueued int `json:"enqueued" url:"enqueued"`
 	// A UTC timestamp at which Courier passed the message to the Integration provider. Stored as a millisecond representation of the Unix epoch.
-	Sent int `json:"sent"`
+	Sent int `json:"sent" url:"sent"`
 	// A UTC timestamp at which the Integration provider delivered the message. Stored as a millisecond representation of the Unix epoch.
-	Delivered int `json:"delivered"`
+	Delivered int `json:"delivered" url:"delivered"`
 	// A UTC timestamp at which the recipient opened a message for the first time. Stored as a millisecond representation of the Unix epoch.
-	Opened int `json:"opened"`
+	Opened int `json:"opened" url:"opened"`
 	// A UTC timestamp at which the recipient clicked on a tracked link for the first time. Stored as a millisecond representation of the Unix epoch.
-	Clicked int `json:"clicked"`
+	Clicked int `json:"clicked" url:"clicked"`
 	// A unique identifier associated with the recipient of the delivered message.
-	Recipient string `json:"recipient"`
+	Recipient string `json:"recipient" url:"recipient"`
 	// A unique identifier associated with the event of the delivered message.
-	Event string `json:"event"`
+	Event string `json:"event" url:"event"`
 	// A unique identifier associated with the notification of the delivered message.
-	Notification string `json:"notification"`
+	Notification string `json:"notification" url:"notification"`
 	// A message describing the error that occurred.
-	Error *string `json:"error,omitempty"`
+	Error *string `json:"error,omitempty" url:"error,omitempty"`
 	// The reason for the current status of the message.
-	Reason *Reason `json:"reason,omitempty"`
+	Reason *Reason `json:"reason,omitempty" url:"reason,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -123,7 +123,7 @@ func (m *MessageDetails) String() string {
 }
 
 type MessageHistoryResponse struct {
-	Results []*MessageDetails `json:"results,omitempty"`
+	Results []*MessageDetails `json:"results,omitempty" url:"results,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -153,7 +153,7 @@ func (m *MessageHistoryResponse) String() string {
 
 type RenderOutputResponse struct {
 	// An array of render output of a previously sent message.
-	Results []*RenderOutput `json:"results,omitempty"`
+	Results []*RenderOutput `json:"results,omitempty" url:"results,omitempty"`
 
 	_rawJSON json.RawMessage
 }
