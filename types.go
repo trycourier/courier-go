@@ -2469,6 +2469,8 @@ const (
 	MessageStatusCanceled MessageStatus = "CANCELED"
 	// The message has been accepted by the provider.
 	MessageStatusSent MessageStatus = "SENT"
+	// The message was throttled by Courier.
+	MessageStatusThrottled MessageStatus = "THROTTLED"
 	// The message could not be delivered to at least one provider, or the provider could not deliver the message to the recipient. This can happen for multiple reasons: an error, insufficient profile data, invalid notification setup, invalid integration configuration, etc.
 	MessageStatusUndeliverable MessageStatus = "UNDELIVERABLE"
 	// Could not find a corresponding notification or event for the messages.
@@ -2491,6 +2493,8 @@ func NewMessageStatusFromString(s string) (MessageStatus, error) {
 		return MessageStatusCanceled, nil
 	case "SENT":
 		return MessageStatusSent, nil
+	case "THROTTLED":
+		return MessageStatusThrottled, nil
 	case "UNDELIVERABLE":
 		return MessageStatusUndeliverable, nil
 	case "UNMAPPED":
