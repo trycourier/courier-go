@@ -195,29 +195,18 @@ func (c ComparisonOperator) Ptr() *ComparisonOperator {
 }
 
 type FilterConfig struct {
-	typeName           string
 	SingleFilterConfig *SingleFilterConfig
 	NestedFilterConfig *NestedFilterConfig
-}
-
-func NewFilterConfigFromSingleFilterConfig(value *SingleFilterConfig) *FilterConfig {
-	return &FilterConfig{typeName: "singleFilterConfig", SingleFilterConfig: value}
-}
-
-func NewFilterConfigFromNestedFilterConfig(value *NestedFilterConfig) *FilterConfig {
-	return &FilterConfig{typeName: "nestedFilterConfig", NestedFilterConfig: value}
 }
 
 func (f *FilterConfig) UnmarshalJSON(data []byte) error {
 	valueSingleFilterConfig := new(SingleFilterConfig)
 	if err := json.Unmarshal(data, &valueSingleFilterConfig); err == nil {
-		f.typeName = "singleFilterConfig"
 		f.SingleFilterConfig = valueSingleFilterConfig
 		return nil
 	}
 	valueNestedFilterConfig := new(NestedFilterConfig)
 	if err := json.Unmarshal(data, &valueNestedFilterConfig); err == nil {
-		f.typeName = "nestedFilterConfig"
 		f.NestedFilterConfig = valueNestedFilterConfig
 		return nil
 	}
@@ -225,14 +214,13 @@ func (f *FilterConfig) UnmarshalJSON(data []byte) error {
 }
 
 func (f FilterConfig) MarshalJSON() ([]byte, error) {
-	switch f.typeName {
-	default:
-		return nil, fmt.Errorf("invalid type %s in %T", f.typeName, f)
-	case "singleFilterConfig":
+	if f.SingleFilterConfig != nil {
 		return json.Marshal(f.SingleFilterConfig)
-	case "nestedFilterConfig":
+	}
+	if f.NestedFilterConfig != nil {
 		return json.Marshal(f.NestedFilterConfig)
 	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", f)
 }
 
 type FilterConfigVisitor interface {
@@ -241,14 +229,13 @@ type FilterConfigVisitor interface {
 }
 
 func (f *FilterConfig) Accept(visitor FilterConfigVisitor) error {
-	switch f.typeName {
-	default:
-		return fmt.Errorf("invalid type %s in %T", f.typeName, f)
-	case "singleFilterConfig":
+	if f.SingleFilterConfig != nil {
 		return visitor.VisitSingleFilterConfig(f.SingleFilterConfig)
-	case "nestedFilterConfig":
+	}
+	if f.NestedFilterConfig != nil {
 		return visitor.VisitNestedFilterConfig(f.NestedFilterConfig)
 	}
+	return fmt.Errorf("type %T does not include a non-empty union type", f)
 }
 
 type LogicalOperator string
@@ -306,29 +293,18 @@ func (n *NestedFilterConfig) String() string {
 }
 
 type Operator struct {
-	typeName           string
 	ComparisonOperator ComparisonOperator
 	LogicalOperator    LogicalOperator
-}
-
-func NewOperatorFromComparisonOperator(value ComparisonOperator) *Operator {
-	return &Operator{typeName: "comparisonOperator", ComparisonOperator: value}
-}
-
-func NewOperatorFromLogicalOperator(value LogicalOperator) *Operator {
-	return &Operator{typeName: "logicalOperator", LogicalOperator: value}
 }
 
 func (o *Operator) UnmarshalJSON(data []byte) error {
 	var valueComparisonOperator ComparisonOperator
 	if err := json.Unmarshal(data, &valueComparisonOperator); err == nil {
-		o.typeName = "comparisonOperator"
 		o.ComparisonOperator = valueComparisonOperator
 		return nil
 	}
 	var valueLogicalOperator LogicalOperator
 	if err := json.Unmarshal(data, &valueLogicalOperator); err == nil {
-		o.typeName = "logicalOperator"
 		o.LogicalOperator = valueLogicalOperator
 		return nil
 	}
@@ -336,14 +312,13 @@ func (o *Operator) UnmarshalJSON(data []byte) error {
 }
 
 func (o Operator) MarshalJSON() ([]byte, error) {
-	switch o.typeName {
-	default:
-		return nil, fmt.Errorf("invalid type %s in %T", o.typeName, o)
-	case "comparisonOperator":
+	if o.ComparisonOperator != "" {
 		return json.Marshal(o.ComparisonOperator)
-	case "logicalOperator":
+	}
+	if o.LogicalOperator != "" {
 		return json.Marshal(o.LogicalOperator)
 	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", o)
 }
 
 type OperatorVisitor interface {
@@ -352,14 +327,13 @@ type OperatorVisitor interface {
 }
 
 func (o *Operator) Accept(visitor OperatorVisitor) error {
-	switch o.typeName {
-	default:
-		return fmt.Errorf("invalid type %s in %T", o.typeName, o)
-	case "comparisonOperator":
+	if o.ComparisonOperator != "" {
 		return visitor.VisitComparisonOperator(o.ComparisonOperator)
-	case "logicalOperator":
+	}
+	if o.LogicalOperator != "" {
 		return visitor.VisitLogicalOperator(o.LogicalOperator)
 	}
+	return fmt.Errorf("type %T does not include a non-empty union type", o)
 }
 
 // A single filter to use for filtering
@@ -951,7 +925,6 @@ func (a AutomationStepAction) Ptr() *AutomationStepAction {
 }
 
 type AutomationStepOption struct {
-	typeName                    string
 	AutomationCancelStep        *AutomationCancelStep
 	AutomationDelayStep         *AutomationDelayStep
 	AutomationInvokeStep        *AutomationInvokeStep
@@ -961,74 +934,39 @@ type AutomationStepOption struct {
 	AutomationUpdateProfileStep *AutomationUpdateProfileStep
 }
 
-func NewAutomationStepOptionFromAutomationCancelStep(value *AutomationCancelStep) *AutomationStepOption {
-	return &AutomationStepOption{typeName: "automationCancelStep", AutomationCancelStep: value}
-}
-
-func NewAutomationStepOptionFromAutomationDelayStep(value *AutomationDelayStep) *AutomationStepOption {
-	return &AutomationStepOption{typeName: "automationDelayStep", AutomationDelayStep: value}
-}
-
-func NewAutomationStepOptionFromAutomationInvokeStep(value *AutomationInvokeStep) *AutomationStepOption {
-	return &AutomationStepOption{typeName: "automationInvokeStep", AutomationInvokeStep: value}
-}
-
-func NewAutomationStepOptionFromAutomationSendStep(value *AutomationSendStep) *AutomationStepOption {
-	return &AutomationStepOption{typeName: "automationSendStep", AutomationSendStep: value}
-}
-
-func NewAutomationStepOptionFromAutomationV2SendStep(value *AutomationV2SendStep) *AutomationStepOption {
-	return &AutomationStepOption{typeName: "automationV2SendStep", AutomationV2SendStep: value}
-}
-
-func NewAutomationStepOptionFromAutomationSendListStep(value *AutomationSendListStep) *AutomationStepOption {
-	return &AutomationStepOption{typeName: "automationSendListStep", AutomationSendListStep: value}
-}
-
-func NewAutomationStepOptionFromAutomationUpdateProfileStep(value *AutomationUpdateProfileStep) *AutomationStepOption {
-	return &AutomationStepOption{typeName: "automationUpdateProfileStep", AutomationUpdateProfileStep: value}
-}
-
 func (a *AutomationStepOption) UnmarshalJSON(data []byte) error {
 	valueAutomationCancelStep := new(AutomationCancelStep)
 	if err := json.Unmarshal(data, &valueAutomationCancelStep); err == nil {
-		a.typeName = "automationCancelStep"
 		a.AutomationCancelStep = valueAutomationCancelStep
 		return nil
 	}
 	valueAutomationDelayStep := new(AutomationDelayStep)
 	if err := json.Unmarshal(data, &valueAutomationDelayStep); err == nil {
-		a.typeName = "automationDelayStep"
 		a.AutomationDelayStep = valueAutomationDelayStep
 		return nil
 	}
 	valueAutomationInvokeStep := new(AutomationInvokeStep)
 	if err := json.Unmarshal(data, &valueAutomationInvokeStep); err == nil {
-		a.typeName = "automationInvokeStep"
 		a.AutomationInvokeStep = valueAutomationInvokeStep
 		return nil
 	}
 	valueAutomationSendStep := new(AutomationSendStep)
 	if err := json.Unmarshal(data, &valueAutomationSendStep); err == nil {
-		a.typeName = "automationSendStep"
 		a.AutomationSendStep = valueAutomationSendStep
 		return nil
 	}
 	valueAutomationV2SendStep := new(AutomationV2SendStep)
 	if err := json.Unmarshal(data, &valueAutomationV2SendStep); err == nil {
-		a.typeName = "automationV2SendStep"
 		a.AutomationV2SendStep = valueAutomationV2SendStep
 		return nil
 	}
 	valueAutomationSendListStep := new(AutomationSendListStep)
 	if err := json.Unmarshal(data, &valueAutomationSendListStep); err == nil {
-		a.typeName = "automationSendListStep"
 		a.AutomationSendListStep = valueAutomationSendListStep
 		return nil
 	}
 	valueAutomationUpdateProfileStep := new(AutomationUpdateProfileStep)
 	if err := json.Unmarshal(data, &valueAutomationUpdateProfileStep); err == nil {
-		a.typeName = "automationUpdateProfileStep"
 		a.AutomationUpdateProfileStep = valueAutomationUpdateProfileStep
 		return nil
 	}
@@ -1036,24 +974,28 @@ func (a *AutomationStepOption) UnmarshalJSON(data []byte) error {
 }
 
 func (a AutomationStepOption) MarshalJSON() ([]byte, error) {
-	switch a.typeName {
-	default:
-		return nil, fmt.Errorf("invalid type %s in %T", a.typeName, a)
-	case "automationCancelStep":
+	if a.AutomationCancelStep != nil {
 		return json.Marshal(a.AutomationCancelStep)
-	case "automationDelayStep":
+	}
+	if a.AutomationDelayStep != nil {
 		return json.Marshal(a.AutomationDelayStep)
-	case "automationInvokeStep":
+	}
+	if a.AutomationInvokeStep != nil {
 		return json.Marshal(a.AutomationInvokeStep)
-	case "automationSendStep":
+	}
+	if a.AutomationSendStep != nil {
 		return json.Marshal(a.AutomationSendStep)
-	case "automationV2SendStep":
+	}
+	if a.AutomationV2SendStep != nil {
 		return json.Marshal(a.AutomationV2SendStep)
-	case "automationSendListStep":
+	}
+	if a.AutomationSendListStep != nil {
 		return json.Marshal(a.AutomationSendListStep)
-	case "automationUpdateProfileStep":
+	}
+	if a.AutomationUpdateProfileStep != nil {
 		return json.Marshal(a.AutomationUpdateProfileStep)
 	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", a)
 }
 
 type AutomationStepOptionVisitor interface {
@@ -1067,24 +1009,28 @@ type AutomationStepOptionVisitor interface {
 }
 
 func (a *AutomationStepOption) Accept(visitor AutomationStepOptionVisitor) error {
-	switch a.typeName {
-	default:
-		return fmt.Errorf("invalid type %s in %T", a.typeName, a)
-	case "automationCancelStep":
+	if a.AutomationCancelStep != nil {
 		return visitor.VisitAutomationCancelStep(a.AutomationCancelStep)
-	case "automationDelayStep":
+	}
+	if a.AutomationDelayStep != nil {
 		return visitor.VisitAutomationDelayStep(a.AutomationDelayStep)
-	case "automationInvokeStep":
+	}
+	if a.AutomationInvokeStep != nil {
 		return visitor.VisitAutomationInvokeStep(a.AutomationInvokeStep)
-	case "automationSendStep":
+	}
+	if a.AutomationSendStep != nil {
 		return visitor.VisitAutomationSendStep(a.AutomationSendStep)
-	case "automationV2SendStep":
+	}
+	if a.AutomationV2SendStep != nil {
 		return visitor.VisitAutomationV2SendStep(a.AutomationV2SendStep)
-	case "automationSendListStep":
+	}
+	if a.AutomationSendListStep != nil {
 		return visitor.VisitAutomationSendListStep(a.AutomationSendListStep)
-	case "automationUpdateProfileStep":
+	}
+	if a.AutomationUpdateProfileStep != nil {
 		return visitor.VisitAutomationUpdateProfileStep(a.AutomationUpdateProfileStep)
 	}
+	return fmt.Errorf("type %T does not include a non-empty union type", a)
 }
 
 type AutomationUpdateProfileStep struct {
@@ -1670,7 +1616,6 @@ func (i *InboundBulkMessageV1) String() string {
 }
 
 type InboundBulkMessageV2 struct {
-	typeName string
 	// Describes the content of the message in a way that will
 	// work for email, push, chat, or any channel.
 	InboundBulkTemplateMessage *InboundBulkTemplateMessage
@@ -1680,24 +1625,14 @@ type InboundBulkMessageV2 struct {
 	InboundBulkContentMessage *InboundBulkContentMessage
 }
 
-func NewInboundBulkMessageV2FromInboundBulkTemplateMessage(value *InboundBulkTemplateMessage) *InboundBulkMessageV2 {
-	return &InboundBulkMessageV2{typeName: "inboundBulkTemplateMessage", InboundBulkTemplateMessage: value}
-}
-
-func NewInboundBulkMessageV2FromInboundBulkContentMessage(value *InboundBulkContentMessage) *InboundBulkMessageV2 {
-	return &InboundBulkMessageV2{typeName: "inboundBulkContentMessage", InboundBulkContentMessage: value}
-}
-
 func (i *InboundBulkMessageV2) UnmarshalJSON(data []byte) error {
 	valueInboundBulkTemplateMessage := new(InboundBulkTemplateMessage)
 	if err := json.Unmarshal(data, &valueInboundBulkTemplateMessage); err == nil {
-		i.typeName = "inboundBulkTemplateMessage"
 		i.InboundBulkTemplateMessage = valueInboundBulkTemplateMessage
 		return nil
 	}
 	valueInboundBulkContentMessage := new(InboundBulkContentMessage)
 	if err := json.Unmarshal(data, &valueInboundBulkContentMessage); err == nil {
-		i.typeName = "inboundBulkContentMessage"
 		i.InboundBulkContentMessage = valueInboundBulkContentMessage
 		return nil
 	}
@@ -1705,14 +1640,13 @@ func (i *InboundBulkMessageV2) UnmarshalJSON(data []byte) error {
 }
 
 func (i InboundBulkMessageV2) MarshalJSON() ([]byte, error) {
-	switch i.typeName {
-	default:
-		return nil, fmt.Errorf("invalid type %s in %T", i.typeName, i)
-	case "inboundBulkTemplateMessage":
+	if i.InboundBulkTemplateMessage != nil {
 		return json.Marshal(i.InboundBulkTemplateMessage)
-	case "inboundBulkContentMessage":
+	}
+	if i.InboundBulkContentMessage != nil {
 		return json.Marshal(i.InboundBulkContentMessage)
 	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", i)
 }
 
 type InboundBulkMessageV2Visitor interface {
@@ -1721,14 +1655,13 @@ type InboundBulkMessageV2Visitor interface {
 }
 
 func (i *InboundBulkMessageV2) Accept(visitor InboundBulkMessageV2Visitor) error {
-	switch i.typeName {
-	default:
-		return fmt.Errorf("invalid type %s in %T", i.typeName, i)
-	case "inboundBulkTemplateMessage":
+	if i.InboundBulkTemplateMessage != nil {
 		return visitor.VisitInboundBulkTemplateMessage(i.InboundBulkTemplateMessage)
-	case "inboundBulkContentMessage":
+	}
+	if i.InboundBulkContentMessage != nil {
 		return visitor.VisitInboundBulkContentMessage(i.InboundBulkContentMessage)
 	}
+	return fmt.Errorf("type %T does not include a non-empty union type", i)
 }
 
 type InboundBulkTemplateMessage struct {
@@ -2808,29 +2741,18 @@ func (m *MessageRouting) String() string {
 }
 
 type MessageRoutingChannel struct {
-	typeName       string
 	String         string
 	MessageRouting *MessageRouting
-}
-
-func NewMessageRoutingChannelFromString(value string) *MessageRoutingChannel {
-	return &MessageRoutingChannel{typeName: "string", String: value}
-}
-
-func NewMessageRoutingChannelFromMessageRouting(value *MessageRouting) *MessageRoutingChannel {
-	return &MessageRoutingChannel{typeName: "messageRouting", MessageRouting: value}
 }
 
 func (m *MessageRoutingChannel) UnmarshalJSON(data []byte) error {
 	var valueString string
 	if err := json.Unmarshal(data, &valueString); err == nil {
-		m.typeName = "string"
 		m.String = valueString
 		return nil
 	}
 	valueMessageRouting := new(MessageRouting)
 	if err := json.Unmarshal(data, &valueMessageRouting); err == nil {
-		m.typeName = "messageRouting"
 		m.MessageRouting = valueMessageRouting
 		return nil
 	}
@@ -2838,14 +2760,13 @@ func (m *MessageRoutingChannel) UnmarshalJSON(data []byte) error {
 }
 
 func (m MessageRoutingChannel) MarshalJSON() ([]byte, error) {
-	switch m.typeName {
-	default:
-		return nil, fmt.Errorf("invalid type %s in %T", m.typeName, m)
-	case "string":
+	if m.String != "" {
 		return json.Marshal(m.String)
-	case "messageRouting":
+	}
+	if m.MessageRouting != nil {
 		return json.Marshal(m.MessageRouting)
 	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", m)
 }
 
 type MessageRoutingChannelVisitor interface {
@@ -2854,14 +2775,13 @@ type MessageRoutingChannelVisitor interface {
 }
 
 func (m *MessageRoutingChannel) Accept(visitor MessageRoutingChannelVisitor) error {
-	switch m.typeName {
-	default:
-		return fmt.Errorf("invalid type %s in %T", m.typeName, m)
-	case "string":
+	if m.String != "" {
 		return visitor.VisitString(m.String)
-	case "messageRouting":
+	}
+	if m.MessageRouting != nil {
 		return visitor.VisitMessageRouting(m.MessageRouting)
 	}
+	return fmt.Errorf("type %T does not include a non-empty union type", m)
 }
 
 type MessageRoutingMethod string
@@ -2948,29 +2868,18 @@ func (n *NotificationChannelContent) String() string {
 }
 
 type NotificationContent struct {
-	typeName                     string
 	String                       string
 	NotificationContentHierarchy *NotificationContentHierarchy
-}
-
-func NewNotificationContentFromString(value string) *NotificationContent {
-	return &NotificationContent{typeName: "string", String: value}
-}
-
-func NewNotificationContentFromNotificationContentHierarchy(value *NotificationContentHierarchy) *NotificationContent {
-	return &NotificationContent{typeName: "notificationContentHierarchy", NotificationContentHierarchy: value}
 }
 
 func (n *NotificationContent) UnmarshalJSON(data []byte) error {
 	var valueString string
 	if err := json.Unmarshal(data, &valueString); err == nil {
-		n.typeName = "string"
 		n.String = valueString
 		return nil
 	}
 	valueNotificationContentHierarchy := new(NotificationContentHierarchy)
 	if err := json.Unmarshal(data, &valueNotificationContentHierarchy); err == nil {
-		n.typeName = "notificationContentHierarchy"
 		n.NotificationContentHierarchy = valueNotificationContentHierarchy
 		return nil
 	}
@@ -2978,14 +2887,13 @@ func (n *NotificationContent) UnmarshalJSON(data []byte) error {
 }
 
 func (n NotificationContent) MarshalJSON() ([]byte, error) {
-	switch n.typeName {
-	default:
-		return nil, fmt.Errorf("invalid type %s in %T", n.typeName, n)
-	case "string":
+	if n.String != "" {
 		return json.Marshal(n.String)
-	case "notificationContentHierarchy":
+	}
+	if n.NotificationContentHierarchy != nil {
 		return json.Marshal(n.NotificationContentHierarchy)
 	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", n)
 }
 
 type NotificationContentVisitor interface {
@@ -2994,14 +2902,13 @@ type NotificationContentVisitor interface {
 }
 
 func (n *NotificationContent) Accept(visitor NotificationContentVisitor) error {
-	switch n.typeName {
-	default:
-		return fmt.Errorf("invalid type %s in %T", n.typeName, n)
-	case "string":
+	if n.String != "" {
 		return visitor.VisitString(n.String)
-	case "notificationContentHierarchy":
+	}
+	if n.NotificationContentHierarchy != nil {
 		return visitor.VisitNotificationContentHierarchy(n.NotificationContentHierarchy)
 	}
+	return fmt.Errorf("type %T does not include a non-empty union type", n)
 }
 
 type NotificationContentHierarchy struct {
@@ -3130,29 +3037,18 @@ func (a *AirshipProfileAudience) String() string {
 type DeviceType = interface{}
 
 type Discord struct {
-	typeName          string
 	SendToChannel     *SendToChannel
 	SendDirectMessage *SendDirectMessage
-}
-
-func NewDiscordFromSendToChannel(value *SendToChannel) *Discord {
-	return &Discord{typeName: "sendToChannel", SendToChannel: value}
-}
-
-func NewDiscordFromSendDirectMessage(value *SendDirectMessage) *Discord {
-	return &Discord{typeName: "sendDirectMessage", SendDirectMessage: value}
 }
 
 func (d *Discord) UnmarshalJSON(data []byte) error {
 	valueSendToChannel := new(SendToChannel)
 	if err := json.Unmarshal(data, &valueSendToChannel); err == nil {
-		d.typeName = "sendToChannel"
 		d.SendToChannel = valueSendToChannel
 		return nil
 	}
 	valueSendDirectMessage := new(SendDirectMessage)
 	if err := json.Unmarshal(data, &valueSendDirectMessage); err == nil {
-		d.typeName = "sendDirectMessage"
 		d.SendDirectMessage = valueSendDirectMessage
 		return nil
 	}
@@ -3160,14 +3056,13 @@ func (d *Discord) UnmarshalJSON(data []byte) error {
 }
 
 func (d Discord) MarshalJSON() ([]byte, error) {
-	switch d.typeName {
-	default:
-		return nil, fmt.Errorf("invalid type %s in %T", d.typeName, d)
-	case "sendToChannel":
+	if d.SendToChannel != nil {
 		return json.Marshal(d.SendToChannel)
-	case "sendDirectMessage":
+	}
+	if d.SendDirectMessage != nil {
 		return json.Marshal(d.SendDirectMessage)
 	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", d)
 }
 
 type DiscordVisitor interface {
@@ -3176,40 +3071,28 @@ type DiscordVisitor interface {
 }
 
 func (d *Discord) Accept(visitor DiscordVisitor) error {
-	switch d.typeName {
-	default:
-		return fmt.Errorf("invalid type %s in %T", d.typeName, d)
-	case "sendToChannel":
+	if d.SendToChannel != nil {
 		return visitor.VisitSendToChannel(d.SendToChannel)
-	case "sendDirectMessage":
+	}
+	if d.SendDirectMessage != nil {
 		return visitor.VisitSendDirectMessage(d.SendDirectMessage)
 	}
+	return fmt.Errorf("type %T does not include a non-empty union type", d)
 }
 
 type Expo struct {
-	typeName       string
 	Token          *Token
 	MultipleTokens *MultipleTokens
-}
-
-func NewExpoFromToken(value *Token) *Expo {
-	return &Expo{typeName: "token", Token: value}
-}
-
-func NewExpoFromMultipleTokens(value *MultipleTokens) *Expo {
-	return &Expo{typeName: "multipleTokens", MultipleTokens: value}
 }
 
 func (e *Expo) UnmarshalJSON(data []byte) error {
 	valueToken := new(Token)
 	if err := json.Unmarshal(data, &valueToken); err == nil {
-		e.typeName = "token"
 		e.Token = valueToken
 		return nil
 	}
 	valueMultipleTokens := new(MultipleTokens)
 	if err := json.Unmarshal(data, &valueMultipleTokens); err == nil {
-		e.typeName = "multipleTokens"
 		e.MultipleTokens = valueMultipleTokens
 		return nil
 	}
@@ -3217,14 +3100,13 @@ func (e *Expo) UnmarshalJSON(data []byte) error {
 }
 
 func (e Expo) MarshalJSON() ([]byte, error) {
-	switch e.typeName {
-	default:
-		return nil, fmt.Errorf("invalid type %s in %T", e.typeName, e)
-	case "token":
+	if e.Token != nil {
 		return json.Marshal(e.Token)
-	case "multipleTokens":
+	}
+	if e.MultipleTokens != nil {
 		return json.Marshal(e.MultipleTokens)
 	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", e)
 }
 
 type ExpoVisitor interface {
@@ -3233,14 +3115,13 @@ type ExpoVisitor interface {
 }
 
 func (e *Expo) Accept(visitor ExpoVisitor) error {
-	switch e.typeName {
-	default:
-		return fmt.Errorf("invalid type %s in %T", e.typeName, e)
-	case "token":
+	if e.Token != nil {
 		return visitor.VisitToken(e.Token)
-	case "multipleTokens":
+	}
+	if e.MultipleTokens != nil {
 		return visitor.VisitMultipleTokens(e.MultipleTokens)
 	}
+	return fmt.Errorf("type %T does not include a non-empty union type", e)
 }
 
 type GetListSubscriptionsList struct {
@@ -3339,7 +3220,6 @@ func (i *IntercomRecipient) String() string {
 }
 
 type MsTeams struct {
-	typeName                    string
 	SendToMsTeamsUserId         *SendToMsTeamsUserId
 	SendToMsTeamsEmail          *SendToMsTeamsEmail
 	SendToMsTeamsChannelId      *SendToMsTeamsChannelId
@@ -3347,54 +3227,29 @@ type MsTeams struct {
 	SendToMsTeamsChannelName    *SendToMsTeamsChannelName
 }
 
-func NewMsTeamsFromSendToMsTeamsUserId(value *SendToMsTeamsUserId) *MsTeams {
-	return &MsTeams{typeName: "sendToMsTeamsUserId", SendToMsTeamsUserId: value}
-}
-
-func NewMsTeamsFromSendToMsTeamsEmail(value *SendToMsTeamsEmail) *MsTeams {
-	return &MsTeams{typeName: "sendToMsTeamsEmail", SendToMsTeamsEmail: value}
-}
-
-func NewMsTeamsFromSendToMsTeamsChannelId(value *SendToMsTeamsChannelId) *MsTeams {
-	return &MsTeams{typeName: "sendToMsTeamsChannelId", SendToMsTeamsChannelId: value}
-}
-
-func NewMsTeamsFromSendToMsTeamsConversationId(value *SendToMsTeamsConversationId) *MsTeams {
-	return &MsTeams{typeName: "sendToMsTeamsConversationId", SendToMsTeamsConversationId: value}
-}
-
-func NewMsTeamsFromSendToMsTeamsChannelName(value *SendToMsTeamsChannelName) *MsTeams {
-	return &MsTeams{typeName: "sendToMsTeamsChannelName", SendToMsTeamsChannelName: value}
-}
-
 func (m *MsTeams) UnmarshalJSON(data []byte) error {
 	valueSendToMsTeamsUserId := new(SendToMsTeamsUserId)
 	if err := json.Unmarshal(data, &valueSendToMsTeamsUserId); err == nil {
-		m.typeName = "sendToMsTeamsUserId"
 		m.SendToMsTeamsUserId = valueSendToMsTeamsUserId
 		return nil
 	}
 	valueSendToMsTeamsEmail := new(SendToMsTeamsEmail)
 	if err := json.Unmarshal(data, &valueSendToMsTeamsEmail); err == nil {
-		m.typeName = "sendToMsTeamsEmail"
 		m.SendToMsTeamsEmail = valueSendToMsTeamsEmail
 		return nil
 	}
 	valueSendToMsTeamsChannelId := new(SendToMsTeamsChannelId)
 	if err := json.Unmarshal(data, &valueSendToMsTeamsChannelId); err == nil {
-		m.typeName = "sendToMsTeamsChannelId"
 		m.SendToMsTeamsChannelId = valueSendToMsTeamsChannelId
 		return nil
 	}
 	valueSendToMsTeamsConversationId := new(SendToMsTeamsConversationId)
 	if err := json.Unmarshal(data, &valueSendToMsTeamsConversationId); err == nil {
-		m.typeName = "sendToMsTeamsConversationId"
 		m.SendToMsTeamsConversationId = valueSendToMsTeamsConversationId
 		return nil
 	}
 	valueSendToMsTeamsChannelName := new(SendToMsTeamsChannelName)
 	if err := json.Unmarshal(data, &valueSendToMsTeamsChannelName); err == nil {
-		m.typeName = "sendToMsTeamsChannelName"
 		m.SendToMsTeamsChannelName = valueSendToMsTeamsChannelName
 		return nil
 	}
@@ -3402,20 +3257,22 @@ func (m *MsTeams) UnmarshalJSON(data []byte) error {
 }
 
 func (m MsTeams) MarshalJSON() ([]byte, error) {
-	switch m.typeName {
-	default:
-		return nil, fmt.Errorf("invalid type %s in %T", m.typeName, m)
-	case "sendToMsTeamsUserId":
+	if m.SendToMsTeamsUserId != nil {
 		return json.Marshal(m.SendToMsTeamsUserId)
-	case "sendToMsTeamsEmail":
+	}
+	if m.SendToMsTeamsEmail != nil {
 		return json.Marshal(m.SendToMsTeamsEmail)
-	case "sendToMsTeamsChannelId":
+	}
+	if m.SendToMsTeamsChannelId != nil {
 		return json.Marshal(m.SendToMsTeamsChannelId)
-	case "sendToMsTeamsConversationId":
+	}
+	if m.SendToMsTeamsConversationId != nil {
 		return json.Marshal(m.SendToMsTeamsConversationId)
-	case "sendToMsTeamsChannelName":
+	}
+	if m.SendToMsTeamsChannelName != nil {
 		return json.Marshal(m.SendToMsTeamsChannelName)
 	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", m)
 }
 
 type MsTeamsVisitor interface {
@@ -3427,20 +3284,22 @@ type MsTeamsVisitor interface {
 }
 
 func (m *MsTeams) Accept(visitor MsTeamsVisitor) error {
-	switch m.typeName {
-	default:
-		return fmt.Errorf("invalid type %s in %T", m.typeName, m)
-	case "sendToMsTeamsUserId":
+	if m.SendToMsTeamsUserId != nil {
 		return visitor.VisitSendToMsTeamsUserId(m.SendToMsTeamsUserId)
-	case "sendToMsTeamsEmail":
+	}
+	if m.SendToMsTeamsEmail != nil {
 		return visitor.VisitSendToMsTeamsEmail(m.SendToMsTeamsEmail)
-	case "sendToMsTeamsChannelId":
+	}
+	if m.SendToMsTeamsChannelId != nil {
 		return visitor.VisitSendToMsTeamsChannelId(m.SendToMsTeamsChannelId)
-	case "sendToMsTeamsConversationId":
+	}
+	if m.SendToMsTeamsConversationId != nil {
 		return visitor.VisitSendToMsTeamsConversationId(m.SendToMsTeamsConversationId)
-	case "sendToMsTeamsChannelName":
+	}
+	if m.SendToMsTeamsChannelName != nil {
 		return visitor.VisitSendToMsTeamsChannelName(m.SendToMsTeamsChannelName)
 	}
+	return fmt.Errorf("type %T does not include a non-empty union type", m)
 }
 
 type MsTeamsBaseProperties struct {
@@ -3836,40 +3695,24 @@ func (s *SendToSlackUserId) String() string {
 }
 
 type Slack struct {
-	typeName           string
 	SendToSlackChannel *SendToSlackChannel
 	SendToSlackEmail   *SendToSlackEmail
 	SendToSlackUserId  *SendToSlackUserId
 }
 
-func NewSlackFromSendToSlackChannel(value *SendToSlackChannel) *Slack {
-	return &Slack{typeName: "sendToSlackChannel", SendToSlackChannel: value}
-}
-
-func NewSlackFromSendToSlackEmail(value *SendToSlackEmail) *Slack {
-	return &Slack{typeName: "sendToSlackEmail", SendToSlackEmail: value}
-}
-
-func NewSlackFromSendToSlackUserId(value *SendToSlackUserId) *Slack {
-	return &Slack{typeName: "sendToSlackUserId", SendToSlackUserId: value}
-}
-
 func (s *Slack) UnmarshalJSON(data []byte) error {
 	valueSendToSlackChannel := new(SendToSlackChannel)
 	if err := json.Unmarshal(data, &valueSendToSlackChannel); err == nil {
-		s.typeName = "sendToSlackChannel"
 		s.SendToSlackChannel = valueSendToSlackChannel
 		return nil
 	}
 	valueSendToSlackEmail := new(SendToSlackEmail)
 	if err := json.Unmarshal(data, &valueSendToSlackEmail); err == nil {
-		s.typeName = "sendToSlackEmail"
 		s.SendToSlackEmail = valueSendToSlackEmail
 		return nil
 	}
 	valueSendToSlackUserId := new(SendToSlackUserId)
 	if err := json.Unmarshal(data, &valueSendToSlackUserId); err == nil {
-		s.typeName = "sendToSlackUserId"
 		s.SendToSlackUserId = valueSendToSlackUserId
 		return nil
 	}
@@ -3877,16 +3720,16 @@ func (s *Slack) UnmarshalJSON(data []byte) error {
 }
 
 func (s Slack) MarshalJSON() ([]byte, error) {
-	switch s.typeName {
-	default:
-		return nil, fmt.Errorf("invalid type %s in %T", s.typeName, s)
-	case "sendToSlackChannel":
+	if s.SendToSlackChannel != nil {
 		return json.Marshal(s.SendToSlackChannel)
-	case "sendToSlackEmail":
+	}
+	if s.SendToSlackEmail != nil {
 		return json.Marshal(s.SendToSlackEmail)
-	case "sendToSlackUserId":
+	}
+	if s.SendToSlackUserId != nil {
 		return json.Marshal(s.SendToSlackUserId)
 	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", s)
 }
 
 type SlackVisitor interface {
@@ -3896,16 +3739,16 @@ type SlackVisitor interface {
 }
 
 func (s *Slack) Accept(visitor SlackVisitor) error {
-	switch s.typeName {
-	default:
-		return fmt.Errorf("invalid type %s in %T", s.typeName, s)
-	case "sendToSlackChannel":
+	if s.SendToSlackChannel != nil {
 		return visitor.VisitSendToSlackChannel(s.SendToSlackChannel)
-	case "sendToSlackEmail":
+	}
+	if s.SendToSlackEmail != nil {
 		return visitor.VisitSendToSlackEmail(s.SendToSlackEmail)
-	case "sendToSlackUserId":
+	}
+	if s.SendToSlackUserId != nil {
 		return visitor.VisitSendToSlackUserId(s.SendToSlackUserId)
 	}
+	return fmt.Errorf("type %T does not include a non-empty union type", s)
 }
 
 type SlackBaseProperties struct {
@@ -4553,29 +4396,18 @@ func (c ChannelSource) Ptr() *ChannelSource {
 }
 
 type Content struct {
-	typeName              string
 	ElementalContent      *ElementalContent
 	ElementalContentSugar *ElementalContentSugar
-}
-
-func NewContentFromElementalContent(value *ElementalContent) *Content {
-	return &Content{typeName: "elementalContent", ElementalContent: value}
-}
-
-func NewContentFromElementalContentSugar(value *ElementalContentSugar) *Content {
-	return &Content{typeName: "elementalContentSugar", ElementalContentSugar: value}
 }
 
 func (c *Content) UnmarshalJSON(data []byte) error {
 	valueElementalContent := new(ElementalContent)
 	if err := json.Unmarshal(data, &valueElementalContent); err == nil {
-		c.typeName = "elementalContent"
 		c.ElementalContent = valueElementalContent
 		return nil
 	}
 	valueElementalContentSugar := new(ElementalContentSugar)
 	if err := json.Unmarshal(data, &valueElementalContentSugar); err == nil {
-		c.typeName = "elementalContentSugar"
 		c.ElementalContentSugar = valueElementalContentSugar
 		return nil
 	}
@@ -4583,14 +4415,13 @@ func (c *Content) UnmarshalJSON(data []byte) error {
 }
 
 func (c Content) MarshalJSON() ([]byte, error) {
-	switch c.typeName {
-	default:
-		return nil, fmt.Errorf("invalid type %s in %T", c.typeName, c)
-	case "elementalContent":
+	if c.ElementalContent != nil {
 		return json.Marshal(c.ElementalContent)
-	case "elementalContentSugar":
+	}
+	if c.ElementalContentSugar != nil {
 		return json.Marshal(c.ElementalContentSugar)
 	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", c)
 }
 
 type ContentVisitor interface {
@@ -4599,14 +4430,13 @@ type ContentVisitor interface {
 }
 
 func (c *Content) Accept(visitor ContentVisitor) error {
-	switch c.typeName {
-	default:
-		return fmt.Errorf("invalid type %s in %T", c.typeName, c)
-	case "elementalContent":
+	if c.ElementalContent != nil {
 		return visitor.VisitElementalContent(c.ElementalContent)
-	case "elementalContentSugar":
+	}
+	if c.ElementalContentSugar != nil {
 		return visitor.VisitElementalContentSugar(c.ElementalContentSugar)
 	}
+	return fmt.Errorf("type %T does not include a non-empty union type", c)
 }
 
 // The message property has the following primary top-level properties. They define the destination and content of the message.
@@ -5077,38 +4907,6 @@ type ElementalNode struct {
 	Quote   *ElementalQuoteNode
 }
 
-func NewElementalNodeFromText(value *ElementalTextNode) *ElementalNode {
-	return &ElementalNode{Type: "text", Text: value}
-}
-
-func NewElementalNodeFromMeta(value *ElementalMetaNode) *ElementalNode {
-	return &ElementalNode{Type: "meta", Meta: value}
-}
-
-func NewElementalNodeFromChannel(value *ElementalChannelNode) *ElementalNode {
-	return &ElementalNode{Type: "channel", Channel: value}
-}
-
-func NewElementalNodeFromImage(value *ElementalImageNode) *ElementalNode {
-	return &ElementalNode{Type: "image", Image: value}
-}
-
-func NewElementalNodeFromAction(value *ElementalActionNode) *ElementalNode {
-	return &ElementalNode{Type: "action", Action: value}
-}
-
-func NewElementalNodeFromDivider(value *ElementalDividerNode) *ElementalNode {
-	return &ElementalNode{Type: "divider", Divider: value}
-}
-
-func NewElementalNodeFromGroup(value *ElementalGroupNode) *ElementalNode {
-	return &ElementalNode{Type: "group", Group: value}
-}
-
-func NewElementalNodeFromQuote(value *ElementalQuoteNode) *ElementalNode {
-	return &ElementalNode{Type: "quote", Quote: value}
-}
-
 func (e *ElementalNode) UnmarshalJSON(data []byte) error {
 	var unmarshaler struct {
 		Type string `json:"type"`
@@ -5171,82 +4969,87 @@ func (e *ElementalNode) UnmarshalJSON(data []byte) error {
 }
 
 func (e ElementalNode) MarshalJSON() ([]byte, error) {
-	switch e.Type {
-	default:
-		return nil, fmt.Errorf("invalid type %s in %T", e.Type, e)
-	case "text":
+	if e.Text != nil {
 		var marshaler = struct {
 			Type string `json:"type"`
 			*ElementalTextNode
 		}{
-			Type:              e.Type,
+			Type:              "text",
 			ElementalTextNode: e.Text,
 		}
 		return json.Marshal(marshaler)
-	case "meta":
+	}
+	if e.Meta != nil {
 		var marshaler = struct {
 			Type string `json:"type"`
 			*ElementalMetaNode
 		}{
-			Type:              e.Type,
+			Type:              "meta",
 			ElementalMetaNode: e.Meta,
 		}
 		return json.Marshal(marshaler)
-	case "channel":
+	}
+	if e.Channel != nil {
 		var marshaler = struct {
 			Type string `json:"type"`
 			*ElementalChannelNode
 		}{
-			Type:                 e.Type,
+			Type:                 "channel",
 			ElementalChannelNode: e.Channel,
 		}
 		return json.Marshal(marshaler)
-	case "image":
+	}
+	if e.Image != nil {
 		var marshaler = struct {
 			Type string `json:"type"`
 			*ElementalImageNode
 		}{
-			Type:               e.Type,
+			Type:               "image",
 			ElementalImageNode: e.Image,
 		}
 		return json.Marshal(marshaler)
-	case "action":
+	}
+	if e.Action != nil {
 		var marshaler = struct {
 			Type string `json:"type"`
 			*ElementalActionNode
 		}{
-			Type:                e.Type,
+			Type:                "action",
 			ElementalActionNode: e.Action,
 		}
 		return json.Marshal(marshaler)
-	case "divider":
+	}
+	if e.Divider != nil {
 		var marshaler = struct {
 			Type string `json:"type"`
 			*ElementalDividerNode
 		}{
-			Type:                 e.Type,
+			Type:                 "divider",
 			ElementalDividerNode: e.Divider,
 		}
 		return json.Marshal(marshaler)
-	case "group":
+	}
+	if e.Group != nil {
 		var marshaler = struct {
 			Type string `json:"type"`
 			*ElementalGroupNode
 		}{
-			Type:               e.Type,
+			Type:               "group",
 			ElementalGroupNode: e.Group,
 		}
 		return json.Marshal(marshaler)
-	case "quote":
+	}
+	if e.Quote != nil {
 		var marshaler = struct {
 			Type string `json:"type"`
 			*ElementalQuoteNode
 		}{
-			Type:               e.Type,
+			Type:               "quote",
 			ElementalQuoteNode: e.Quote,
 		}
 		return json.Marshal(marshaler)
 	}
+	return nil, fmt.Errorf("type %T does not define a non-empty union type", e)
 }
 
 type ElementalNodeVisitor interface {
@@ -5261,26 +5064,31 @@ type ElementalNodeVisitor interface {
 }
 
 func (e *ElementalNode) Accept(visitor ElementalNodeVisitor) error {
-	switch e.Type {
-	default:
-		return fmt.Errorf("invalid type %s in %T", e.Type, e)
-	case "text":
+	if e.Text != nil {
 		return visitor.VisitText(e.Text)
-	case "meta":
+	}
+	if e.Meta != nil {
 		return visitor.VisitMeta(e.Meta)
-	case "channel":
+	}
+	if e.Channel != nil {
 		return visitor.VisitChannel(e.Channel)
-	case "image":
+	}
+	if e.Image != nil {
 		return visitor.VisitImage(e.Image)
-	case "action":
+	}
+	if e.Action != nil {
 		return visitor.VisitAction(e.Action)
-	case "divider":
+	}
+	if e.Divider != nil {
 		return visitor.VisitDivider(e.Divider)
-	case "group":
+	}
+	if e.Group != nil {
 		return visitor.VisitGroup(e.Group)
-	case "quote":
+	}
+	if e.Quote != nil {
 		return visitor.VisitQuote(e.Quote)
 	}
+	return fmt.Errorf("type %T does not define a non-empty union type", e)
 }
 
 // Renders a quote block.
@@ -5470,29 +5278,18 @@ func (e *EmailHeader) String() string {
 }
 
 type ExpiresInType struct {
-	typeName string
-	String   string
-	Integer  int
-}
-
-func NewExpiresInTypeFromString(value string) *ExpiresInType {
-	return &ExpiresInType{typeName: "string", String: value}
-}
-
-func NewExpiresInTypeFromInteger(value int) *ExpiresInType {
-	return &ExpiresInType{typeName: "integer", Integer: value}
+	String  string
+	Integer int
 }
 
 func (e *ExpiresInType) UnmarshalJSON(data []byte) error {
 	var valueString string
 	if err := json.Unmarshal(data, &valueString); err == nil {
-		e.typeName = "string"
 		e.String = valueString
 		return nil
 	}
 	var valueInteger int
 	if err := json.Unmarshal(data, &valueInteger); err == nil {
-		e.typeName = "integer"
 		e.Integer = valueInteger
 		return nil
 	}
@@ -5500,14 +5297,13 @@ func (e *ExpiresInType) UnmarshalJSON(data []byte) error {
 }
 
 func (e ExpiresInType) MarshalJSON() ([]byte, error) {
-	switch e.typeName {
-	default:
-		return nil, fmt.Errorf("invalid type %s in %T", e.typeName, e)
-	case "string":
+	if e.String != "" {
 		return json.Marshal(e.String)
-	case "integer":
+	}
+	if e.Integer != 0 {
 		return json.Marshal(e.Integer)
 	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", e)
 }
 
 type ExpiresInTypeVisitor interface {
@@ -5516,14 +5312,13 @@ type ExpiresInTypeVisitor interface {
 }
 
 func (e *ExpiresInType) Accept(visitor ExpiresInTypeVisitor) error {
-	switch e.typeName {
-	default:
-		return fmt.Errorf("invalid type %s in %T", e.typeName, e)
-	case "string":
+	if e.String != "" {
 		return visitor.VisitString(e.String)
-	case "integer":
+	}
+	if e.Integer != 0 {
 		return visitor.VisitInteger(e.Integer)
 	}
+	return fmt.Errorf("type %T does not include a non-empty union type", e)
 }
 
 type Expiry struct {
@@ -6026,31 +5821,20 @@ func (l *Logo) String() string {
 }
 
 type Message struct {
-	typeName string
 	// Describes the content of the message in a way that will work for email, push, chat, or any channel.
 	ContentMessage *ContentMessage
 	// A template for a type of message that can be sent more than once. For example, you might create an "Appointment Reminder" Notification or “Reset Password” Notifications.
 	TemplateMessage *TemplateMessage
 }
 
-func NewMessageFromContentMessage(value *ContentMessage) *Message {
-	return &Message{typeName: "contentMessage", ContentMessage: value}
-}
-
-func NewMessageFromTemplateMessage(value *TemplateMessage) *Message {
-	return &Message{typeName: "templateMessage", TemplateMessage: value}
-}
-
 func (m *Message) UnmarshalJSON(data []byte) error {
 	valueContentMessage := new(ContentMessage)
 	if err := json.Unmarshal(data, &valueContentMessage); err == nil {
-		m.typeName = "contentMessage"
 		m.ContentMessage = valueContentMessage
 		return nil
 	}
 	valueTemplateMessage := new(TemplateMessage)
 	if err := json.Unmarshal(data, &valueTemplateMessage); err == nil {
-		m.typeName = "templateMessage"
 		m.TemplateMessage = valueTemplateMessage
 		return nil
 	}
@@ -6058,14 +5842,13 @@ func (m *Message) UnmarshalJSON(data []byte) error {
 }
 
 func (m Message) MarshalJSON() ([]byte, error) {
-	switch m.typeName {
-	default:
-		return nil, fmt.Errorf("invalid type %s in %T", m.typeName, m)
-	case "contentMessage":
+	if m.ContentMessage != nil {
 		return json.Marshal(m.ContentMessage)
-	case "templateMessage":
+	}
+	if m.TemplateMessage != nil {
 		return json.Marshal(m.TemplateMessage)
 	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", m)
 }
 
 type MessageVisitor interface {
@@ -6074,14 +5857,13 @@ type MessageVisitor interface {
 }
 
 func (m *Message) Accept(visitor MessageVisitor) error {
-	switch m.typeName {
-	default:
-		return fmt.Errorf("invalid type %s in %T", m.typeName, m)
-	case "contentMessage":
+	if m.ContentMessage != nil {
 		return visitor.VisitContentMessage(m.ContentMessage)
-	case "templateMessage":
+	}
+	if m.TemplateMessage != nil {
 		return visitor.VisitTemplateMessage(m.TemplateMessage)
 	}
+	return fmt.Errorf("type %T does not include a non-empty union type", m)
 }
 
 type MessageChannelEmailOverride struct {
@@ -6232,29 +6014,18 @@ func (m *MessageProvidersType) String() string {
 }
 
 type MessageRecipient struct {
-	typeName      string
 	Recipient     *Recipient
 	RecipientList []*Recipient
-}
-
-func NewMessageRecipientFromRecipient(value *Recipient) *MessageRecipient {
-	return &MessageRecipient{typeName: "recipient", Recipient: value}
-}
-
-func NewMessageRecipientFromRecipientList(value []*Recipient) *MessageRecipient {
-	return &MessageRecipient{typeName: "recipientList", RecipientList: value}
 }
 
 func (m *MessageRecipient) UnmarshalJSON(data []byte) error {
 	valueRecipient := new(Recipient)
 	if err := json.Unmarshal(data, &valueRecipient); err == nil {
-		m.typeName = "recipient"
 		m.Recipient = valueRecipient
 		return nil
 	}
 	var valueRecipientList []*Recipient
 	if err := json.Unmarshal(data, &valueRecipientList); err == nil {
-		m.typeName = "recipientList"
 		m.RecipientList = valueRecipientList
 		return nil
 	}
@@ -6262,14 +6033,13 @@ func (m *MessageRecipient) UnmarshalJSON(data []byte) error {
 }
 
 func (m MessageRecipient) MarshalJSON() ([]byte, error) {
-	switch m.typeName {
-	default:
-		return nil, fmt.Errorf("invalid type %s in %T", m.typeName, m)
-	case "recipient":
+	if m.Recipient != nil {
 		return json.Marshal(m.Recipient)
-	case "recipientList":
+	}
+	if m.RecipientList != nil {
 		return json.Marshal(m.RecipientList)
 	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", m)
 }
 
 type MessageRecipientVisitor interface {
@@ -6278,14 +6048,13 @@ type MessageRecipientVisitor interface {
 }
 
 func (m *MessageRecipient) Accept(visitor MessageRecipientVisitor) error {
-	switch m.typeName {
-	default:
-		return fmt.Errorf("invalid type %s in %T", m.typeName, m)
-	case "recipient":
+	if m.Recipient != nil {
 		return visitor.VisitRecipient(m.Recipient)
-	case "recipientList":
+	}
+	if m.RecipientList != nil {
 		return visitor.VisitRecipientList(m.RecipientList)
 	}
+	return fmt.Errorf("type %T does not include a non-empty union type", m)
 }
 
 type Metadata struct {
@@ -6430,7 +6199,6 @@ func (p *Preferences) String() string {
 }
 
 type Recipient struct {
-	typeName             string
 	AudienceRecipient    *AudienceRecipient
 	ListRecipient        *ListRecipient
 	ListPatternRecipient *ListPatternRecipient
@@ -6439,64 +6207,34 @@ type Recipient struct {
 	MsTeamsRecipient     *MsTeamsRecipient
 }
 
-func NewRecipientFromAudienceRecipient(value *AudienceRecipient) *Recipient {
-	return &Recipient{typeName: "audienceRecipient", AudienceRecipient: value}
-}
-
-func NewRecipientFromListRecipient(value *ListRecipient) *Recipient {
-	return &Recipient{typeName: "listRecipient", ListRecipient: value}
-}
-
-func NewRecipientFromListPatternRecipient(value *ListPatternRecipient) *Recipient {
-	return &Recipient{typeName: "listPatternRecipient", ListPatternRecipient: value}
-}
-
-func NewRecipientFromUserRecipient(value *UserRecipient) *Recipient {
-	return &Recipient{typeName: "userRecipient", UserRecipient: value}
-}
-
-func NewRecipientFromSlackRecipient(value *SlackRecipient) *Recipient {
-	return &Recipient{typeName: "slackRecipient", SlackRecipient: value}
-}
-
-func NewRecipientFromMsTeamsRecipient(value *MsTeamsRecipient) *Recipient {
-	return &Recipient{typeName: "msTeamsRecipient", MsTeamsRecipient: value}
-}
-
 func (r *Recipient) UnmarshalJSON(data []byte) error {
 	valueAudienceRecipient := new(AudienceRecipient)
 	if err := json.Unmarshal(data, &valueAudienceRecipient); err == nil {
-		r.typeName = "audienceRecipient"
 		r.AudienceRecipient = valueAudienceRecipient
 		return nil
 	}
 	valueListRecipient := new(ListRecipient)
 	if err := json.Unmarshal(data, &valueListRecipient); err == nil {
-		r.typeName = "listRecipient"
 		r.ListRecipient = valueListRecipient
 		return nil
 	}
 	valueListPatternRecipient := new(ListPatternRecipient)
 	if err := json.Unmarshal(data, &valueListPatternRecipient); err == nil {
-		r.typeName = "listPatternRecipient"
 		r.ListPatternRecipient = valueListPatternRecipient
 		return nil
 	}
 	valueUserRecipient := new(UserRecipient)
 	if err := json.Unmarshal(data, &valueUserRecipient); err == nil {
-		r.typeName = "userRecipient"
 		r.UserRecipient = valueUserRecipient
 		return nil
 	}
 	valueSlackRecipient := new(SlackRecipient)
 	if err := json.Unmarshal(data, &valueSlackRecipient); err == nil {
-		r.typeName = "slackRecipient"
 		r.SlackRecipient = valueSlackRecipient
 		return nil
 	}
 	valueMsTeamsRecipient := new(MsTeamsRecipient)
 	if err := json.Unmarshal(data, &valueMsTeamsRecipient); err == nil {
-		r.typeName = "msTeamsRecipient"
 		r.MsTeamsRecipient = valueMsTeamsRecipient
 		return nil
 	}
@@ -6504,22 +6242,25 @@ func (r *Recipient) UnmarshalJSON(data []byte) error {
 }
 
 func (r Recipient) MarshalJSON() ([]byte, error) {
-	switch r.typeName {
-	default:
-		return nil, fmt.Errorf("invalid type %s in %T", r.typeName, r)
-	case "audienceRecipient":
+	if r.AudienceRecipient != nil {
 		return json.Marshal(r.AudienceRecipient)
-	case "listRecipient":
+	}
+	if r.ListRecipient != nil {
 		return json.Marshal(r.ListRecipient)
-	case "listPatternRecipient":
+	}
+	if r.ListPatternRecipient != nil {
 		return json.Marshal(r.ListPatternRecipient)
-	case "userRecipient":
+	}
+	if r.UserRecipient != nil {
 		return json.Marshal(r.UserRecipient)
-	case "slackRecipient":
+	}
+	if r.SlackRecipient != nil {
 		return json.Marshal(r.SlackRecipient)
-	case "msTeamsRecipient":
+	}
+	if r.MsTeamsRecipient != nil {
 		return json.Marshal(r.MsTeamsRecipient)
 	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", r)
 }
 
 type RecipientVisitor interface {
@@ -6532,22 +6273,25 @@ type RecipientVisitor interface {
 }
 
 func (r *Recipient) Accept(visitor RecipientVisitor) error {
-	switch r.typeName {
-	default:
-		return fmt.Errorf("invalid type %s in %T", r.typeName, r)
-	case "audienceRecipient":
+	if r.AudienceRecipient != nil {
 		return visitor.VisitAudienceRecipient(r.AudienceRecipient)
-	case "listRecipient":
+	}
+	if r.ListRecipient != nil {
 		return visitor.VisitListRecipient(r.ListRecipient)
-	case "listPatternRecipient":
+	}
+	if r.ListPatternRecipient != nil {
 		return visitor.VisitListPatternRecipient(r.ListPatternRecipient)
-	case "userRecipient":
+	}
+	if r.UserRecipient != nil {
 		return visitor.VisitUserRecipient(r.UserRecipient)
-	case "slackRecipient":
+	}
+	if r.SlackRecipient != nil {
 		return visitor.VisitSlackRecipient(r.SlackRecipient)
-	case "msTeamsRecipient":
+	}
+	if r.MsTeamsRecipient != nil {
 		return visitor.VisitMsTeamsRecipient(r.MsTeamsRecipient)
 	}
+	return fmt.Errorf("type %T does not include a non-empty union type", r)
 }
 
 // Allows you to customize which channel(s) Courier will potentially deliver the message.
@@ -6587,40 +6331,24 @@ func (r *Routing) String() string {
 }
 
 type RoutingChannel struct {
-	typeName                string
 	RoutingStrategyChannel  *RoutingStrategyChannel
 	RoutingStrategyProvider *RoutingStrategyProvider
 	String                  string
 }
 
-func NewRoutingChannelFromRoutingStrategyChannel(value *RoutingStrategyChannel) *RoutingChannel {
-	return &RoutingChannel{typeName: "routingStrategyChannel", RoutingStrategyChannel: value}
-}
-
-func NewRoutingChannelFromRoutingStrategyProvider(value *RoutingStrategyProvider) *RoutingChannel {
-	return &RoutingChannel{typeName: "routingStrategyProvider", RoutingStrategyProvider: value}
-}
-
-func NewRoutingChannelFromString(value string) *RoutingChannel {
-	return &RoutingChannel{typeName: "string", String: value}
-}
-
 func (r *RoutingChannel) UnmarshalJSON(data []byte) error {
 	valueRoutingStrategyChannel := new(RoutingStrategyChannel)
 	if err := json.Unmarshal(data, &valueRoutingStrategyChannel); err == nil {
-		r.typeName = "routingStrategyChannel"
 		r.RoutingStrategyChannel = valueRoutingStrategyChannel
 		return nil
 	}
 	valueRoutingStrategyProvider := new(RoutingStrategyProvider)
 	if err := json.Unmarshal(data, &valueRoutingStrategyProvider); err == nil {
-		r.typeName = "routingStrategyProvider"
 		r.RoutingStrategyProvider = valueRoutingStrategyProvider
 		return nil
 	}
 	var valueString string
 	if err := json.Unmarshal(data, &valueString); err == nil {
-		r.typeName = "string"
 		r.String = valueString
 		return nil
 	}
@@ -6628,16 +6356,16 @@ func (r *RoutingChannel) UnmarshalJSON(data []byte) error {
 }
 
 func (r RoutingChannel) MarshalJSON() ([]byte, error) {
-	switch r.typeName {
-	default:
-		return nil, fmt.Errorf("invalid type %s in %T", r.typeName, r)
-	case "routingStrategyChannel":
+	if r.RoutingStrategyChannel != nil {
 		return json.Marshal(r.RoutingStrategyChannel)
-	case "routingStrategyProvider":
+	}
+	if r.RoutingStrategyProvider != nil {
 		return json.Marshal(r.RoutingStrategyProvider)
-	case "string":
+	}
+	if r.String != "" {
 		return json.Marshal(r.String)
 	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", r)
 }
 
 type RoutingChannelVisitor interface {
@@ -6647,16 +6375,16 @@ type RoutingChannelVisitor interface {
 }
 
 func (r *RoutingChannel) Accept(visitor RoutingChannelVisitor) error {
-	switch r.typeName {
-	default:
-		return fmt.Errorf("invalid type %s in %T", r.typeName, r)
-	case "routingStrategyChannel":
+	if r.RoutingStrategyChannel != nil {
 		return visitor.VisitRoutingStrategyChannel(r.RoutingStrategyChannel)
-	case "routingStrategyProvider":
+	}
+	if r.RoutingStrategyProvider != nil {
 		return visitor.VisitRoutingStrategyProvider(r.RoutingStrategyProvider)
-	case "string":
+	}
+	if r.String != "" {
 		return visitor.VisitString(r.String)
 	}
+	return fmt.Errorf("type %T does not include a non-empty union type", r)
 }
 
 type RoutingMethod string
