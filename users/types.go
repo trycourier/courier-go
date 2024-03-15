@@ -115,29 +115,18 @@ func (d *Device) String() string {
 }
 
 type ExpiryDate struct {
-	typeName string
-	String   string
-	Boolean  bool
-}
-
-func NewExpiryDateFromString(value string) *ExpiryDate {
-	return &ExpiryDate{typeName: "string", String: value}
-}
-
-func NewExpiryDateFromBoolean(value bool) *ExpiryDate {
-	return &ExpiryDate{typeName: "boolean", Boolean: value}
+	String  string
+	Boolean bool
 }
 
 func (e *ExpiryDate) UnmarshalJSON(data []byte) error {
 	var valueString string
 	if err := json.Unmarshal(data, &valueString); err == nil {
-		e.typeName = "string"
 		e.String = valueString
 		return nil
 	}
 	var valueBoolean bool
 	if err := json.Unmarshal(data, &valueBoolean); err == nil {
-		e.typeName = "boolean"
 		e.Boolean = valueBoolean
 		return nil
 	}
@@ -145,14 +134,13 @@ func (e *ExpiryDate) UnmarshalJSON(data []byte) error {
 }
 
 func (e ExpiryDate) MarshalJSON() ([]byte, error) {
-	switch e.typeName {
-	default:
-		return nil, fmt.Errorf("invalid type %s in %T", e.typeName, e)
-	case "string":
+	if e.String != "" {
 		return json.Marshal(e.String)
-	case "boolean":
+	}
+	if e.Boolean != false {
 		return json.Marshal(e.Boolean)
 	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", e)
 }
 
 type ExpiryDateVisitor interface {
@@ -161,14 +149,13 @@ type ExpiryDateVisitor interface {
 }
 
 func (e *ExpiryDate) Accept(visitor ExpiryDateVisitor) error {
-	switch e.typeName {
-	default:
-		return fmt.Errorf("invalid type %s in %T", e.typeName, e)
-	case "string":
+	if e.String != "" {
 		return visitor.VisitString(e.String)
-	case "boolean":
+	}
+	if e.Boolean != false {
 		return visitor.VisitBoolean(e.Boolean)
 	}
+	return fmt.Errorf("type %T does not include a non-empty union type", e)
 }
 
 type GetUserTokenOpts struct {

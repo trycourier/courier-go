@@ -145,29 +145,18 @@ func (a *AudienceUpdateResponse) String() string {
 }
 
 type Filter struct {
-	typeName           string
 	SingleFilterConfig *SingleFilterConfig
 	NestedFilterConfig *NestedFilterConfig
-}
-
-func NewFilterFromSingleFilterConfig(value *SingleFilterConfig) *Filter {
-	return &Filter{typeName: "singleFilterConfig", SingleFilterConfig: value}
-}
-
-func NewFilterFromNestedFilterConfig(value *NestedFilterConfig) *Filter {
-	return &Filter{typeName: "nestedFilterConfig", NestedFilterConfig: value}
 }
 
 func (f *Filter) UnmarshalJSON(data []byte) error {
 	valueSingleFilterConfig := new(SingleFilterConfig)
 	if err := json.Unmarshal(data, &valueSingleFilterConfig); err == nil {
-		f.typeName = "singleFilterConfig"
 		f.SingleFilterConfig = valueSingleFilterConfig
 		return nil
 	}
 	valueNestedFilterConfig := new(NestedFilterConfig)
 	if err := json.Unmarshal(data, &valueNestedFilterConfig); err == nil {
-		f.typeName = "nestedFilterConfig"
 		f.NestedFilterConfig = valueNestedFilterConfig
 		return nil
 	}
@@ -175,14 +164,13 @@ func (f *Filter) UnmarshalJSON(data []byte) error {
 }
 
 func (f Filter) MarshalJSON() ([]byte, error) {
-	switch f.typeName {
-	default:
-		return nil, fmt.Errorf("invalid type %s in %T", f.typeName, f)
-	case "singleFilterConfig":
+	if f.SingleFilterConfig != nil {
 		return json.Marshal(f.SingleFilterConfig)
-	case "nestedFilterConfig":
+	}
+	if f.NestedFilterConfig != nil {
 		return json.Marshal(f.NestedFilterConfig)
 	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", f)
 }
 
 type FilterVisitor interface {
@@ -191,14 +179,13 @@ type FilterVisitor interface {
 }
 
 func (f *Filter) Accept(visitor FilterVisitor) error {
-	switch f.typeName {
-	default:
-		return fmt.Errorf("invalid type %s in %T", f.typeName, f)
-	case "singleFilterConfig":
+	if f.SingleFilterConfig != nil {
 		return visitor.VisitSingleFilterConfig(f.SingleFilterConfig)
-	case "nestedFilterConfig":
+	}
+	if f.NestedFilterConfig != nil {
 		return visitor.VisitNestedFilterConfig(f.NestedFilterConfig)
 	}
+	return fmt.Errorf("type %T does not include a non-empty union type", f)
 }
 
 type AudienceUpdateParams struct {
