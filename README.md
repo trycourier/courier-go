@@ -72,32 +72,38 @@ fmt.Printf("Sent message %s\n", sendResponse.RequestId)
 
 ## Unions
 
-Our API, particularly the send method, uses several unions. Our Go SDK provides
-strongly typed factories to construct these unions, such as `courier.NewMessageFromContentMessage(...)`.
+Our API, particularly the send method, uses several unions. Our Go SDK defines structs
+to construct these unions, such as `courier.Message`, shown below:
 
 ```go
 import (
   courier "github.com/trycourier/courier-go/v3"
 )
 
-courier.SendMessageRequest{
-  // Construct a template message
-  Message: courier.NewMessageFromContentMessage(&courier.ContentMessage{
-    // Construct a single recepient
-    To: courier.NewMessageRecipientFromRecipient(
-      // Construct a single recepient that is a user recepient
-      courier.NewRecipientFromUserRecipient(&courier.UserRecipient{
-        Email: courier.String("marty_mcfly@email.com"),
-        Data: &courier.MessageData{
-          "name": "Marty",
+request := &courier.SendMessageRequest{
+  // Construct a content message.
+  Message: &courier.Message{
+    ContentMessage: &courier.ContentMessage{
+      // Construct a single recepient that is a user recepient.
+      To: &courier.MessageRecipient{
+        Recipient: &courier.Recipient{
+          UserRecipient: &courier.UserRecipient{
+            Email: courier.String("marty_mcfly@email.com"),
+            Data: &courier.MessageData{
+              "name": "Marty",
+            },
+          },
         },
-      })),
-    // Construct content from elemental content sugar
-    Content: courier.NewContentFromElementalContentSugar(&courier.ElementalContentSugar{
-      Title: "Back to the Future",
-      Body:  "Oh my {{name}}, we need 1.21 Gigawatts!",
-    }),
-  }),
+      },
+      // Construct content from elemental content sugar.
+      Content: &courier.Content{
+        ElementalContentSugar: &courier.ElementalContentSugar{
+          Title: "Back to the Future",
+          Body:  "Oh my {{name}}, we need 1.21 Gigawatts!",
+        },
+      },
+    },
+  },
 }
 ```
 
