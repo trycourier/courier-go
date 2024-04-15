@@ -107,6 +107,76 @@ request := &courier.SendMessageRequest{
 }
 ```
 
+### Breaking change (3.0.7 -> 3.0.8)
+
+We introduced a better union construction experience in [3.0.8](https://github.com/trycourier/courier-go/releases/tag/v3.0.8).
+For example, the `courier.Message` type was previously constructed with the following:
+
+```go
+import (
+  courier "github.com/trycourier/courier-go/v3"
+)
+
+request := courier.SendMessageRequest{
+  // Construct a content message.
+  Message: courier.NewMessageFromContentMessage(
+    &courier.ContentMessage{
+      // Construct a single recepient that is a user recepient.
+      To: courier.NewMessageRecipientFromRecipient(
+        courier.NewRecipientFromUserRecipient(
+          &courier.UserRecipient{
+            Email: courier.String("marty_mcfly@email.com"),
+            Data: &courier.MessageData{
+              "name": "Marty",
+            },
+          },
+        ),
+      ),
+      // Construct content from elemental content sugar.
+      Content: courier.NewContentFromElementalContentSugar(
+        &courier.ElementalContentSugar{
+          Title: "Back to the Future",
+          Body:  "Oh my {{name}}, we need 1.21 Gigawatts!",
+        },
+      ),
+    },
+  ),
+}
+```
+
+Although the construction looks fairly similar, the old approach required navigating a
+variety of cumebersome constructor function names (e.g. `courier.NewContentFromElementalContentSugar`).
+
+The new approach drops these constructors entirely, which simplifies the experience significantly.
+Migrating from the old approach is as simple as setting the concrete type to the appropriate
+field like so:
+
+**Before**
+
+```go
+  ...
+  Content: courier.NewContentFromElementalContentSugar(
+    &courier.ElementalContentSugar{
+      Title: "Back to the Future",
+      Body:  "Oh my {{name}}, we need 1.21 Gigawatts!",
+    },
+  ),
+  ...
+```
+
+**After**
+
+```go
+  ...
+  Content: &courier.Content{
+    ElementalContentSugar: &courier.ElementalContentSugar{
+      Title: "Back to the Future",
+      Body:  "Oh my {{name}}, we need 1.21 Gigawatts!",
+    },
+  },
+  ...
+```
+
 ## Timeouts
 
 Setting a timeout for each individual request is as simple as using the standard
