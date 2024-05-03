@@ -3327,9 +3327,13 @@ func (m MessageRoutingMethod) Ptr() *MessageRoutingMethod {
 }
 
 type Notification struct {
-	CreatedAt int64           `json:"created_at" url:"created_at"`
-	Id        string          `json:"id" url:"id"`
-	Routing   *MessageRouting `json:"routing,omitempty" url:"routing,omitempty"`
+	CreatedAt int64            `json:"created_at" url:"created_at"`
+	UpdatedAt int64            `json:"updated_at" url:"updated_at"`
+	Id        string           `json:"id" url:"id"`
+	Routing   *MessageRouting  `json:"routing,omitempty" url:"routing,omitempty"`
+	Tags      *NotificationTag `json:"tags,omitempty" url:"tags,omitempty"`
+	Title     *string          `json:"title,omitempty" url:"title,omitempty"`
+	TopicId   string           `json:"topic_id" url:"topic_id"`
 
 	_rawJSON json.RawMessage
 }
@@ -3450,6 +3454,65 @@ func (n *NotificationContentHierarchy) UnmarshalJSON(data []byte) error {
 }
 
 func (n *NotificationContentHierarchy) String() string {
+	if len(n._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(n._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(n); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", n)
+}
+
+type NotificationTag struct {
+	Data []*NotificationTagData `json:"data,omitempty" url:"data,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (n *NotificationTag) UnmarshalJSON(data []byte) error {
+	type unmarshaler NotificationTag
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*n = NotificationTag(value)
+	n._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (n *NotificationTag) String() string {
+	if len(n._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(n._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(n); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", n)
+}
+
+type NotificationTagData struct {
+	Id   string `json:"id" url:"id"`
+	Name string `json:"name" url:"name"`
+
+	_rawJSON json.RawMessage
+}
+
+func (n *NotificationTagData) UnmarshalJSON(data []byte) error {
+	type unmarshaler NotificationTagData
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*n = NotificationTagData(value)
+	n._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (n *NotificationTagData) String() string {
 	if len(n._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(n._rawJSON); err == nil {
 			return value
