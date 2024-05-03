@@ -17,7 +17,9 @@ func WithIdempotencyKey(idempotencyKey *string) *core.IdempotencyKeyOption {
 }
 
 // WithIdempotencyExpiry sets the idempotencyExpiry request header.
-func WithIdempotencyExpiry(idempotencyExpiry *int) *core.IdempotencyExpiryOption {
+//
+// The expiry can either be an ISO8601 datetime or a duration like "1 Day".
+func WithIdempotencyExpiry(idempotencyExpiry *string) *core.IdempotencyExpiryOption {
 	return &core.IdempotencyExpiryOption{
 		IdempotencyExpiry: idempotencyExpiry,
 	}

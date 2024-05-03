@@ -489,6 +489,35 @@ func (t *Target) String() string {
 	return fmt.Sprintf("%#v", t)
 }
 
+type AccessorType struct {
+	Ref string `json:"$ref" url:"$ref"`
+
+	_rawJSON json.RawMessage
+}
+
+func (a *AccessorType) UnmarshalJSON(data []byte) error {
+	type unmarshaler AccessorType
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AccessorType(value)
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AccessorType) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
 type Automation struct {
 	CancelationToken *string                 `json:"cancelation_token,omitempty" url:"cancelation_token,omitempty"`
 	Steps            []*AutomationStepOption `json:"steps,omitempty" url:"steps,omitempty"`
@@ -508,6 +537,261 @@ func (a *Automation) UnmarshalJSON(data []byte) error {
 }
 
 func (a *Automation) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AutomationAddToBatchMaxItemsType struct {
+	String  string
+	Integer int
+}
+
+func (a *AutomationAddToBatchMaxItemsType) UnmarshalJSON(data []byte) error {
+	var valueString string
+	if err := json.Unmarshal(data, &valueString); err == nil {
+		a.String = valueString
+		return nil
+	}
+	var valueInteger int
+	if err := json.Unmarshal(data, &valueInteger); err == nil {
+		a.Integer = valueInteger
+		return nil
+	}
+	return fmt.Errorf("%s cannot be deserialized as a %T", data, a)
+}
+
+func (a AutomationAddToBatchMaxItemsType) MarshalJSON() ([]byte, error) {
+	if a.String != "" {
+		return json.Marshal(a.String)
+	}
+	if a.Integer != 0 {
+		return json.Marshal(a.Integer)
+	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", a)
+}
+
+type AutomationAddToBatchMaxItemsTypeVisitor interface {
+	VisitString(string) error
+	VisitInteger(int) error
+}
+
+func (a *AutomationAddToBatchMaxItemsType) Accept(visitor AutomationAddToBatchMaxItemsTypeVisitor) error {
+	if a.String != "" {
+		return visitor.VisitString(a.String)
+	}
+	if a.Integer != 0 {
+		return visitor.VisitInteger(a.Integer)
+	}
+	return fmt.Errorf("type %T does not include a non-empty union type", a)
+}
+
+// Defines what items should be retained and passed along to the next steps when the batch is released
+type AutomationAddToBatchRetain struct {
+	// Keep N number of notifications based on the type. First/Last N based on notification received.
+	// highest/lowest based on a scoring key providing in the data accessed by sort_key
+	Type AutomationAddToBatchRetainType `json:"type,omitempty" url:"type,omitempty"`
+	// The number of records to keep in batch. Default is 10 and only configurable by requesting from support.
+	// When configurable minimum is 2 and maximum is 100.
+	Count int `json:"count" url:"count"`
+	// Defines the data value data[sort_key] that is used to sort the stored items. Required when type is set to highest or lowest.
+	SortKey *string `json:"sort_key,omitempty" url:"sort_key,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (a *AutomationAddToBatchRetain) UnmarshalJSON(data []byte) error {
+	type unmarshaler AutomationAddToBatchRetain
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AutomationAddToBatchRetain(value)
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AutomationAddToBatchRetain) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AutomationAddToBatchRetainType string
+
+const (
+	AutomationAddToBatchRetainTypeFirst   AutomationAddToBatchRetainType = "first"
+	AutomationAddToBatchRetainTypeLast    AutomationAddToBatchRetainType = "last"
+	AutomationAddToBatchRetainTypeHighest AutomationAddToBatchRetainType = "highest"
+	AutomationAddToBatchRetainTypeLowest  AutomationAddToBatchRetainType = "lowest"
+)
+
+func NewAutomationAddToBatchRetainTypeFromString(s string) (AutomationAddToBatchRetainType, error) {
+	switch s {
+	case "first":
+		return AutomationAddToBatchRetainTypeFirst, nil
+	case "last":
+		return AutomationAddToBatchRetainTypeLast, nil
+	case "highest":
+		return AutomationAddToBatchRetainTypeHighest, nil
+	case "lowest":
+		return AutomationAddToBatchRetainTypeLowest, nil
+	}
+	var t AutomationAddToBatchRetainType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AutomationAddToBatchRetainType) Ptr() *AutomationAddToBatchRetainType {
+	return &a
+}
+
+type AutomationAddToBatchScope string
+
+const (
+	AutomationAddToBatchScopeUser    AutomationAddToBatchScope = "user"
+	AutomationAddToBatchScopeGlobal  AutomationAddToBatchScope = "global"
+	AutomationAddToBatchScopeDynamic AutomationAddToBatchScope = "dynamic"
+)
+
+func NewAutomationAddToBatchScopeFromString(s string) (AutomationAddToBatchScope, error) {
+	switch s {
+	case "user":
+		return AutomationAddToBatchScopeUser, nil
+	case "global":
+		return AutomationAddToBatchScopeGlobal, nil
+	case "dynamic":
+		return AutomationAddToBatchScopeDynamic, nil
+	}
+	var t AutomationAddToBatchScope
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AutomationAddToBatchScope) Ptr() *AutomationAddToBatchScope {
+	return &a
+}
+
+type AutomationAddToBatchStep struct {
+	If  *string `json:"if,omitempty" url:"if,omitempty"`
+	Ref *string `json:"ref,omitempty" url:"ref,omitempty"`
+	// Defines the period of inactivity before the batch is released. Specified as an [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations)
+	WaitPeriod string `json:"wait_period" url:"wait_period"`
+	// Defines the maximum wait time before the batch should be released. Must be less than wait period. Maximum of 60 days. Specified as an [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations)
+	MaxWaitPeriod string `json:"max_wait_period" url:"max_wait_period"`
+	// If specified, the batch will release as soon as this number is reached
+	MaxItems *AutomationAddToBatchMaxItemsType `json:"max_items,omitempty" url:"max_items,omitempty"`
+	Retain   *AutomationAddToBatchRetain       `json:"retain,omitempty" url:"retain,omitempty"`
+	// Determine the scope of the batching. If user, chosen in this order: recipient, profile.user_id, data.user_id, data.userId.
+	// If dynamic, then specify where the batch_key or a reference to the batch_key
+	Scope *AutomationAddToBatchScope `json:"scope,omitempty" url:"scope,omitempty"`
+	// If using scope=dynamic, provide the key or a reference (e.g., refs.data.batch_key)
+	BatchKey *string `json:"batch_key,omitempty" url:"batch_key,omitempty"`
+	BatchId  *string `json:"batch_id,omitempty" url:"batch_id,omitempty"`
+	// Defines the field of the data object the batch is set to when complete. Defaults to `batch`
+	CategoryKey *string `json:"category_key,omitempty" url:"category_key,omitempty"`
+	action      string
+
+	_rawJSON json.RawMessage
+}
+
+func (a *AutomationAddToBatchStep) Action() string {
+	return a.action
+}
+
+func (a *AutomationAddToBatchStep) UnmarshalJSON(data []byte) error {
+	type embed AutomationAddToBatchStep
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+		return err
+	}
+	*a = AutomationAddToBatchStep(unmarshaler.embed)
+	a.action = "add-to-batch"
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AutomationAddToBatchStep) MarshalJSON() ([]byte, error) {
+	type embed AutomationAddToBatchStep
+	var marshaler = struct {
+		embed
+		Action string `json:"action"`
+	}{
+		embed:  embed(*a),
+		Action: "add-to-batch",
+	}
+	return json.Marshal(marshaler)
+}
+
+func (a *AutomationAddToBatchStep) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AutomationAddToDigestStep struct {
+	If  *string `json:"if,omitempty" url:"if,omitempty"`
+	Ref *string `json:"ref,omitempty" url:"ref,omitempty"`
+	// The subscription topic that has digests enabled
+	SubscriptionTopicId string `json:"subscription_topic_id" url:"subscription_topic_id"`
+	action              string
+
+	_rawJSON json.RawMessage
+}
+
+func (a *AutomationAddToDigestStep) Action() string {
+	return a.action
+}
+
+func (a *AutomationAddToDigestStep) UnmarshalJSON(data []byte) error {
+	type embed AutomationAddToDigestStep
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+		return err
+	}
+	*a = AutomationAddToDigestStep(unmarshaler.embed)
+	a.action = "add-to-digest"
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AutomationAddToDigestStep) MarshalJSON() ([]byte, error) {
+	type embed AutomationAddToDigestStep
+	var marshaler = struct {
+		embed
+		Action string `json:"action"`
+	}{
+		embed:  embed(*a),
+		Action: "add-to-digest",
+	}
+	return json.Marshal(marshaler)
+}
+
+func (a *AutomationAddToDigestStep) String() string {
 	if len(a._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
 			return value
@@ -573,8 +857,11 @@ func (a *AutomationCancelStep) String() string {
 }
 
 type AutomationDelayStep struct {
-	If     *string `json:"if,omitempty" url:"if,omitempty"`
-	Ref    *string `json:"ref,omitempty" url:"ref,omitempty"`
+	If  *string `json:"if,omitempty" url:"if,omitempty"`
+	Ref *string `json:"ref,omitempty" url:"ref,omitempty"`
+	// The [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations) string for how long to delay for
+	Duration *string `json:"duration,omitempty" url:"duration,omitempty"`
+	// The ISO 8601 timestamp for when the delay should end
 	Until  *string `json:"until,omitempty" url:"until,omitempty"`
 	action string
 
@@ -623,6 +910,117 @@ func (a *AutomationDelayStep) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", a)
+}
+
+type AutomationFetchDataStep struct {
+	If                *string                     `json:"if,omitempty" url:"if,omitempty"`
+	Ref               *string                     `json:"ref,omitempty" url:"ref,omitempty"`
+	Webhook           *AutomationFetchDataWebhook `json:"webhook,omitempty" url:"webhook,omitempty"`
+	MergeStrategy     MergeAlgorithm              `json:"merge_strategy,omitempty" url:"merge_strategy,omitempty"`
+	IdempotencyExpiry *string                     `json:"idempotency_expiry,omitempty" url:"idempotency_expiry,omitempty"`
+	IdempotencyKey    *string                     `json:"idempotency_key,omitempty" url:"idempotency_key,omitempty"`
+	action            string
+
+	_rawJSON json.RawMessage
+}
+
+func (a *AutomationFetchDataStep) Action() string {
+	return a.action
+}
+
+func (a *AutomationFetchDataStep) UnmarshalJSON(data []byte) error {
+	type embed AutomationFetchDataStep
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+		return err
+	}
+	*a = AutomationFetchDataStep(unmarshaler.embed)
+	a.action = "fetch-data"
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AutomationFetchDataStep) MarshalJSON() ([]byte, error) {
+	type embed AutomationFetchDataStep
+	var marshaler = struct {
+		embed
+		Action string `json:"action"`
+	}{
+		embed:  embed(*a),
+		Action: "fetch-data",
+	}
+	return json.Marshal(marshaler)
+}
+
+func (a *AutomationFetchDataStep) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AutomationFetchDataWebhook struct {
+	Body    map[string]interface{}           `json:"body,omitempty" url:"body,omitempty"`
+	Headers map[string]interface{}           `json:"headers,omitempty" url:"headers,omitempty"`
+	Params  map[string]interface{}           `json:"params,omitempty" url:"params,omitempty"`
+	Method  AutomationFetchDataWebhookMethod `json:"method,omitempty" url:"method,omitempty"`
+	Url     string                           `json:"url" url:"url"`
+
+	_rawJSON json.RawMessage
+}
+
+func (a *AutomationFetchDataWebhook) UnmarshalJSON(data []byte) error {
+	type unmarshaler AutomationFetchDataWebhook
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AutomationFetchDataWebhook(value)
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AutomationFetchDataWebhook) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AutomationFetchDataWebhookMethod string
+
+const (
+	AutomationFetchDataWebhookMethodGet  AutomationFetchDataWebhookMethod = "GET"
+	AutomationFetchDataWebhookMethodPost AutomationFetchDataWebhookMethod = "POST"
+)
+
+func NewAutomationFetchDataWebhookMethodFromString(s string) (AutomationFetchDataWebhookMethod, error) {
+	switch s {
+	case "GET":
+		return AutomationFetchDataWebhookMethodGet, nil
+	case "POST":
+		return AutomationFetchDataWebhookMethodPost, nil
+	}
+	var t AutomationFetchDataWebhookMethod
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AutomationFetchDataWebhookMethod) Ptr() *AutomationFetchDataWebhookMethod {
+	return &a
 }
 
 type AutomationInvokeStep struct {
@@ -890,43 +1288,13 @@ func (a *AutomationStep) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
-type AutomationStepAction string
-
-const (
-	AutomationStepActionCancel        AutomationStepAction = "cancel"
-	AutomationStepActionDelay         AutomationStepAction = "delay"
-	AutomationStepActionInvoke        AutomationStepAction = "invoke"
-	AutomationStepActionSend          AutomationStepAction = "send"
-	AutomationStepActionSendList      AutomationStepAction = "send-list"
-	AutomationStepActionUpdateProfile AutomationStepAction = "update-profile"
-)
-
-func NewAutomationStepActionFromString(s string) (AutomationStepAction, error) {
-	switch s {
-	case "cancel":
-		return AutomationStepActionCancel, nil
-	case "delay":
-		return AutomationStepActionDelay, nil
-	case "invoke":
-		return AutomationStepActionInvoke, nil
-	case "send":
-		return AutomationStepActionSend, nil
-	case "send-list":
-		return AutomationStepActionSendList, nil
-	case "update-profile":
-		return AutomationStepActionUpdateProfile, nil
-	}
-	var t AutomationStepAction
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (a AutomationStepAction) Ptr() *AutomationStepAction {
-	return &a
-}
-
 type AutomationStepOption struct {
+	AutomationAddToDigestStep   *AutomationAddToDigestStep
+	AutomationAddToBatchStep    *AutomationAddToBatchStep
+	AutomationThrottleStep      *AutomationThrottleStep
 	AutomationCancelStep        *AutomationCancelStep
 	AutomationDelayStep         *AutomationDelayStep
+	AutomationFetchDataStep     *AutomationFetchDataStep
 	AutomationInvokeStep        *AutomationInvokeStep
 	AutomationSendStep          *AutomationSendStep
 	AutomationV2SendStep        *AutomationV2SendStep
@@ -935,6 +1303,21 @@ type AutomationStepOption struct {
 }
 
 func (a *AutomationStepOption) UnmarshalJSON(data []byte) error {
+	valueAutomationAddToDigestStep := new(AutomationAddToDigestStep)
+	if err := json.Unmarshal(data, &valueAutomationAddToDigestStep); err == nil {
+		a.AutomationAddToDigestStep = valueAutomationAddToDigestStep
+		return nil
+	}
+	valueAutomationAddToBatchStep := new(AutomationAddToBatchStep)
+	if err := json.Unmarshal(data, &valueAutomationAddToBatchStep); err == nil {
+		a.AutomationAddToBatchStep = valueAutomationAddToBatchStep
+		return nil
+	}
+	valueAutomationThrottleStep := new(AutomationThrottleStep)
+	if err := json.Unmarshal(data, &valueAutomationThrottleStep); err == nil {
+		a.AutomationThrottleStep = valueAutomationThrottleStep
+		return nil
+	}
 	valueAutomationCancelStep := new(AutomationCancelStep)
 	if err := json.Unmarshal(data, &valueAutomationCancelStep); err == nil {
 		a.AutomationCancelStep = valueAutomationCancelStep
@@ -943,6 +1326,11 @@ func (a *AutomationStepOption) UnmarshalJSON(data []byte) error {
 	valueAutomationDelayStep := new(AutomationDelayStep)
 	if err := json.Unmarshal(data, &valueAutomationDelayStep); err == nil {
 		a.AutomationDelayStep = valueAutomationDelayStep
+		return nil
+	}
+	valueAutomationFetchDataStep := new(AutomationFetchDataStep)
+	if err := json.Unmarshal(data, &valueAutomationFetchDataStep); err == nil {
+		a.AutomationFetchDataStep = valueAutomationFetchDataStep
 		return nil
 	}
 	valueAutomationInvokeStep := new(AutomationInvokeStep)
@@ -974,11 +1362,23 @@ func (a *AutomationStepOption) UnmarshalJSON(data []byte) error {
 }
 
 func (a AutomationStepOption) MarshalJSON() ([]byte, error) {
+	if a.AutomationAddToDigestStep != nil {
+		return json.Marshal(a.AutomationAddToDigestStep)
+	}
+	if a.AutomationAddToBatchStep != nil {
+		return json.Marshal(a.AutomationAddToBatchStep)
+	}
+	if a.AutomationThrottleStep != nil {
+		return json.Marshal(a.AutomationThrottleStep)
+	}
 	if a.AutomationCancelStep != nil {
 		return json.Marshal(a.AutomationCancelStep)
 	}
 	if a.AutomationDelayStep != nil {
 		return json.Marshal(a.AutomationDelayStep)
+	}
+	if a.AutomationFetchDataStep != nil {
+		return json.Marshal(a.AutomationFetchDataStep)
 	}
 	if a.AutomationInvokeStep != nil {
 		return json.Marshal(a.AutomationInvokeStep)
@@ -999,8 +1399,12 @@ func (a AutomationStepOption) MarshalJSON() ([]byte, error) {
 }
 
 type AutomationStepOptionVisitor interface {
+	VisitAutomationAddToDigestStep(*AutomationAddToDigestStep) error
+	VisitAutomationAddToBatchStep(*AutomationAddToBatchStep) error
+	VisitAutomationThrottleStep(*AutomationThrottleStep) error
 	VisitAutomationCancelStep(*AutomationCancelStep) error
 	VisitAutomationDelayStep(*AutomationDelayStep) error
+	VisitAutomationFetchDataStep(*AutomationFetchDataStep) error
 	VisitAutomationInvokeStep(*AutomationInvokeStep) error
 	VisitAutomationSendStep(*AutomationSendStep) error
 	VisitAutomationV2SendStep(*AutomationV2SendStep) error
@@ -1009,11 +1413,23 @@ type AutomationStepOptionVisitor interface {
 }
 
 func (a *AutomationStepOption) Accept(visitor AutomationStepOptionVisitor) error {
+	if a.AutomationAddToDigestStep != nil {
+		return visitor.VisitAutomationAddToDigestStep(a.AutomationAddToDigestStep)
+	}
+	if a.AutomationAddToBatchStep != nil {
+		return visitor.VisitAutomationAddToBatchStep(a.AutomationAddToBatchStep)
+	}
+	if a.AutomationThrottleStep != nil {
+		return visitor.VisitAutomationThrottleStep(a.AutomationThrottleStep)
+	}
 	if a.AutomationCancelStep != nil {
 		return visitor.VisitAutomationCancelStep(a.AutomationCancelStep)
 	}
 	if a.AutomationDelayStep != nil {
 		return visitor.VisitAutomationDelayStep(a.AutomationDelayStep)
+	}
+	if a.AutomationFetchDataStep != nil {
+		return visitor.VisitAutomationFetchDataStep(a.AutomationFetchDataStep)
 	}
 	if a.AutomationInvokeStep != nil {
 		return visitor.VisitAutomationInvokeStep(a.AutomationInvokeStep)
@@ -1031,6 +1447,130 @@ func (a *AutomationStepOption) Accept(visitor AutomationStepOptionVisitor) error
 		return visitor.VisitAutomationUpdateProfileStep(a.AutomationUpdateProfileStep)
 	}
 	return fmt.Errorf("type %T does not include a non-empty union type", a)
+}
+
+type AutomationThrottleOnThrottle struct {
+	// The node to go to if the request is throttled
+	NodeId string `json:"$node_id" url:"$node_id"`
+
+	_rawJSON json.RawMessage
+}
+
+func (a *AutomationThrottleOnThrottle) UnmarshalJSON(data []byte) error {
+	type unmarshaler AutomationThrottleOnThrottle
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AutomationThrottleOnThrottle(value)
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AutomationThrottleOnThrottle) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AutomationThrottleScope string
+
+const (
+	AutomationThrottleScopeUser    AutomationThrottleScope = "user"
+	AutomationThrottleScopeGlobal  AutomationThrottleScope = "global"
+	AutomationThrottleScopeDynamic AutomationThrottleScope = "dynamic"
+)
+
+func NewAutomationThrottleScopeFromString(s string) (AutomationThrottleScope, error) {
+	switch s {
+	case "user":
+		return AutomationThrottleScopeUser, nil
+	case "global":
+		return AutomationThrottleScopeGlobal, nil
+	case "dynamic":
+		return AutomationThrottleScopeDynamic, nil
+	}
+	var t AutomationThrottleScope
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a AutomationThrottleScope) Ptr() *AutomationThrottleScope {
+	return &a
+}
+
+type AutomationThrottleStep struct {
+	If  *string `json:"if,omitempty" url:"if,omitempty"`
+	Ref *string `json:"ref,omitempty" url:"ref,omitempty"`
+	// Maximum number of allowed notifications in that timeframe
+	MaxAllowed int `json:"max_allowed" url:"max_allowed"`
+	// Defines the throttle period which corresponds to the max_allowed. Specified as an ISO 8601 duration, https://en.wikipedia.org/wiki/ISO_8601#Durations
+	Period string                  `json:"period" url:"period"`
+	Scope  AutomationThrottleScope `json:"scope,omitempty" url:"scope,omitempty"`
+	// If using scope=dynamic, provide the reference (e.g., refs.data.throttle_key) to the how the throttle should be identified
+	ThrottleKey *string `json:"throttle_key,omitempty" url:"throttle_key,omitempty"`
+	// Value must be true
+	OnThrottle  *AutomationThrottleOnThrottle `json:"on_throttle,omitempty" url:"on_throttle,omitempty"`
+	action      string
+	shouldAlert bool
+
+	_rawJSON json.RawMessage
+}
+
+func (a *AutomationThrottleStep) Action() string {
+	return a.action
+}
+
+func (a *AutomationThrottleStep) ShouldAlert() bool {
+	return a.shouldAlert
+}
+
+func (a *AutomationThrottleStep) UnmarshalJSON(data []byte) error {
+	type embed AutomationThrottleStep
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*a),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+		return err
+	}
+	*a = AutomationThrottleStep(unmarshaler.embed)
+	a.action = "throttle"
+	a.shouldAlert = false
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AutomationThrottleStep) MarshalJSON() ([]byte, error) {
+	type embed AutomationThrottleStep
+	var marshaler = struct {
+		embed
+		Action      string `json:"action"`
+		ShouldAlert bool   `json:"should_alert"`
+	}{
+		embed:       embed(*a),
+		Action:      "throttle",
+		ShouldAlert: false,
+	}
+	return json.Marshal(marshaler)
+}
+
+func (a *AutomationThrottleStep) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
 }
 
 type AutomationUpdateProfileStep struct {
@@ -2303,45 +2843,25 @@ func (r *Rule) String() string {
 
 type UserTenantAssociation struct {
 	// User ID for the assocation between tenant and user
-	UserId string `json:"user_id" url:"user_id"`
+	UserId *string `json:"user_id,omitempty" url:"user_id,omitempty"`
+	Type   *string `json:"type,omitempty" url:"type,omitempty"`
 	// Tenant ID for the assocation between tenant and user
-	TenantId string                 `json:"tenant_id" url:"tenant_id"`
-	Profile  map[string]interface{} `json:"profile,omitempty" url:"profile,omitempty"`
-	type_    string
+	TenantId string `json:"tenant_id" url:"tenant_id"`
+	// Additional metadata to be applied to a user profile when used in a tenant context
+	Profile map[string]interface{} `json:"profile,omitempty" url:"profile,omitempty"`
 
 	_rawJSON json.RawMessage
 }
 
-func (u *UserTenantAssociation) Type() string {
-	return u.type_
-}
-
 func (u *UserTenantAssociation) UnmarshalJSON(data []byte) error {
-	type embed UserTenantAssociation
-	var unmarshaler = struct {
-		embed
-	}{
-		embed: embed(*u),
-	}
-	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+	type unmarshaler UserTenantAssociation
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*u = UserTenantAssociation(unmarshaler.embed)
-	u.type_ = "user"
+	*u = UserTenantAssociation(value)
 	u._rawJSON = json.RawMessage(data)
 	return nil
-}
-
-func (u *UserTenantAssociation) MarshalJSON() ([]byte, error) {
-	type embed UserTenantAssociation
-	var marshaler = struct {
-		embed
-		Type string `json:"type"`
-	}{
-		embed: embed(*u),
-		Type:  "user",
-	}
-	return json.Marshal(marshaler)
 }
 
 func (u *UserTenantAssociation) String() string {
@@ -4091,6 +4611,36 @@ func (b *BaseMessage) String() string {
 	return fmt.Sprintf("%#v", b)
 }
 
+type BaseMessageSendTo struct {
+	// The recipient or a list of recipients of the message
+	To *MessageRecipient `json:"to,omitempty" url:"to,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (b *BaseMessageSendTo) UnmarshalJSON(data []byte) error {
+	type unmarshaler BaseMessageSendTo
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = BaseMessageSendTo(value)
+	b._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BaseMessageSendTo) String() string {
+	if len(b._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(b._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
+}
+
 type BaseSocialPresence struct {
 	Url string `json:"url" url:"url"`
 
@@ -4462,11 +5012,11 @@ type ContentMessage struct {
 	// "Expiry allows you to set an absolute or relative time in which a message expires.
 	// Note: This is only valid for the Courier Inbox channel as of 12-08-2022."
 	Expiry *Expiry `json:"expiry,omitempty" url:"expiry,omitempty"`
+	// The recipient or a list of recipients of the message
+	To *MessageRecipient `json:"to,omitempty" url:"to,omitempty"`
 	// Describes the content of the message in a way that will work for email, push,
 	// chat, or any channel. Either this or template must be specified.
 	Content *Content `json:"content,omitempty" url:"content,omitempty"`
-	// The recipient or a list of recipients of the message
-	To *MessageRecipient `json:"to,omitempty" url:"to,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -6205,6 +6755,7 @@ type Recipient struct {
 	UserRecipient        *UserRecipient
 	SlackRecipient       *SlackRecipient
 	MsTeamsRecipient     *MsTeamsRecipient
+	RecipientData        RecipientData
 }
 
 func (r *Recipient) UnmarshalJSON(data []byte) error {
@@ -6238,6 +6789,11 @@ func (r *Recipient) UnmarshalJSON(data []byte) error {
 		r.MsTeamsRecipient = valueMsTeamsRecipient
 		return nil
 	}
+	var valueRecipientData RecipientData
+	if err := json.Unmarshal(data, &valueRecipientData); err == nil {
+		r.RecipientData = valueRecipientData
+		return nil
+	}
 	return fmt.Errorf("%s cannot be deserialized as a %T", data, r)
 }
 
@@ -6260,6 +6816,9 @@ func (r Recipient) MarshalJSON() ([]byte, error) {
 	if r.MsTeamsRecipient != nil {
 		return json.Marshal(r.MsTeamsRecipient)
 	}
+	if r.RecipientData != nil {
+		return json.Marshal(r.RecipientData)
+	}
 	return nil, fmt.Errorf("type %T does not include a non-empty union type", r)
 }
 
@@ -6270,6 +6829,7 @@ type RecipientVisitor interface {
 	VisitUserRecipient(*UserRecipient) error
 	VisitSlackRecipient(*SlackRecipient) error
 	VisitMsTeamsRecipient(*MsTeamsRecipient) error
+	VisitRecipientData(RecipientData) error
 }
 
 func (r *Recipient) Accept(visitor RecipientVisitor) error {
@@ -6291,8 +6851,13 @@ func (r *Recipient) Accept(visitor RecipientVisitor) error {
 	if r.MsTeamsRecipient != nil {
 		return visitor.VisitMsTeamsRecipient(r.MsTeamsRecipient)
 	}
+	if r.RecipientData != nil {
+		return visitor.VisitRecipientData(r.RecipientData)
+	}
 	return fmt.Errorf("type %T does not include a non-empty union type", r)
 }
+
+type RecipientData = map[string]interface{}
 
 // Allows you to customize which channel(s) Courier will potentially deliver the message.
 // If no routing key is specified, Courier will use the default routing configuration or
@@ -6549,11 +7114,11 @@ type TemplateMessage struct {
 	// "Expiry allows you to set an absolute or relative time in which a message expires.
 	// Note: This is only valid for the Courier Inbox channel as of 12-08-2022."
 	Expiry *Expiry `json:"expiry,omitempty" url:"expiry,omitempty"`
+	// The recipient or a list of recipients of the message
+	To *MessageRecipient `json:"to,omitempty" url:"to,omitempty"`
 	// The id of the notification template to be rendered and sent to the recipient(s).
 	// This field or the content field must be supplied.
 	Template string `json:"template" url:"template"`
-	// The recipient or a list of recipients of the message
-	To *MessageRecipient `json:"to,omitempty" url:"to,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -7070,3 +7635,6 @@ func NewSubscriptionTopicStatusFromString(s string) (SubscriptionTopicStatus, er
 func (s SubscriptionTopicStatus) Ptr() *SubscriptionTopicStatus {
 	return &s
 }
+
+// Unused type for tenants
+type TemplateProperty = interface{}

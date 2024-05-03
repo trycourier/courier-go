@@ -20,7 +20,7 @@ type IdempotentRequestOptions struct {
 	*RequestOptions
 
 	IdempotencyKey    *string
-	IdempotencyExpiry *int
+	IdempotencyExpiry *string
 }
 
 // NewIdempotentRequestOptions returns a new *IdempotentRequestOptions value.
@@ -51,7 +51,7 @@ func (i *IdempotencyKeyOption) applyIdempotentRequestOptions(opts *IdempotentReq
 
 // IdempotencyExpiryOption implements the RequestOption interface.
 type IdempotencyExpiryOption struct {
-	IdempotencyExpiry *int
+	IdempotencyExpiry *string
 }
 
 func (i *IdempotencyExpiryOption) applyIdempotentRequestOptions(opts *IdempotentRequestOptions) {

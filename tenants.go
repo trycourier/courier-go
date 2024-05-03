@@ -16,7 +16,7 @@ type TenantCreateOrReplaceParams struct {
 	// Defines the preferences used for the tenant when the user hasn't specified their own.
 	DefaultPreferences *DefaultPreferences `json:"default_preferences,omitempty" url:"default_preferences,omitempty"`
 	// Arbitrary properties accessible to a template.
-	Properties []TemplateProperty `json:"properties,omitempty" url:"properties,omitempty"`
+	Properties map[string]interface{} `json:"properties,omitempty" url:"properties,omitempty"`
 	// A user profile object merged with user profile on send.
 	UserProfile map[string]interface{} `json:"user_profile,omitempty" url:"user_profile,omitempty"`
 	// Brand to be used for the account when one is not specified by the send call.
@@ -130,8 +130,6 @@ func (l *ListUsersForTenantResponse) String() string {
 	return fmt.Sprintf("%#v", l)
 }
 
-type TemplateProperty = interface{}
-
 type Tenant struct {
 	// Id of the tenant.
 	Id string `json:"id" url:"id"`
@@ -142,7 +140,7 @@ type Tenant struct {
 	// Defines the preferences used for the account when the user hasn't specified their own.
 	DefaultPreferences *DefaultPreferences `json:"default_preferences,omitempty" url:"default_preferences,omitempty"`
 	// Arbitrary properties accessible to a template.
-	Properties *TemplateProperty `json:"properties,omitempty" url:"properties,omitempty"`
+	Properties map[string]interface{} `json:"properties,omitempty" url:"properties,omitempty"`
 	// A user profile object merged with user profile on send.
 	UserProfile map[string]interface{} `json:"user_profile,omitempty" url:"user_profile,omitempty"`
 	// Brand to be used for the account when one is not specified by the send call.
