@@ -10,7 +10,7 @@ import (
 )
 
 type AddUserToSingleTenantsParams struct {
-	Profile *AddUserToSingleTenantsParamsProfile `json:"profile,omitempty" url:"profile,omitempty"`
+	Profile map[string]interface{} `json:"profile,omitempty" url:"profile,omitempty"`
 }
 
 type AddUserToMultipleTenantsParams struct {
@@ -23,43 +23,6 @@ type ListTenantsForUserParams struct {
 	Limit *int `json:"-" url:"limit,omitempty"`
 	// Continue the pagination with the next cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
-}
-
-type AddUserToSingleTenantsParamsProfile struct {
-	Title string `json:"title" url:"title"`
-	// Email Address
-	Email string `json:"email" url:"email"`
-	// A valid phone number
-	PhoneNumber string `json:"phone_number" url:"phone_number"`
-	// The user's preferred ISO 639-1 language code.
-	Locale string `json:"locale" url:"locale"`
-	// Additional provider specific fields may be specified.
-	AdditionalFields map[string]interface{} `json:"additional_fields,omitempty" url:"additional_fields,omitempty"`
-
-	_rawJSON json.RawMessage
-}
-
-func (a *AddUserToSingleTenantsParamsProfile) UnmarshalJSON(data []byte) error {
-	type unmarshaler AddUserToSingleTenantsParamsProfile
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*a = AddUserToSingleTenantsParamsProfile(value)
-	a._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (a *AddUserToSingleTenantsParamsProfile) String() string {
-	if len(a._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(a); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", a)
 }
 
 type ListTenantsForUserResponse struct {

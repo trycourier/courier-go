@@ -9,6 +9,38 @@ import (
 	core "github.com/trycourier/courier-go/v3/core"
 )
 
+type TopicPreferenceUpdate struct {
+	Status v3.PreferenceStatus `json:"status,omitempty" url:"status,omitempty"`
+	// The Channels a user has chosen to receive notifications through for this topic
+	CustomRouting    []v3.ChannelClassification `json:"custom_routing,omitempty" url:"custom_routing,omitempty"`
+	HasCustomRouting *bool                      `json:"has_custom_routing,omitempty" url:"has_custom_routing,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (t *TopicPreferenceUpdate) UnmarshalJSON(data []byte) error {
+	type unmarshaler TopicPreferenceUpdate
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TopicPreferenceUpdate(value)
+	t._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TopicPreferenceUpdate) String() string {
+	if len(t._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(t._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
 type UserPreferencesGetResponse struct {
 	Topic *TopicPreference `json:"topic,omitempty" url:"topic,omitempty"`
 
@@ -99,9 +131,5 @@ func (u *UserPreferencesUpdateResponse) String() string {
 }
 
 type UserPreferencesUpdateParams struct {
-	Status v3.PreferenceStatus `json:"status,omitempty" url:"status,omitempty"`
-	// The Channels a user has chosen to receive notifications through for this topic
-	CustomRouting    []v3.ChannelClassification `json:"custom_routing,omitempty" url:"custom_routing,omitempty"`
-	DefaultStatus    v3.PreferenceStatus        `json:"default_status,omitempty" url:"default_status,omitempty"`
-	HasCustomRouting *bool                      `json:"has_custom_routing,omitempty" url:"has_custom_routing,omitempty"`
+	Topic *TopicPreferenceUpdate `json:"topic,omitempty" url:"topic,omitempty"`
 }

@@ -16,7 +16,7 @@ type GetMessageHistoryRequest struct {
 type ListMessagesRequest struct {
 	// A boolean value that indicates whether archived messages should be included in the response.
 	Archived *bool `json:"-" url:"archived,omitempty"`
-	// A unique identifier that allows for fetching the next set of message statuses.
+	// A unique identifier that allows for fetching the next set of messages.
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 	// A unique identifier representing the event that was used to send the event.
 	Event *string `json:"-" url:"event,omitempty"`
@@ -26,12 +26,18 @@ type ListMessagesRequest struct {
 	MessageId *string `json:"-" url:"messageId,omitempty"`
 	// A unique identifier representing the notification that was used to send the event.
 	Notification *string `json:"-" url:"notification,omitempty"`
+	// The key assocated to the provider you want to filter on. E.g., sendgrid, inbox, twilio, slack, msteams, etc. Allows multiple values to be set in query parameters.
+	Provider []*string `json:"-" url:"provider,omitempty"`
 	// A unique identifier representing the recipient associated with the requested profile.
 	Recipient *string `json:"-" url:"recipient,omitempty"`
-	// An indicator of the current status of the message. Multiple status values can be passed in.
+	// An indicator of the current status of the message. Allows multiple values to be set in query parameters.
 	Status []*string `json:"-" url:"status,omitempty"`
+	// A tag placed in the metadata.tags during a notification send. Allows multiple values to be set in query parameters.
+	Tag []*string `json:"-" url:"tag,omitempty"`
 	// A comma delimited list of 'tags'. Messages will be returned if they match any of the tags passed in.
 	Tags *string `json:"-" url:"tags,omitempty"`
+	// Messages sent with the context of a Tenant
+	TenantId *string `json:"-" url:"tenant_id,omitempty"`
 	// The enqueued datetime of a message to filter out messages received before.
 	EnqueuedAfter *string `json:"-" url:"enqueued_after,omitempty"`
 	// The unique identifier used to trace the requests
