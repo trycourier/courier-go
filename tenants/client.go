@@ -290,3 +290,77 @@ func (c *Client) GetUsersByTenant(
 	}
 	return response, nil
 }
+
+func (c *Client) CreateOrReplaceDefaultPreferencesForTopic(
+	ctx context.Context,
+	// Id of the tenant to update the default preferences for.
+	tenantId string,
+	// Id fo the susbcription topic you want to have a default preference for.
+	topicId string,
+	request *v3.SubscriptionTopicNew,
+	opts ...option.RequestOption,
+) error {
+	options := core.NewRequestOptions(opts...)
+
+	baseURL := "https://api.courier.com"
+	if c.baseURL != "" {
+		baseURL = c.baseURL
+	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
+	endpointURL := fmt.Sprintf(baseURL+"/"+"tenants/%v/default_preferences/items/%v", tenantId, topicId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+
+	if err := c.caller.Call(
+		ctx,
+		&core.CallParams{
+			URL:         endpointURL,
+			Method:      http.MethodPut,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
+			Request:     request,
+		},
+	); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Client) RemoveDefaultPreferencesForTopic(
+	ctx context.Context,
+	// Id of the tenant to update the default preferences for.
+	tenantId string,
+	// Id fo the susbcription topic you want to have a default preference for.
+	topicId string,
+	opts ...option.RequestOption,
+) error {
+	options := core.NewRequestOptions(opts...)
+
+	baseURL := "https://api.courier.com"
+	if c.baseURL != "" {
+		baseURL = c.baseURL
+	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
+	endpointURL := fmt.Sprintf(baseURL+"/"+"tenants/%v/default_preferences/items/%v", tenantId, topicId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+
+	if err := c.caller.Call(
+		ctx,
+		&core.CallParams{
+			URL:         endpointURL,
+			Method:      http.MethodDelete,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
+		},
+	); err != nil {
+		return err
+	}
+	return nil
+}

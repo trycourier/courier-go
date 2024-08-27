@@ -324,3 +324,39 @@ func (c *Client) List(
 	}
 	return response, nil
 }
+
+func (c *Client) Delete(
+	ctx context.Context,
+	// The user's ID. This can be any uniquely identifiable string.
+	userId string,
+	// The full token string.
+	token string,
+	opts ...option.RequestOption,
+) error {
+	options := core.NewRequestOptions(opts...)
+
+	baseURL := "https://api.courier.com"
+	if c.baseURL != "" {
+		baseURL = c.baseURL
+	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
+	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v/tokens/%v", userId, token)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+
+	if err := c.caller.Call(
+		ctx,
+		&core.CallParams{
+			URL:         endpointURL,
+			Method:      http.MethodDelete,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
+		},
+	); err != nil {
+		return err
+	}
+	return nil
+}

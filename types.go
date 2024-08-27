@@ -3361,6 +3361,74 @@ func (n *Notification) String() string {
 	return fmt.Sprintf("%#v", n)
 }
 
+type NotificationBlock struct {
+	Alias    *string                         `json:"alias,omitempty" url:"alias,omitempty"`
+	Context  *string                         `json:"context,omitempty" url:"context,omitempty"`
+	Id       string                          `json:"id" url:"id"`
+	Type     BlockType                       `json:"type,omitempty" url:"type,omitempty"`
+	Content  *NotificationContent            `json:"content,omitempty" url:"content,omitempty"`
+	Locales  map[string]*NotificationContent `json:"locales,omitempty" url:"locales,omitempty"`
+	Checksum *string                         `json:"checksum,omitempty" url:"checksum,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (n *NotificationBlock) UnmarshalJSON(data []byte) error {
+	type unmarshaler NotificationBlock
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*n = NotificationBlock(value)
+	n._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (n *NotificationBlock) String() string {
+	if len(n._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(n._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(n); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", n)
+}
+
+type NotificationChannel struct {
+	Id       string                                 `json:"id" url:"id"`
+	Type     *string                                `json:"type,omitempty" url:"type,omitempty"`
+	Content  *NotificationChannelContent            `json:"content,omitempty" url:"content,omitempty"`
+	Locales  map[string]*NotificationChannelContent `json:"locales,omitempty" url:"locales,omitempty"`
+	Checksum *string                                `json:"checksum,omitempty" url:"checksum,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (n *NotificationChannel) UnmarshalJSON(data []byte) error {
+	type unmarshaler NotificationChannel
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*n = NotificationChannel(value)
+	n._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (n *NotificationChannel) String() string {
+	if len(n._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(n._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(n); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", n)
+}
+
 type NotificationChannelContent struct {
 	Subject *string `json:"subject,omitempty" url:"subject,omitempty"`
 	Title   *string `json:"title,omitempty" url:"title,omitempty"`
@@ -3944,6 +4012,38 @@ func (m *MultipleTokens) String() string {
 	return fmt.Sprintf("%#v", m)
 }
 
+type Pagerduty struct {
+	RoutingKey  *string `json:"routing_key,omitempty" url:"routing_key,omitempty"`
+	EventAction *string `json:"event_action,omitempty" url:"event_action,omitempty"`
+	Severity    *string `json:"severity,omitempty" url:"severity,omitempty"`
+	Source      *string `json:"source,omitempty" url:"source,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (p *Pagerduty) UnmarshalJSON(data []byte) error {
+	type unmarshaler Pagerduty
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = Pagerduty(value)
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *Pagerduty) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
 type ProfileGetParameters struct {
 	RecipientId string `json:"recipientId" url:"recipientId"`
 
@@ -4494,17 +4594,17 @@ type UserProfile struct {
 	Website             string   `json:"website" url:"website"`
 	Zoneinfo            string   `json:"zoneinfo" url:"zoneinfo"`
 	// A free form object. Due to a limitation of the API Explorer, you can only enter string key/values below, but this API accepts more complex object structures.
-	Custom        interface{}     `json:"custom,omitempty" url:"custom,omitempty"`
-	Airship       *AirshipProfile `json:"airship,omitempty" url:"airship,omitempty"`
-	Apn           string          `json:"apn" url:"apn"`
-	TargetArn     string          `json:"target_arn" url:"target_arn"`
-	Discord       *Discord        `json:"discord,omitempty" url:"discord,omitempty"`
-	Expo          *Expo           `json:"expo,omitempty" url:"expo,omitempty"`
-	FacebookPsid  string          `json:"facebookPSID" url:"facebookPSID"`
-	FirebaseToken string          `json:"firebaseToken" url:"firebaseToken"`
-	Intercom      *Intercom       `json:"intercom,omitempty" url:"intercom,omitempty"`
-	Slack         *Slack          `json:"slack,omitempty" url:"slack,omitempty"`
-	MsTeams       *MsTeams        `json:"ms_teams,omitempty" url:"ms_teams,omitempty"`
+	Custom        interface{}               `json:"custom,omitempty" url:"custom,omitempty"`
+	Airship       *AirshipProfile           `json:"airship,omitempty" url:"airship,omitempty"`
+	Apn           string                    `json:"apn" url:"apn"`
+	TargetArn     string                    `json:"target_arn" url:"target_arn"`
+	Discord       *Discord                  `json:"discord,omitempty" url:"discord,omitempty"`
+	Expo          *Expo                     `json:"expo,omitempty" url:"expo,omitempty"`
+	FacebookPsid  string                    `json:"facebookPSID" url:"facebookPSID"`
+	FirebaseToken *UserProfileFirebaseToken `json:"firebaseToken,omitempty" url:"firebaseToken,omitempty"`
+	Intercom      *Intercom                 `json:"intercom,omitempty" url:"intercom,omitempty"`
+	Slack         *Slack                    `json:"slack,omitempty" url:"slack,omitempty"`
+	MsTeams       *MsTeams                  `json:"ms_teams,omitempty" url:"ms_teams,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -4530,6 +4630,193 @@ func (u *UserProfile) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", u)
+}
+
+type UserProfileFirebaseToken struct {
+	String     string
+	StringList []string
+}
+
+func (u *UserProfileFirebaseToken) UnmarshalJSON(data []byte) error {
+	var valueString string
+	if err := json.Unmarshal(data, &valueString); err == nil {
+		u.String = valueString
+		return nil
+	}
+	var valueStringList []string
+	if err := json.Unmarshal(data, &valueStringList); err == nil {
+		u.StringList = valueStringList
+		return nil
+	}
+	return fmt.Errorf("%s cannot be deserialized as a %T", data, u)
+}
+
+func (u UserProfileFirebaseToken) MarshalJSON() ([]byte, error) {
+	if u.String != "" {
+		return json.Marshal(u.String)
+	}
+	if u.StringList != nil {
+		return json.Marshal(u.StringList)
+	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", u)
+}
+
+type UserProfileFirebaseTokenVisitor interface {
+	VisitString(string) error
+	VisitStringList([]string) error
+}
+
+func (u *UserProfileFirebaseToken) Accept(visitor UserProfileFirebaseTokenVisitor) error {
+	if u.String != "" {
+		return visitor.VisitString(u.String)
+	}
+	if u.StringList != nil {
+		return visitor.VisitStringList(u.StringList)
+	}
+	return fmt.Errorf("type %T does not include a non-empty union type", u)
+}
+
+type WebhookAuthMode string
+
+const (
+	WebhookAuthModeNone   WebhookAuthMode = "none"
+	WebhookAuthModeBasic  WebhookAuthMode = "basic"
+	WebhookAuthModeBearer WebhookAuthMode = "bearer"
+)
+
+func NewWebhookAuthModeFromString(s string) (WebhookAuthMode, error) {
+	switch s {
+	case "none":
+		return WebhookAuthModeNone, nil
+	case "basic":
+		return WebhookAuthModeBasic, nil
+	case "bearer":
+		return WebhookAuthModeBearer, nil
+	}
+	var t WebhookAuthMode
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (w WebhookAuthMode) Ptr() *WebhookAuthMode {
+	return &w
+}
+
+type WebhookAuthentication struct {
+	// The authentication mode to use. Defaults to 'none' if not specified.
+	Mode WebhookAuthMode `json:"mode,omitempty" url:"mode,omitempty"`
+	// Username for basic authentication.
+	Username *string `json:"username,omitempty" url:"username,omitempty"`
+	// Password for basic authentication.
+	Password *string `json:"password,omitempty" url:"password,omitempty"`
+	// Token for bearer authentication.
+	Token *string `json:"token,omitempty" url:"token,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (w *WebhookAuthentication) UnmarshalJSON(data []byte) error {
+	type unmarshaler WebhookAuthentication
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*w = WebhookAuthentication(value)
+	w._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (w *WebhookAuthentication) String() string {
+	if len(w._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(w._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(w); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", w)
+}
+
+type WebhookMethod string
+
+const (
+	WebhookMethodPost WebhookMethod = "POST"
+	WebhookMethodPut  WebhookMethod = "PUT"
+)
+
+func NewWebhookMethodFromString(s string) (WebhookMethod, error) {
+	switch s {
+	case "POST":
+		return WebhookMethodPost, nil
+	case "PUT":
+		return WebhookMethodPut, nil
+	}
+	var t WebhookMethod
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (w WebhookMethod) Ptr() *WebhookMethod {
+	return &w
+}
+
+type WebhookProfile struct {
+	// The URL to send the webhook request to.
+	Url string `json:"url" url:"url"`
+	// The HTTP method to use for the webhook request. Defaults to POST if not specified.
+	Method *WebhookMethod `json:"method,omitempty" url:"method,omitempty"`
+	// Custom headers to include in the webhook request.
+	Headers map[string]string `json:"headers,omitempty" url:"headers,omitempty"`
+	// Authentication configuration for the webhook request.
+	Authentication *WebhookAuthentication `json:"authentication,omitempty" url:"authentication,omitempty"`
+	// Specifies what profile information is included in the request payload. Defaults to 'limited' if not specified.
+	Profile *WebhookProfileType `json:"profile,omitempty" url:"profile,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (w *WebhookProfile) UnmarshalJSON(data []byte) error {
+	type unmarshaler WebhookProfile
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*w = WebhookProfile(value)
+	w._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (w *WebhookProfile) String() string {
+	if len(w._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(w._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(w); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", w)
+}
+
+type WebhookProfileType string
+
+const (
+	WebhookProfileTypeLimited  WebhookProfileType = "limited"
+	WebhookProfileTypeExpanded WebhookProfileType = "expanded"
+)
+
+func NewWebhookProfileTypeFromString(s string) (WebhookProfileType, error) {
+	switch s {
+	case "limited":
+		return WebhookProfileTypeLimited, nil
+	case "expanded":
+		return WebhookProfileTypeExpanded, nil
+	}
+	var t WebhookProfileType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (w WebhookProfileType) Ptr() *WebhookProfileType {
+	return &w
 }
 
 type Attachment = map[string]interface{}
@@ -4925,8 +5212,8 @@ type Channel struct {
 	If       *string   `json:"if,omitempty" url:"if,omitempty"`
 	Timeouts *Timeouts `json:"timeouts,omitempty" url:"timeouts,omitempty"`
 	// Channel specific overrides.
-	Override *Override        `json:"override,omitempty" url:"override,omitempty"`
-	Metadata *ChannelMetadata `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Override map[string]interface{} `json:"override,omitempty" url:"override,omitempty"`
+	Metadata *ChannelMetadata       `json:"metadata,omitempty" url:"metadata,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -6479,44 +6766,6 @@ func (m *Message) Accept(visitor MessageVisitor) error {
 	return fmt.Errorf("type %T does not include a non-empty union type", m)
 }
 
-type MessageChannelEmailOverride struct {
-	Attachments []Attachment      `json:"attachments,omitempty" url:"attachments,omitempty"`
-	Bcc         *string           `json:"bcc,omitempty" url:"bcc,omitempty"`
-	Brand       *Brand            `json:"brand,omitempty" url:"brand,omitempty"`
-	Cc          *string           `json:"cc,omitempty" url:"cc,omitempty"`
-	From        *string           `json:"from,omitempty" url:"from,omitempty"`
-	Html        *string           `json:"html,omitempty" url:"html,omitempty"`
-	ReplyTo     *string           `json:"reply_to,omitempty" url:"reply_to,omitempty"`
-	Subject     *string           `json:"subject,omitempty" url:"subject,omitempty"`
-	Text        *string           `json:"text,omitempty" url:"text,omitempty"`
-	Tracking    *TrackingOverride `json:"tracking,omitempty" url:"tracking,omitempty"`
-
-	_rawJSON json.RawMessage
-}
-
-func (m *MessageChannelEmailOverride) UnmarshalJSON(data []byte) error {
-	type unmarshaler MessageChannelEmailOverride
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*m = MessageChannelEmailOverride(value)
-	m._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (m *MessageChannelEmailOverride) String() string {
-	if len(m._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(m._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(m); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", m)
-}
-
 type MessageChannels = map[string]*Channel
 
 type MessageContext struct {
@@ -6728,26 +6977,33 @@ func (m *MsTeamsRecipient) String() string {
 	return fmt.Sprintf("%#v", m)
 }
 
-type Override string
+type PagerdutyRecipient struct {
+	Pagerduty *Pagerduty `json:"pagerduty,omitempty" url:"pagerduty,omitempty"`
 
-const (
-	OverrideMessageChannelEmailOverride Override = "MessageChannelEmailOverride"
-	OverrideMessageChannelPushOverride  Override = "MessageChannelPushOverride"
-)
-
-func NewOverrideFromString(s string) (Override, error) {
-	switch s {
-	case "MessageChannelEmailOverride":
-		return OverrideMessageChannelEmailOverride, nil
-	case "MessageChannelPushOverride":
-		return OverrideMessageChannelPushOverride, nil
-	}
-	var t Override
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
+	_rawJSON json.RawMessage
 }
 
-func (o Override) Ptr() *Override {
-	return &o
+func (p *PagerdutyRecipient) UnmarshalJSON(data []byte) error {
+	type unmarshaler PagerdutyRecipient
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PagerdutyRecipient(value)
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PagerdutyRecipient) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
 }
 
 type Preference struct {
@@ -6819,6 +7075,8 @@ type Recipient struct {
 	SlackRecipient       *SlackRecipient
 	MsTeamsRecipient     *MsTeamsRecipient
 	RecipientData        RecipientData
+	PagerdutyRecipient   *PagerdutyRecipient
+	WebhookRecipient     *WebhookRecipient
 }
 
 func (r *Recipient) UnmarshalJSON(data []byte) error {
@@ -6857,6 +7115,16 @@ func (r *Recipient) UnmarshalJSON(data []byte) error {
 		r.RecipientData = valueRecipientData
 		return nil
 	}
+	valuePagerdutyRecipient := new(PagerdutyRecipient)
+	if err := json.Unmarshal(data, &valuePagerdutyRecipient); err == nil {
+		r.PagerdutyRecipient = valuePagerdutyRecipient
+		return nil
+	}
+	valueWebhookRecipient := new(WebhookRecipient)
+	if err := json.Unmarshal(data, &valueWebhookRecipient); err == nil {
+		r.WebhookRecipient = valueWebhookRecipient
+		return nil
+	}
 	return fmt.Errorf("%s cannot be deserialized as a %T", data, r)
 }
 
@@ -6882,6 +7150,12 @@ func (r Recipient) MarshalJSON() ([]byte, error) {
 	if r.RecipientData != nil {
 		return json.Marshal(r.RecipientData)
 	}
+	if r.PagerdutyRecipient != nil {
+		return json.Marshal(r.PagerdutyRecipient)
+	}
+	if r.WebhookRecipient != nil {
+		return json.Marshal(r.WebhookRecipient)
+	}
 	return nil, fmt.Errorf("type %T does not include a non-empty union type", r)
 }
 
@@ -6893,6 +7167,8 @@ type RecipientVisitor interface {
 	VisitSlackRecipient(*SlackRecipient) error
 	VisitMsTeamsRecipient(*MsTeamsRecipient) error
 	VisitRecipientData(RecipientData) error
+	VisitPagerdutyRecipient(*PagerdutyRecipient) error
+	VisitWebhookRecipient(*WebhookRecipient) error
 }
 
 func (r *Recipient) Accept(visitor RecipientVisitor) error {
@@ -6916,6 +7192,12 @@ func (r *Recipient) Accept(visitor RecipientVisitor) error {
 	}
 	if r.RecipientData != nil {
 		return visitor.VisitRecipientData(r.RecipientData)
+	}
+	if r.PagerdutyRecipient != nil {
+		return visitor.VisitPagerdutyRecipient(r.PagerdutyRecipient)
+	}
+	if r.WebhookRecipient != nil {
+		return visitor.VisitWebhookRecipient(r.WebhookRecipient)
 	}
 	return fmt.Errorf("type %T does not include a non-empty union type", r)
 }
@@ -7456,6 +7738,35 @@ func (u *UserRecipientType) String() string {
 	return fmt.Sprintf("%#v", u)
 }
 
+type WebhookRecipient struct {
+	Webhook *WebhookProfile `json:"webhook,omitempty" url:"webhook,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (w *WebhookRecipient) UnmarshalJSON(data []byte) error {
+	type unmarshaler WebhookRecipient
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*w = WebhookRecipient(value)
+	w._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (w *WebhookRecipient) String() string {
+	if len(w._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(w._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(w); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", w)
+}
+
 type WidgetBackground struct {
 	TopColor    *string `json:"topColor,omitempty" url:"topColor,omitempty"`
 	BottomColor *string `json:"bottomColor,omitempty" url:"bottomColor,omitempty"`
@@ -7490,7 +7801,7 @@ type ChannelIdentifier = string
 
 type NotificationTemplates struct {
 	// A UTC timestamp at which notification was created. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970).
-	CreatedAt int `json:"created_at" url:"created_at"`
+	CreatedAt int64 `json:"created_at" url:"created_at"`
 	// A unique identifier associated with the notification.
 	Id string `json:"id" url:"id"`
 	// Routing strategy used by this notification.
@@ -7500,7 +7811,7 @@ type NotificationTemplates struct {
 	// The title of the notification.
 	Title string `json:"title" url:"title"`
 	// A UTC timestamp at which notification was updated. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970).
-	UpdatedAt int `json:"updated_at" url:"updated_at"`
+	UpdatedAt int64 `json:"updated_at" url:"updated_at"`
 
 	_rawJSON json.RawMessage
 }
@@ -7644,9 +7955,13 @@ func (t *TagData) String() string {
 }
 
 type SubscriptionTopic struct {
-	// Topic ID
-	Id     string                  `json:"id" url:"id"`
 	Status SubscriptionTopicStatus `json:"status,omitempty" url:"status,omitempty"`
+	// Override channel routing with custom preferences. This will override any template prefernces that are set, but a user can still customize their preferences
+	HasCustomRouting *bool `json:"has_custom_routing,omitempty" url:"has_custom_routing,omitempty"`
+	// The default channels to send to this tenant when has_custom_routing is enabled
+	CustomRouting []ChannelClassification `json:"custom_routing,omitempty" url:"custom_routing,omitempty"`
+	// Topic ID
+	Id string `json:"id" url:"id"`
 
 	_rawJSON json.RawMessage
 }

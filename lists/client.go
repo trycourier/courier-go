@@ -336,7 +336,7 @@ func (c *Client) UpdateSubscribers(
 	ctx context.Context,
 	// A unique identifier representing the list you wish to retrieve.
 	listId string,
-	request []*v3.PutSubscriptionsRecipient,
+	request *v3.SubscribeUsersToListRequest,
 	opts ...option.RequestOption,
 ) error {
 	options := core.NewRequestOptions(opts...)
@@ -393,7 +393,7 @@ func (c *Client) AddSubscribers(
 	ctx context.Context,
 	// A unique identifier representing the list you wish to retrieve.
 	listId string,
-	request []*v3.PutSubscriptionsRecipient,
+	request *v3.AddSubscribersToList,
 	opts ...option.IdempotentRequestOption,
 ) error {
 	options := core.NewIdempotentRequestOptions(opts...)

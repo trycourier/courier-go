@@ -8,6 +8,10 @@ import (
 	core "github.com/trycourier/courier-go/v3/core"
 )
 
+type AddSubscribersToList struct {
+	Recipients []*PutSubscriptionsRecipient `json:"recipients,omitempty" url:"recipients,omitempty"`
+}
+
 type GetSubscriptionForListRequest struct {
 	// A unique identifier that allows for fetching the next set of list subscriptions
 	Cursor *string `json:"-" url:"cursor,omitempty"`
@@ -204,4 +208,8 @@ func (p *PutSubscriptionsRecipient) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", p)
+}
+
+type SubscribeUsersToListRequest struct {
+	Recipients []*PutSubscriptionsRecipient `json:"recipients,omitempty" url:"recipients,omitempty"`
 }

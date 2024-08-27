@@ -68,74 +68,6 @@ func (b *BaseCheck) String() string {
 	return fmt.Sprintf("%#v", b)
 }
 
-type NotificationBlock struct {
-	Alias    *string                         `json:"alias,omitempty" url:"alias,omitempty"`
-	Context  *string                         `json:"context,omitempty" url:"context,omitempty"`
-	Id       string                          `json:"id" url:"id"`
-	Type     BlockType                       `json:"type,omitempty" url:"type,omitempty"`
-	Content  *NotificationContent            `json:"content,omitempty" url:"content,omitempty"`
-	Locales  map[string]*NotificationContent `json:"locales,omitempty" url:"locales,omitempty"`
-	Checksum *string                         `json:"checksum,omitempty" url:"checksum,omitempty"`
-
-	_rawJSON json.RawMessage
-}
-
-func (n *NotificationBlock) UnmarshalJSON(data []byte) error {
-	type unmarshaler NotificationBlock
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*n = NotificationBlock(value)
-	n._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (n *NotificationBlock) String() string {
-	if len(n._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(n._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(n); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", n)
-}
-
-type NotificationChannel struct {
-	Id       string                                 `json:"id" url:"id"`
-	Type     *string                                `json:"type,omitempty" url:"type,omitempty"`
-	Content  *NotificationChannelContent            `json:"content,omitempty" url:"content,omitempty"`
-	Locales  map[string]*NotificationChannelContent `json:"locales,omitempty" url:"locales,omitempty"`
-	Checksum *string                                `json:"checksum,omitempty" url:"checksum,omitempty"`
-
-	_rawJSON json.RawMessage
-}
-
-func (n *NotificationChannel) UnmarshalJSON(data []byte) error {
-	type unmarshaler NotificationChannel
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*n = NotificationChannel(value)
-	n._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (n *NotificationChannel) String() string {
-	if len(n._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(n._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(n); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", n)
-}
-
 type NotificationGetContentResponse struct {
 	Blocks   []*NotificationBlock   `json:"blocks,omitempty" url:"blocks,omitempty"`
 	Channels []*NotificationChannel `json:"channels,omitempty" url:"channels,omitempty"`
@@ -253,14 +185,4 @@ func (s *SubmissionChecksReplaceResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", s)
-}
-
-type NotificationDraftUpdateVariationsParams struct {
-	Blocks   []*NotificationBlock   `json:"blocks,omitempty" url:"blocks,omitempty"`
-	Channels []*NotificationChannel `json:"channels,omitempty" url:"channels,omitempty"`
-}
-
-type NotificationUpdateVariationsParams struct {
-	Blocks   []*NotificationBlock   `json:"blocks,omitempty" url:"blocks,omitempty"`
-	Channels []*NotificationChannel `json:"channels,omitempty" url:"channels,omitempty"`
 }

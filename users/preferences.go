@@ -71,6 +71,7 @@ func (u *UserPreferencesGetResponse) String() string {
 }
 
 type UserPreferencesListResponse struct {
+	// Deprecated - Paging not implemented on this endpoint
 	Paging *v3.Paging `json:"paging,omitempty" url:"paging,omitempty"`
 	// The Preferences associated with the user_id.
 	Items []*TopicPreference `json:"items,omitempty" url:"items,omitempty"`

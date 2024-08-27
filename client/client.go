@@ -12,6 +12,7 @@ import (
 	brands "github.com/trycourier/courier-go/v3/brands"
 	bulk "github.com/trycourier/courier-go/v3/bulk"
 	core "github.com/trycourier/courier-go/v3/core"
+	inbound "github.com/trycourier/courier-go/v3/inbound"
 	lists "github.com/trycourier/courier-go/v3/lists"
 	messages "github.com/trycourier/courier-go/v3/messages"
 	notifications "github.com/trycourier/courier-go/v3/notifications"
@@ -35,6 +36,7 @@ type Client struct {
 	Automations   *automations.Client
 	Brands        *brands.Client
 	Bulk          *bulk.Client
+	Inbound       *inbound.Client
 	Lists         *lists.Client
 	Messages      *messages.Client
 	Notifications *notifications.Client
@@ -62,6 +64,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 		Automations:   automations.NewClient(opts...),
 		Brands:        brands.NewClient(opts...),
 		Bulk:          bulk.NewClient(opts...),
+		Inbound:       inbound.NewClient(opts...),
 		Lists:         lists.NewClient(opts...),
 		Messages:      messages.NewClient(opts...),
 		Notifications: notifications.NewClient(opts...),

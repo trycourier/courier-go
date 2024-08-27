@@ -32,7 +32,9 @@ type ListUsersForTenantParams struct {
 }
 
 type ListTenantParams struct {
-	// The number of accousnts to return
+	// Filter the list of tenants by parent_id
+	ParentTenantId *string `json:"-" url:"parent_tenant_id,omitempty"`
+	// The number of tenants to return
 	// (defaults to 20, maximum value of 100)
 	Limit *int `json:"-" url:"limit,omitempty"`
 	// Continue the pagination with the next cursor
@@ -128,6 +130,39 @@ func (l *ListUsersForTenantResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", l)
+}
+
+type SubscriptionTopicNew struct {
+	Status SubscriptionTopicStatus `json:"status,omitempty" url:"status,omitempty"`
+	// Override channel routing with custom preferences. This will override any template prefernces that are set, but a user can still customize their preferences
+	HasCustomRouting *bool `json:"has_custom_routing,omitempty" url:"has_custom_routing,omitempty"`
+	// The default channels to send to this tenant when has_custom_routing is enabled
+	CustomRouting []ChannelClassification `json:"custom_routing,omitempty" url:"custom_routing,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (s *SubscriptionTopicNew) UnmarshalJSON(data []byte) error {
+	type unmarshaler SubscriptionTopicNew
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SubscriptionTopicNew(value)
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SubscriptionTopicNew) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
 }
 
 type Tenant struct {

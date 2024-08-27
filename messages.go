@@ -82,15 +82,15 @@ type MessageDetails struct {
 	// The current status of the message.
 	Status MessageStatus `json:"status,omitempty" url:"status,omitempty"`
 	// A UTC timestamp at which Courier received the message request. Stored as a millisecond representation of the Unix epoch.
-	Enqueued int `json:"enqueued" url:"enqueued"`
+	Enqueued int64 `json:"enqueued" url:"enqueued"`
 	// A UTC timestamp at which Courier passed the message to the Integration provider. Stored as a millisecond representation of the Unix epoch.
-	Sent int `json:"sent" url:"sent"`
+	Sent int64 `json:"sent" url:"sent"`
 	// A UTC timestamp at which the Integration provider delivered the message. Stored as a millisecond representation of the Unix epoch.
-	Delivered int `json:"delivered" url:"delivered"`
+	Delivered int64 `json:"delivered" url:"delivered"`
 	// A UTC timestamp at which the recipient opened a message for the first time. Stored as a millisecond representation of the Unix epoch.
-	Opened int `json:"opened" url:"opened"`
+	Opened int64 `json:"opened" url:"opened"`
 	// A UTC timestamp at which the recipient clicked on a tracked link for the first time. Stored as a millisecond representation of the Unix epoch.
-	Clicked int `json:"clicked" url:"clicked"`
+	Clicked int64 `json:"clicked" url:"clicked"`
 	// A unique identifier associated with the recipient of the delivered message.
 	Recipient string `json:"recipient" url:"recipient"`
 	// A unique identifier associated with the event of the delivered message.
@@ -129,7 +129,7 @@ func (m *MessageDetails) String() string {
 }
 
 type MessageHistoryResponse struct {
-	Results []*MessageDetails `json:"results,omitempty" url:"results,omitempty"`
+	Results []map[string]interface{} `json:"results,omitempty" url:"results,omitempty"`
 
 	_rawJSON json.RawMessage
 }
