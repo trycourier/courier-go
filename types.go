@@ -6,6 +6,7 @@ import (
 	json "encoding/json"
 	fmt "fmt"
 	core "github.com/trycourier/courier-go/v3/core"
+	"strings"
 )
 
 type SendMessageRequest struct {
@@ -7129,32 +7130,75 @@ func (r *Recipient) UnmarshalJSON(data []byte) error {
 }
 
 func (r Recipient) MarshalJSON() ([]byte, error) {
+	var jsonString []string
 	if r.AudienceRecipient != nil {
-		return json.Marshal(r.AudienceRecipient)
+		bytes, err := json.Marshal(r.AudienceRecipient)
+		if err != nil {
+			return []byte{}, err
+		}
+		jsonString = append(jsonString, string(bytes))
 	}
 	if r.ListRecipient != nil {
-		return json.Marshal(r.ListRecipient)
+		bytes, err := json.Marshal(r.ListRecipient)
+		if err != nil {
+			return []byte{}, err
+		}
+		jsonString = append(jsonString, string(bytes))
 	}
 	if r.ListPatternRecipient != nil {
-		return json.Marshal(r.ListPatternRecipient)
+		bytes, err := json.Marshal(r.ListPatternRecipient)
+		if err != nil {
+			return []byte{}, err
+		}
+		jsonString = append(jsonString, string(bytes))
 	}
 	if r.UserRecipient != nil {
-		return json.Marshal(r.UserRecipient)
+		bytes, err := json.Marshal(r.UserRecipient)
+		if err != nil {
+			return []byte{}, err
+		}
+		jsonString = append(jsonString, string(bytes))
 	}
 	if r.SlackRecipient != nil {
-		return json.Marshal(r.SlackRecipient)
+		bytes, err := json.Marshal(r.SlackRecipient)
+		if err != nil {
+			return []byte{}, err
+		}
+		jsonString = append(jsonString, string(bytes))
 	}
 	if r.MsTeamsRecipient != nil {
-		return json.Marshal(r.MsTeamsRecipient)
+		bytes, err := json.Marshal(r.MsTeamsRecipient)
+		if err != nil {
+			return []byte{}, err
+		}
+		jsonString = append(jsonString, string(bytes))
 	}
 	if r.RecipientData != nil {
-		return json.Marshal(r.RecipientData)
+		bytes, err := json.Marshal(r.RecipientData)
+		if err != nil {
+			return []byte{}, err
+		}
+		jsonString = append(jsonString, string(bytes))
 	}
 	if r.PagerdutyRecipient != nil {
-		return json.Marshal(r.PagerdutyRecipient)
+		bytes, err := json.Marshal(r.PagerdutyRecipient)
+		if err != nil {
+			return []byte{}, err
+		}
+		jsonString = append(jsonString, string(bytes))
 	}
 	if r.WebhookRecipient != nil {
-		return json.Marshal(r.WebhookRecipient)
+		bytes, err := json.Marshal(r.WebhookRecipient)
+		if err != nil {
+			return []byte{}, err
+		}
+		jsonString = append(jsonString, string(bytes))
+	}
+	if len(jsonString) > 0 {
+		for i := 0; i < len(jsonString); i++ {
+			jsonString[i] = jsonString[i][1 : len(jsonString[i])-1]
+		}
+		return []byte("{" + strings.Join(jsonString, ",") + "}"), nil
 	}
 	return nil, fmt.Errorf("type %T does not include a non-empty union type", r)
 }
