@@ -24,45 +24,18 @@ type GetAllListsRequest struct {
 	Pattern *string `json:"-" url:"pattern,omitempty"`
 }
 
+type RestoreListRequest struct {
+}
+
 type SubscribeUserToListRequest struct {
 	Preferences *RecipientPreferences `json:"preferences,omitempty" url:"preferences,omitempty"`
 }
 
-type RecipientPreferences struct {
-	Categories    *NotificationPreferences `json:"categories,omitempty" url:"categories,omitempty"`
-	Notifications *NotificationPreferences `json:"notifications,omitempty" url:"notifications,omitempty"`
-
-	_rawJSON json.RawMessage
-}
-
-func (r *RecipientPreferences) UnmarshalJSON(data []byte) error {
-	type unmarshaler RecipientPreferences
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*r = RecipientPreferences(value)
-	r._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (r *RecipientPreferences) String() string {
-	if len(r._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(r); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", r)
-}
-
 type List struct {
-	Id      string `json:"id" url:"id"`
-	Name    string `json:"name" url:"name"`
-	Created *int   `json:"created,omitempty" url:"created,omitempty"`
-	Updated *int   `json:"updated,omitempty" url:"updated,omitempty"`
+	Id      string  `json:"id" url:"id"`
+	Name    string  `json:"name" url:"name"`
+	Created *string `json:"created,omitempty" url:"created,omitempty"`
+	Updated *string `json:"updated,omitempty" url:"updated,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -169,6 +142,37 @@ func (l *ListPutParams) UnmarshalJSON(data []byte) error {
 }
 
 func (l *ListPutParams) String() string {
+	if len(l._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(l._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(l); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", l)
+}
+
+type ListSubscriptionRecipient struct {
+	RecipientId string                `json:"recipientId" url:"recipientId"`
+	Created     *string               `json:"created,omitempty" url:"created,omitempty"`
+	Preferences *RecipientPreferences `json:"preferences,omitempty" url:"preferences,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (l *ListSubscriptionRecipient) UnmarshalJSON(data []byte) error {
+	type unmarshaler ListSubscriptionRecipient
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*l = ListSubscriptionRecipient(value)
+	l._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (l *ListSubscriptionRecipient) String() string {
 	if len(l._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(l._rawJSON); err == nil {
 			return value

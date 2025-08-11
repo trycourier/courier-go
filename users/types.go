@@ -5,44 +5,8 @@ package users
 import (
 	json "encoding/json"
 	fmt "fmt"
-	v3 "github.com/trycourier/courier-go/v3"
 	core "github.com/trycourier/courier-go/v3/core"
 )
-
-type TopicPreference struct {
-	// The Channels a user has chosen to receive notifications through for this topic
-	CustomRouting    []v3.ChannelClassification `json:"custom_routing,omitempty" url:"custom_routing,omitempty"`
-	DefaultStatus    v3.PreferenceStatus        `json:"default_status,omitempty" url:"default_status,omitempty"`
-	HasCustomRouting *bool                      `json:"has_custom_routing,omitempty" url:"has_custom_routing,omitempty"`
-	Status           v3.PreferenceStatus        `json:"status,omitempty" url:"status,omitempty"`
-	TopicId          string                     `json:"topic_id" url:"topic_id"`
-	TopicName        string                     `json:"topic_name" url:"topic_name"`
-
-	_rawJSON json.RawMessage
-}
-
-func (t *TopicPreference) UnmarshalJSON(data []byte) error {
-	type unmarshaler TopicPreference
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*t = TopicPreference(value)
-	t._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (t *TopicPreference) String() string {
-	if len(t._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(t._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(t); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", t)
-}
 
 // AddUserToSingleTenantsParamsProfile is no longer used for Add a User to a Single Tenant
 type AddUserToSingleTenantsParamsProfile struct {
@@ -110,90 +74,6 @@ func (d *DeleteUserTokenOpts) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", d)
-}
-
-type Device struct {
-	// Id of the application the token is used for
-	AppId *string `json:"app_id,omitempty" url:"app_id,omitempty"`
-	// Id of the advertising identifier
-	AdId *string `json:"ad_id,omitempty" url:"ad_id,omitempty"`
-	// Id of the device the token is associated with
-	DeviceId *string `json:"device_id,omitempty" url:"device_id,omitempty"`
-	// The device platform i.e. android, ios, web
-	Platform *string `json:"platform,omitempty" url:"platform,omitempty"`
-	// The device manufacturer
-	Manufacturer *string `json:"manufacturer,omitempty" url:"manufacturer,omitempty"`
-	// The device model
-	Model *string `json:"model,omitempty" url:"model,omitempty"`
-
-	_rawJSON json.RawMessage
-}
-
-func (d *Device) UnmarshalJSON(data []byte) error {
-	type unmarshaler Device
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*d = Device(value)
-	d._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (d *Device) String() string {
-	if len(d._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(d._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(d); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", d)
-}
-
-type ExpiryDate struct {
-	String  string
-	Boolean bool
-}
-
-func (e *ExpiryDate) UnmarshalJSON(data []byte) error {
-	var valueString string
-	if err := json.Unmarshal(data, &valueString); err == nil {
-		e.String = valueString
-		return nil
-	}
-	var valueBoolean bool
-	if err := json.Unmarshal(data, &valueBoolean); err == nil {
-		e.Boolean = valueBoolean
-		return nil
-	}
-	return fmt.Errorf("%s cannot be deserialized as a %T", data, e)
-}
-
-func (e ExpiryDate) MarshalJSON() ([]byte, error) {
-	if e.String != "" {
-		return json.Marshal(e.String)
-	}
-	if e.Boolean != false {
-		return json.Marshal(e.Boolean)
-	}
-	return nil, fmt.Errorf("type %T does not include a non-empty union type", e)
-}
-
-type ExpiryDateVisitor interface {
-	VisitString(string) error
-	VisitBoolean(bool) error
-}
-
-func (e *ExpiryDate) Accept(visitor ExpiryDateVisitor) error {
-	if e.String != "" {
-		return visitor.VisitString(e.String)
-	}
-	if e.Boolean != false {
-		return visitor.VisitBoolean(e.Boolean)
-	}
-	return fmt.Errorf("type %T does not include a non-empty union type", e)
 }
 
 type GetUserTokenOpts struct {
@@ -289,68 +169,6 @@ func (p PatchOp) Ptr() *PatchOp {
 	return &p
 }
 
-type PatchOperation struct {
-	// The operation to perform.
-	Op string `json:"op" url:"op"`
-	// The JSON path specifying the part of the profile to operate on.
-	Path string `json:"path" url:"path"`
-	// The value for the operation.
-	Value *string `json:"value,omitempty" url:"value,omitempty"`
-
-	_rawJSON json.RawMessage
-}
-
-func (p *PatchOperation) UnmarshalJSON(data []byte) error {
-	type unmarshaler PatchOperation
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*p = PatchOperation(value)
-	p._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (p *PatchOperation) String() string {
-	if len(p._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(p); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", p)
-}
-
-type ProviderKey string
-
-const (
-	ProviderKeyFirebaseFcm ProviderKey = "firebase-fcm"
-	ProviderKeyApn         ProviderKey = "apn"
-	ProviderKeyExpo        ProviderKey = "expo"
-	ProviderKeyOnesignal   ProviderKey = "onesignal"
-)
-
-func NewProviderKeyFromString(s string) (ProviderKey, error) {
-	switch s {
-	case "firebase-fcm":
-		return ProviderKeyFirebaseFcm, nil
-	case "apn":
-		return ProviderKeyApn, nil
-	case "expo":
-		return ProviderKeyExpo, nil
-	case "onesignal":
-		return ProviderKeyOnesignal, nil
-	}
-	var t ProviderKey
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (p ProviderKey) Ptr() *ProviderKey {
-	return &p
-}
-
 type PutUserTokenOpts struct {
 	UserId string     `json:"user_id" url:"user_id"`
 	Token  *UserToken `json:"token,omitempty" url:"token,omitempty"`
@@ -409,68 +227,4 @@ func (p *PutUserTokensOpts) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", p)
-}
-
-type TokenStatus string
-
-const (
-	TokenStatusActive  TokenStatus = "active"
-	TokenStatusUnknown TokenStatus = "unknown"
-	TokenStatusFailed  TokenStatus = "failed"
-	TokenStatusRevoked TokenStatus = "revoked"
-)
-
-func NewTokenStatusFromString(s string) (TokenStatus, error) {
-	switch s {
-	case "active":
-		return TokenStatusActive, nil
-	case "unknown":
-		return TokenStatusUnknown, nil
-	case "failed":
-		return TokenStatusFailed, nil
-	case "revoked":
-		return TokenStatusRevoked, nil
-	}
-	var t TokenStatus
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (t TokenStatus) Ptr() *TokenStatus {
-	return &t
-}
-
-type Tracking struct {
-	// The operating system version
-	OsVersion *string `json:"os_version,omitempty" url:"os_version,omitempty"`
-	// The IP address of the device
-	Ip *string `json:"ip,omitempty" url:"ip,omitempty"`
-	// The latitude of the device
-	Lat *string `json:"lat,omitempty" url:"lat,omitempty"`
-	// The longitude of the device
-	Long *string `json:"long,omitempty" url:"long,omitempty"`
-
-	_rawJSON json.RawMessage
-}
-
-func (t *Tracking) UnmarshalJSON(data []byte) error {
-	type unmarshaler Tracking
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*t = Tracking(value)
-	t._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (t *Tracking) String() string {
-	if len(t._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(t._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(t); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", t)
 }

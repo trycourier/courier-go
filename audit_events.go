@@ -13,6 +13,36 @@ type ListAuditEventsRequest struct {
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 }
 
+type Actor struct {
+	Id    *string `json:"id,omitempty" url:"id,omitempty"`
+	Email *string `json:"email,omitempty" url:"email,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (a *Actor) UnmarshalJSON(data []byte) error {
+	type unmarshaler Actor
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = Actor(value)
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *Actor) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
 type AuditEvent struct {
 	Actor        *Actor  `json:"actor,omitempty" url:"actor,omitempty"`
 	Target       *Target `json:"target,omitempty" url:"target,omitempty"`
@@ -75,4 +105,34 @@ func (l *ListAuditEventsResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", l)
+}
+
+type Target struct {
+	Id    *string `json:"id,omitempty" url:"id,omitempty"`
+	Email *string `json:"email,omitempty" url:"email,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (t *Target) UnmarshalJSON(data []byte) error {
+	type unmarshaler Target
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = Target(value)
+	t._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *Target) String() string {
+	if len(t._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(t._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
 }

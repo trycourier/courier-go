@@ -13,6 +13,8 @@ type ListTemplatesRequest struct {
 	Cursor *string `json:"-" url:"cursor,omitempty"`
 }
 
+type ChannelIdentifier = string
+
 type ListTemplatesResponse struct {
 	Paging *Paging `json:"paging,omitempty" url:"paging,omitempty"`
 	// An array of Notification Templates
@@ -42,4 +44,159 @@ func (l *ListTemplatesResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", l)
+}
+
+type NotificationTemplates struct {
+	// A UTC timestamp at which notification was created. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970).
+	CreatedAt int64 `json:"created_at" url:"created_at"`
+	// A unique identifier associated with the notification.
+	Id string `json:"id" url:"id"`
+	// Routing strategy used by this notification.
+	Routing *RoutingStrategy `json:"routing,omitempty" url:"routing,omitempty"`
+	// A list of tags attached to the notification.
+	Tags []*Tag `json:"tags,omitempty" url:"tags,omitempty"`
+	// The title of the notification.
+	Title string `json:"title" url:"title"`
+	// A UTC timestamp at which notification was updated. This is stored as a millisecond representation of the Unix epoch (the time passed since January 1, 1970).
+	UpdatedAt int64 `json:"updated_at" url:"updated_at"`
+
+	_rawJSON json.RawMessage
+}
+
+func (n *NotificationTemplates) UnmarshalJSON(data []byte) error {
+	type unmarshaler NotificationTemplates
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*n = NotificationTemplates(value)
+	n._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (n *NotificationTemplates) String() string {
+	if len(n._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(n._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(n); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", n)
+}
+
+type RoutingStrategy struct {
+	// The method for selecting channels to send the message with. Value can be either 'single' or 'all'. If not provided will default to 'single'
+	Method RoutingStrategyMethod `json:"method,omitempty" url:"method,omitempty"`
+	// An array of valid channel identifiers (like email, push, sms, etc.) and additional routing nodes.
+	Channels []ChannelIdentifier `json:"channels,omitempty" url:"channels,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (r *RoutingStrategy) UnmarshalJSON(data []byte) error {
+	type unmarshaler RoutingStrategy
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = RoutingStrategy(value)
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *RoutingStrategy) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
+type RoutingStrategyMethod string
+
+const (
+	RoutingStrategyMethodAll    RoutingStrategyMethod = "all"
+	RoutingStrategyMethodSingle RoutingStrategyMethod = "single"
+)
+
+func NewRoutingStrategyMethodFromString(s string) (RoutingStrategyMethod, error) {
+	switch s {
+	case "all":
+		return RoutingStrategyMethodAll, nil
+	case "single":
+		return RoutingStrategyMethodSingle, nil
+	}
+	var t RoutingStrategyMethod
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (r RoutingStrategyMethod) Ptr() *RoutingStrategyMethod {
+	return &r
+}
+
+type Tag struct {
+	Data []*TagData `json:"data,omitempty" url:"data,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (t *Tag) UnmarshalJSON(data []byte) error {
+	type unmarshaler Tag
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = Tag(value)
+	t._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *Tag) String() string {
+	if len(t._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(t._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+type TagData struct {
+	// A unique identifier of the tag.
+	Id string `json:"id" url:"id"`
+	// Name of the tag.
+	Name string `json:"name" url:"name"`
+
+	_rawJSON json.RawMessage
+}
+
+func (t *TagData) UnmarshalJSON(data []byte) error {
+	type unmarshaler TagData
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TagData(value)
+	t._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TagData) String() string {
+	if len(t._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(t._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
 }

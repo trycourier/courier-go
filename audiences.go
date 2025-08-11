@@ -85,6 +85,39 @@ func (a *AudienceListResponse) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
+type AudienceMember struct {
+	AddedAt         string `json:"added_at" url:"added_at"`
+	AudienceId      string `json:"audience_id" url:"audience_id"`
+	AudienceVersion int    `json:"audience_version" url:"audience_version"`
+	MemberId        string `json:"member_id" url:"member_id"`
+	Reason          string `json:"reason" url:"reason"`
+
+	_rawJSON json.RawMessage
+}
+
+func (a *AudienceMember) UnmarshalJSON(data []byte) error {
+	type unmarshaler AudienceMember
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AudienceMember(value)
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AudienceMember) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
 type AudienceMemberListResponse struct {
 	Items  []*AudienceMember `json:"items,omitempty" url:"items,omitempty"`
 	Paging *Paging           `json:"paging,omitempty" url:"paging,omitempty"`
@@ -144,6 +177,91 @@ func (a *AudienceUpdateResponse) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
+type BaseFilterConfig struct {
+	// The operator to use for filtering
+	Operator *Operator `json:"operator,omitempty" url:"operator,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (b *BaseFilterConfig) UnmarshalJSON(data []byte) error {
+	type unmarshaler BaseFilterConfig
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = BaseFilterConfig(value)
+	b._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BaseFilterConfig) String() string {
+	if len(b._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(b._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
+}
+
+type ComparisonOperator string
+
+const (
+	ComparisonOperatorEndsWith   ComparisonOperator = "ENDS_WITH"
+	ComparisonOperatorEq         ComparisonOperator = "EQ"
+	ComparisonOperatorExists     ComparisonOperator = "EXISTS"
+	ComparisonOperatorGt         ComparisonOperator = "GT"
+	ComparisonOperatorGte        ComparisonOperator = "GTE"
+	ComparisonOperatorIncludes   ComparisonOperator = "INCLUDES"
+	ComparisonOperatorIsAfter    ComparisonOperator = "IS_AFTER"
+	ComparisonOperatorIsBefore   ComparisonOperator = "IS_BEFORE"
+	ComparisonOperatorLt         ComparisonOperator = "LT"
+	ComparisonOperatorLte        ComparisonOperator = "LTE"
+	ComparisonOperatorNeq        ComparisonOperator = "NEQ"
+	ComparisonOperatorOmit       ComparisonOperator = "OMIT"
+	ComparisonOperatorStartsWith ComparisonOperator = "STARTS_WITH"
+)
+
+func NewComparisonOperatorFromString(s string) (ComparisonOperator, error) {
+	switch s {
+	case "ENDS_WITH":
+		return ComparisonOperatorEndsWith, nil
+	case "EQ":
+		return ComparisonOperatorEq, nil
+	case "EXISTS":
+		return ComparisonOperatorExists, nil
+	case "GT":
+		return ComparisonOperatorGt, nil
+	case "GTE":
+		return ComparisonOperatorGte, nil
+	case "INCLUDES":
+		return ComparisonOperatorIncludes, nil
+	case "IS_AFTER":
+		return ComparisonOperatorIsAfter, nil
+	case "IS_BEFORE":
+		return ComparisonOperatorIsBefore, nil
+	case "LT":
+		return ComparisonOperatorLt, nil
+	case "LTE":
+		return ComparisonOperatorLte, nil
+	case "NEQ":
+		return ComparisonOperatorNeq, nil
+	case "OMIT":
+		return ComparisonOperatorOmit, nil
+	case "STARTS_WITH":
+		return ComparisonOperatorStartsWith, nil
+	}
+	var t ComparisonOperator
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ComparisonOperator) Ptr() *ComparisonOperator {
+	return &c
+}
+
 type Filter struct {
 	SingleFilterConfig *SingleFilterConfig
 	NestedFilterConfig *NestedFilterConfig
@@ -186,6 +304,183 @@ func (f *Filter) Accept(visitor FilterVisitor) error {
 		return visitor.VisitNestedFilterConfig(f.NestedFilterConfig)
 	}
 	return fmt.Errorf("type %T does not include a non-empty union type", f)
+}
+
+type FilterConfig struct {
+	SingleFilterConfig *SingleFilterConfig
+	NestedFilterConfig *NestedFilterConfig
+}
+
+func (f *FilterConfig) UnmarshalJSON(data []byte) error {
+	valueSingleFilterConfig := new(SingleFilterConfig)
+	if err := json.Unmarshal(data, &valueSingleFilterConfig); err == nil {
+		f.SingleFilterConfig = valueSingleFilterConfig
+		return nil
+	}
+	valueNestedFilterConfig := new(NestedFilterConfig)
+	if err := json.Unmarshal(data, &valueNestedFilterConfig); err == nil {
+		f.NestedFilterConfig = valueNestedFilterConfig
+		return nil
+	}
+	return fmt.Errorf("%s cannot be deserialized as a %T", data, f)
+}
+
+func (f FilterConfig) MarshalJSON() ([]byte, error) {
+	if f.SingleFilterConfig != nil {
+		return json.Marshal(f.SingleFilterConfig)
+	}
+	if f.NestedFilterConfig != nil {
+		return json.Marshal(f.NestedFilterConfig)
+	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", f)
+}
+
+type FilterConfigVisitor interface {
+	VisitSingleFilterConfig(*SingleFilterConfig) error
+	VisitNestedFilterConfig(*NestedFilterConfig) error
+}
+
+func (f *FilterConfig) Accept(visitor FilterConfigVisitor) error {
+	if f.SingleFilterConfig != nil {
+		return visitor.VisitSingleFilterConfig(f.SingleFilterConfig)
+	}
+	if f.NestedFilterConfig != nil {
+		return visitor.VisitNestedFilterConfig(f.NestedFilterConfig)
+	}
+	return fmt.Errorf("type %T does not include a non-empty union type", f)
+}
+
+type LogicalOperator string
+
+const (
+	LogicalOperatorAnd LogicalOperator = "AND"
+	LogicalOperatorOr  LogicalOperator = "OR"
+)
+
+func NewLogicalOperatorFromString(s string) (LogicalOperator, error) {
+	switch s {
+	case "AND":
+		return LogicalOperatorAnd, nil
+	case "OR":
+		return LogicalOperatorOr, nil
+	}
+	var t LogicalOperator
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (l LogicalOperator) Ptr() *LogicalOperator {
+	return &l
+}
+
+// The operator to use for filtering
+type NestedFilterConfig struct {
+	// The operator to use for filtering
+	Operator *Operator       `json:"operator,omitempty" url:"operator,omitempty"`
+	Rules    []*FilterConfig `json:"rules,omitempty" url:"rules,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (n *NestedFilterConfig) UnmarshalJSON(data []byte) error {
+	type unmarshaler NestedFilterConfig
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*n = NestedFilterConfig(value)
+	n._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (n *NestedFilterConfig) String() string {
+	if len(n._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(n._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(n); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", n)
+}
+
+type Operator struct {
+	ComparisonOperator ComparisonOperator
+	LogicalOperator    LogicalOperator
+}
+
+func (o *Operator) UnmarshalJSON(data []byte) error {
+	var valueComparisonOperator ComparisonOperator
+	if err := json.Unmarshal(data, &valueComparisonOperator); err == nil {
+		o.ComparisonOperator = valueComparisonOperator
+		return nil
+	}
+	var valueLogicalOperator LogicalOperator
+	if err := json.Unmarshal(data, &valueLogicalOperator); err == nil {
+		o.LogicalOperator = valueLogicalOperator
+		return nil
+	}
+	return fmt.Errorf("%s cannot be deserialized as a %T", data, o)
+}
+
+func (o Operator) MarshalJSON() ([]byte, error) {
+	if o.ComparisonOperator != "" {
+		return json.Marshal(o.ComparisonOperator)
+	}
+	if o.LogicalOperator != "" {
+		return json.Marshal(o.LogicalOperator)
+	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", o)
+}
+
+type OperatorVisitor interface {
+	VisitComparisonOperator(ComparisonOperator) error
+	VisitLogicalOperator(LogicalOperator) error
+}
+
+func (o *Operator) Accept(visitor OperatorVisitor) error {
+	if o.ComparisonOperator != "" {
+		return visitor.VisitComparisonOperator(o.ComparisonOperator)
+	}
+	if o.LogicalOperator != "" {
+		return visitor.VisitLogicalOperator(o.LogicalOperator)
+	}
+	return fmt.Errorf("type %T does not include a non-empty union type", o)
+}
+
+// A single filter to use for filtering
+type SingleFilterConfig struct {
+	// The operator to use for filtering
+	Operator *Operator `json:"operator,omitempty" url:"operator,omitempty"`
+	// The value to use for filtering
+	Value string `json:"value" url:"value"`
+	// The attribe name from profile whose value will be operated against the filter value
+	Path string `json:"path" url:"path"`
+
+	_rawJSON json.RawMessage
+}
+
+func (s *SingleFilterConfig) UnmarshalJSON(data []byte) error {
+	type unmarshaler SingleFilterConfig
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SingleFilterConfig(value)
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SingleFilterConfig) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
 }
 
 type AudienceUpdateParams struct {

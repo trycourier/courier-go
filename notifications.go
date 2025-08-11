@@ -10,6 +10,8 @@ import (
 
 type NotificationListParams struct {
 	Cursor *string `json:"-" url:"cursor,omitempty"`
+	// Retrieve the notes from the Notification template settings.
+	Notes *bool `json:"-" url:"notes,omitempty"`
 }
 
 type SubmissionChecksReplaceParams struct {
@@ -68,6 +70,335 @@ func (b *BaseCheck) String() string {
 	return fmt.Sprintf("%#v", b)
 }
 
+type BlockType string
+
+const (
+	BlockTypeAction   BlockType = "action"
+	BlockTypeDivider  BlockType = "divider"
+	BlockTypeImage    BlockType = "image"
+	BlockTypeJsonnet  BlockType = "jsonnet"
+	BlockTypeList     BlockType = "list"
+	BlockTypeMarkdown BlockType = "markdown"
+	BlockTypeQuote    BlockType = "quote"
+	BlockTypeTemplate BlockType = "template"
+	BlockTypeText     BlockType = "text"
+)
+
+func NewBlockTypeFromString(s string) (BlockType, error) {
+	switch s {
+	case "action":
+		return BlockTypeAction, nil
+	case "divider":
+		return BlockTypeDivider, nil
+	case "image":
+		return BlockTypeImage, nil
+	case "jsonnet":
+		return BlockTypeJsonnet, nil
+	case "list":
+		return BlockTypeList, nil
+	case "markdown":
+		return BlockTypeMarkdown, nil
+	case "quote":
+		return BlockTypeQuote, nil
+	case "template":
+		return BlockTypeTemplate, nil
+	case "text":
+		return BlockTypeText, nil
+	}
+	var t BlockType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (b BlockType) Ptr() *BlockType {
+	return &b
+}
+
+type Check struct {
+	Id      string      `json:"id" url:"id"`
+	Status  CheckStatus `json:"status,omitempty" url:"status,omitempty"`
+	Updated int64       `json:"updated" url:"updated"`
+	type_   string
+
+	_rawJSON json.RawMessage
+}
+
+func (c *Check) Type() string {
+	return c.type_
+}
+
+func (c *Check) UnmarshalJSON(data []byte) error {
+	type embed Check
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+		return err
+	}
+	*c = Check(unmarshaler.embed)
+	c.type_ = "custom"
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *Check) MarshalJSON() ([]byte, error) {
+	type embed Check
+	var marshaler = struct {
+		embed
+		Type string `json:"type"`
+	}{
+		embed: embed(*c),
+		Type:  "custom",
+	}
+	return json.Marshal(marshaler)
+}
+
+func (c *Check) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+type CheckStatus string
+
+const (
+	CheckStatusResolved CheckStatus = "RESOLVED"
+	CheckStatusFailed   CheckStatus = "FAILED"
+	CheckStatusPending  CheckStatus = "PENDING"
+)
+
+func NewCheckStatusFromString(s string) (CheckStatus, error) {
+	switch s {
+	case "RESOLVED":
+		return CheckStatusResolved, nil
+	case "FAILED":
+		return CheckStatusFailed, nil
+	case "PENDING":
+		return CheckStatusPending, nil
+	}
+	var t CheckStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c CheckStatus) Ptr() *CheckStatus {
+	return &c
+}
+
+type Notification struct {
+	CreatedAt int64            `json:"created_at" url:"created_at"`
+	UpdatedAt int64            `json:"updated_at" url:"updated_at"`
+	Id        string           `json:"id" url:"id"`
+	Routing   *MessageRouting  `json:"routing,omitempty" url:"routing,omitempty"`
+	Tags      *NotificationTag `json:"tags,omitempty" url:"tags,omitempty"`
+	Title     *string          `json:"title,omitempty" url:"title,omitempty"`
+	TopicId   string           `json:"topic_id" url:"topic_id"`
+	Note      string           `json:"note" url:"note"`
+
+	_rawJSON json.RawMessage
+}
+
+func (n *Notification) UnmarshalJSON(data []byte) error {
+	type unmarshaler Notification
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*n = Notification(value)
+	n._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (n *Notification) String() string {
+	if len(n._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(n._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(n); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", n)
+}
+
+type NotificationBlock struct {
+	Alias    *string                         `json:"alias,omitempty" url:"alias,omitempty"`
+	Context  *string                         `json:"context,omitempty" url:"context,omitempty"`
+	Id       string                          `json:"id" url:"id"`
+	Type     BlockType                       `json:"type,omitempty" url:"type,omitempty"`
+	Content  *NotificationContent            `json:"content,omitempty" url:"content,omitempty"`
+	Locales  map[string]*NotificationContent `json:"locales,omitempty" url:"locales,omitempty"`
+	Checksum *string                         `json:"checksum,omitempty" url:"checksum,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (n *NotificationBlock) UnmarshalJSON(data []byte) error {
+	type unmarshaler NotificationBlock
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*n = NotificationBlock(value)
+	n._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (n *NotificationBlock) String() string {
+	if len(n._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(n._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(n); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", n)
+}
+
+type NotificationChannel struct {
+	Id       string                                 `json:"id" url:"id"`
+	Type     *string                                `json:"type,omitempty" url:"type,omitempty"`
+	Content  *NotificationChannelContent            `json:"content,omitempty" url:"content,omitempty"`
+	Locales  map[string]*NotificationChannelContent `json:"locales,omitempty" url:"locales,omitempty"`
+	Checksum *string                                `json:"checksum,omitempty" url:"checksum,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (n *NotificationChannel) UnmarshalJSON(data []byte) error {
+	type unmarshaler NotificationChannel
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*n = NotificationChannel(value)
+	n._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (n *NotificationChannel) String() string {
+	if len(n._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(n._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(n); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", n)
+}
+
+type NotificationChannelContent struct {
+	Subject *string `json:"subject,omitempty" url:"subject,omitempty"`
+	Title   *string `json:"title,omitempty" url:"title,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (n *NotificationChannelContent) UnmarshalJSON(data []byte) error {
+	type unmarshaler NotificationChannelContent
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*n = NotificationChannelContent(value)
+	n._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (n *NotificationChannelContent) String() string {
+	if len(n._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(n._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(n); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", n)
+}
+
+type NotificationContent struct {
+	String                       string
+	NotificationContentHierarchy *NotificationContentHierarchy
+}
+
+func (n *NotificationContent) UnmarshalJSON(data []byte) error {
+	var valueString string
+	if err := json.Unmarshal(data, &valueString); err == nil {
+		n.String = valueString
+		return nil
+	}
+	valueNotificationContentHierarchy := new(NotificationContentHierarchy)
+	if err := json.Unmarshal(data, &valueNotificationContentHierarchy); err == nil {
+		n.NotificationContentHierarchy = valueNotificationContentHierarchy
+		return nil
+	}
+	return fmt.Errorf("%s cannot be deserialized as a %T", data, n)
+}
+
+func (n NotificationContent) MarshalJSON() ([]byte, error) {
+	if n.String != "" {
+		return json.Marshal(n.String)
+	}
+	if n.NotificationContentHierarchy != nil {
+		return json.Marshal(n.NotificationContentHierarchy)
+	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", n)
+}
+
+type NotificationContentVisitor interface {
+	VisitString(string) error
+	VisitNotificationContentHierarchy(*NotificationContentHierarchy) error
+}
+
+func (n *NotificationContent) Accept(visitor NotificationContentVisitor) error {
+	if n.String != "" {
+		return visitor.VisitString(n.String)
+	}
+	if n.NotificationContentHierarchy != nil {
+		return visitor.VisitNotificationContentHierarchy(n.NotificationContentHierarchy)
+	}
+	return fmt.Errorf("type %T does not include a non-empty union type", n)
+}
+
+type NotificationContentHierarchy struct {
+	Parent   *string `json:"parent,omitempty" url:"parent,omitempty"`
+	Children *string `json:"children,omitempty" url:"children,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (n *NotificationContentHierarchy) UnmarshalJSON(data []byte) error {
+	type unmarshaler NotificationContentHierarchy
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*n = NotificationContentHierarchy(value)
+	n._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (n *NotificationContentHierarchy) String() string {
+	if len(n._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(n._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(n); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", n)
+}
+
 type NotificationGetContentResponse struct {
 	Blocks   []*NotificationBlock   `json:"blocks,omitempty" url:"blocks,omitempty"`
 	Channels []*NotificationChannel `json:"channels,omitempty" url:"channels,omitempty"`
@@ -118,6 +449,65 @@ func (n *NotificationListResponse) UnmarshalJSON(data []byte) error {
 }
 
 func (n *NotificationListResponse) String() string {
+	if len(n._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(n._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(n); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", n)
+}
+
+type NotificationTag struct {
+	Data []*NotificationTagData `json:"data,omitempty" url:"data,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (n *NotificationTag) UnmarshalJSON(data []byte) error {
+	type unmarshaler NotificationTag
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*n = NotificationTag(value)
+	n._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (n *NotificationTag) String() string {
+	if len(n._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(n._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(n); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", n)
+}
+
+type NotificationTagData struct {
+	Id   string `json:"id" url:"id"`
+	Name string `json:"name" url:"name"`
+
+	_rawJSON json.RawMessage
+}
+
+func (n *NotificationTagData) UnmarshalJSON(data []byte) error {
+	type unmarshaler NotificationTagData
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*n = NotificationTagData(value)
+	n._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (n *NotificationTagData) String() string {
 	if len(n._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(n._rawJSON); err == nil {
 			return value

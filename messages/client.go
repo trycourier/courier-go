@@ -85,7 +85,7 @@ func (c *Client) Get(
 	// A unique identifier associated with the message you wish to retrieve (results from a send).
 	messageId string,
 	opts ...option.RequestOption,
-) (*v3.MessageDetails, error) {
+) (*v3.MessageDetailsExtended, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.courier.com"
@@ -125,7 +125,7 @@ func (c *Client) Get(
 		return apiError
 	}
 
-	var response *v3.MessageDetails
+	var response *v3.MessageDetailsExtended
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{

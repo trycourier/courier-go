@@ -12,6 +12,11 @@ type BulkCreateJobParams struct {
 	Message *InboundBulkMessage `json:"message,omitempty" url:"message,omitempty"`
 }
 
+type BulkGetUsersParams struct {
+	// A unique identifier that allows for fetching the next set of users added to the bulk job
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+}
+
 type BulkCreateJobResponse struct {
 	JobId string `json:"jobId" url:"jobId"`
 
@@ -129,6 +134,148 @@ func (b *BulkIngestUsersParams) String() string {
 	return fmt.Sprintf("%#v", b)
 }
 
+type BulkJobStatus string
+
+const (
+	BulkJobStatusCreated    BulkJobStatus = "CREATED"
+	BulkJobStatusProcessing BulkJobStatus = "PROCESSING"
+	BulkJobStatusCompleted  BulkJobStatus = "COMPLETED"
+	BulkJobStatusError      BulkJobStatus = "ERROR"
+)
+
+func NewBulkJobStatusFromString(s string) (BulkJobStatus, error) {
+	switch s {
+	case "CREATED":
+		return BulkJobStatusCreated, nil
+	case "PROCESSING":
+		return BulkJobStatusProcessing, nil
+	case "COMPLETED":
+		return BulkJobStatusCompleted, nil
+	case "ERROR":
+		return BulkJobStatusError, nil
+	}
+	var t BulkJobStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (b BulkJobStatus) Ptr() *BulkJobStatus {
+	return &b
+}
+
+type BulkJobUserStatus string
+
+const (
+	BulkJobUserStatusPending  BulkJobUserStatus = "PENDING"
+	BulkJobUserStatusEnqueued BulkJobUserStatus = "ENQUEUED"
+	BulkJobUserStatusError    BulkJobUserStatus = "ERROR"
+)
+
+func NewBulkJobUserStatusFromString(s string) (BulkJobUserStatus, error) {
+	switch s {
+	case "PENDING":
+		return BulkJobUserStatusPending, nil
+	case "ENQUEUED":
+		return BulkJobUserStatusEnqueued, nil
+	case "ERROR":
+		return BulkJobUserStatusError, nil
+	}
+	var t BulkJobUserStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (b BulkJobUserStatus) Ptr() *BulkJobUserStatus {
+	return &b
+}
+
+type BulkMessageUserResponse struct {
+	Preferences *RecipientPreferences `json:"preferences,omitempty" url:"preferences,omitempty"`
+	Profile     interface{}           `json:"profile,omitempty" url:"profile,omitempty"`
+	Recipient   *string               `json:"recipient,omitempty" url:"recipient,omitempty"`
+	Data        interface{}           `json:"data,omitempty" url:"data,omitempty"`
+	To          *UserRecipient        `json:"to,omitempty" url:"to,omitempty"`
+	Status      BulkJobUserStatus     `json:"status,omitempty" url:"status,omitempty"`
+	MessageId   *string               `json:"messageId,omitempty" url:"messageId,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (b *BulkMessageUserResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler BulkMessageUserResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = BulkMessageUserResponse(value)
+	b._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BulkMessageUserResponse) String() string {
+	if len(b._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(b._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
+}
+
+// The message property has the following primary top-level properties. They define the destination and content of the message.
+// Additional advanced configuration fields [are defined below](https://www.courier.com/docs/reference/send/message/#other-message-properties).
+type InboundBulkContentMessage struct {
+	// An arbitrary object that includes any data you want to pass to the message.
+	// The data will populate the corresponding template or elements variables.
+	Data    *MessageData `json:"data,omitempty" url:"data,omitempty"`
+	BrandId *string      `json:"brand_id,omitempty" url:"brand_id,omitempty"`
+	// "Define run-time configuration for one or more channels. If you don't specify channels, the default configuration for each channel will be used. Valid ChannelId's are: email, sms, push, inbox, direct_message, banner, and webhook."
+	Channels *MessageChannels `json:"channels,omitempty" url:"channels,omitempty"`
+	// Context to load with this recipient. Will override any context set on message.context.
+	Context *MessageContext `json:"context,omitempty" url:"context,omitempty"`
+	// Metadata such as utm tracking attached with the notification through this channel.
+	Metadata    *MessageMetadata    `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Preferences *MessagePreferences `json:"preferences,omitempty" url:"preferences,omitempty"`
+	// An object whose keys are valid provider identifiers which map to an object.
+	Providers *MessageProviders `json:"providers,omitempty" url:"providers,omitempty"`
+	Routing   *Routing          `json:"routing,omitempty" url:"routing,omitempty"`
+	// Time in ms to attempt the channel before failing over to the next available channel.
+	Timeout *Timeout `json:"timeout,omitempty" url:"timeout,omitempty"`
+	// Defines the time to wait before delivering the message. You can specify one of the following options. Duration with the number of milliseconds to delay. Until with an ISO 8601 timestamp that specifies when it should be delivered. Until with an OpenStreetMap opening_hours-like format that specifies the [Delivery Window](https://www.courier.com/docs/platform/sending/failover/#delivery-window) (e.g., 'Mo-Fr 08:00-18:00pm')
+	Delay *Delay `json:"delay,omitempty" url:"delay,omitempty"`
+	// "Expiry allows you to set an absolute or relative time in which a message expires.
+	// Note: This is only valid for the Courier Inbox channel as of 12-08-2022."
+	Expiry *Expiry `json:"expiry,omitempty" url:"expiry,omitempty"`
+	// Describes the content of the message in a way that will work for email, push,
+	// chat, or any channel. Either this or template must be specified.
+	Content *Content `json:"content,omitempty" url:"content,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (i *InboundBulkContentMessage) UnmarshalJSON(data []byte) error {
+	type unmarshaler InboundBulkContentMessage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = InboundBulkContentMessage(value)
+	i._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *InboundBulkContentMessage) String() string {
+	if len(i._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(i._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
 type InboundBulkMessage struct {
 	// A unique identifier that represents the brand that should be used
 	// for rendering the notification.
@@ -168,4 +315,211 @@ func (i *InboundBulkMessage) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", i)
+}
+
+type InboundBulkMessageUser struct {
+	Preferences *RecipientPreferences `json:"preferences,omitempty" url:"preferences,omitempty"`
+	Profile     interface{}           `json:"profile,omitempty" url:"profile,omitempty"`
+	Recipient   *string               `json:"recipient,omitempty" url:"recipient,omitempty"`
+	Data        interface{}           `json:"data,omitempty" url:"data,omitempty"`
+	To          *UserRecipient        `json:"to,omitempty" url:"to,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (i *InboundBulkMessageUser) UnmarshalJSON(data []byte) error {
+	type unmarshaler InboundBulkMessageUser
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = InboundBulkMessageUser(value)
+	i._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *InboundBulkMessageUser) String() string {
+	if len(i._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(i._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+type InboundBulkMessageV1 struct {
+	// A unique identifier that represents the brand that should be used
+	// for rendering the notification.
+	Brand *string `json:"brand,omitempty" url:"brand,omitempty"`
+	// JSON that includes any data you want to pass to a message template.
+	// The data will populate the corresponding template variables.
+	Data   map[string]interface{} `json:"data,omitempty" url:"data,omitempty"`
+	Event  *string                `json:"event,omitempty" url:"event,omitempty"`
+	Locale map[string]interface{} `json:"locale,omitempty" url:"locale,omitempty"`
+	// JSON that is merged into the request sent by Courier to the provider
+	// to override properties or to gain access to features in the provider
+	// API that are not natively supported by Courier.
+	Override interface{} `json:"override,omitempty" url:"override,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (i *InboundBulkMessageV1) UnmarshalJSON(data []byte) error {
+	type unmarshaler InboundBulkMessageV1
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = InboundBulkMessageV1(value)
+	i._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *InboundBulkMessageV1) String() string {
+	if len(i._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(i._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+type InboundBulkMessageV2 struct {
+	// Describes the content of the message in a way that will
+	// work for email, push, chat, or any channel.
+	InboundBulkTemplateMessage *InboundBulkTemplateMessage
+	// A template for a type of message that can be sent more than once.
+	// For example, you might create an "Appointment Reminder" Notification or
+	// “Reset Password” Notifications.
+	InboundBulkContentMessage *InboundBulkContentMessage
+}
+
+func (i *InboundBulkMessageV2) UnmarshalJSON(data []byte) error {
+	valueInboundBulkTemplateMessage := new(InboundBulkTemplateMessage)
+	if err := json.Unmarshal(data, &valueInboundBulkTemplateMessage); err == nil {
+		i.InboundBulkTemplateMessage = valueInboundBulkTemplateMessage
+		return nil
+	}
+	valueInboundBulkContentMessage := new(InboundBulkContentMessage)
+	if err := json.Unmarshal(data, &valueInboundBulkContentMessage); err == nil {
+		i.InboundBulkContentMessage = valueInboundBulkContentMessage
+		return nil
+	}
+	return fmt.Errorf("%s cannot be deserialized as a %T", data, i)
+}
+
+func (i InboundBulkMessageV2) MarshalJSON() ([]byte, error) {
+	if i.InboundBulkTemplateMessage != nil {
+		return json.Marshal(i.InboundBulkTemplateMessage)
+	}
+	if i.InboundBulkContentMessage != nil {
+		return json.Marshal(i.InboundBulkContentMessage)
+	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", i)
+}
+
+type InboundBulkMessageV2Visitor interface {
+	VisitInboundBulkTemplateMessage(*InboundBulkTemplateMessage) error
+	VisitInboundBulkContentMessage(*InboundBulkContentMessage) error
+}
+
+func (i *InboundBulkMessageV2) Accept(visitor InboundBulkMessageV2Visitor) error {
+	if i.InboundBulkTemplateMessage != nil {
+		return visitor.VisitInboundBulkTemplateMessage(i.InboundBulkTemplateMessage)
+	}
+	if i.InboundBulkContentMessage != nil {
+		return visitor.VisitInboundBulkContentMessage(i.InboundBulkContentMessage)
+	}
+	return fmt.Errorf("type %T does not include a non-empty union type", i)
+}
+
+type InboundBulkTemplateMessage struct {
+	// An arbitrary object that includes any data you want to pass to the message.
+	// The data will populate the corresponding template or elements variables.
+	Data    *MessageData `json:"data,omitempty" url:"data,omitempty"`
+	BrandId *string      `json:"brand_id,omitempty" url:"brand_id,omitempty"`
+	// "Define run-time configuration for one or more channels. If you don't specify channels, the default configuration for each channel will be used. Valid ChannelId's are: email, sms, push, inbox, direct_message, banner, and webhook."
+	Channels *MessageChannels `json:"channels,omitempty" url:"channels,omitempty"`
+	// Context to load with this recipient. Will override any context set on message.context.
+	Context *MessageContext `json:"context,omitempty" url:"context,omitempty"`
+	// Metadata such as utm tracking attached with the notification through this channel.
+	Metadata    *MessageMetadata    `json:"metadata,omitempty" url:"metadata,omitempty"`
+	Preferences *MessagePreferences `json:"preferences,omitempty" url:"preferences,omitempty"`
+	// An object whose keys are valid provider identifiers which map to an object.
+	Providers *MessageProviders `json:"providers,omitempty" url:"providers,omitempty"`
+	Routing   *Routing          `json:"routing,omitempty" url:"routing,omitempty"`
+	// Time in ms to attempt the channel before failing over to the next available channel.
+	Timeout *Timeout `json:"timeout,omitempty" url:"timeout,omitempty"`
+	// Defines the time to wait before delivering the message. You can specify one of the following options. Duration with the number of milliseconds to delay. Until with an ISO 8601 timestamp that specifies when it should be delivered. Until with an OpenStreetMap opening_hours-like format that specifies the [Delivery Window](https://www.courier.com/docs/platform/sending/failover/#delivery-window) (e.g., 'Mo-Fr 08:00-18:00pm')
+	Delay *Delay `json:"delay,omitempty" url:"delay,omitempty"`
+	// "Expiry allows you to set an absolute or relative time in which a message expires.
+	// Note: This is only valid for the Courier Inbox channel as of 12-08-2022."
+	Expiry *Expiry `json:"expiry,omitempty" url:"expiry,omitempty"`
+	// The id of the notification template to be rendered and sent to the recipient(s).
+	// This field or the content field must be supplied.
+	Template string `json:"template" url:"template"`
+
+	_rawJSON json.RawMessage
+}
+
+func (i *InboundBulkTemplateMessage) UnmarshalJSON(data []byte) error {
+	type unmarshaler InboundBulkTemplateMessage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = InboundBulkTemplateMessage(value)
+	i._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *InboundBulkTemplateMessage) String() string {
+	if len(i._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(i._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+type JobDetails struct {
+	Definition *InboundBulkMessage `json:"definition,omitempty" url:"definition,omitempty"`
+	Enqueued   int                 `json:"enqueued" url:"enqueued"`
+	Failures   int                 `json:"failures" url:"failures"`
+	Received   int                 `json:"received" url:"received"`
+	Status     BulkJobStatus       `json:"status,omitempty" url:"status,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (j *JobDetails) UnmarshalJSON(data []byte) error {
+	type unmarshaler JobDetails
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*j = JobDetails(value)
+	j._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (j *JobDetails) String() string {
+	if len(j._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(j._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(j); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", j)
 }

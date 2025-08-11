@@ -9,6 +9,51 @@ import (
 	core "github.com/trycourier/courier-go/v3/core"
 )
 
+type UserPreferencesTopicParams struct {
+	// Query the preferences of a user for this specific tenant context.
+	TenantId *string `json:"-" url:"tenant_id,omitempty"`
+}
+
+type UserPreferencesParams struct {
+	// Query the preferences of a user for this specific tenant context.
+	TenantId *string `json:"-" url:"tenant_id,omitempty"`
+}
+
+type TopicPreference struct {
+	// The Channels a user has chosen to receive notifications through for this topic
+	CustomRouting    []v3.ChannelClassification `json:"custom_routing,omitempty" url:"custom_routing,omitempty"`
+	DefaultStatus    v3.PreferenceStatus        `json:"default_status,omitempty" url:"default_status,omitempty"`
+	HasCustomRouting *bool                      `json:"has_custom_routing,omitempty" url:"has_custom_routing,omitempty"`
+	Status           v3.PreferenceStatus        `json:"status,omitempty" url:"status,omitempty"`
+	TopicId          string                     `json:"topic_id" url:"topic_id"`
+	TopicName        string                     `json:"topic_name" url:"topic_name"`
+
+	_rawJSON json.RawMessage
+}
+
+func (t *TopicPreference) UnmarshalJSON(data []byte) error {
+	type unmarshaler TopicPreference
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TopicPreference(value)
+	t._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TopicPreference) String() string {
+	if len(t._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(t._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
 type TopicPreferenceUpdate struct {
 	Status v3.PreferenceStatus `json:"status,omitempty" url:"status,omitempty"`
 	// The Channels a user has chosen to receive notifications through for this topic
@@ -132,5 +177,7 @@ func (u *UserPreferencesUpdateResponse) String() string {
 }
 
 type UserPreferencesUpdateParams struct {
-	Topic *TopicPreferenceUpdate `json:"topic,omitempty" url:"topic,omitempty"`
+	// Update the preferences of a user for this specific tenant context.
+	TenantId *string                `json:"-" url:"tenant_id,omitempty"`
+	Topic    *TopicPreferenceUpdate `json:"topic,omitempty" url:"topic,omitempty"`
 }

@@ -245,6 +245,7 @@ func (c *Client) GetUsers(
 	ctx context.Context,
 	// A unique identifier representing the bulk job
 	jobId string,
+	request *v3.BulkGetUsersParams,
 	opts ...option.RequestOption,
 ) (*v3.BulkGetJobUsersResponse, error) {
 	options := core.NewRequestOptions(opts...)
@@ -257,6 +258,14 @@ func (c *Client) GetUsers(
 		baseURL = options.BaseURL
 	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"bulk/%v/users", jobId)
+
+	queryParams, err := core.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	if len(queryParams) > 0 {
+		endpointURL += "?" + queryParams.Encode()
+	}
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 

@@ -163,7 +163,7 @@ func (c *Client) Update(
 	listId string,
 	request *v3.ListPutParams,
 	opts ...option.RequestOption,
-) (*v3.List, error) {
+) error {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://api.courier.com"
@@ -177,7 +177,6 @@ func (c *Client) Update(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
-	var response *v3.List
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -187,12 +186,11 @@ func (c *Client) Update(
 			Headers:     headers,
 			Client:      options.HTTPClient,
 			Request:     request,
-			Response:    &response,
 		},
 	); err != nil {
-		return nil, err
+		return err
 	}
-	return response, nil
+	return nil
 }
 
 // Delete a list by list ID.
@@ -235,6 +233,7 @@ func (c *Client) Restore(
 	ctx context.Context,
 	// A unique identifier representing the list you wish to retrieve.
 	listId string,
+	request *v3.RestoreListRequest,
 	opts ...option.RequestOption,
 ) error {
 	options := core.NewRequestOptions(opts...)
@@ -258,6 +257,7 @@ func (c *Client) Restore(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Request:     request,
 		},
 	); err != nil {
 		return err

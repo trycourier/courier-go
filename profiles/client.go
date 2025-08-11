@@ -213,6 +213,42 @@ func (c *Client) Replace(
 	return response, nil
 }
 
+func (c *Client) MergeProfile(
+	ctx context.Context,
+	// A unique identifier representing the user associated with the requested profile.
+	userId string,
+	request *v3.ProfileUpdateRequest,
+	opts ...option.RequestOption,
+) error {
+	options := core.NewRequestOptions(opts...)
+
+	baseURL := "https://api.courier.com"
+	if c.baseURL != "" {
+		baseURL = c.baseURL
+	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
+	endpointURL := fmt.Sprintf(baseURL+"/"+"profiles/%v", userId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+
+	if err := c.caller.Call(
+		ctx,
+		&core.CallParams{
+			URL:         endpointURL,
+			Method:      http.MethodPatch,
+			MaxAttempts: options.MaxAttempts,
+			Headers:     headers,
+			Client:      options.HTTPClient,
+			Request:     request,
+		},
+	); err != nil {
+		return err
+	}
+	return nil
+}
+
 // Deletes the specified user profile.
 func (c *Client) Delete(
 	ctx context.Context,

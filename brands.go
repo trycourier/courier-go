@@ -62,6 +62,37 @@ func (b *Brand) String() string {
 	return fmt.Sprintf("%#v", b)
 }
 
+type BrandColors struct {
+	Primary   *string `json:"primary,omitempty" url:"primary,omitempty"`
+	Secondary *string `json:"secondary,omitempty" url:"secondary,omitempty"`
+	Tertiary  *string `json:"tertiary,omitempty" url:"tertiary,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (b *BrandColors) UnmarshalJSON(data []byte) error {
+	type unmarshaler BrandColors
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = BrandColors(value)
+	b._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BrandColors) String() string {
+	if len(b._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(b._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
+}
+
 type BrandParameters struct {
 	Id *string `json:"id,omitempty" url:"id,omitempty"`
 	// The name of the brand.
@@ -115,6 +146,58 @@ func (b *BrandSettings) UnmarshalJSON(data []byte) error {
 }
 
 func (b *BrandSettings) String() string {
+	if len(b._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(b._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
+}
+
+type BrandSnippet struct {
+	Name   string `json:"name" url:"name"`
+	Value  string `json:"value" url:"value"`
+	format string
+
+	_rawJSON json.RawMessage
+}
+
+func (b *BrandSnippet) Format() string {
+	return b.format
+}
+
+func (b *BrandSnippet) UnmarshalJSON(data []byte) error {
+	type embed BrandSnippet
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*b),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+		return err
+	}
+	*b = BrandSnippet(unmarshaler.embed)
+	b.format = "handlebars"
+	b._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BrandSnippet) MarshalJSON() ([]byte, error) {
+	type embed BrandSnippet
+	var marshaler = struct {
+		embed
+		Format string `json:"format"`
+	}{
+		embed:  embed(*b),
+		Format: "handlebars",
+	}
+	return json.Marshal(marshaler)
+}
+
+func (b *BrandSnippet) String() string {
 	if len(b._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(b._rawJSON); err == nil {
 			return value
@@ -183,4 +266,34 @@ func (b *BrandsResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", b)
+}
+
+type Email struct {
+	Footer interface{} `json:"footer,omitempty" url:"footer,omitempty"`
+	Header interface{} `json:"header,omitempty" url:"header,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (e *Email) UnmarshalJSON(data []byte) error {
+	type unmarshaler Email
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = Email(value)
+	e._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *Email) String() string {
+	if len(e._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(e._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
 }

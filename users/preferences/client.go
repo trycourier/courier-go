@@ -41,6 +41,7 @@ func (c *Client) List(
 	ctx context.Context,
 	// A unique identifier associated with the user whose preferences you wish to retrieve.
 	userId string,
+	request *users.UserPreferencesParams,
 	opts ...option.RequestOption,
 ) (*users.UserPreferencesListResponse, error) {
 	options := core.NewRequestOptions(opts...)
@@ -53,6 +54,14 @@ func (c *Client) List(
 		baseURL = options.BaseURL
 	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v/preferences", userId)
+
+	queryParams, err := core.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	if len(queryParams) > 0 {
+		endpointURL += "?" + queryParams.Encode()
+	}
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -100,6 +109,7 @@ func (c *Client) Get(
 	userId string,
 	// A unique identifier associated with a subscription topic.
 	topicId string,
+	request *users.UserPreferencesTopicParams,
 	opts ...option.RequestOption,
 ) (*users.UserPreferencesGetResponse, error) {
 	options := core.NewRequestOptions(opts...)
@@ -112,6 +122,14 @@ func (c *Client) Get(
 		baseURL = options.BaseURL
 	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v/preferences/%v", userId, topicId)
+
+	queryParams, err := core.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	if len(queryParams) > 0 {
+		endpointURL += "?" + queryParams.Encode()
+	}
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -172,6 +190,14 @@ func (c *Client) Update(
 		baseURL = options.BaseURL
 	}
 	endpointURL := fmt.Sprintf(baseURL+"/"+"users/%v/preferences/%v", userId, topicId)
+
+	queryParams, err := core.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	if len(queryParams) > 0 {
+		endpointURL += "?" + queryParams.Encode()
+	}
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 

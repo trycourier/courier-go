@@ -23,6 +23,13 @@ type TenantCreateOrReplaceParams struct {
 	BrandId *string `json:"brand_id,omitempty" url:"brand_id,omitempty"`
 }
 
+type GetTemplateListByTenantParams struct {
+	// The number of templates to return (defaults to 20, maximum value of 100)
+	Limit *int `json:"-" url:"limit,omitempty"`
+	// Continue the pagination with the next cursor
+	Cursor *string `json:"-" url:"cursor,omitempty"`
+}
+
 type ListUsersForTenantParams struct {
 	// The number of accounts to return
 	// (defaults to 20, maximum value of 100)
@@ -39,6 +46,183 @@ type ListTenantParams struct {
 	Limit *int `json:"-" url:"limit,omitempty"`
 	// Continue the pagination with the next cursor
 	Cursor *string `json:"-" url:"cursor,omitempty"`
+}
+
+type BaseTemplateTenantAssociation struct {
+	// The template's id
+	Id string `json:"id" url:"id"`
+	// The timestamp at which the template was created
+	CreatedAt string `json:"created_at" url:"created_at"`
+	// The timestamp at which the template was last updated
+	UpdatedAt string `json:"updated_at" url:"updated_at"`
+	// The timestamp at which the template was published
+	PublishedAt string `json:"published_at" url:"published_at"`
+	// The version of the template
+	Version string `json:"version" url:"version"`
+
+	_rawJSON json.RawMessage
+}
+
+func (b *BaseTemplateTenantAssociation) UnmarshalJSON(data []byte) error {
+	type unmarshaler BaseTemplateTenantAssociation
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = BaseTemplateTenantAssociation(value)
+	b._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BaseTemplateTenantAssociation) String() string {
+	if len(b._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(b._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
+}
+
+type ListTemplateTenantAssociation struct {
+	// The template's id
+	Id string `json:"id" url:"id"`
+	// The timestamp at which the template was created
+	CreatedAt string `json:"created_at" url:"created_at"`
+	// The timestamp at which the template was last updated
+	UpdatedAt string `json:"updated_at" url:"updated_at"`
+	// The timestamp at which the template was published
+	PublishedAt string `json:"published_at" url:"published_at"`
+	// The version of the template
+	Version string                       `json:"version" url:"version"`
+	Data    *TenantTemplateDataNoContent `json:"data,omitempty" url:"data,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (l *ListTemplateTenantAssociation) UnmarshalJSON(data []byte) error {
+	type unmarshaler ListTemplateTenantAssociation
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*l = ListTemplateTenantAssociation(value)
+	l._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (l *ListTemplateTenantAssociation) String() string {
+	if len(l._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(l._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(l); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", l)
+}
+
+type SingleTemplateTenantAssociation struct {
+	// The template's id
+	Id string `json:"id" url:"id"`
+	// The timestamp at which the template was created
+	CreatedAt string `json:"created_at" url:"created_at"`
+	// The timestamp at which the template was last updated
+	UpdatedAt string `json:"updated_at" url:"updated_at"`
+	// The timestamp at which the template was published
+	PublishedAt string `json:"published_at" url:"published_at"`
+	// The version of the template
+	Version string              `json:"version" url:"version"`
+	Data    *TenantTemplateData `json:"data,omitempty" url:"data,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (s *SingleTemplateTenantAssociation) UnmarshalJSON(data []byte) error {
+	type unmarshaler SingleTemplateTenantAssociation
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SingleTemplateTenantAssociation(value)
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SingleTemplateTenantAssociation) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+// The template's data containing it's routing configs and Elemental content
+type TenantTemplateData struct {
+	Routing *MessageRouting   `json:"routing,omitempty" url:"routing,omitempty"`
+	Content *ElementalContent `json:"content,omitempty" url:"content,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (t *TenantTemplateData) UnmarshalJSON(data []byte) error {
+	type unmarshaler TenantTemplateData
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TenantTemplateData(value)
+	t._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TenantTemplateData) String() string {
+	if len(t._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(t._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+// The template's data containing it's routing configs
+type TenantTemplateDataNoContent struct {
+	Routing *MessageRouting `json:"routing,omitempty" url:"routing,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (t *TenantTemplateDataNoContent) UnmarshalJSON(data []byte) error {
+	type unmarshaler TenantTemplateDataNoContent
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TenantTemplateDataNoContent(value)
+	t._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TenantTemplateDataNoContent) String() string {
+	if len(t._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(t._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
 }
 
 type DefaultPreferences struct {
@@ -68,6 +252,107 @@ func (d *DefaultPreferences) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", d)
+}
+
+type GetTemplateByTenantResponse struct {
+	// The template's id
+	Id string `json:"id" url:"id"`
+	// The timestamp at which the template was created
+	CreatedAt string `json:"created_at" url:"created_at"`
+	// The timestamp at which the template was last updated
+	UpdatedAt string `json:"updated_at" url:"updated_at"`
+	// The timestamp at which the template was published
+	PublishedAt string `json:"published_at" url:"published_at"`
+	// The version of the template
+	Version string              `json:"version" url:"version"`
+	Data    *TenantTemplateData `json:"data,omitempty" url:"data,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (g *GetTemplateByTenantResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler GetTemplateByTenantResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GetTemplateByTenantResponse(value)
+	g._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GetTemplateByTenantResponse) String() string {
+	if len(g._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(g._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
+type ListTemplatesByTenantResponse struct {
+	Items []*ListTemplateTenantAssociation `json:"items,omitempty" url:"items,omitempty"`
+	// Set to true when there are more pages that can be retrieved.
+	HasMore bool `json:"has_more" url:"has_more"`
+	// A url that may be used to generate these results.
+	Url string `json:"url" url:"url"`
+	// A url that may be used to generate fetch the next set of results.
+	// Defined only when `has_more` is set to true
+	NextUrl *string `json:"next_url,omitempty" url:"next_url,omitempty"`
+	// A pointer to the next page of results. Defined
+	// only when `has_more` is set to true
+	Cursor *string `json:"cursor,omitempty" url:"cursor,omitempty"`
+	// Always set to `list`. Represents the type of this object.
+	type_ string
+
+	_rawJSON json.RawMessage
+}
+
+func (l *ListTemplatesByTenantResponse) Type() string {
+	return l.type_
+}
+
+func (l *ListTemplatesByTenantResponse) UnmarshalJSON(data []byte) error {
+	type embed ListTemplatesByTenantResponse
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*l),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+		return err
+	}
+	*l = ListTemplatesByTenantResponse(unmarshaler.embed)
+	l.type_ = "list"
+	l._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (l *ListTemplatesByTenantResponse) MarshalJSON() ([]byte, error) {
+	type embed ListTemplatesByTenantResponse
+	var marshaler = struct {
+		embed
+		Type string `json:"type"`
+	}{
+		embed: embed(*l),
+		Type:  "list",
+	}
+	return json.Marshal(marshaler)
+}
+
+func (l *ListTemplatesByTenantResponse) String() string {
+	if len(l._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(l._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(l); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", l)
 }
 
 type ListUsersForTenantResponse struct {
@@ -132,6 +417,41 @@ func (l *ListUsersForTenantResponse) String() string {
 	return fmt.Sprintf("%#v", l)
 }
 
+type SubscriptionTopic struct {
+	Status SubscriptionTopicStatus `json:"status,omitempty" url:"status,omitempty"`
+	// Override channel routing with custom preferences. This will override any template prefernces that are set, but a user can still customize their preferences
+	HasCustomRouting *bool `json:"has_custom_routing,omitempty" url:"has_custom_routing,omitempty"`
+	// The default channels to send to this tenant when has_custom_routing is enabled
+	CustomRouting []ChannelClassification `json:"custom_routing,omitempty" url:"custom_routing,omitempty"`
+	// Topic ID
+	Id string `json:"id" url:"id"`
+
+	_rawJSON json.RawMessage
+}
+
+func (s *SubscriptionTopic) UnmarshalJSON(data []byte) error {
+	type unmarshaler SubscriptionTopic
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SubscriptionTopic(value)
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SubscriptionTopic) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
 type SubscriptionTopicNew struct {
 	Status SubscriptionTopicStatus `json:"status,omitempty" url:"status,omitempty"`
 	// Override channel routing with custom preferences. This will override any template prefernces that are set, but a user can still customize their preferences
@@ -163,6 +483,31 @@ func (s *SubscriptionTopicNew) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", s)
+}
+
+type SubscriptionTopicStatus string
+
+const (
+	SubscriptionTopicStatusOptedOut SubscriptionTopicStatus = "OPTED_OUT"
+	SubscriptionTopicStatusOptedIn  SubscriptionTopicStatus = "OPTED_IN"
+	SubscriptionTopicStatusRequired SubscriptionTopicStatus = "REQUIRED"
+)
+
+func NewSubscriptionTopicStatusFromString(s string) (SubscriptionTopicStatus, error) {
+	switch s {
+	case "OPTED_OUT":
+		return SubscriptionTopicStatusOptedOut, nil
+	case "OPTED_IN":
+		return SubscriptionTopicStatusOptedIn, nil
+	case "REQUIRED":
+		return SubscriptionTopicStatusRequired, nil
+	}
+	var t SubscriptionTopicStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (s SubscriptionTopicStatus) Ptr() *SubscriptionTopicStatus {
+	return &s
 }
 
 type Tenant struct {

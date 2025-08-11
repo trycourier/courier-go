@@ -71,6 +71,42 @@ func (d *DeleteListSubscriptionResponse) String() string {
 	return fmt.Sprintf("%#v", d)
 }
 
+type GetListSubscriptionsList struct {
+	Id string `json:"id" url:"id"`
+	// List name
+	Name string `json:"name" url:"name"`
+	// The date/time of when the list was created. Represented as a string in ISO format.
+	Created string `json:"created" url:"created"`
+	// The date/time of when the list was updated. Represented as a string in ISO format.
+	Updated     string                `json:"updated" url:"updated"`
+	Preferences *RecipientPreferences `json:"preferences,omitempty" url:"preferences,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (g *GetListSubscriptionsList) UnmarshalJSON(data []byte) error {
+	type unmarshaler GetListSubscriptionsList
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GetListSubscriptionsList(value)
+	g._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GetListSubscriptionsList) String() string {
+	if len(g._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(g._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
 type GetListSubscriptionsResponse struct {
 	Paging *Paging `json:"paging,omitempty" url:"paging,omitempty"`
 	// An array of lists
@@ -182,6 +218,36 @@ func (p *ProfileGetResponse) String() string {
 	return fmt.Sprintf("%#v", p)
 }
 
+type ProfileUpdateRequest struct {
+	// List of patch operations to apply to the profile.
+	Patch []*UserProfilePatch `json:"patch,omitempty" url:"patch,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (p *ProfileUpdateRequest) UnmarshalJSON(data []byte) error {
+	type unmarshaler ProfileUpdateRequest
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = ProfileUpdateRequest(value)
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *ProfileUpdateRequest) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
 type ReplaceProfileResponse struct {
 	status string
 
@@ -261,6 +327,36 @@ func (s *SubscribeToListsRequest) String() string {
 	return fmt.Sprintf("%#v", s)
 }
 
+type SubscribeToListsRequestListObject struct {
+	ListId      string                `json:"listId" url:"listId"`
+	Preferences *RecipientPreferences `json:"preferences,omitempty" url:"preferences,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (s *SubscribeToListsRequestListObject) UnmarshalJSON(data []byte) error {
+	type unmarshaler SubscribeToListsRequestListObject
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SubscribeToListsRequestListObject(value)
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SubscribeToListsRequestListObject) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
 type SubscribeToListsResponse struct {
 	status string
 
@@ -309,4 +405,38 @@ func (s *SubscribeToListsResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", s)
+}
+
+type UserProfilePatch struct {
+	// The operation to perform.
+	Op string `json:"op" url:"op"`
+	// The JSON path specifying the part of the profile to operate on.
+	Path string `json:"path" url:"path"`
+	// The value for the operation.
+	Value string `json:"value" url:"value"`
+
+	_rawJSON json.RawMessage
+}
+
+func (u *UserProfilePatch) UnmarshalJSON(data []byte) error {
+	type unmarshaler UserProfilePatch
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*u = UserProfilePatch(value)
+	u._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (u *UserProfilePatch) String() string {
+	if len(u._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(u._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(u); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", u)
 }

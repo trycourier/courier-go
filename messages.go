@@ -128,6 +128,59 @@ func (m *MessageDetails) String() string {
 	return fmt.Sprintf("%#v", m)
 }
 
+type MessageDetailsExtended struct {
+	// A unique identifier associated with the message you wish to retrieve (results from a send).
+	Id string `json:"id" url:"id"`
+	// The current status of the message.
+	Status MessageStatus `json:"status,omitempty" url:"status,omitempty"`
+	// A UTC timestamp at which Courier received the message request. Stored as a millisecond representation of the Unix epoch.
+	Enqueued int64 `json:"enqueued" url:"enqueued"`
+	// A UTC timestamp at which Courier passed the message to the Integration provider. Stored as a millisecond representation of the Unix epoch.
+	Sent int64 `json:"sent" url:"sent"`
+	// A UTC timestamp at which the Integration provider delivered the message. Stored as a millisecond representation of the Unix epoch.
+	Delivered int64 `json:"delivered" url:"delivered"`
+	// A UTC timestamp at which the recipient opened a message for the first time. Stored as a millisecond representation of the Unix epoch.
+	Opened int64 `json:"opened" url:"opened"`
+	// A UTC timestamp at which the recipient clicked on a tracked link for the first time. Stored as a millisecond representation of the Unix epoch.
+	Clicked int64 `json:"clicked" url:"clicked"`
+	// A unique identifier associated with the recipient of the delivered message.
+	Recipient string `json:"recipient" url:"recipient"`
+	// A unique identifier associated with the event of the delivered message.
+	Event string `json:"event" url:"event"`
+	// A unique identifier associated with the notification of the delivered message.
+	Notification string `json:"notification" url:"notification"`
+	// A message describing the error that occurred.
+	Error *string `json:"error,omitempty" url:"error,omitempty"`
+	// The reason for the current status of the message.
+	Reason    *Reason                  `json:"reason,omitempty" url:"reason,omitempty"`
+	Providers []map[string]interface{} `json:"providers,omitempty" url:"providers,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (m *MessageDetailsExtended) UnmarshalJSON(data []byte) error {
+	type unmarshaler MessageDetailsExtended
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = MessageDetailsExtended(value)
+	m._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *MessageDetailsExtended) String() string {
+	if len(m._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(m._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
+}
+
 type MessageHistoryResponse struct {
 	Results []map[string]interface{} `json:"results,omitempty" url:"results,omitempty"`
 
@@ -157,6 +210,168 @@ func (m *MessageHistoryResponse) String() string {
 	return fmt.Sprintf("%#v", m)
 }
 
+type MessageStatus string
+
+const (
+	// The message has been canceled such that it will not be delivered.
+	MessageStatusCanceled MessageStatus = "CANCELED"
+	// The recipient has clicked on any link in the message at least one time.
+	MessageStatusClicked MessageStatus = "CLICKED"
+	// The message has been delayed and will be attempted for delivery at a later time.
+	MessageStatusDelayed MessageStatus = "DELAYED"
+	// The provider successfully delivered the message to the recipient.
+	MessageStatusDelivered MessageStatus = "DELIVERED"
+	// The message has been aggregated into a digest and will be sent according to digest rules.
+	MessageStatusDigested MessageStatus = "DIGESTED"
+	// The request has been received to send a message, is waiting in the work queue.
+	MessageStatusEnqueued MessageStatus = "ENQUEUED"
+	// The message was filtered out based on configured rules or preferences.
+	MessageStatusFiltered MessageStatus = "FILTERED"
+	// The recipient has opened the message at least one time.
+	MessageStatusOpened MessageStatus = "OPENED"
+	// The message has been successfully routed to a specific channel or provider.
+	MessageStatusRouted MessageStatus = "ROUTED"
+	// The message has been accepted by the provider.
+	MessageStatusSent MessageStatus = "SENT"
+	// The message was sent with a mock key and Courier simulated the message lifecycle without sending to the downstream provider.
+	MessageStatusSimulated MessageStatus = "SIMULATED"
+	// The message was throttled by Courier.
+	MessageStatusThrottled MessageStatus = "THROTTLED"
+	// The message could not be delivered to at least one provider, or the provider could not deliver the message to the recipient. This can happen for multiple reasons: an error, insufficient profile data, invalid notification setup, invalid integration configuration, etc.
+	MessageStatusUndeliverable MessageStatus = "UNDELIVERABLE"
+	// Could not find a corresponding notification or event for the messages.
+	MessageStatusUnmapped MessageStatus = "UNMAPPED"
+	// The message could not be routed to any channel or provider. This can happen for multiple reasons: insufficient profile data, invalid notification setup, invalid integration configuration, etc.
+	MessageStatusUnroutable MessageStatus = "UNROUTABLE"
+)
+
+func NewMessageStatusFromString(s string) (MessageStatus, error) {
+	switch s {
+	case "CANCELED":
+		return MessageStatusCanceled, nil
+	case "CLICKED":
+		return MessageStatusClicked, nil
+	case "DELAYED":
+		return MessageStatusDelayed, nil
+	case "DELIVERED":
+		return MessageStatusDelivered, nil
+	case "DIGESTED":
+		return MessageStatusDigested, nil
+	case "ENQUEUED":
+		return MessageStatusEnqueued, nil
+	case "FILTERED":
+		return MessageStatusFiltered, nil
+	case "OPENED":
+		return MessageStatusOpened, nil
+	case "ROUTED":
+		return MessageStatusRouted, nil
+	case "SENT":
+		return MessageStatusSent, nil
+	case "SIMULATED":
+		return MessageStatusSimulated, nil
+	case "THROTTLED":
+		return MessageStatusThrottled, nil
+	case "UNDELIVERABLE":
+		return MessageStatusUndeliverable, nil
+	case "UNMAPPED":
+		return MessageStatusUnmapped, nil
+	case "UNROUTABLE":
+		return MessageStatusUnroutable, nil
+	}
+	var t MessageStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (m MessageStatus) Ptr() *MessageStatus {
+	return &m
+}
+
+type Reason string
+
+const (
+	// The message bounced and was not delivered.
+	ReasonBounced Reason = "BOUNCED"
+	// The message failed to be delivered.
+	ReasonFailed Reason = "FAILED"
+	// The recipient did not receive the notification because of a condition that passed.
+	ReasonFiltered Reason = "FILTERED"
+	// The notification did not contain any valid channels.
+	ReasonNoChannels Reason = "NO_CHANNELS"
+	// The notification did not contain a configured provider for a channel.
+	ReasonNoProviders Reason = "NO_PROVIDERS"
+	// The recipient has not opted in to receive this type of notification.
+	ReasonOptInRequired Reason = "OPT_IN_REQUIRED"
+	// The Integration provider had an error when sending a notification.
+	ReasonProviderError Reason = "PROVIDER_ERROR"
+	// The notification hasn't been published yet.
+	ReasonUnpublished Reason = "UNPUBLISHED"
+	// The recipient did not receive the notification because they chose to unsubscribe from it.
+	ReasonUnsubscribed Reason = "UNSUBSCRIBED"
+)
+
+func NewReasonFromString(s string) (Reason, error) {
+	switch s {
+	case "BOUNCED":
+		return ReasonBounced, nil
+	case "FAILED":
+		return ReasonFailed, nil
+	case "FILTERED":
+		return ReasonFiltered, nil
+	case "NO_CHANNELS":
+		return ReasonNoChannels, nil
+	case "NO_PROVIDERS":
+		return ReasonNoProviders, nil
+	case "OPT_IN_REQUIRED":
+		return ReasonOptInRequired, nil
+	case "PROVIDER_ERROR":
+		return ReasonProviderError, nil
+	case "UNPUBLISHED":
+		return ReasonUnpublished, nil
+	case "UNSUBSCRIBED":
+		return ReasonUnsubscribed, nil
+	}
+	var t Reason
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (r Reason) Ptr() *Reason {
+	return &r
+}
+
+type RenderOutput struct {
+	// The channel used for rendering the message.
+	Channel string `json:"channel" url:"channel"`
+	// The ID of channel used for rendering the message.
+	ChannelId string `json:"channel_id" url:"channel_id"`
+	// Content details of the rendered message.
+	Content *RenderedMessageContent `json:"content,omitempty" url:"content,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (r *RenderOutput) UnmarshalJSON(data []byte) error {
+	type unmarshaler RenderOutput
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = RenderOutput(value)
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *RenderOutput) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
 type RenderOutputResponse struct {
 	// An array of render output of a previously sent message.
 	Results []*RenderOutput `json:"results,omitempty" url:"results,omitempty"`
@@ -176,6 +391,78 @@ func (r *RenderOutputResponse) UnmarshalJSON(data []byte) error {
 }
 
 func (r *RenderOutputResponse) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
+type RenderedMessageBlock struct {
+	// The block type of the rendered message block.
+	Type string `json:"type" url:"type"`
+	// The block text of the rendered message block.
+	Text string `json:"text" url:"text"`
+
+	_rawJSON json.RawMessage
+}
+
+func (r *RenderedMessageBlock) UnmarshalJSON(data []byte) error {
+	type unmarshaler RenderedMessageBlock
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = RenderedMessageBlock(value)
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *RenderedMessageBlock) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
+type RenderedMessageContent struct {
+	// The html content of the rendered message.
+	Html string `json:"html" url:"html"`
+	// The title of the rendered message.
+	Title string `json:"title" url:"title"`
+	// The body of the rendered message.
+	Body string `json:"body" url:"body"`
+	// The subject of the rendered message.
+	Subject string `json:"subject" url:"subject"`
+	// The text of the rendered message.
+	Text string `json:"text" url:"text"`
+	// The blocks of the rendered message.
+	Blocks []*RenderedMessageBlock `json:"blocks,omitempty" url:"blocks,omitempty"`
+
+	_rawJSON json.RawMessage
+}
+
+func (r *RenderedMessageContent) UnmarshalJSON(data []byte) error {
+	type unmarshaler RenderedMessageContent
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = RenderedMessageContent(value)
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *RenderedMessageContent) String() string {
 	if len(r._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
 			return value
