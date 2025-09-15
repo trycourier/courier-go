@@ -2614,6 +2614,7 @@ type Channel struct {
 	RoutingMethod *RoutingMethod `json:"routing_method,omitempty" url:"routing_method,omitempty"`
 	// A JavaScript conditional expression to determine if the message should
 	// be sent through the channel. Has access to the data and profile object.
+	// Only applies when a custom routing strategy is defined.
 	// For example, `data.name === profile.name`
 	If       *string   `json:"if,omitempty" url:"if,omitempty"`
 	Timeouts *Timeouts `json:"timeouts,omitempty" url:"timeouts,omitempty"`
@@ -4281,9 +4282,10 @@ type MessageProviders = map[string]*MessageProvidersType
 type MessageProvidersType struct {
 	// Provider specific overrides.
 	Override map[string]interface{} `json:"override,omitempty" url:"override,omitempty"`
-	// A JavaScript conditional expression to determine if the message should be sent
-	// through the channel. Has access to the data and profile object. For example,
-	// `data.name === profile.name`
+	// A JavaScript conditional expression to determine if the message should
+	// be sent through the provider. Has access to the data and profile object.
+	// Only applies when a custom routing strategy is defined.
+	// For example, `data.name === profile.name`
 	If       *string   `json:"if,omitempty" url:"if,omitempty"`
 	Timeouts *int      `json:"timeouts,omitempty" url:"timeouts,omitempty"`
 	Metadata *Metadata `json:"metadata,omitempty" url:"metadata,omitempty"`
@@ -4651,7 +4653,7 @@ type Routing struct {
 	// A list of channels or providers to send the message through. Can also recursively define
 	// sub-routing methods, which can be useful for defining advanced push notification
 	// delivery strategies.
-	Channels []*RoutingChannel `json:"channels,omitempty" url:"channels,omitempty"`
+	Channels []*MessageRoutingChannel `json:"channels,omitempty" url:"channels,omitempty"`
 
 	_rawJSON json.RawMessage
 }
@@ -4679,63 +4681,6 @@ func (r *Routing) String() string {
 	return fmt.Sprintf("%#v", r)
 }
 
-type RoutingChannel struct {
-	RoutingStrategyChannel  *RoutingStrategyChannel
-	RoutingStrategyProvider *RoutingStrategyProvider
-	String                  string
-}
-
-func (r *RoutingChannel) UnmarshalJSON(data []byte) error {
-	valueRoutingStrategyChannel := new(RoutingStrategyChannel)
-	if err := json.Unmarshal(data, &valueRoutingStrategyChannel); err == nil {
-		r.RoutingStrategyChannel = valueRoutingStrategyChannel
-		return nil
-	}
-	valueRoutingStrategyProvider := new(RoutingStrategyProvider)
-	if err := json.Unmarshal(data, &valueRoutingStrategyProvider); err == nil {
-		r.RoutingStrategyProvider = valueRoutingStrategyProvider
-		return nil
-	}
-	var valueString string
-	if err := json.Unmarshal(data, &valueString); err == nil {
-		r.String = valueString
-		return nil
-	}
-	return fmt.Errorf("%s cannot be deserialized as a %T", data, r)
-}
-
-func (r RoutingChannel) MarshalJSON() ([]byte, error) {
-	if r.RoutingStrategyChannel != nil {
-		return json.Marshal(r.RoutingStrategyChannel)
-	}
-	if r.RoutingStrategyProvider != nil {
-		return json.Marshal(r.RoutingStrategyProvider)
-	}
-	if r.String != "" {
-		return json.Marshal(r.String)
-	}
-	return nil, fmt.Errorf("type %T does not include a non-empty union type", r)
-}
-
-type RoutingChannelVisitor interface {
-	VisitRoutingStrategyChannel(*RoutingStrategyChannel) error
-	VisitRoutingStrategyProvider(*RoutingStrategyProvider) error
-	VisitString(string) error
-}
-
-func (r *RoutingChannel) Accept(visitor RoutingChannelVisitor) error {
-	if r.RoutingStrategyChannel != nil {
-		return visitor.VisitRoutingStrategyChannel(r.RoutingStrategyChannel)
-	}
-	if r.RoutingStrategyProvider != nil {
-		return visitor.VisitRoutingStrategyProvider(r.RoutingStrategyProvider)
-	}
-	if r.String != "" {
-		return visitor.VisitString(r.String)
-	}
-	return fmt.Errorf("type %T does not include a non-empty union type", r)
-}
-
 type RoutingMethod string
 
 const (
@@ -4756,71 +4701,6 @@ func NewRoutingMethodFromString(s string) (RoutingMethod, error) {
 
 func (r RoutingMethod) Ptr() *RoutingMethod {
 	return &r
-}
-
-type RoutingStrategyChannel struct {
-	Channel   string                 `json:"channel" url:"channel"`
-	Config    map[string]interface{} `json:"config,omitempty" url:"config,omitempty"`
-	Method    *RoutingMethod         `json:"method,omitempty" url:"method,omitempty"`
-	Providers *MessageProviders      `json:"providers,omitempty" url:"providers,omitempty"`
-	If        *string                `json:"if,omitempty" url:"if,omitempty"`
-
-	_rawJSON json.RawMessage
-}
-
-func (r *RoutingStrategyChannel) UnmarshalJSON(data []byte) error {
-	type unmarshaler RoutingStrategyChannel
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*r = RoutingStrategyChannel(value)
-	r._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (r *RoutingStrategyChannel) String() string {
-	if len(r._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(r); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", r)
-}
-
-type RoutingStrategyProvider struct {
-	Name     string                 `json:"name" url:"name"`
-	Config   map[string]interface{} `json:"config,omitempty" url:"config,omitempty"`
-	If       *string                `json:"if,omitempty" url:"if,omitempty"`
-	Metadata *Metadata              `json:"metadata,omitempty" url:"metadata,omitempty"`
-
-	_rawJSON json.RawMessage
-}
-
-func (r *RoutingStrategyProvider) UnmarshalJSON(data []byte) error {
-	type unmarshaler RoutingStrategyProvider
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*r = RoutingStrategyProvider(value)
-	r._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (r *RoutingStrategyProvider) String() string {
-	if len(r._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(r); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", r)
 }
 
 type RuleType string
