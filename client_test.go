@@ -38,7 +38,7 @@ func TestUserAgentHeader(t *testing.T) {
 			},
 		}),
 	)
-	client.Send.SendMessage(context.Background(), courier.SendSendMessageParams{
+	client.Send.Message(context.Background(), courier.SendMessageParams{
 		Message: courier.MessageUnionParam{
 			OfContentMessage: &courier.MessageContentMessageParam{
 				BaseMessageParam:       courier.BaseMessageParam{},
@@ -77,7 +77,7 @@ func TestRetryAfter(t *testing.T) {
 			},
 		}),
 	)
-	_, err := client.Send.SendMessage(context.Background(), courier.SendSendMessageParams{
+	_, err := client.Send.Message(context.Background(), courier.SendMessageParams{
 		Message: courier.MessageUnionParam{
 			OfContentMessage: &courier.MessageContentMessageParam{
 				BaseMessageParam:       courier.BaseMessageParam{},
@@ -127,7 +127,7 @@ func TestDeleteRetryCountHeader(t *testing.T) {
 		}),
 		option.WithHeaderDel("X-Stainless-Retry-Count"),
 	)
-	_, err := client.Send.SendMessage(context.Background(), courier.SendSendMessageParams{
+	_, err := client.Send.Message(context.Background(), courier.SendMessageParams{
 		Message: courier.MessageUnionParam{
 			OfContentMessage: &courier.MessageContentMessageParam{
 				BaseMessageParam:       courier.BaseMessageParam{},
@@ -172,7 +172,7 @@ func TestOverwriteRetryCountHeader(t *testing.T) {
 		}),
 		option.WithHeader("X-Stainless-Retry-Count", "42"),
 	)
-	_, err := client.Send.SendMessage(context.Background(), courier.SendSendMessageParams{
+	_, err := client.Send.Message(context.Background(), courier.SendMessageParams{
 		Message: courier.MessageUnionParam{
 			OfContentMessage: &courier.MessageContentMessageParam{
 				BaseMessageParam:       courier.BaseMessageParam{},
@@ -216,7 +216,7 @@ func TestRetryAfterMs(t *testing.T) {
 			},
 		}),
 	)
-	_, err := client.Send.SendMessage(context.Background(), courier.SendSendMessageParams{
+	_, err := client.Send.Message(context.Background(), courier.SendMessageParams{
 		Message: courier.MessageUnionParam{
 			OfContentMessage: &courier.MessageContentMessageParam{
 				BaseMessageParam:       courier.BaseMessageParam{},
@@ -254,7 +254,7 @@ func TestContextCancel(t *testing.T) {
 	)
 	cancelCtx, cancel := context.WithCancel(context.Background())
 	cancel()
-	_, err := client.Send.SendMessage(cancelCtx, courier.SendSendMessageParams{
+	_, err := client.Send.Message(cancelCtx, courier.SendMessageParams{
 		Message: courier.MessageUnionParam{
 			OfContentMessage: &courier.MessageContentMessageParam{
 				BaseMessageParam:       courier.BaseMessageParam{},
@@ -289,7 +289,7 @@ func TestContextCancelDelay(t *testing.T) {
 	)
 	cancelCtx, cancel := context.WithTimeout(context.Background(), 2*time.Millisecond)
 	defer cancel()
-	_, err := client.Send.SendMessage(cancelCtx, courier.SendSendMessageParams{
+	_, err := client.Send.Message(cancelCtx, courier.SendMessageParams{
 		Message: courier.MessageUnionParam{
 			OfContentMessage: &courier.MessageContentMessageParam{
 				BaseMessageParam:       courier.BaseMessageParam{},
@@ -330,7 +330,7 @@ func TestContextDeadline(t *testing.T) {
 				},
 			}),
 		)
-		_, err := client.Send.SendMessage(deadlineCtx, courier.SendSendMessageParams{
+		_, err := client.Send.Message(deadlineCtx, courier.SendMessageParams{
 			Message: courier.MessageUnionParam{
 				OfContentMessage: &courier.MessageContentMessageParam{
 					BaseMessageParam:       courier.BaseMessageParam{},

@@ -35,7 +35,7 @@ func NewSendService(opts ...option.RequestOption) (r SendService) {
 }
 
 // Use the send API to send a message to one or more recipients.
-func (r *SendService) SendMessage(ctx context.Context, body SendSendMessageParams, opts ...option.RequestOption) (res *SendSendMessageResponse, err error) {
+func (r *SendService) Message(ctx context.Context, body SendMessageParams, opts ...option.RequestOption) (res *SendMessageResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "send"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -3485,7 +3485,7 @@ func (r *UtmParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type SendSendMessageResponse struct {
+type SendMessageResponse struct {
 	// A successful call to `POST /send` returns a `202` status code along with a
 	// `requestId` in the response body.
 	//
@@ -3507,21 +3507,21 @@ type SendSendMessageResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r SendSendMessageResponse) RawJSON() string { return r.JSON.raw }
-func (r *SendSendMessageResponse) UnmarshalJSON(data []byte) error {
+func (r SendMessageResponse) RawJSON() string { return r.JSON.raw }
+func (r *SendMessageResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type SendSendMessageParams struct {
+type SendMessageParams struct {
 	// Defines the message to be delivered
 	Message MessageUnionParam `json:"message,omitzero,required"`
 	paramObj
 }
 
-func (r SendSendMessageParams) MarshalJSON() (data []byte, err error) {
-	type shadow SendSendMessageParams
+func (r SendMessageParams) MarshalJSON() (data []byte, err error) {
+	type shadow SendMessageParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *SendSendMessageParams) UnmarshalJSON(data []byte) error {
+func (r *SendMessageParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
