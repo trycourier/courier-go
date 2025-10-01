@@ -8,8 +8,8 @@ import (
 	"os"
 	"slices"
 
-	"github.com/stainless-sdks/courier-go/internal/requestconfig"
-	"github.com/stainless-sdks/courier-go/option"
+	"github.com/trycourier/courier-go/internal/requestconfig"
+	"github.com/trycourier/courier-go/option"
 )
 
 // Client creates a struct with services and top level methods that help with

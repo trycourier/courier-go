@@ -10,11 +10,11 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/stainless-sdks/courier-go/internal/apijson"
-	shimjson "github.com/stainless-sdks/courier-go/internal/encoding/json"
-	"github.com/stainless-sdks/courier-go/internal/requestconfig"
-	"github.com/stainless-sdks/courier-go/option"
-	"github.com/stainless-sdks/courier-go/packages/param"
+	"github.com/trycourier/courier-go/internal/apijson"
+	shimjson "github.com/trycourier/courier-go/internal/encoding/json"
+	"github.com/trycourier/courier-go/internal/requestconfig"
+	"github.com/trycourier/courier-go/option"
+	"github.com/trycourier/courier-go/packages/param"
 )
 
 // AutomationService contains methods and other services that help with interacting

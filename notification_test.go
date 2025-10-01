@@ -8,9 +8,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/courier-go"
-	"github.com/stainless-sdks/courier-go/internal/testutil"
-	"github.com/stainless-sdks/courier-go/option"
+	"github.com/trycourier/courier-go"
+	"github.com/trycourier/courier-go/internal/testutil"
+	"github.com/trycourier/courier-go/option"
 )
 
 func TestNotificationListWithOptionalParams(t *testing.T) {

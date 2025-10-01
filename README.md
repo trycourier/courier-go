@@ -2,7 +2,7 @@
 
 <!-- x-release-please-start-version -->
 
-<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go"><img src="https://pkg.go.dev/badge/github.com/stainless-sdks/courier-go.svg" alt="Go Reference"></a>
+<a href="https://pkg.go.dev/github.com/trycourier/courier-go"><img src="https://pkg.go.dev/badge/github.com/trycourier/courier-go.svg" alt="Go Reference"></a>
 
 <!-- x-release-please-end -->
 
@@ -13,17 +13,25 @@ It is generated with [Stainless](https://www.stainless.com/).
 
 ## Installation
 
+<!-- x-release-please-start-version -->
+
 ```go
 import (
-	"github.com/stainless-sdks/courier-go" // imported as courier
+	"github.com/trycourier/courier-go" // imported as courier
 )
 ```
 
+<!-- x-release-please-end -->
+
 Or to pin the version:
 
+<!-- x-release-please-start-version -->
+
 ```sh
-go get -u 'github.com/stainless-sdks/courier-go@v0.0.1'
+go get -u 'github.com/trycourier/courier-go@v0.0.1'
 ```
+
+<!-- x-release-please-end -->
 
 ## Requirements
 
@@ -40,8 +48,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/stainless-sdks/courier-go"
-	"github.com/stainless-sdks/courier-go/option"
+	"github.com/trycourier/courier-go"
+	"github.com/trycourier/courier-go/option"
 )
 
 func main() {
@@ -283,7 +291,7 @@ client.Send.SendMessage(context.TODO(), ...,
 
 The request option `option.WithDebugLog(nil)` may be helpful while debugging.
 
-See the [full list of request options](https://pkg.go.dev/github.com/stainless-sdks/courier-go/option).
+See the [full list of request options](https://pkg.go.dev/github.com/trycourier/courier-go/option).
 
 ### Pagination
 
@@ -549,7 +557,7 @@ This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) con
 
 We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/stainless-sdks/courier-go/issues) with questions, bugs, or suggestions.
+We are keen for your feedback; please open an [issue](https://www.github.com/trycourier/courier-go/issues) with questions, bugs, or suggestions.
 
 ## Contributing
 

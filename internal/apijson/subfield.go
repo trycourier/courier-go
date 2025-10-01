@@ -1,7 +1,7 @@
 package apijson
 
 import (
-	"github.com/stainless-sdks/courier-go/packages/respjson"
+	"github.com/trycourier/courier-go/packages/respjson"
 	"reflect"
 )
 
