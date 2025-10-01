@@ -24,7 +24,7 @@ func TestUsage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	response, err := client.Send.SendMessage(context.TODO(), courier.SendSendMessageParams{
+	response, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
 		Message: courier.MessageUnionParam{
 			OfContentMessage: &courier.MessageContentMessageParam{
 				BaseMessageParam:       courier.BaseMessageParam{},

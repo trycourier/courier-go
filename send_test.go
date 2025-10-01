@@ -13,7 +13,7 @@ import (
 	"github.com/trycourier/courier-go/option"
 )
 
-func TestSendSendMessage(t *testing.T) {
+func TestSendMessage(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,7 +26,7 @@ func TestSendSendMessage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Send.SendMessage(context.TODO(), courier.SendSendMessageParams{
+	_, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
 		Message: courier.MessageUnionParam{
 			OfContentMessage: &courier.MessageContentMessageParam{
 				BaseMessageParam: courier.BaseMessageParam{
