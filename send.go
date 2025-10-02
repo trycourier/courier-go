@@ -1955,75 +1955,6 @@ func (r *ContentElementalContentSugarParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type ElementalChannelNode struct {
-	// The channel the contents of this element should be applied to. Can be `email`,
-	// `push`, `direct_message`, `sms` or a provider such as slack
-	Channel  string   `json:"channel,required"`
-	Channels []string `json:"channels,nullable"`
-	// An array of elements to apply to the channel. If `raw` has not been specified,
-	// `elements` is `required`.
-	Elements []ElementalNodeUnion `json:"elements,nullable"`
-	If       string               `json:"if,nullable"`
-	Loop     string               `json:"loop,nullable"`
-	// Raw data to apply to the channel. If `elements` has not been specified, `raw` is
-	// `required`.
-	Raw map[string]any `json:"raw,nullable"`
-	Ref string         `json:"ref,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Channel     respjson.Field
-		Channels    respjson.Field
-		Elements    respjson.Field
-		If          respjson.Field
-		Loop        respjson.Field
-		Raw         respjson.Field
-		Ref         respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ElementalChannelNode) RawJSON() string { return r.JSON.raw }
-func (r *ElementalChannelNode) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this ElementalChannelNode to a ElementalChannelNodeParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// ElementalChannelNodeParam.Overrides()
-func (r ElementalChannelNode) ToParam() ElementalChannelNodeParam {
-	return param.Override[ElementalChannelNodeParam](json.RawMessage(r.RawJSON()))
-}
-
-// The property Channel is required.
-type ElementalChannelNodeParam struct {
-	// The channel the contents of this element should be applied to. Can be `email`,
-	// `push`, `direct_message`, `sms` or a provider such as slack
-	Channel  string            `json:"channel,required"`
-	If       param.Opt[string] `json:"if,omitzero"`
-	Loop     param.Opt[string] `json:"loop,omitzero"`
-	Ref      param.Opt[string] `json:"ref,omitzero"`
-	Channels []string          `json:"channels,omitzero"`
-	// An array of elements to apply to the channel. If `raw` has not been specified,
-	// `elements` is `required`.
-	Elements []ElementalNodeUnionParam `json:"elements,omitzero"`
-	// Raw data to apply to the channel. If `elements` has not been specified, `raw` is
-	// `required`.
-	Raw map[string]any `json:"raw,omitzero"`
-	paramObj
-}
-
-func (r ElementalChannelNodeParam) MarshalJSON() (data []byte, err error) {
-	type shadow ElementalChannelNodeParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ElementalChannelNodeParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type ElementalGroupNode struct {
 	// Sub elements to render.
 	Elements []ElementalNodeUnion `json:"elements,required"`
@@ -2078,7 +2009,7 @@ func (r *ElementalGroupNodeParam) UnmarshalJSON(data []byte) error {
 }
 
 // ElementalNodeUnion contains all possible properties and values from
-// [ElementalNodeObject], [ElementalNodeObject], [ElementalNodeObject],
+// [ElementalNodeObject], [ElementalNodeObject], [ElementalNodeType],
 // [ElementalNodeObject], [ElementalNodeObject], [ElementalNodeObject],
 // [ElementalNodeObject], [ElementalNodeObject].
 //
@@ -2088,22 +2019,16 @@ type ElementalNodeUnion struct {
 	If       string   `json:"if"`
 	Loop     string   `json:"loop"`
 	Ref      string   `json:"ref"`
+	Type     string   `json:"type"`
 	// This field is from variant [ElementalNodeObject].
-	Type string `json:"type"`
-	// This field is from variant [ElementalNodeObject].
-	Channel  string               `json:"channel"`
 	Elements []ElementalNodeUnion `json:"elements"`
-	// This field is from variant [ElementalNodeObject].
-	Raw  map[string]any `json:"raw"`
-	JSON struct {
+	JSON     struct {
 		Channels respjson.Field
 		If       respjson.Field
 		Loop     respjson.Field
 		Ref      respjson.Field
 		Type     respjson.Field
-		Channel  respjson.Field
 		Elements respjson.Field
-		Raw      respjson.Field
 		raw      string
 	} `json:"-"`
 }
@@ -2114,6 +2039,11 @@ func (u ElementalNodeUnion) AsElementalNodeObject() (v ElementalNodeObject) {
 }
 
 func (u ElementalNodeUnion) AsVariant2() (v ElementalNodeObject) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ElementalNodeUnion) AsElementalNodeType() (v ElementalNodeType) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -2164,10 +2094,27 @@ func (r *ElementalNodeObject) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func ElementalNodeParamOfVariant3(channel string) ElementalNodeUnionParam {
-	var variant ElementalNodeObjectParam
-	variant.Channel = channel
-	return ElementalNodeUnionParam{OfVariant3: &variant}
+type ElementalNodeType struct {
+	// Any of "channel".
+	Type string `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ElementalNodeType) RawJSON() string { return r.JSON.raw }
+func (r *ElementalNodeType) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func ElementalNodeParamOfElementalNodeType(type_ string) ElementalNodeUnionParam {
+	var variant ElementalNodeTypeParam
+	variant.Type = type_
+	return ElementalNodeUnionParam{OfElementalNodeType: &variant}
 }
 
 func ElementalNodeParamOfVariant3(elements []ElementalNodeUnionParam) ElementalNodeUnionParam {
@@ -2182,6 +2129,7 @@ func ElementalNodeParamOfVariant3(elements []ElementalNodeUnionParam) ElementalN
 type ElementalNodeUnionParam struct {
 	OfElementalNodeObject *ElementalNodeObjectParam `json:",omitzero,inline"`
 	OfVariant2            *ElementalNodeObjectParam `json:",omitzero,inline"`
+	OfElementalNodeType   *ElementalNodeTypeParam   `json:",omitzero,inline"`
 	OfVariant3            *ElementalNodeObjectParam `json:",omitzero,inline"`
 	paramUnion
 }
@@ -2189,7 +2137,7 @@ type ElementalNodeUnionParam struct {
 func (u ElementalNodeUnionParam) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfElementalNodeObject,
 		u.OfVariant2,
-		u.OfVariant3,
+		u.OfElementalNodeType,
 		u.OfVariant3,
 		u.OfVariant3,
 		u.OfVariant3,
@@ -2205,8 +2153,8 @@ func (u *ElementalNodeUnionParam) asAny() any {
 		return u.OfElementalNodeObject
 	} else if !param.IsOmitted(u.OfVariant2) {
 		return u.OfVariant2
-	} else if !param.IsOmitted(u.OfVariant3) {
-		return u.OfVariant3
+	} else if !param.IsOmitted(u.OfElementalNodeType) {
+		return u.OfElementalNodeType
 	} else if !param.IsOmitted(u.OfVariant3) {
 		return u.OfVariant3
 	} else if !param.IsOmitted(u.OfVariant3) {
@@ -2222,17 +2170,9 @@ func (u *ElementalNodeUnionParam) asAny() any {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetChannel() *string {
+func (u ElementalNodeUnionParam) GetElements() []ElementalNodeUnionParam {
 	if vt := u.OfVariant3; vt != nil {
-		return &vt.Channel
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetRaw() map[string]any {
-	if vt := u.OfVariant3; vt != nil {
-		return vt.Raw
+		return vt.Elements
 	}
 	return nil
 }
@@ -2242,8 +2182,6 @@ func (u ElementalNodeUnionParam) GetIf() *string {
 	if vt := u.OfElementalNodeObject; vt != nil && vt.If.Valid() {
 		return &vt.If.Value
 	} else if vt := u.OfVariant2; vt != nil && vt.If.Valid() {
-		return &vt.If.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
 		return &vt.If.Value
 	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
 		return &vt.If.Value
@@ -2275,8 +2213,6 @@ func (u ElementalNodeUnionParam) GetLoop() *string {
 		return &vt.Loop.Value
 	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
 		return &vt.Loop.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
-		return &vt.Loop.Value
 	}
 	return nil
 }
@@ -2286,8 +2222,6 @@ func (u ElementalNodeUnionParam) GetRef() *string {
 	if vt := u.OfElementalNodeObject; vt != nil && vt.Ref.Valid() {
 		return &vt.Ref.Value
 	} else if vt := u.OfVariant2; vt != nil && vt.Ref.Valid() {
-		return &vt.Ref.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
 		return &vt.Ref.Value
 	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
 		return &vt.Ref.Value
@@ -2309,7 +2243,7 @@ func (u ElementalNodeUnionParam) GetType() *string {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfVariant2; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfVariant3; vt != nil {
+	} else if vt := u.OfElementalNodeType; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfVariant3; vt != nil {
 		return (*string)(&vt.Type)
@@ -2341,18 +2275,6 @@ func (u ElementalNodeUnionParam) GetChannels() []string {
 		return vt.Channels
 	} else if vt := u.OfVariant3; vt != nil {
 		return vt.Channels
-	} else if vt := u.OfVariant3; vt != nil {
-		return vt.Channels
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's Elements property, if present.
-func (u ElementalNodeUnionParam) GetElements() []ElementalNodeUnionParam {
-	if vt := u.OfVariant3; vt != nil {
-		return vt.Elements
-	} else if vt := u.OfVariant3; vt != nil {
-		return vt.Elements
 	}
 	return nil
 }
@@ -2378,6 +2300,27 @@ func (r *ElementalNodeObjectParam) UnmarshalJSON(data []byte) error {
 func init() {
 	apijson.RegisterFieldValidator[ElementalNodeObjectParam](
 		"type", "text",
+	)
+}
+
+// The property Type is required.
+type ElementalNodeTypeParam struct {
+	// Any of "channel".
+	Type string `json:"type,omitzero,required"`
+	paramObj
+}
+
+func (r ElementalNodeTypeParam) MarshalJSON() (data []byte, err error) {
+	type shadow ElementalNodeTypeParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ElementalNodeTypeParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ElementalNodeTypeParam](
+		"type", "channel",
 	)
 }
 
