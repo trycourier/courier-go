@@ -322,25 +322,14 @@ Methods:
 
 ## Templates
 
-Params Types:
-
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalChannelNodeParam">ElementalChannelNodeParam</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalContentParam">ElementalContentParam</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalGroupNodeParam">ElementalGroupNodeParam</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalNodeUnionParam">ElementalNodeUnionParam</a>
-
 Response Types:
 
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#BaseTemplateTenantAssociation">BaseTemplateTenantAssociation</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalChannelNode">ElementalChannelNode</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalContent">ElementalContent</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalGroupNode">ElementalGroupNode</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalNodeUnion">ElementalNodeUnion</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#TenantTemplateGetResponse">TenantTemplateGetResponse</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#TenantTemplateListResponse">TenantTemplateListResponse</a>
 
 Methods:
 
-- <code title="get /tenants/{tenant_id}/templates/{template_id}">client.Tenants.Templates.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#TenantTemplateService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, templateID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#TenantTemplateGetParams">TenantTemplateGetParams</a>) (<a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#BaseTemplateTenantAssociation">BaseTemplateTenantAssociation</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /tenants/{tenant_id}/templates/{template_id}">client.Tenants.Templates.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#TenantTemplateService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, templateID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#TenantTemplateGetParams">TenantTemplateGetParams</a>) (<a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#TenantTemplateGetResponse">TenantTemplateGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /tenants/{tenant_id}/templates">client.Tenants.Templates.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#TenantTemplateService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, tenantID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#TenantTemplateListParams">TenantTemplateListParams</a>) (<a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#TenantTemplateListResponse">TenantTemplateListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Translations
