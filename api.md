@@ -5,27 +5,17 @@ Params Types:
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#BaseMessageParam">BaseMessageParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#BaseMessageSendToParam">BaseMessageSendToParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ContentUnionParam">ContentUnionParam</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalChannelNodeParam">ElementalChannelNodeParam</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalGroupNodeParam">ElementalGroupNodeParam</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalNodeUnionParam">ElementalNodeUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageUnionParam">MessageUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageContextParam">MessageContextParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MsTeamsBasePropertiesParam">MsTeamsBasePropertiesParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#RecipientUnionParam">RecipientUnionParam</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#RoutingMethod">RoutingMethod</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#SlackBasePropertiesParam">SlackBasePropertiesParam</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UtmParam">UtmParam</a>
 
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#BaseMessage">BaseMessage</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ContentUnion">ContentUnion</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalChannelNode">ElementalChannelNode</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalGroupNode">ElementalGroupNode</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalNodeUnion">ElementalNodeUnion</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageContext">MessageContext</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#RoutingMethod">RoutingMethod</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#Utm">Utm</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#SendMessageResponse">SendMessageResponse</a>
 
 Methods:
@@ -83,11 +73,6 @@ Methods:
 
 # Automations
 
-Methods:
-
-- <code title="post /automations/invoke">client.Automations.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#AutomationService.InvokeAdHoc">InvokeAdHoc</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#AutomationInvokeAdHocParams">AutomationInvokeAdHocParams</a>) (<a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#AutomationInvokeResponse">AutomationInvokeResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="post /automations/{templateId}/invoke">client.Automations.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#AutomationService.InvokeByTemplate">InvokeByTemplate</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, templateID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#AutomationInvokeByTemplateParams">AutomationInvokeByTemplateParams</a>) (<a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#AutomationInvokeResponse">AutomationInvokeResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
 ## Invoke
 
 Params Types:
@@ -99,6 +84,11 @@ Params Types:
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#AutomationInvokeResponse">AutomationInvokeResponse</a>
+
+Methods:
+
+- <code title="post /automations/invoke">client.Automations.Invoke.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#AutomationInvokeService.InvokeAdHoc">InvokeAdHoc</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#AutomationInvokeInvokeAdHocParams">AutomationInvokeInvokeAdHocParams</a>) (<a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#AutomationInvokeResponse">AutomationInvokeResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /automations/{templateId}/invoke">client.Automations.Invoke.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#AutomationInvokeService.InvokeByTemplate">InvokeByTemplate</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, templateID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#AutomationInvokeInvokeByTemplateParams">AutomationInvokeInvokeByTemplateParams</a>) (<a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#AutomationInvokeResponse">AutomationInvokeResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Brands
 
@@ -167,10 +157,10 @@ Response Types:
 Methods:
 
 - <code title="get /lists/{list_id}">client.Lists.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ListService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, listID <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#List">List</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="put /lists/{list_id}">client.Lists.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ListService.Update">Update</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, listID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ListUpdateParams">ListUpdateParams</a>) (<a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#List">List</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="put /lists/{list_id}">client.Lists.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ListService.Update">Update</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, listID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ListUpdateParams">ListUpdateParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 - <code title="get /lists">client.Lists.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ListService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ListListParams">ListListParams</a>) (<a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ListListResponse">ListListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="delete /lists/{list_id}">client.Lists.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ListService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, listID <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
-- <code title="put /lists/{list_id}/restore">client.Lists.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ListService.Restore">Restore</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, listID <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
+- <code title="put /lists/{list_id}/restore">client.Lists.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ListService.Restore">Restore</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, listID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ListRestoreParams">ListRestoreParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 
 ## Subscriptions
 
@@ -199,7 +189,7 @@ Response Types:
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageDetails">MessageDetails</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageGetResponse">MessageGetResponse</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageListResponse">MessageListResponse</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageGetContentResponse">MessageGetContentResponse</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageContentResponse">MessageContentResponse</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageHistoryResponse">MessageHistoryResponse</a>
 
 Methods:
@@ -207,7 +197,7 @@ Methods:
 - <code title="get /messages/{message_id}">client.Messages.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, messageID <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageGetResponse">MessageGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /messages">client.Messages.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageListParams">MessageListParams</a>) (<a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageListResponse">MessageListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="post /messages/{message_id}/cancel">client.Messages.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageService.Cancel">Cancel</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, messageID <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageDetails">MessageDetails</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /messages/{message_id}/output">client.Messages.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageService.GetContent">GetContent</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, messageID <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageGetContentResponse">MessageGetContentResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /messages/{message_id}/output">client.Messages.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageService.Content">Content</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, messageID <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageContentResponse">MessageContentResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /messages/{message_id}/history">client.Messages.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageService.History">History</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, messageID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageHistoryParams">MessageHistoryParams</a>) (<a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageHistoryResponse">MessageHistoryResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Requests
@@ -217,6 +207,11 @@ Methods:
 - <code title="put /requests/{request_id}/archive">client.Requests.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#RequestService.Archive">Archive</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, requestID <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 
 # Notifications
+
+Params Types:
+
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageRoutingParam">MessageRoutingParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageRoutingChannelUnionParam">MessageRoutingChannelUnionParam</a>
 
 Response Types:
 
@@ -325,6 +320,29 @@ Methods:
 - <code title="put /tenants/{tenant_id}/default_preferences/items/{topic_id}">client.Tenants.DefaultPreferences.Items.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#TenantDefaultPreferenceItemService.Update">Update</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, topicID <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#TenantDefaultPreferenceItemUpdateParams">TenantDefaultPreferenceItemUpdateParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 - <code title="delete /tenants/{tenant_id}/default_preferences/items/{topic_id}">client.Tenants.DefaultPreferences.Items.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#TenantDefaultPreferenceItemService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, topicID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#TenantDefaultPreferenceItemDeleteParams">TenantDefaultPreferenceItemDeleteParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 
+## Templates
+
+Params Types:
+
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalChannelNodeParam">ElementalChannelNodeParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalContentParam">ElementalContentParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalGroupNodeParam">ElementalGroupNodeParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalNodeUnionParam">ElementalNodeUnionParam</a>
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#BaseTemplateTenantAssociation">BaseTemplateTenantAssociation</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalChannelNode">ElementalChannelNode</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalContent">ElementalContent</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalGroupNode">ElementalGroupNode</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalNodeUnion">ElementalNodeUnion</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#TenantTemplateListResponse">TenantTemplateListResponse</a>
+
+Methods:
+
+- <code title="get /tenants/{tenant_id}/templates/{template_id}">client.Tenants.Templates.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#TenantTemplateService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, templateID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#TenantTemplateGetParams">TenantTemplateGetParams</a>) (<a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#BaseTemplateTenantAssociation">BaseTemplateTenantAssociation</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /tenants/{tenant_id}/templates">client.Tenants.Templates.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#TenantTemplateService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, tenantID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#TenantTemplateListParams">TenantTemplateListParams</a>) (<a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#TenantTemplateListResponse">TenantTemplateListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
 # Translations
 
 Methods:
@@ -382,13 +400,13 @@ Params Types:
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UserToken">UserToken</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UserTokenGetSingleResponse">UserTokenGetSingleResponse</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UserTokenGetResponse">UserTokenGetResponse</a>
 
 Methods:
 
+- <code title="get /users/{user_id}/tokens/{token}">client.Users.Tokens.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UserTokenService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, token <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UserTokenGetParams">UserTokenGetParams</a>) (<a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UserTokenGetResponse">UserTokenGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="patch /users/{user_id}/tokens/{token}">client.Users.Tokens.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UserTokenService.Update">Update</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, token <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UserTokenUpdateParams">UserTokenUpdateParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 - <code title="get /users/{user_id}/tokens">client.Users.Tokens.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UserTokenService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, userID <a href="https://pkg.go.dev/builtin#string">string</a>) ([]<a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UserToken">UserToken</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="delete /users/{user_id}/tokens/{token}">client.Users.Tokens.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UserTokenService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, token <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UserTokenDeleteParams">UserTokenDeleteParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 - <code title="put /users/{user_id}/tokens">client.Users.Tokens.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UserTokenService.AddMultiple">AddMultiple</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, userID <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 - <code title="put /users/{user_id}/tokens/{token}">client.Users.Tokens.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UserTokenService.AddSingle">AddSingle</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, token <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UserTokenAddSingleParams">UserTokenAddSingleParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
-- <code title="get /users/{user_id}/tokens/{token}">client.Users.Tokens.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UserTokenService.GetSingle">GetSingle</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, token <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UserTokenGetSingleParams">UserTokenGetSingleParams</a>) (<a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UserTokenGetSingleResponse">UserTokenGetSingleResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>

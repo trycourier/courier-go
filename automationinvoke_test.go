@@ -13,7 +13,7 @@ import (
 	"github.com/trycourier/courier-go/option"
 )
 
-func TestAutomationInvokeAdHocWithOptionalParams(t *testing.T) {
+func TestAutomationInvokeInvokeAdHocWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,10 +26,10 @@ func TestAutomationInvokeAdHocWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Automations.InvokeAdHoc(context.TODO(), courier.AutomationInvokeAdHocParams{
-		Automation: courier.AutomationInvokeAdHocParamsAutomation{
-			Steps: []courier.AutomationInvokeAdHocParamsAutomationStepUnion{{
-				OfAutomationAddToDigestStep: &courier.AutomationInvokeAdHocParamsAutomationStepAutomationAddToDigestStep{
+	_, err := client.Automations.Invoke.InvokeAdHoc(context.TODO(), courier.AutomationInvokeInvokeAdHocParams{
+		Automation: courier.AutomationInvokeInvokeAdHocParamsAutomation{
+			Steps: []courier.AutomationInvokeInvokeAdHocParamsAutomationStepUnion{{
+				OfAutomationAddToDigestStep: &courier.AutomationInvokeInvokeAdHocParamsAutomationStepAutomationAddToDigestStep{
 					AutomationStepParam: courier.AutomationStepParam{
 						If:  courier.String("if"),
 						Ref: courier.String("ref"),
@@ -57,7 +57,7 @@ func TestAutomationInvokeAdHocWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestAutomationInvokeByTemplateWithOptionalParams(t *testing.T) {
+func TestAutomationInvokeInvokeByTemplateWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -70,10 +70,10 @@ func TestAutomationInvokeByTemplateWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Automations.InvokeByTemplate(
+	_, err := client.Automations.Invoke.InvokeByTemplate(
 		context.TODO(),
 		"templateId",
-		courier.AutomationInvokeByTemplateParams{
+		courier.AutomationInvokeInvokeByTemplateParams{
 			AutomationInvokeParams: courier.AutomationInvokeParams{
 				Brand: courier.String("brand"),
 				Data: map[string]any{

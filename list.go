@@ -52,14 +52,15 @@ func (r *ListService) Get(ctx context.Context, listID string, opts ...option.Req
 }
 
 // Create or replace an existing list with the supplied values.
-func (r *ListService) Update(ctx context.Context, listID string, body ListUpdateParams, opts ...option.RequestOption) (res *List, err error) {
+func (r *ListService) Update(ctx context.Context, listID string, body ListUpdateParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	if listID == "" {
 		err = errors.New("missing required list_id parameter")
 		return
 	}
 	path := fmt.Sprintf("lists/%s", listID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, nil, opts...)
 	return
 }
 
@@ -85,7 +86,7 @@ func (r *ListService) Delete(ctx context.Context, listID string, opts ...option.
 }
 
 // Restore a previously deleted list.
-func (r *ListService) Restore(ctx context.Context, listID string, opts ...option.RequestOption) (err error) {
+func (r *ListService) Restore(ctx context.Context, listID string, body ListRestoreParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	if listID == "" {
@@ -93,15 +94,15 @@ func (r *ListService) Restore(ctx context.Context, listID string, opts ...option
 		return
 	}
 	path := fmt.Sprintf("lists/%s/restore", listID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, nil, nil, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, nil, opts...)
 	return
 }
 
 type List struct {
 	ID      string `json:"id,required"`
 	Name    string `json:"name,required"`
-	Created int64  `json:"created,nullable"`
-	Updated int64  `json:"updated,nullable"`
+	Created string `json:"created,nullable"`
+	Updated string `json:"updated,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -168,4 +169,16 @@ func (r ListListParams) URLQuery() (v url.Values, err error) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+type ListRestoreParams struct {
+	paramObj
+}
+
+func (r ListRestoreParams) MarshalJSON() (data []byte, err error) {
+	type shadow ListRestoreParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ListRestoreParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }

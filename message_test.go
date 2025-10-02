@@ -97,7 +97,7 @@ func TestMessageCancel(t *testing.T) {
 	}
 }
 
-func TestMessageGetContent(t *testing.T) {
+func TestMessageContent(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -110,7 +110,7 @@ func TestMessageGetContent(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Messages.GetContent(context.TODO(), "message_id")
+	_, err := client.Messages.Content(context.TODO(), "message_id")
 	if err != nil {
 		var apierr *courier.Error
 		if errors.As(err, &apierr) {
