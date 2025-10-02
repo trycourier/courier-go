@@ -147,7 +147,7 @@ func TestBulkNewJobWithOptionalParams(t *testing.T) {
 								BrandID: courier.String("brand_id"),
 								If:      courier.String("if"),
 								Metadata: courier.BaseMessageChannelMetadataParam{
-									Utm: courier.UtmParam{
+									Utm: courier.BaseMessageChannelMetadataUtmParam{
 										Campaign: courier.String("campaign"),
 										Content:  courier.String("content"),
 										Medium:   courier.String("medium"),
@@ -159,7 +159,7 @@ func TestBulkNewJobWithOptionalParams(t *testing.T) {
 									"foo": "bar",
 								},
 								Providers:     []string{"string"},
-								RoutingMethod: courier.RoutingMethodAll,
+								RoutingMethod: "all",
 								Timeouts: courier.BaseMessageChannelTimeoutsParam{
 									Channel:  courier.Int(0),
 									Provider: courier.Int(0),
@@ -186,7 +186,7 @@ func TestBulkNewJobWithOptionalParams(t *testing.T) {
 							Event:   courier.String("event"),
 							Tags:    []string{"string"},
 							TraceID: courier.String("trace_id"),
-							Utm: courier.UtmParam{
+							Utm: courier.BaseMessageMetadataUtmParam{
 								Campaign: courier.String("campaign"),
 								Content:  courier.String("content"),
 								Medium:   courier.String("medium"),
@@ -201,7 +201,7 @@ func TestBulkNewJobWithOptionalParams(t *testing.T) {
 							"foo": {
 								If: courier.String("if"),
 								Metadata: courier.BaseMessageProviderMetadataParam{
-									Utm: courier.UtmParam{
+									Utm: courier.BaseMessageProviderMetadataUtmParam{
 										Campaign: courier.String("campaign"),
 										Content:  courier.String("content"),
 										Medium:   courier.String("medium"),
@@ -216,35 +216,10 @@ func TestBulkNewJobWithOptionalParams(t *testing.T) {
 							},
 						},
 						Routing: courier.BaseMessageRoutingParam{
-							Channels: []courier.BaseMessageRoutingChannelUnionParam{{
-								OfRoutingStrategyChannel: &courier.BaseMessageRoutingChannelRoutingStrategyChannelParam{
-									Channel: "channel",
-									Config: map[string]any{
-										"foo": "bar",
-									},
-									If:     courier.String("if"),
-									Method: courier.RoutingMethodAll,
-									Providers: map[string]courier.BaseMessageRoutingChannelRoutingStrategyChannelProviderParam{
-										"foo": {
-											If: courier.String("if"),
-											Metadata: courier.BaseMessageRoutingChannelRoutingStrategyChannelProviderMetadataParam{
-												Utm: courier.UtmParam{
-													Campaign: courier.String("campaign"),
-													Content:  courier.String("content"),
-													Medium:   courier.String("medium"),
-													Source:   courier.String("source"),
-													Term:     courier.String("term"),
-												},
-											},
-											Override: map[string]any{
-												"foo": "bar",
-											},
-											Timeouts: courier.Int(0),
-										},
-									},
-								},
+							Channels: []courier.MessageRoutingChannelUnionParam{{
+								OfString: courier.String("string"),
 							}},
-							Method: courier.RoutingMethodAll,
+							Method: "all",
 						},
 						Timeout: courier.BaseMessageTimeoutParam{
 							Channel: map[string]int64{

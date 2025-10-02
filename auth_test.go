@@ -28,7 +28,7 @@ func TestAuthIssueToken(t *testing.T) {
 	)
 	_, err := client.Auth.IssueToken(context.TODO(), courier.AuthIssueTokenParams{
 		ExpiresIn: "expires_in",
-		Scope:     courier.AuthIssueTokenParamsScopeReadPreferences,
+		Scope:     "scope",
 	})
 	if err != nil {
 		var apierr *courier.Error

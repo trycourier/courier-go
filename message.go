@@ -74,7 +74,7 @@ func (r *MessageService) Cancel(ctx context.Context, messageID string, opts ...o
 }
 
 // Get message content
-func (r *MessageService) GetContent(ctx context.Context, messageID string, opts ...option.RequestOption) (res *MessageGetContentResponse, err error) {
+func (r *MessageService) Content(ctx context.Context, messageID string, opts ...option.RequestOption) (res *MessageContentResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if messageID == "" {
 		err = errors.New("missing required message_id parameter")
@@ -132,8 +132,8 @@ type MessageDetails struct {
 	Error string `json:"error,nullable"`
 	// The reason for the current status of the message.
 	//
-	// Any of "FILTERED", "NO_CHANNELS", "NO_PROVIDERS", "PROVIDER_ERROR",
-	// "UNPUBLISHED", "UNSUBSCRIBED".
+	// Any of "BOUNCED", "FAILED", "FILTERED", "NO_CHANNELS", "NO_PROVIDERS",
+	// "OPT_IN_REQUIRED", "PROVIDER_ERROR", "UNPUBLISHED", "UNSUBSCRIBED".
 	Reason MessageDetailsReason `json:"reason,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -185,9 +185,12 @@ const (
 type MessageDetailsReason string
 
 const (
+	MessageDetailsReasonBounced       MessageDetailsReason = "BOUNCED"
+	MessageDetailsReasonFailed        MessageDetailsReason = "FAILED"
 	MessageDetailsReasonFiltered      MessageDetailsReason = "FILTERED"
 	MessageDetailsReasonNoChannels    MessageDetailsReason = "NO_CHANNELS"
 	MessageDetailsReasonNoProviders   MessageDetailsReason = "NO_PROVIDERS"
+	MessageDetailsReasonOptInRequired MessageDetailsReason = "OPT_IN_REQUIRED"
 	MessageDetailsReasonProviderError MessageDetailsReason = "PROVIDER_ERROR"
 	MessageDetailsReasonUnpublished   MessageDetailsReason = "UNPUBLISHED"
 	MessageDetailsReasonUnsubscribed  MessageDetailsReason = "UNSUBSCRIBED"
@@ -230,9 +233,9 @@ func (r *MessageListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type MessageGetContentResponse struct {
+type MessageContentResponse struct {
 	// An array of render output of a previously sent message.
-	Results []MessageGetContentResponseResult `json:"results,required"`
+	Results []MessageContentResponseResult `json:"results,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Results     respjson.Field
@@ -242,18 +245,18 @@ type MessageGetContentResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r MessageGetContentResponse) RawJSON() string { return r.JSON.raw }
-func (r *MessageGetContentResponse) UnmarshalJSON(data []byte) error {
+func (r MessageContentResponse) RawJSON() string { return r.JSON.raw }
+func (r *MessageContentResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type MessageGetContentResponseResult struct {
+type MessageContentResponseResult struct {
 	// The channel used for rendering the message.
 	Channel string `json:"channel,required"`
 	// The ID of channel used for rendering the message.
 	ChannelID string `json:"channel_id,required"`
 	// Content details of the rendered message.
-	Content MessageGetContentResponseResultContent `json:"content,required"`
+	Content MessageContentResponseResultContent `json:"content,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Channel     respjson.Field
@@ -265,15 +268,15 @@ type MessageGetContentResponseResult struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r MessageGetContentResponseResult) RawJSON() string { return r.JSON.raw }
-func (r *MessageGetContentResponseResult) UnmarshalJSON(data []byte) error {
+func (r MessageContentResponseResult) RawJSON() string { return r.JSON.raw }
+func (r *MessageContentResponseResult) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Content details of the rendered message.
-type MessageGetContentResponseResultContent struct {
+type MessageContentResponseResultContent struct {
 	// The blocks of the rendered message.
-	Blocks []MessageGetContentResponseResultContentBlock `json:"blocks,required"`
+	Blocks []MessageContentResponseResultContentBlock `json:"blocks,required"`
 	// The body of the rendered message.
 	Body string `json:"body,required"`
 	// The html content of the rendered message.
@@ -298,12 +301,12 @@ type MessageGetContentResponseResultContent struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r MessageGetContentResponseResultContent) RawJSON() string { return r.JSON.raw }
-func (r *MessageGetContentResponseResultContent) UnmarshalJSON(data []byte) error {
+func (r MessageContentResponseResultContent) RawJSON() string { return r.JSON.raw }
+func (r *MessageContentResponseResultContent) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type MessageGetContentResponseResultContentBlock struct {
+type MessageContentResponseResultContentBlock struct {
 	// The block text of the rendered message block.
 	Text string `json:"text,required"`
 	// The block type of the rendered message block.
@@ -318,8 +321,8 @@ type MessageGetContentResponseResultContentBlock struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r MessageGetContentResponseResultContentBlock) RawJSON() string { return r.JSON.raw }
-func (r *MessageGetContentResponseResultContentBlock) UnmarshalJSON(data []byte) error {
+func (r MessageContentResponseResultContentBlock) RawJSON() string { return r.JSON.raw }
+func (r *MessageContentResponseResultContentBlock) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

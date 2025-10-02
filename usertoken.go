@@ -37,6 +37,22 @@ func NewUserTokenService(opts ...option.RequestOption) (r UserTokenService) {
 	return
 }
 
+// Get single token available for a `:token`
+func (r *UserTokenService) Get(ctx context.Context, token string, query UserTokenGetParams, opts ...option.RequestOption) (res *UserTokenGetResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if query.UserID == "" {
+		err = errors.New("missing required user_id parameter")
+		return
+	}
+	if token == "" {
+		err = errors.New("missing required token parameter")
+		return
+	}
+	path := fmt.Sprintf("users/%s/tokens/%s", query.UserID, token)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return
+}
+
 // Apply a JSON Patch (RFC 6902) to the specified token.
 func (r *UserTokenService) Update(ctx context.Context, token string, params UserTokenUpdateParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -110,22 +126,6 @@ func (r *UserTokenService) AddSingle(ctx context.Context, token string, params U
 	}
 	path := fmt.Sprintf("users/%s/tokens/%s", params.UserID, token)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, nil, opts...)
-	return
-}
-
-// Get single token available for a `:token`
-func (r *UserTokenService) GetSingle(ctx context.Context, token string, query UserTokenGetSingleParams, opts ...option.RequestOption) (res *UserTokenGetSingleResponse, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if query.UserID == "" {
-		err = errors.New("missing required user_id parameter")
-		return
-	}
-	if token == "" {
-		err = errors.New("missing required token parameter")
-		return
-	}
-	path := fmt.Sprintf("users/%s/tokens/%s", query.UserID, token)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
 }
 
@@ -373,7 +373,7 @@ func (r *UserTokenTrackingParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type UserTokenGetSingleResponse struct {
+type UserTokenGetResponse struct {
 	// Any of "active", "unknown", "failed", "revoked".
 	Status string `json:"status,nullable"`
 	// The reason for the token status.
@@ -389,9 +389,14 @@ type UserTokenGetSingleResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r UserTokenGetSingleResponse) RawJSON() string { return r.JSON.raw }
-func (r *UserTokenGetSingleResponse) UnmarshalJSON(data []byte) error {
+func (r UserTokenGetResponse) RawJSON() string { return r.JSON.raw }
+func (r *UserTokenGetResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+type UserTokenGetParams struct {
+	UserID string `path:"user_id,required" json:"-"`
+	paramObj
 }
 
 type UserTokenUpdateParams struct {
@@ -443,9 +448,4 @@ func (r UserTokenAddSingleParams) MarshalJSON() (data []byte, err error) {
 }
 func (r *UserTokenAddSingleParams) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(data, &r.UserToken)
-}
-
-type UserTokenGetSingleParams struct {
-	UserID string `path:"user_id,required" json:"-"`
-	paramObj
 }

@@ -49,7 +49,7 @@ func TestListUpdateWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Lists.Update(
+	err := client.Lists.Update(
 		context.TODO(),
 		"list_id",
 		courier.ListUpdateParams{
@@ -153,7 +153,11 @@ func TestListRestore(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	err := client.Lists.Restore(context.TODO(), "list_id")
+	err := client.Lists.Restore(
+		context.TODO(),
+		"list_id",
+		courier.ListRestoreParams{},
+	)
 	if err != nil {
 		var apierr *courier.Error
 		if errors.As(err, &apierr) {

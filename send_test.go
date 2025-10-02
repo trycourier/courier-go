@@ -36,7 +36,7 @@ func TestSendMessage(t *testing.T) {
 							BrandID: courier.String("brand_id"),
 							If:      courier.String("if"),
 							Metadata: courier.BaseMessageChannelMetadataParam{
-								Utm: courier.UtmParam{
+								Utm: courier.BaseMessageChannelMetadataUtmParam{
 									Campaign: courier.String("campaign"),
 									Content:  courier.String("content"),
 									Medium:   courier.String("medium"),
@@ -48,7 +48,7 @@ func TestSendMessage(t *testing.T) {
 								"foo": "bar",
 							},
 							Providers:     []string{"string"},
-							RoutingMethod: courier.RoutingMethodAll,
+							RoutingMethod: "all",
 							Timeouts: courier.BaseMessageChannelTimeoutsParam{
 								Channel:  courier.Int(0),
 								Provider: courier.Int(0),
@@ -59,7 +59,7 @@ func TestSendMessage(t *testing.T) {
 						TenantID: courier.String("tenant_id"),
 					},
 					Data: map[string]any{
-						"foo": "bar",
+						"name": "bar",
 					},
 					Delay: courier.BaseMessageDelayParam{
 						Duration: courier.Int(0),
@@ -75,7 +75,7 @@ func TestSendMessage(t *testing.T) {
 						Event:   courier.String("event"),
 						Tags:    []string{"string"},
 						TraceID: courier.String("trace_id"),
-						Utm: courier.UtmParam{
+						Utm: courier.BaseMessageMetadataUtmParam{
 							Campaign: courier.String("campaign"),
 							Content:  courier.String("content"),
 							Medium:   courier.String("medium"),
@@ -90,7 +90,7 @@ func TestSendMessage(t *testing.T) {
 						"foo": {
 							If: courier.String("if"),
 							Metadata: courier.BaseMessageProviderMetadataParam{
-								Utm: courier.UtmParam{
+								Utm: courier.BaseMessageProviderMetadataUtmParam{
 									Campaign: courier.String("campaign"),
 									Content:  courier.String("content"),
 									Medium:   courier.String("medium"),
@@ -105,35 +105,10 @@ func TestSendMessage(t *testing.T) {
 						},
 					},
 					Routing: courier.BaseMessageRoutingParam{
-						Channels: []courier.BaseMessageRoutingChannelUnionParam{{
-							OfRoutingStrategyChannel: &courier.BaseMessageRoutingChannelRoutingStrategyChannelParam{
-								Channel: "channel",
-								Config: map[string]any{
-									"foo": "bar",
-								},
-								If:     courier.String("if"),
-								Method: courier.RoutingMethodAll,
-								Providers: map[string]courier.BaseMessageRoutingChannelRoutingStrategyChannelProviderParam{
-									"foo": {
-										If: courier.String("if"),
-										Metadata: courier.BaseMessageRoutingChannelRoutingStrategyChannelProviderMetadataParam{
-											Utm: courier.UtmParam{
-												Campaign: courier.String("campaign"),
-												Content:  courier.String("content"),
-												Medium:   courier.String("medium"),
-												Source:   courier.String("source"),
-												Term:     courier.String("term"),
-											},
-										},
-										Override: map[string]any{
-											"foo": "bar",
-										},
-										Timeouts: courier.Int(0),
-									},
-								},
-							},
+						Channels: []courier.MessageRoutingChannelUnionParam{{
+							OfString: courier.String("email"),
 						}},
-						Method: courier.RoutingMethodAll,
+						Method: "single",
 					},
 					Timeout: courier.BaseMessageTimeoutParam{
 						Channel: map[string]int64{
@@ -149,32 +124,23 @@ func TestSendMessage(t *testing.T) {
 				},
 				BaseMessageSendToParam: courier.BaseMessageSendToParam{
 					To: courier.BaseMessageSendToToUnionParam{
-						OfAudienceRecipient: &courier.BaseMessageSendToToAudienceRecipientParam{
-							AudienceID: "audience_id",
+						OfBaseMessageSendToToObject: &courier.BaseMessageSendToToObjectParam{
 							Data: map[string]any{
 								"foo": "bar",
 							},
-							Filters: []courier.BaseMessageSendToToAudienceRecipientFilterParam{{
+							Filters: []courier.BaseMessageSendToToObjectFilterParam{{
 								Operator: "MEMBER_OF",
 								Path:     "account_id",
 								Value:    "value",
 							}},
+							ListID: courier.String("list_id"),
 						},
 					},
 				},
 				Content: courier.ContentUnionParam{
-					OfElementalContent: &courier.ContentElementalContentParam{
-						Elements: []courier.ElementalNodeUnionParam{{
-							OfElementalNodeObject: &courier.ElementalNodeObjectParam{
-								Channels: []string{"string"},
-								If:       courier.String("if"),
-								Loop:     courier.String("loop"),
-								Ref:      courier.String("ref"),
-								Type:     "text",
-							},
-						}},
-						Version: "version",
-						Brand:   map[string]interface{}{},
+					OfElementalContentSugar: &courier.ContentElementalContentSugarParam{
+						Body:  "Thanks for signing up, {{name}}",
+						Title: "Welcome!",
 					},
 				},
 			},

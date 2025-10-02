@@ -28,6 +28,7 @@ import (
 type TenantService struct {
 	Options            []option.RequestOption
 	DefaultPreferences TenantDefaultPreferenceService
+	Templates          TenantTemplateService
 }
 
 // NewTenantService generates a new service that applies the given options to each
@@ -37,6 +38,7 @@ func NewTenantService(opts ...option.RequestOption) (r TenantService) {
 	r = TenantService{}
 	r.Options = opts
 	r.DefaultPreferences = NewTenantDefaultPreferenceService(opts...)
+	r.Templates = NewTenantTemplateService(opts...)
 	return
 }
 

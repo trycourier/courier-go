@@ -13,6 +13,35 @@ import (
 	"github.com/trycourier/courier-go/option"
 )
 
+func TestUserTokenGet(t *testing.T) {
+	t.Skip("Prism tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := courier.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Users.Tokens.Get(
+		context.TODO(),
+		"token",
+		courier.UserTokenGetParams{
+			UserID: "user_id",
+		},
+	)
+	if err != nil {
+		var apierr *courier.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
 func TestUserTokenUpdate(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
@@ -162,35 +191,6 @@ func TestUserTokenAddSingleWithOptionalParams(t *testing.T) {
 					OsVersion: courier.String("os_version"),
 				},
 			},
-		},
-	)
-	if err != nil {
-		var apierr *courier.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestUserTokenGetSingle(t *testing.T) {
-	t.Skip("Prism tests are disabled")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := courier.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
-	)
-	_, err := client.Users.Tokens.GetSingle(
-		context.TODO(),
-		"token",
-		courier.UserTokenGetSingleParams{
-			UserID: "user_id",
 		},
 	)
 	if err != nil {
