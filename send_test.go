@@ -164,8 +164,8 @@ func TestSendMessage(t *testing.T) {
 				},
 				Content: courier.ContentUnionParam{
 					OfElementalContent: &courier.ContentElementalContentParam{
-						Elements: []courier.ElementalNodeUnionParam{{
-							OfElementalNodeObject: &courier.ElementalNodeObjectParam{
+						Elements: []courier.ContentElementalContentElementUnionParam{{
+							OfContentElementalContentElementObject: &courier.ContentElementalContentElementObjectParam{
 								Channels: []string{"string"},
 								If:       courier.String("if"),
 								Loop:     courier.String("loop"),

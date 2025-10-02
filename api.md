@@ -5,8 +5,6 @@ Params Types:
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#BaseMessageParam">BaseMessageParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#BaseMessageSendToParam">BaseMessageSendToParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ContentUnionParam">ContentUnionParam</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalGroupNodeParam">ElementalGroupNodeParam</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalNodeUnionParam">ElementalNodeUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageUnionParam">MessageUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageContextParam">MessageContextParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MsTeamsBasePropertiesParam">MsTeamsBasePropertiesParam</a>
@@ -19,8 +17,6 @@ Response Types:
 
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#BaseMessage">BaseMessage</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ContentUnion">ContentUnion</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalGroupNode">ElementalGroupNode</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalNodeUnion">ElementalNodeUnion</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageContext">MessageContext</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#RoutingMethod">RoutingMethod</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#Utm">Utm</a>
