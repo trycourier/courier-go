@@ -154,7 +154,7 @@ func (r *BaseMessageChannel) UnmarshalJSON(data []byte) error {
 }
 
 type BaseMessageChannelMetadata struct {
-	Utm BaseMessageChannelMetadataUtm `json:"utm,nullable"`
+	Utm Utm `json:"utm,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Utm         respjson.Field
@@ -166,30 +166,6 @@ type BaseMessageChannelMetadata struct {
 // Returns the unmodified JSON received from the API
 func (r BaseMessageChannelMetadata) RawJSON() string { return r.JSON.raw }
 func (r *BaseMessageChannelMetadata) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type BaseMessageChannelMetadataUtm struct {
-	Campaign string `json:"campaign,nullable"`
-	Content  string `json:"content,nullable"`
-	Medium   string `json:"medium,nullable"`
-	Source   string `json:"source,nullable"`
-	Term     string `json:"term,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Campaign    respjson.Field
-		Content     respjson.Field
-		Medium      respjson.Field
-		Source      respjson.Field
-		Term        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r BaseMessageChannelMetadataUtm) RawJSON() string { return r.JSON.raw }
-func (r *BaseMessageChannelMetadataUtm) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -316,7 +292,7 @@ type BaseMessageMetadata struct {
 	TraceID string `json:"trace_id,nullable"`
 	// Identify the campaign that refers traffic to a specific website, and attributes
 	// the browser's website session.
-	Utm BaseMessageMetadataUtm `json:"utm,nullable"`
+	Utm Utm `json:"utm,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Event       respjson.Field
@@ -331,32 +307,6 @@ type BaseMessageMetadata struct {
 // Returns the unmodified JSON received from the API
 func (r BaseMessageMetadata) RawJSON() string { return r.JSON.raw }
 func (r *BaseMessageMetadata) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Identify the campaign that refers traffic to a specific website, and attributes
-// the browser's website session.
-type BaseMessageMetadataUtm struct {
-	Campaign string `json:"campaign,nullable"`
-	Content  string `json:"content,nullable"`
-	Medium   string `json:"medium,nullable"`
-	Source   string `json:"source,nullable"`
-	Term     string `json:"term,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Campaign    respjson.Field
-		Content     respjson.Field
-		Medium      respjson.Field
-		Source      respjson.Field
-		Term        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r BaseMessageMetadataUtm) RawJSON() string { return r.JSON.raw }
-func (r *BaseMessageMetadataUtm) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -406,7 +356,7 @@ func (r *BaseMessageProvider) UnmarshalJSON(data []byte) error {
 }
 
 type BaseMessageProviderMetadata struct {
-	Utm BaseMessageProviderMetadataUtm `json:"utm,nullable"`
+	Utm Utm `json:"utm,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Utm         respjson.Field
@@ -418,30 +368,6 @@ type BaseMessageProviderMetadata struct {
 // Returns the unmodified JSON received from the API
 func (r BaseMessageProviderMetadata) RawJSON() string { return r.JSON.raw }
 func (r *BaseMessageProviderMetadata) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type BaseMessageProviderMetadataUtm struct {
-	Campaign string `json:"campaign,nullable"`
-	Content  string `json:"content,nullable"`
-	Medium   string `json:"medium,nullable"`
-	Source   string `json:"source,nullable"`
-	Term     string `json:"term,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Campaign    respjson.Field
-		Content     respjson.Field
-		Medium      respjson.Field
-		Source      respjson.Field
-		Term        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r BaseMessageProviderMetadataUtm) RawJSON() string { return r.JSON.raw }
-func (r *BaseMessageProviderMetadataUtm) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -584,7 +510,7 @@ func init() {
 }
 
 type BaseMessageChannelMetadataParam struct {
-	Utm BaseMessageChannelMetadataUtmParam `json:"utm,omitzero"`
+	Utm UtmParam `json:"utm,omitzero"`
 	paramObj
 }
 
@@ -593,23 +519,6 @@ func (r BaseMessageChannelMetadataParam) MarshalJSON() (data []byte, err error) 
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *BaseMessageChannelMetadataParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type BaseMessageChannelMetadataUtmParam struct {
-	Campaign param.Opt[string] `json:"campaign,omitzero"`
-	Content  param.Opt[string] `json:"content,omitzero"`
-	Medium   param.Opt[string] `json:"medium,omitzero"`
-	Source   param.Opt[string] `json:"source,omitzero"`
-	Term     param.Opt[string] `json:"term,omitzero"`
-	paramObj
-}
-
-func (r BaseMessageChannelMetadataUtmParam) MarshalJSON() (data []byte, err error) {
-	type shadow BaseMessageChannelMetadataUtmParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *BaseMessageChannelMetadataUtmParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -715,7 +624,7 @@ type BaseMessageMetadataParam struct {
 	Tags []string `json:"tags,omitzero"`
 	// Identify the campaign that refers traffic to a specific website, and attributes
 	// the browser's website session.
-	Utm BaseMessageMetadataUtmParam `json:"utm,omitzero"`
+	Utm UtmParam `json:"utm,omitzero"`
 	paramObj
 }
 
@@ -724,25 +633,6 @@ func (r BaseMessageMetadataParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *BaseMessageMetadataParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Identify the campaign that refers traffic to a specific website, and attributes
-// the browser's website session.
-type BaseMessageMetadataUtmParam struct {
-	Campaign param.Opt[string] `json:"campaign,omitzero"`
-	Content  param.Opt[string] `json:"content,omitzero"`
-	Medium   param.Opt[string] `json:"medium,omitzero"`
-	Source   param.Opt[string] `json:"source,omitzero"`
-	Term     param.Opt[string] `json:"term,omitzero"`
-	paramObj
-}
-
-func (r BaseMessageMetadataUtmParam) MarshalJSON() (data []byte, err error) {
-	type shadow BaseMessageMetadataUtmParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *BaseMessageMetadataUtmParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -784,7 +674,7 @@ func (r *BaseMessageProviderParam) UnmarshalJSON(data []byte) error {
 }
 
 type BaseMessageProviderMetadataParam struct {
-	Utm BaseMessageProviderMetadataUtmParam `json:"utm,omitzero"`
+	Utm UtmParam `json:"utm,omitzero"`
 	paramObj
 }
 
@@ -793,23 +683,6 @@ func (r BaseMessageProviderMetadataParam) MarshalJSON() (data []byte, err error)
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *BaseMessageProviderMetadataParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type BaseMessageProviderMetadataUtmParam struct {
-	Campaign param.Opt[string] `json:"campaign,omitzero"`
-	Content  param.Opt[string] `json:"content,omitzero"`
-	Medium   param.Opt[string] `json:"medium,omitzero"`
-	Source   param.Opt[string] `json:"source,omitzero"`
-	Term     param.Opt[string] `json:"term,omitzero"`
-	paramObj
-}
-
-func (r BaseMessageProviderMetadataUtmParam) MarshalJSON() (data []byte, err error) {
-	type shadow BaseMessageProviderMetadataUtmParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *BaseMessageProviderMetadataUtmParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1596,15 +1469,15 @@ func init() {
 }
 
 // ContentUnion contains all possible properties and values from
-// [ContentElementalContent], [ContentElementalContentSugar].
+// [ElementalContent], [ContentElementalContentSugar].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type ContentUnion struct {
-	// This field is from variant [ContentElementalContent].
-	Elements []ContentElementalContentElementUnion `json:"elements"`
-	// This field is from variant [ContentElementalContent].
+	// This field is from variant [ElementalContent].
+	Elements []ElementalNodeUnion `json:"elements"`
+	// This field is from variant [ElementalContent].
 	Version string `json:"version"`
-	// This field is from variant [ContentElementalContent].
+	// This field is from variant [ElementalContent].
 	Brand any `json:"brand"`
 	// This field is from variant [ContentElementalContentSugar].
 	Body string `json:"body"`
@@ -1620,7 +1493,7 @@ type ContentUnion struct {
 	} `json:"-"`
 }
 
-func (u ContentUnion) AsElementalContent() (v ContentElementalContent) {
+func (u ContentUnion) AsElementalContent() (v ElementalContent) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -1646,124 +1519,6 @@ func (r ContentUnion) ToParam() ContentUnionParam {
 	return param.Override[ContentUnionParam](json.RawMessage(r.RawJSON()))
 }
 
-type ContentElementalContent struct {
-	Elements []ContentElementalContentElementUnion `json:"elements,required"`
-	// For example, "2022-01-01"
-	Version string `json:"version,required"`
-	Brand   any    `json:"brand"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Elements    respjson.Field
-		Version     respjson.Field
-		Brand       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ContentElementalContent) RawJSON() string { return r.JSON.raw }
-func (r *ContentElementalContent) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ContentElementalContentElementUnion contains all possible properties and values
-// from [ContentElementalContentElementObject],
-// [ContentElementalContentElementObject], [ContentElementalContentElementType],
-// [ContentElementalContentElementObject], [ContentElementalContentElementObject],
-// [ContentElementalContentElementObject], [ContentElementalContentElementType],
-// [ContentElementalContentElementObject].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-type ContentElementalContentElementUnion struct {
-	// This field is from variant [ContentElementalContentElementObject].
-	Channels []string `json:"channels"`
-	// This field is from variant [ContentElementalContentElementObject].
-	If string `json:"if"`
-	// This field is from variant [ContentElementalContentElementObject].
-	Loop string `json:"loop"`
-	// This field is from variant [ContentElementalContentElementObject].
-	Ref  string `json:"ref"`
-	Type string `json:"type"`
-	JSON struct {
-		Channels respjson.Field
-		If       respjson.Field
-		Loop     respjson.Field
-		Ref      respjson.Field
-		Type     respjson.Field
-		raw      string
-	} `json:"-"`
-}
-
-func (u ContentElementalContentElementUnion) AsContentElementalContentElementObject() (v ContentElementalContentElementObject) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ContentElementalContentElementUnion) AsVariant2() (v ContentElementalContentElementObject) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ContentElementalContentElementUnion) AsContentElementalContentElementType() (v ContentElementalContentElementType) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ContentElementalContentElementUnion) AsVariant3() (v ContentElementalContentElementObject) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ContentElementalContentElementUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ContentElementalContentElementUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ContentElementalContentElementObject struct {
-	Channels []string `json:"channels,nullable"`
-	If       string   `json:"if,nullable"`
-	Loop     string   `json:"loop,nullable"`
-	Ref      string   `json:"ref,nullable"`
-	// Any of "text".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Channels    respjson.Field
-		If          respjson.Field
-		Loop        respjson.Field
-		Ref         respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ContentElementalContentElementObject) RawJSON() string { return r.JSON.raw }
-func (r *ContentElementalContentElementObject) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ContentElementalContentElementType struct {
-	// Any of "channel".
-	Type string `json:"type,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ContentElementalContentElementType) RawJSON() string { return r.JSON.raw }
-func (r *ContentElementalContentElementType) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // Syntatic Sugar to provide a fast shorthand for Courier Elemental Blocks.
 type ContentElementalContentSugar struct {
 	// The text content displayed in the notification.
@@ -1785,8 +1540,8 @@ func (r *ContentElementalContentSugar) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func ContentParamOfElementalContent(elements []ContentElementalContentElementUnionParam, version string) ContentUnionParam {
-	var variant ContentElementalContentParam
+func ContentParamOfElementalContent(elements []ElementalNodeUnionParam, version string) ContentUnionParam {
+	var variant ElementalContentParam
 	variant.Elements = elements
 	variant.Version = version
 	return ContentUnionParam{OfElementalContent: &variant}
@@ -1803,7 +1558,7 @@ func ContentParamOfElementalContentSugar(body string, title string) ContentUnion
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type ContentUnionParam struct {
-	OfElementalContent      *ContentElementalContentParam      `json:",omitzero,inline"`
+	OfElementalContent      *ElementalContentParam             `json:",omitzero,inline"`
 	OfElementalContentSugar *ContentElementalContentSugarParam `json:",omitzero,inline"`
 	paramUnion
 }
@@ -1822,208 +1577,6 @@ func (u *ContentUnionParam) asAny() any {
 		return u.OfElementalContentSugar
 	}
 	return nil
-}
-
-// The properties Elements, Version are required.
-type ContentElementalContentParam struct {
-	Elements []ContentElementalContentElementUnionParam `json:"elements,omitzero,required"`
-	// For example, "2022-01-01"
-	Version string `json:"version,required"`
-	Brand   any    `json:"brand,omitzero"`
-	paramObj
-}
-
-func (r ContentElementalContentParam) MarshalJSON() (data []byte, err error) {
-	type shadow ContentElementalContentParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ContentElementalContentParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type ContentElementalContentElementUnionParam struct {
-	OfContentElementalContentElementObject *ContentElementalContentElementObjectParam `json:",omitzero,inline"`
-	OfVariant2                             *ContentElementalContentElementObjectParam `json:",omitzero,inline"`
-	OfContentElementalContentElementType   *ContentElementalContentElementTypeParam   `json:",omitzero,inline"`
-	OfVariant3                             *ContentElementalContentElementObjectParam `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u ContentElementalContentElementUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfContentElementalContentElementObject,
-		u.OfVariant2,
-		u.OfContentElementalContentElementType,
-		u.OfVariant3,
-		u.OfVariant3,
-		u.OfVariant3,
-		u.OfVariant3,
-		u.OfVariant3)
-}
-func (u *ContentElementalContentElementUnionParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *ContentElementalContentElementUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfContentElementalContentElementObject) {
-		return u.OfContentElementalContentElementObject
-	} else if !param.IsOmitted(u.OfVariant2) {
-		return u.OfVariant2
-	} else if !param.IsOmitted(u.OfContentElementalContentElementType) {
-		return u.OfContentElementalContentElementType
-	} else if !param.IsOmitted(u.OfVariant3) {
-		return u.OfVariant3
-	} else if !param.IsOmitted(u.OfVariant3) {
-		return u.OfVariant3
-	} else if !param.IsOmitted(u.OfVariant3) {
-		return u.OfVariant3
-	} else if !param.IsOmitted(u.OfVariant3) {
-		return u.OfVariant3
-	} else if !param.IsOmitted(u.OfVariant3) {
-		return u.OfVariant3
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ContentElementalContentElementUnionParam) GetIf() *string {
-	if vt := u.OfContentElementalContentElementObject; vt != nil && vt.If.Valid() {
-		return &vt.If.Value
-	} else if vt := u.OfVariant2; vt != nil && vt.If.Valid() {
-		return &vt.If.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
-		return &vt.If.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
-		return &vt.If.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
-		return &vt.If.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
-		return &vt.If.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ContentElementalContentElementUnionParam) GetLoop() *string {
-	if vt := u.OfContentElementalContentElementObject; vt != nil && vt.Loop.Valid() {
-		return &vt.Loop.Value
-	} else if vt := u.OfVariant2; vt != nil && vt.Loop.Valid() {
-		return &vt.Loop.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
-		return &vt.Loop.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
-		return &vt.Loop.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
-		return &vt.Loop.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
-		return &vt.Loop.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ContentElementalContentElementUnionParam) GetRef() *string {
-	if vt := u.OfContentElementalContentElementObject; vt != nil && vt.Ref.Valid() {
-		return &vt.Ref.Value
-	} else if vt := u.OfVariant2; vt != nil && vt.Ref.Valid() {
-		return &vt.Ref.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
-		return &vt.Ref.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
-		return &vt.Ref.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
-		return &vt.Ref.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
-		return &vt.Ref.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ContentElementalContentElementUnionParam) GetType() *string {
-	if vt := u.OfContentElementalContentElementObject; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfVariant2; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfContentElementalContentElementType; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfVariant3; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfVariant3; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfVariant3; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfVariant3; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfVariant3; vt != nil {
-		return (*string)(&vt.Type)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's Channels property, if present.
-func (u ContentElementalContentElementUnionParam) GetChannels() []string {
-	if vt := u.OfContentElementalContentElementObject; vt != nil {
-		return vt.Channels
-	} else if vt := u.OfVariant2; vt != nil {
-		return vt.Channels
-	} else if vt := u.OfVariant3; vt != nil {
-		return vt.Channels
-	} else if vt := u.OfVariant3; vt != nil {
-		return vt.Channels
-	} else if vt := u.OfVariant3; vt != nil {
-		return vt.Channels
-	} else if vt := u.OfVariant3; vt != nil {
-		return vt.Channels
-	}
-	return nil
-}
-
-type ContentElementalContentElementObjectParam struct {
-	If       param.Opt[string] `json:"if,omitzero"`
-	Loop     param.Opt[string] `json:"loop,omitzero"`
-	Ref      param.Opt[string] `json:"ref,omitzero"`
-	Channels []string          `json:"channels,omitzero"`
-	// Any of "text".
-	Type string `json:"type,omitzero"`
-	paramObj
-}
-
-func (r ContentElementalContentElementObjectParam) MarshalJSON() (data []byte, err error) {
-	type shadow ContentElementalContentElementObjectParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ContentElementalContentElementObjectParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[ContentElementalContentElementObjectParam](
-		"type", "text",
-	)
-}
-
-// The property Type is required.
-type ContentElementalContentElementTypeParam struct {
-	// Any of "channel".
-	Type string `json:"type,omitzero,required"`
-	paramObj
-}
-
-func (r ContentElementalContentElementTypeParam) MarshalJSON() (data []byte, err error) {
-	type shadow ContentElementalContentElementTypeParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ContentElementalContentElementTypeParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[ContentElementalContentElementTypeParam](
-		"type", "channel",
-	)
 }
 
 // Syntatic Sugar to provide a fast shorthand for Courier Elemental Blocks.
@@ -2046,11 +1599,11 @@ func (r *ContentElementalContentSugarParam) UnmarshalJSON(data []byte) error {
 }
 
 func MessageParamOfContentMessage[
-	T ContentElementalContentParam | ContentElementalContentSugarParam,
+	T ElementalContentParam | ContentElementalContentSugarParam,
 ](content T) MessageUnionParam {
 	var variant MessageContentMessageParam
 	switch v := any(content).(type) {
-	case ContentElementalContentParam:
+	case ElementalContentParam:
 		variant.Content.OfElementalContent = &v
 	case ContentElementalContentSugarParam:
 		variant.Content.OfElementalContentSugar = &v
@@ -3089,6 +2642,56 @@ func (r SlackBasePropertiesParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *SlackBasePropertiesParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type Utm struct {
+	Campaign string `json:"campaign,nullable"`
+	Content  string `json:"content,nullable"`
+	Medium   string `json:"medium,nullable"`
+	Source   string `json:"source,nullable"`
+	Term     string `json:"term,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Campaign    respjson.Field
+		Content     respjson.Field
+		Medium      respjson.Field
+		Source      respjson.Field
+		Term        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r Utm) RawJSON() string { return r.JSON.raw }
+func (r *Utm) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this Utm to a UtmParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// UtmParam.Overrides()
+func (r Utm) ToParam() UtmParam {
+	return param.Override[UtmParam](json.RawMessage(r.RawJSON()))
+}
+
+type UtmParam struct {
+	Campaign param.Opt[string] `json:"campaign,omitzero"`
+	Content  param.Opt[string] `json:"content,omitzero"`
+	Medium   param.Opt[string] `json:"medium,omitzero"`
+	Source   param.Opt[string] `json:"source,omitzero"`
+	Term     param.Opt[string] `json:"term,omitzero"`
+	paramObj
+}
+
+func (r UtmParam) MarshalJSON() (data []byte, err error) {
+	type shadow UtmParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *UtmParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

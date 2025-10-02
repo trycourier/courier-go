@@ -29,12 +29,12 @@ func TestBrandNewWithOptionalParams(t *testing.T) {
 	_, err := client.Brands.New(context.TODO(), courier.BrandNewParams{
 		Name: "name",
 		Settings: courier.BrandSettingsParam{
-			Colors: courier.BrandSettingsColorsParam{
+			Colors: courier.BrandColorsParam{
 				Primary:   courier.String("primary"),
 				Secondary: courier.String("secondary"),
 				Tertiary:  courier.String("tertiary"),
 			},
-			Email: courier.BrandSettingsEmailParam{
+			Email: courier.EmailParam{
 				Footer: map[string]interface{}{},
 				Header: map[string]interface{}{},
 			},
@@ -42,8 +42,8 @@ func TestBrandNewWithOptionalParams(t *testing.T) {
 		},
 		ID: courier.String("id"),
 		Snippets: courier.BrandSnippetsParam{
-			Items: []courier.BrandSnippetsItemParam{{
-				Format: "handlebars",
+			Items: []courier.BrandSnippetParam{{
+				Format: courier.BrandSnippetFormatHandlebars,
 				Name:   "name",
 				Value:  "value",
 			}},
@@ -100,20 +100,20 @@ func TestBrandUpdateWithOptionalParams(t *testing.T) {
 		courier.BrandUpdateParams{
 			Name: "name",
 			Settings: courier.BrandSettingsParam{
-				Colors: courier.BrandSettingsColorsParam{
+				Colors: courier.BrandColorsParam{
 					Primary:   courier.String("primary"),
 					Secondary: courier.String("secondary"),
 					Tertiary:  courier.String("tertiary"),
 				},
-				Email: courier.BrandSettingsEmailParam{
+				Email: courier.EmailParam{
 					Footer: map[string]interface{}{},
 					Header: map[string]interface{}{},
 				},
 				Inapp: map[string]interface{}{},
 			},
 			Snippets: courier.BrandSnippetsParam{
-				Items: []courier.BrandSnippetsItemParam{{
-					Format: "handlebars",
+				Items: []courier.BrandSnippetParam{{
+					Format: courier.BrandSnippetFormatHandlebars,
 					Name:   "name",
 					Value:  "value",
 				}},

@@ -130,10 +130,54 @@ func (r *Brand) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type BrandColors struct {
+	Primary   string `json:"primary,nullable"`
+	Secondary string `json:"secondary,nullable"`
+	Tertiary  string `json:"tertiary,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Primary     respjson.Field
+		Secondary   respjson.Field
+		Tertiary    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r BrandColors) RawJSON() string { return r.JSON.raw }
+func (r *BrandColors) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this BrandColors to a BrandColorsParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// BrandColorsParam.Overrides()
+func (r BrandColors) ToParam() BrandColorsParam {
+	return param.Override[BrandColorsParam](json.RawMessage(r.RawJSON()))
+}
+
+type BrandColorsParam struct {
+	Primary   param.Opt[string] `json:"primary,omitzero"`
+	Secondary param.Opt[string] `json:"secondary,omitzero"`
+	Tertiary  param.Opt[string] `json:"tertiary,omitzero"`
+	paramObj
+}
+
+func (r BrandColorsParam) MarshalJSON() (data []byte, err error) {
+	type shadow BrandColorsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *BrandColorsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type BrandSettings struct {
-	Colors BrandSettingsColors `json:"colors,nullable"`
-	Email  BrandSettingsEmail  `json:"email,nullable"`
-	Inapp  any                 `json:"inapp"`
+	Colors BrandColors `json:"colors,nullable"`
+	Email  Email       `json:"email,nullable"`
+	Inapp  any         `json:"inapp"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Colors      respjson.Field
@@ -159,48 +203,10 @@ func (r BrandSettings) ToParam() BrandSettingsParam {
 	return param.Override[BrandSettingsParam](json.RawMessage(r.RawJSON()))
 }
 
-type BrandSettingsColors struct {
-	Primary   string `json:"primary,nullable"`
-	Secondary string `json:"secondary,nullable"`
-	Tertiary  string `json:"tertiary,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Primary     respjson.Field
-		Secondary   respjson.Field
-		Tertiary    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r BrandSettingsColors) RawJSON() string { return r.JSON.raw }
-func (r *BrandSettingsColors) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type BrandSettingsEmail struct {
-	Footer any `json:"footer,required"`
-	Header any `json:"header,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Footer      respjson.Field
-		Header      respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r BrandSettingsEmail) RawJSON() string { return r.JSON.raw }
-func (r *BrandSettingsEmail) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type BrandSettingsParam struct {
-	Colors BrandSettingsColorsParam `json:"colors,omitzero"`
-	Email  BrandSettingsEmailParam  `json:"email,omitzero"`
-	Inapp  any                      `json:"inapp,omitzero"`
+	Colors BrandColorsParam `json:"colors,omitzero"`
+	Email  EmailParam       `json:"email,omitzero"`
+	Inapp  any              `json:"inapp,omitzero"`
 	paramObj
 }
 
@@ -212,38 +218,61 @@ func (r *BrandSettingsParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type BrandSettingsColorsParam struct {
-	Primary   param.Opt[string] `json:"primary,omitzero"`
-	Secondary param.Opt[string] `json:"secondary,omitzero"`
-	Tertiary  param.Opt[string] `json:"tertiary,omitzero"`
-	paramObj
+type BrandSnippet struct {
+	// Any of "handlebars".
+	Format BrandSnippetFormat `json:"format,required"`
+	Name   string             `json:"name,required"`
+	Value  string             `json:"value,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Format      respjson.Field
+		Name        respjson.Field
+		Value       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
 }
 
-func (r BrandSettingsColorsParam) MarshalJSON() (data []byte, err error) {
-	type shadow BrandSettingsColorsParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *BrandSettingsColorsParam) UnmarshalJSON(data []byte) error {
+// Returns the unmodified JSON received from the API
+func (r BrandSnippet) RawJSON() string { return r.JSON.raw }
+func (r *BrandSnippet) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The properties Footer, Header are required.
-type BrandSettingsEmailParam struct {
-	Footer any `json:"footer,omitzero,required"`
-	Header any `json:"header,omitzero,required"`
+// ToParam converts this BrandSnippet to a BrandSnippetParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// BrandSnippetParam.Overrides()
+func (r BrandSnippet) ToParam() BrandSnippetParam {
+	return param.Override[BrandSnippetParam](json.RawMessage(r.RawJSON()))
+}
+
+type BrandSnippetFormat string
+
+const (
+	BrandSnippetFormatHandlebars BrandSnippetFormat = "handlebars"
+)
+
+// The properties Format, Name, Value are required.
+type BrandSnippetParam struct {
+	// Any of "handlebars".
+	Format BrandSnippetFormat `json:"format,omitzero,required"`
+	Name   string             `json:"name,required"`
+	Value  string             `json:"value,required"`
 	paramObj
 }
 
-func (r BrandSettingsEmailParam) MarshalJSON() (data []byte, err error) {
-	type shadow BrandSettingsEmailParam
+func (r BrandSnippetParam) MarshalJSON() (data []byte, err error) {
+	type shadow BrandSnippetParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *BrandSettingsEmailParam) UnmarshalJSON(data []byte) error {
+func (r *BrandSnippetParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 type BrandSnippets struct {
-	Items []BrandSnippetsItem `json:"items,required"`
+	Items []BrandSnippet `json:"items,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Items       respjson.Field
@@ -267,30 +296,9 @@ func (r BrandSnippets) ToParam() BrandSnippetsParam {
 	return param.Override[BrandSnippetsParam](json.RawMessage(r.RawJSON()))
 }
 
-type BrandSnippetsItem struct {
-	// Any of "handlebars".
-	Format string `json:"format,required"`
-	Name   string `json:"name,required"`
-	Value  string `json:"value,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Format      respjson.Field
-		Name        respjson.Field
-		Value       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r BrandSnippetsItem) RawJSON() string { return r.JSON.raw }
-func (r *BrandSnippetsItem) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // The property Items is required.
 type BrandSnippetsParam struct {
-	Items []BrandSnippetsItemParam `json:"items,omitzero,required"`
+	Items []BrandSnippetParam `json:"items,omitzero,required"`
 	paramObj
 }
 
@@ -302,27 +310,46 @@ func (r *BrandSnippetsParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The properties Format, Name, Value are required.
-type BrandSnippetsItemParam struct {
-	// Any of "handlebars".
-	Format string `json:"format,omitzero,required"`
-	Name   string `json:"name,required"`
-	Value  string `json:"value,required"`
-	paramObj
+type Email struct {
+	Footer any `json:"footer,required"`
+	Header any `json:"header,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Footer      respjson.Field
+		Header      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
 }
 
-func (r BrandSnippetsItemParam) MarshalJSON() (data []byte, err error) {
-	type shadow BrandSnippetsItemParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *BrandSnippetsItemParam) UnmarshalJSON(data []byte) error {
+// Returns the unmodified JSON received from the API
+func (r Email) RawJSON() string { return r.JSON.raw }
+func (r *Email) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func init() {
-	apijson.RegisterFieldValidator[BrandSnippetsItemParam](
-		"format", "handlebars",
-	)
+// ToParam converts this Email to a EmailParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// EmailParam.Overrides()
+func (r Email) ToParam() EmailParam {
+	return param.Override[EmailParam](json.RawMessage(r.RawJSON()))
+}
+
+// The properties Footer, Header are required.
+type EmailParam struct {
+	Footer any `json:"footer,omitzero,required"`
+	Header any `json:"header,omitzero,required"`
+	paramObj
+}
+
+func (r EmailParam) MarshalJSON() (data []byte, err error) {
+	type shadow EmailParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type BrandListResponse struct {
