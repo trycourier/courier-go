@@ -58,17 +58,18 @@ func main() {
 	)
 	response, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
 		Message: courier.MessageUnionParam{
-			OfContentMessage: &courier.MessageContentMessageParam{
-				BaseMessageParam:       courier.BaseMessageParam{},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{},
-				Content: courier.ContentUnionParam{
-					OfElementalContent: &courier.ContentElementalContentParam{
-						Elements: []courier.ElementalNodeUnionParam{{
-							OfElementalNodeObject: &courier.ElementalNodeObjectParam{},
-						}},
-						Version: "version",
+			OfTemplateMessage: &courier.MessageTemplateMessageParam{
+				BaseMessageParam: courier.BaseMessageParam{
+					Data: map[string]any{
+						"foo": "bar",
 					},
 				},
+				BaseMessageSendToParam: courier.BaseMessageSendToParam{
+					To: courier.BaseMessageSendToToUnionParam{
+						OfBaseMessageSendToToObject: &courier.BaseMessageSendToToObjectParam{},
+					},
+				},
+				Template: "your_template",
 			},
 		},
 	})
@@ -314,17 +315,18 @@ To handle errors, we recommend that you use the `errors.As` pattern:
 ```go
 _, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
 	Message: courier.MessageUnionParam{
-		OfContentMessage: &courier.MessageContentMessageParam{
-			BaseMessageParam:       courier.BaseMessageParam{},
-			BaseMessageSendToParam: courier.BaseMessageSendToParam{},
-			Content: courier.ContentUnionParam{
-				OfElementalContent: &courier.ContentElementalContentParam{
-					Elements: []courier.ElementalNodeUnionParam{{
-						OfElementalNodeObject: &courier.ElementalNodeObjectParam{},
-					}},
-					Version: "version",
+		OfTemplateMessage: &courier.MessageTemplateMessageParam{
+			BaseMessageParam: courier.BaseMessageParam{
+				Data: map[string]any{
+					"foo": "bar",
 				},
 			},
+			BaseMessageSendToParam: courier.BaseMessageSendToParam{
+				To: courier.BaseMessageSendToToUnionParam{
+					OfBaseMessageSendToToObject: &courier.BaseMessageSendToToObjectParam{},
+				},
+			},
+			Template: "your_template",
 		},
 	},
 })
@@ -356,17 +358,18 @@ client.Send.Message(
 	ctx,
 	courier.SendMessageParams{
 		Message: courier.MessageUnionParam{
-			OfContentMessage: &courier.MessageContentMessageParam{
-				BaseMessageParam:       courier.BaseMessageParam{},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{},
-				Content: courier.ContentUnionParam{
-					OfElementalContent: &courier.ContentElementalContentParam{
-						Elements: []courier.ElementalNodeUnionParam{{
-							OfElementalNodeObject: &courier.ElementalNodeObjectParam{},
-						}},
-						Version: "version",
+			OfTemplateMessage: &courier.MessageTemplateMessageParam{
+				BaseMessageParam: courier.BaseMessageParam{
+					Data: map[string]any{
+						"foo": "bar",
 					},
 				},
+				BaseMessageSendToParam: courier.BaseMessageSendToParam{
+					To: courier.BaseMessageSendToToUnionParam{
+						OfBaseMessageSendToToObject: &courier.BaseMessageSendToToObjectParam{},
+					},
+				},
+				Template: "your_template",
 			},
 		},
 	},
@@ -407,17 +410,18 @@ client.Send.Message(
 	context.TODO(),
 	courier.SendMessageParams{
 		Message: courier.MessageUnionParam{
-			OfContentMessage: &courier.MessageContentMessageParam{
-				BaseMessageParam:       courier.BaseMessageParam{},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{},
-				Content: courier.ContentUnionParam{
-					OfElementalContent: &courier.ContentElementalContentParam{
-						Elements: []courier.ElementalNodeUnionParam{{
-							OfElementalNodeObject: &courier.ElementalNodeObjectParam{},
-						}},
-						Version: "version",
+			OfTemplateMessage: &courier.MessageTemplateMessageParam{
+				BaseMessageParam: courier.BaseMessageParam{
+					Data: map[string]any{
+						"foo": "bar",
 					},
 				},
+				BaseMessageSendToParam: courier.BaseMessageSendToParam{
+					To: courier.BaseMessageSendToToUnionParam{
+						OfBaseMessageSendToToObject: &courier.BaseMessageSendToToObjectParam{},
+					},
+				},
+				Template: "your_template",
 			},
 		},
 	},
@@ -437,17 +441,18 @@ response, err := client.Send.Message(
 	context.TODO(),
 	courier.SendMessageParams{
 		Message: courier.MessageUnionParam{
-			OfContentMessage: &courier.MessageContentMessageParam{
-				BaseMessageParam:       courier.BaseMessageParam{},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{},
-				Content: courier.ContentUnionParam{
-					OfElementalContent: &courier.ContentElementalContentParam{
-						Elements: []courier.ElementalNodeUnionParam{{
-							OfElementalNodeObject: &courier.ElementalNodeObjectParam{},
-						}},
-						Version: "version",
+			OfTemplateMessage: &courier.MessageTemplateMessageParam{
+				BaseMessageParam: courier.BaseMessageParam{
+					Data: map[string]any{
+						"foo": "bar",
 					},
 				},
+				BaseMessageSendToParam: courier.BaseMessageSendToParam{
+					To: courier.BaseMessageSendToToUnionParam{
+						OfBaseMessageSendToToObject: &courier.BaseMessageSendToToObjectParam{},
+					},
+				},
+				Template: "your_template",
 			},
 		},
 	},

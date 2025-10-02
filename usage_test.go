@@ -26,17 +26,18 @@ func TestUsage(t *testing.T) {
 	)
 	response, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
 		Message: courier.MessageUnionParam{
-			OfContentMessage: &courier.MessageContentMessageParam{
-				BaseMessageParam:       courier.BaseMessageParam{},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{},
-				Content: courier.ContentUnionParam{
-					OfElementalContent: &courier.ContentElementalContentParam{
-						Elements: []courier.ElementalNodeUnionParam{{
-							OfElementalNodeObject: &courier.ElementalNodeObjectParam{},
-						}},
-						Version: "version",
+			OfTemplateMessage: &courier.MessageTemplateMessageParam{
+				BaseMessageParam: courier.BaseMessageParam{
+					Data: map[string]any{
+						"foo": "bar",
 					},
 				},
+				BaseMessageSendToParam: courier.BaseMessageSendToParam{
+					To: courier.BaseMessageSendToToUnionParam{
+						OfBaseMessageSendToToObject: &courier.BaseMessageSendToToObjectParam{},
+					},
+				},
+				Template: "your_template",
 			},
 		},
 	})

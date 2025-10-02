@@ -40,17 +40,18 @@ func TestUserAgentHeader(t *testing.T) {
 	)
 	client.Send.Message(context.Background(), courier.SendMessageParams{
 		Message: courier.MessageUnionParam{
-			OfContentMessage: &courier.MessageContentMessageParam{
-				BaseMessageParam:       courier.BaseMessageParam{},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{},
-				Content: courier.ContentUnionParam{
-					OfElementalContent: &courier.ContentElementalContentParam{
-						Elements: []courier.ElementalNodeUnionParam{{
-							OfElementalNodeObject: &courier.ElementalNodeObjectParam{},
-						}},
-						Version: "version",
+			OfTemplateMessage: &courier.MessageTemplateMessageParam{
+				BaseMessageParam: courier.BaseMessageParam{
+					Data: map[string]any{
+						"foo": "bar",
 					},
 				},
+				BaseMessageSendToParam: courier.BaseMessageSendToParam{
+					To: courier.BaseMessageSendToToUnionParam{
+						OfBaseMessageSendToToObject: &courier.BaseMessageSendToToObjectParam{},
+					},
+				},
+				Template: "your_template",
 			},
 		},
 	})
@@ -79,17 +80,18 @@ func TestRetryAfter(t *testing.T) {
 	)
 	_, err := client.Send.Message(context.Background(), courier.SendMessageParams{
 		Message: courier.MessageUnionParam{
-			OfContentMessage: &courier.MessageContentMessageParam{
-				BaseMessageParam:       courier.BaseMessageParam{},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{},
-				Content: courier.ContentUnionParam{
-					OfElementalContent: &courier.ContentElementalContentParam{
-						Elements: []courier.ElementalNodeUnionParam{{
-							OfElementalNodeObject: &courier.ElementalNodeObjectParam{},
-						}},
-						Version: "version",
+			OfTemplateMessage: &courier.MessageTemplateMessageParam{
+				BaseMessageParam: courier.BaseMessageParam{
+					Data: map[string]any{
+						"foo": "bar",
 					},
 				},
+				BaseMessageSendToParam: courier.BaseMessageSendToParam{
+					To: courier.BaseMessageSendToToUnionParam{
+						OfBaseMessageSendToToObject: &courier.BaseMessageSendToToObjectParam{},
+					},
+				},
+				Template: "your_template",
 			},
 		},
 	})
@@ -129,17 +131,18 @@ func TestDeleteRetryCountHeader(t *testing.T) {
 	)
 	_, err := client.Send.Message(context.Background(), courier.SendMessageParams{
 		Message: courier.MessageUnionParam{
-			OfContentMessage: &courier.MessageContentMessageParam{
-				BaseMessageParam:       courier.BaseMessageParam{},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{},
-				Content: courier.ContentUnionParam{
-					OfElementalContent: &courier.ContentElementalContentParam{
-						Elements: []courier.ElementalNodeUnionParam{{
-							OfElementalNodeObject: &courier.ElementalNodeObjectParam{},
-						}},
-						Version: "version",
+			OfTemplateMessage: &courier.MessageTemplateMessageParam{
+				BaseMessageParam: courier.BaseMessageParam{
+					Data: map[string]any{
+						"foo": "bar",
 					},
 				},
+				BaseMessageSendToParam: courier.BaseMessageSendToParam{
+					To: courier.BaseMessageSendToToUnionParam{
+						OfBaseMessageSendToToObject: &courier.BaseMessageSendToToObjectParam{},
+					},
+				},
+				Template: "your_template",
 			},
 		},
 	})
@@ -174,17 +177,18 @@ func TestOverwriteRetryCountHeader(t *testing.T) {
 	)
 	_, err := client.Send.Message(context.Background(), courier.SendMessageParams{
 		Message: courier.MessageUnionParam{
-			OfContentMessage: &courier.MessageContentMessageParam{
-				BaseMessageParam:       courier.BaseMessageParam{},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{},
-				Content: courier.ContentUnionParam{
-					OfElementalContent: &courier.ContentElementalContentParam{
-						Elements: []courier.ElementalNodeUnionParam{{
-							OfElementalNodeObject: &courier.ElementalNodeObjectParam{},
-						}},
-						Version: "version",
+			OfTemplateMessage: &courier.MessageTemplateMessageParam{
+				BaseMessageParam: courier.BaseMessageParam{
+					Data: map[string]any{
+						"foo": "bar",
 					},
 				},
+				BaseMessageSendToParam: courier.BaseMessageSendToParam{
+					To: courier.BaseMessageSendToToUnionParam{
+						OfBaseMessageSendToToObject: &courier.BaseMessageSendToToObjectParam{},
+					},
+				},
+				Template: "your_template",
 			},
 		},
 	})
@@ -218,17 +222,18 @@ func TestRetryAfterMs(t *testing.T) {
 	)
 	_, err := client.Send.Message(context.Background(), courier.SendMessageParams{
 		Message: courier.MessageUnionParam{
-			OfContentMessage: &courier.MessageContentMessageParam{
-				BaseMessageParam:       courier.BaseMessageParam{},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{},
-				Content: courier.ContentUnionParam{
-					OfElementalContent: &courier.ContentElementalContentParam{
-						Elements: []courier.ElementalNodeUnionParam{{
-							OfElementalNodeObject: &courier.ElementalNodeObjectParam{},
-						}},
-						Version: "version",
+			OfTemplateMessage: &courier.MessageTemplateMessageParam{
+				BaseMessageParam: courier.BaseMessageParam{
+					Data: map[string]any{
+						"foo": "bar",
 					},
 				},
+				BaseMessageSendToParam: courier.BaseMessageSendToParam{
+					To: courier.BaseMessageSendToToUnionParam{
+						OfBaseMessageSendToToObject: &courier.BaseMessageSendToToObjectParam{},
+					},
+				},
+				Template: "your_template",
 			},
 		},
 	})
@@ -256,17 +261,18 @@ func TestContextCancel(t *testing.T) {
 	cancel()
 	_, err := client.Send.Message(cancelCtx, courier.SendMessageParams{
 		Message: courier.MessageUnionParam{
-			OfContentMessage: &courier.MessageContentMessageParam{
-				BaseMessageParam:       courier.BaseMessageParam{},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{},
-				Content: courier.ContentUnionParam{
-					OfElementalContent: &courier.ContentElementalContentParam{
-						Elements: []courier.ElementalNodeUnionParam{{
-							OfElementalNodeObject: &courier.ElementalNodeObjectParam{},
-						}},
-						Version: "version",
+			OfTemplateMessage: &courier.MessageTemplateMessageParam{
+				BaseMessageParam: courier.BaseMessageParam{
+					Data: map[string]any{
+						"foo": "bar",
 					},
 				},
+				BaseMessageSendToParam: courier.BaseMessageSendToParam{
+					To: courier.BaseMessageSendToToUnionParam{
+						OfBaseMessageSendToToObject: &courier.BaseMessageSendToToObjectParam{},
+					},
+				},
+				Template: "your_template",
 			},
 		},
 	})
@@ -291,17 +297,18 @@ func TestContextCancelDelay(t *testing.T) {
 	defer cancel()
 	_, err := client.Send.Message(cancelCtx, courier.SendMessageParams{
 		Message: courier.MessageUnionParam{
-			OfContentMessage: &courier.MessageContentMessageParam{
-				BaseMessageParam:       courier.BaseMessageParam{},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{},
-				Content: courier.ContentUnionParam{
-					OfElementalContent: &courier.ContentElementalContentParam{
-						Elements: []courier.ElementalNodeUnionParam{{
-							OfElementalNodeObject: &courier.ElementalNodeObjectParam{},
-						}},
-						Version: "version",
+			OfTemplateMessage: &courier.MessageTemplateMessageParam{
+				BaseMessageParam: courier.BaseMessageParam{
+					Data: map[string]any{
+						"foo": "bar",
 					},
 				},
+				BaseMessageSendToParam: courier.BaseMessageSendToParam{
+					To: courier.BaseMessageSendToToUnionParam{
+						OfBaseMessageSendToToObject: &courier.BaseMessageSendToToObjectParam{},
+					},
+				},
+				Template: "your_template",
 			},
 		},
 	})
@@ -332,17 +339,18 @@ func TestContextDeadline(t *testing.T) {
 		)
 		_, err := client.Send.Message(deadlineCtx, courier.SendMessageParams{
 			Message: courier.MessageUnionParam{
-				OfContentMessage: &courier.MessageContentMessageParam{
-					BaseMessageParam:       courier.BaseMessageParam{},
-					BaseMessageSendToParam: courier.BaseMessageSendToParam{},
-					Content: courier.ContentUnionParam{
-						OfElementalContent: &courier.ContentElementalContentParam{
-							Elements: []courier.ElementalNodeUnionParam{{
-								OfElementalNodeObject: &courier.ElementalNodeObjectParam{},
-							}},
-							Version: "version",
+				OfTemplateMessage: &courier.MessageTemplateMessageParam{
+					BaseMessageParam: courier.BaseMessageParam{
+						Data: map[string]any{
+							"foo": "bar",
 						},
 					},
+					BaseMessageSendToParam: courier.BaseMessageSendToParam{
+						To: courier.BaseMessageSendToToUnionParam{
+							OfBaseMessageSendToToObject: &courier.BaseMessageSendToToObjectParam{},
+						},
+					},
+					Template: "your_template",
 				},
 			},
 		})
