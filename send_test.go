@@ -36,7 +36,7 @@ func TestSendMessage(t *testing.T) {
 							BrandID: courier.String("brand_id"),
 							If:      courier.String("if"),
 							Metadata: courier.BaseMessageChannelMetadataParam{
-								Utm: courier.BaseMessageChannelMetadataUtmParam{
+								Utm: courier.UtmParam{
 									Campaign: courier.String("campaign"),
 									Content:  courier.String("content"),
 									Medium:   courier.String("medium"),
@@ -75,7 +75,7 @@ func TestSendMessage(t *testing.T) {
 						Event:   courier.String("event"),
 						Tags:    []string{"string"},
 						TraceID: courier.String("trace_id"),
-						Utm: courier.BaseMessageMetadataUtmParam{
+						Utm: courier.UtmParam{
 							Campaign: courier.String("campaign"),
 							Content:  courier.String("content"),
 							Medium:   courier.String("medium"),
@@ -90,7 +90,7 @@ func TestSendMessage(t *testing.T) {
 						"foo": {
 							If: courier.String("if"),
 							Metadata: courier.BaseMessageProviderMetadataParam{
-								Utm: courier.BaseMessageProviderMetadataUtmParam{
+								Utm: courier.UtmParam{
 									Campaign: courier.String("campaign"),
 									Content:  courier.String("content"),
 									Medium:   courier.String("medium"),

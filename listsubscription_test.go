@@ -11,6 +11,7 @@ import (
 	"github.com/trycourier/courier-go"
 	"github.com/trycourier/courier-go/internal/testutil"
 	"github.com/trycourier/courier-go/option"
+	"github.com/trycourier/courier-go/shared"
 )
 
 func TestListSubscriptionListWithOptionalParams(t *testing.T) {
@@ -62,25 +63,25 @@ func TestListSubscriptionAdd(t *testing.T) {
 			Recipients: []courier.PutSubscriptionsRecipientParam{{
 				RecipientID: "recipientId",
 				Preferences: courier.RecipientPreferencesParam{
-					Categories: map[string]courier.RecipientPreferencesCategoryParam{
+					Categories: map[string]courier.NotificationPreferenceDetailsParam{
 						"foo": {
 							Status: courier.PreferenceStatusOptedIn,
-							ChannelPreferences: []courier.RecipientPreferencesCategoryChannelPreferenceParam{{
+							ChannelPreferences: []shared.ChannelPreferenceParam{{
 								Channel: courier.ChannelClassificationDirectMessage,
 							}},
-							Rules: []courier.RecipientPreferencesCategoryRuleParam{{
+							Rules: []shared.RuleParam{{
 								Until: "until",
 								Start: courier.String("start"),
 							}},
 						},
 					},
-					Notifications: map[string]courier.RecipientPreferencesNotificationParam{
+					Notifications: map[string]courier.NotificationPreferenceDetailsParam{
 						"foo": {
 							Status: courier.PreferenceStatusOptedIn,
-							ChannelPreferences: []courier.RecipientPreferencesNotificationChannelPreferenceParam{{
+							ChannelPreferences: []shared.ChannelPreferenceParam{{
 								Channel: courier.ChannelClassificationDirectMessage,
 							}},
-							Rules: []courier.RecipientPreferencesNotificationRuleParam{{
+							Rules: []shared.RuleParam{{
 								Until: "until",
 								Start: courier.String("start"),
 							}},
@@ -119,25 +120,25 @@ func TestListSubscriptionSubscribe(t *testing.T) {
 			Recipients: []courier.PutSubscriptionsRecipientParam{{
 				RecipientID: "recipientId",
 				Preferences: courier.RecipientPreferencesParam{
-					Categories: map[string]courier.RecipientPreferencesCategoryParam{
+					Categories: map[string]courier.NotificationPreferenceDetailsParam{
 						"foo": {
 							Status: courier.PreferenceStatusOptedIn,
-							ChannelPreferences: []courier.RecipientPreferencesCategoryChannelPreferenceParam{{
+							ChannelPreferences: []shared.ChannelPreferenceParam{{
 								Channel: courier.ChannelClassificationDirectMessage,
 							}},
-							Rules: []courier.RecipientPreferencesCategoryRuleParam{{
+							Rules: []shared.RuleParam{{
 								Until: "until",
 								Start: courier.String("start"),
 							}},
 						},
 					},
-					Notifications: map[string]courier.RecipientPreferencesNotificationParam{
+					Notifications: map[string]courier.NotificationPreferenceDetailsParam{
 						"foo": {
 							Status: courier.PreferenceStatusOptedIn,
-							ChannelPreferences: []courier.RecipientPreferencesNotificationChannelPreferenceParam{{
+							ChannelPreferences: []shared.ChannelPreferenceParam{{
 								Channel: courier.ChannelClassificationDirectMessage,
 							}},
-							Rules: []courier.RecipientPreferencesNotificationRuleParam{{
+							Rules: []shared.RuleParam{{
 								Until: "until",
 								Start: courier.String("start"),
 							}},
@@ -175,25 +176,25 @@ func TestListSubscriptionSubscribeUserWithOptionalParams(t *testing.T) {
 		courier.ListSubscriptionSubscribeUserParams{
 			ListID: "list_id",
 			Preferences: courier.RecipientPreferencesParam{
-				Categories: map[string]courier.RecipientPreferencesCategoryParam{
+				Categories: map[string]courier.NotificationPreferenceDetailsParam{
 					"foo": {
 						Status: courier.PreferenceStatusOptedIn,
-						ChannelPreferences: []courier.RecipientPreferencesCategoryChannelPreferenceParam{{
+						ChannelPreferences: []shared.ChannelPreferenceParam{{
 							Channel: courier.ChannelClassificationDirectMessage,
 						}},
-						Rules: []courier.RecipientPreferencesCategoryRuleParam{{
+						Rules: []shared.RuleParam{{
 							Until: "until",
 							Start: courier.String("start"),
 						}},
 					},
 				},
-				Notifications: map[string]courier.RecipientPreferencesNotificationParam{
+				Notifications: map[string]courier.NotificationPreferenceDetailsParam{
 					"foo": {
 						Status: courier.PreferenceStatusOptedIn,
-						ChannelPreferences: []courier.RecipientPreferencesNotificationChannelPreferenceParam{{
+						ChannelPreferences: []shared.ChannelPreferenceParam{{
 							Channel: courier.ChannelClassificationDirectMessage,
 						}},
-						Rules: []courier.RecipientPreferencesNotificationRuleParam{{
+						Rules: []shared.RuleParam{{
 							Until: "until",
 							Start: courier.String("start"),
 						}},

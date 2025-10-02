@@ -11,6 +11,7 @@ import (
 	"github.com/trycourier/courier-go"
 	"github.com/trycourier/courier-go/internal/testutil"
 	"github.com/trycourier/courier-go/option"
+	"github.com/trycourier/courier-go/shared"
 )
 
 func TestListGet(t *testing.T) {
@@ -55,25 +56,25 @@ func TestListUpdateWithOptionalParams(t *testing.T) {
 		courier.ListUpdateParams{
 			Name: "name",
 			Preferences: courier.RecipientPreferencesParam{
-				Categories: map[string]courier.RecipientPreferencesCategoryParam{
+				Categories: map[string]courier.NotificationPreferenceDetailsParam{
 					"foo": {
 						Status: courier.PreferenceStatusOptedIn,
-						ChannelPreferences: []courier.RecipientPreferencesCategoryChannelPreferenceParam{{
+						ChannelPreferences: []shared.ChannelPreferenceParam{{
 							Channel: courier.ChannelClassificationDirectMessage,
 						}},
-						Rules: []courier.RecipientPreferencesCategoryRuleParam{{
+						Rules: []shared.RuleParam{{
 							Until: "until",
 							Start: courier.String("start"),
 						}},
 					},
 				},
-				Notifications: map[string]courier.RecipientPreferencesNotificationParam{
+				Notifications: map[string]courier.NotificationPreferenceDetailsParam{
 					"foo": {
 						Status: courier.PreferenceStatusOptedIn,
-						ChannelPreferences: []courier.RecipientPreferencesNotificationChannelPreferenceParam{{
+						ChannelPreferences: []shared.ChannelPreferenceParam{{
 							Channel: courier.ChannelClassificationDirectMessage,
 						}},
-						Rules: []courier.RecipientPreferencesNotificationRuleParam{{
+						Rules: []shared.RuleParam{{
 							Until: "until",
 							Start: courier.String("start"),
 						}},

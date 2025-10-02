@@ -11,6 +11,7 @@ import (
 	"github.com/trycourier/courier-go"
 	"github.com/trycourier/courier-go/internal/testutil"
 	"github.com/trycourier/courier-go/option"
+	"github.com/trycourier/courier-go/shared"
 )
 
 func TestBulkAddUsers(t *testing.T) {
@@ -33,25 +34,25 @@ func TestBulkAddUsers(t *testing.T) {
 			Users: []courier.InboundBulkMessageUserParam{{
 				Data: map[string]interface{}{},
 				Preferences: courier.RecipientPreferencesParam{
-					Categories: map[string]courier.RecipientPreferencesCategoryParam{
+					Categories: map[string]courier.NotificationPreferenceDetailsParam{
 						"foo": {
 							Status: courier.PreferenceStatusOptedIn,
-							ChannelPreferences: []courier.RecipientPreferencesCategoryChannelPreferenceParam{{
+							ChannelPreferences: []shared.ChannelPreferenceParam{{
 								Channel: courier.ChannelClassificationDirectMessage,
 							}},
-							Rules: []courier.RecipientPreferencesCategoryRuleParam{{
+							Rules: []shared.RuleParam{{
 								Until: "until",
 								Start: courier.String("start"),
 							}},
 						},
 					},
-					Notifications: map[string]courier.RecipientPreferencesNotificationParam{
+					Notifications: map[string]courier.NotificationPreferenceDetailsParam{
 						"foo": {
 							Status: courier.PreferenceStatusOptedIn,
-							ChannelPreferences: []courier.RecipientPreferencesNotificationChannelPreferenceParam{{
+							ChannelPreferences: []shared.ChannelPreferenceParam{{
 								Channel: courier.ChannelClassificationDirectMessage,
 							}},
-							Rules: []courier.RecipientPreferencesNotificationRuleParam{{
+							Rules: []shared.RuleParam{{
 								Until: "until",
 								Start: courier.String("start"),
 							}},
@@ -75,10 +76,10 @@ func TestBulkAddUsers(t *testing.T) {
 						Notifications: map[string]courier.UserRecipientPreferencesNotificationParam{
 							"foo": {
 								Status: courier.PreferenceStatusOptedIn,
-								ChannelPreferences: []courier.UserRecipientPreferencesNotificationChannelPreferenceParam{{
+								ChannelPreferences: []shared.ChannelPreferenceParam{{
 									Channel: courier.ChannelClassificationDirectMessage,
 								}},
-								Rules: []courier.UserRecipientPreferencesNotificationRuleParam{{
+								Rules: []shared.RuleParam{{
 									Until: "until",
 									Start: courier.String("start"),
 								}},
@@ -88,10 +89,10 @@ func TestBulkAddUsers(t *testing.T) {
 						Categories: map[string]courier.UserRecipientPreferencesCategoryParam{
 							"foo": {
 								Status: courier.PreferenceStatusOptedIn,
-								ChannelPreferences: []courier.UserRecipientPreferencesCategoryChannelPreferenceParam{{
+								ChannelPreferences: []shared.ChannelPreferenceParam{{
 									Channel: courier.ChannelClassificationDirectMessage,
 								}},
-								Rules: []courier.UserRecipientPreferencesCategoryRuleParam{{
+								Rules: []shared.RuleParam{{
 									Until: "until",
 									Start: courier.String("start"),
 								}},
@@ -147,7 +148,7 @@ func TestBulkNewJobWithOptionalParams(t *testing.T) {
 								BrandID: courier.String("brand_id"),
 								If:      courier.String("if"),
 								Metadata: courier.BaseMessageChannelMetadataParam{
-									Utm: courier.BaseMessageChannelMetadataUtmParam{
+									Utm: courier.UtmParam{
 										Campaign: courier.String("campaign"),
 										Content:  courier.String("content"),
 										Medium:   courier.String("medium"),
@@ -186,7 +187,7 @@ func TestBulkNewJobWithOptionalParams(t *testing.T) {
 							Event:   courier.String("event"),
 							Tags:    []string{"string"},
 							TraceID: courier.String("trace_id"),
-							Utm: courier.BaseMessageMetadataUtmParam{
+							Utm: courier.UtmParam{
 								Campaign: courier.String("campaign"),
 								Content:  courier.String("content"),
 								Medium:   courier.String("medium"),
@@ -201,7 +202,7 @@ func TestBulkNewJobWithOptionalParams(t *testing.T) {
 							"foo": {
 								If: courier.String("if"),
 								Metadata: courier.BaseMessageProviderMetadataParam{
-									Utm: courier.BaseMessageProviderMetadataUtmParam{
+									Utm: courier.UtmParam{
 										Campaign: courier.String("campaign"),
 										Content:  courier.String("content"),
 										Medium:   courier.String("medium"),
