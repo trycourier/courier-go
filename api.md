@@ -5,7 +5,9 @@ Params Types:
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageContextParam">MessageContextParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageRoutingParam">MessageRoutingParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageRoutingChannelUnionParam">MessageRoutingChannelUnionParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#PreferenceParam">PreferenceParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#RecipientParam">RecipientParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UtmParam">UtmParam</a>
 
 Response Types:
 

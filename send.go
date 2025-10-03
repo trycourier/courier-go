@@ -110,6 +110,77 @@ func (u *MessageRoutingChannelUnionParam) asAny() any {
 	return nil
 }
 
+// The property Status is required.
+type PreferenceParam struct {
+	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
+	Status             PreferenceStatus                   `json:"status,omitzero,required"`
+	ChannelPreferences []PreferenceChannelPreferenceParam `json:"channel_preferences,omitzero"`
+	Rules              []PreferenceRuleParam              `json:"rules,omitzero"`
+	// Any of "subscription", "list", "recipient".
+	Source PreferenceSource `json:"source,omitzero"`
+	paramObj
+}
+
+func (r PreferenceParam) MarshalJSON() (data []byte, err error) {
+	type shadow PreferenceParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *PreferenceParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type PreferenceStatus string
+
+const (
+	PreferenceStatusOptedIn  PreferenceStatus = "OPTED_IN"
+	PreferenceStatusOptedOut PreferenceStatus = "OPTED_OUT"
+	PreferenceStatusRequired PreferenceStatus = "REQUIRED"
+)
+
+// The property Channel is required.
+type PreferenceChannelPreferenceParam struct {
+	// Any of "direct_message", "email", "push", "sms", "webhook", "inbox".
+	Channel string `json:"channel,omitzero,required"`
+	paramObj
+}
+
+func (r PreferenceChannelPreferenceParam) MarshalJSON() (data []byte, err error) {
+	type shadow PreferenceChannelPreferenceParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *PreferenceChannelPreferenceParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[PreferenceChannelPreferenceParam](
+		"channel", "direct_message", "email", "push", "sms", "webhook", "inbox",
+	)
+}
+
+// The property Until is required.
+type PreferenceRuleParam struct {
+	Until string            `json:"until,required"`
+	Start param.Opt[string] `json:"start,omitzero"`
+	paramObj
+}
+
+func (r PreferenceRuleParam) MarshalJSON() (data []byte, err error) {
+	type shadow PreferenceRuleParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *PreferenceRuleParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type PreferenceSource string
+
+const (
+	PreferenceSourceSubscription PreferenceSource = "subscription"
+	PreferenceSourceList         PreferenceSource = "list"
+	PreferenceSourceRecipient    PreferenceSource = "recipient"
+)
+
 type RecipientParam struct {
 	// Use `tenant_id` instead.
 	AccountID param.Opt[string] `json:"account_id,omitzero"`
@@ -137,9 +208,9 @@ func (r *RecipientParam) UnmarshalJSON(data []byte) error {
 
 // The property Notifications is required.
 type RecipientPreferencesParam struct {
-	Notifications map[string]RecipientPreferencesNotificationParam `json:"notifications,omitzero,required"`
-	TemplateID    param.Opt[string]                                `json:"templateId,omitzero"`
-	Categories    map[string]RecipientPreferencesCategoryParam     `json:"categories,omitzero"`
+	Notifications map[string]PreferenceParam `json:"notifications,omitzero,required"`
+	TemplateID    param.Opt[string]          `json:"templateId,omitzero"`
+	Categories    map[string]PreferenceParam `json:"categories,omitzero"`
 	paramObj
 }
 
@@ -151,131 +222,20 @@ func (r *RecipientPreferencesParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The property Status is required.
-type RecipientPreferencesNotificationParam struct {
-	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
-	Status             string                                                   `json:"status,omitzero,required"`
-	ChannelPreferences []RecipientPreferencesNotificationChannelPreferenceParam `json:"channel_preferences,omitzero"`
-	Rules              []RecipientPreferencesNotificationRuleParam              `json:"rules,omitzero"`
-	// Any of "subscription", "list", "recipient".
-	Source string `json:"source,omitzero"`
+type UtmParam struct {
+	Campaign param.Opt[string] `json:"campaign,omitzero"`
+	Content  param.Opt[string] `json:"content,omitzero"`
+	Medium   param.Opt[string] `json:"medium,omitzero"`
+	Source   param.Opt[string] `json:"source,omitzero"`
+	Term     param.Opt[string] `json:"term,omitzero"`
 	paramObj
 }
 
-func (r RecipientPreferencesNotificationParam) MarshalJSON() (data []byte, err error) {
-	type shadow RecipientPreferencesNotificationParam
+func (r UtmParam) MarshalJSON() (data []byte, err error) {
+	type shadow UtmParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *RecipientPreferencesNotificationParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[RecipientPreferencesNotificationParam](
-		"status", "OPTED_IN", "OPTED_OUT", "REQUIRED",
-	)
-	apijson.RegisterFieldValidator[RecipientPreferencesNotificationParam](
-		"source", "subscription", "list", "recipient",
-	)
-}
-
-// The property Channel is required.
-type RecipientPreferencesNotificationChannelPreferenceParam struct {
-	// Any of "direct_message", "email", "push", "sms", "webhook", "inbox".
-	Channel string `json:"channel,omitzero,required"`
-	paramObj
-}
-
-func (r RecipientPreferencesNotificationChannelPreferenceParam) MarshalJSON() (data []byte, err error) {
-	type shadow RecipientPreferencesNotificationChannelPreferenceParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *RecipientPreferencesNotificationChannelPreferenceParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[RecipientPreferencesNotificationChannelPreferenceParam](
-		"channel", "direct_message", "email", "push", "sms", "webhook", "inbox",
-	)
-}
-
-// The property Until is required.
-type RecipientPreferencesNotificationRuleParam struct {
-	Until string            `json:"until,required"`
-	Start param.Opt[string] `json:"start,omitzero"`
-	paramObj
-}
-
-func (r RecipientPreferencesNotificationRuleParam) MarshalJSON() (data []byte, err error) {
-	type shadow RecipientPreferencesNotificationRuleParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *RecipientPreferencesNotificationRuleParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The property Status is required.
-type RecipientPreferencesCategoryParam struct {
-	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
-	Status             string                                               `json:"status,omitzero,required"`
-	ChannelPreferences []RecipientPreferencesCategoryChannelPreferenceParam `json:"channel_preferences,omitzero"`
-	Rules              []RecipientPreferencesCategoryRuleParam              `json:"rules,omitzero"`
-	// Any of "subscription", "list", "recipient".
-	Source string `json:"source,omitzero"`
-	paramObj
-}
-
-func (r RecipientPreferencesCategoryParam) MarshalJSON() (data []byte, err error) {
-	type shadow RecipientPreferencesCategoryParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *RecipientPreferencesCategoryParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[RecipientPreferencesCategoryParam](
-		"status", "OPTED_IN", "OPTED_OUT", "REQUIRED",
-	)
-	apijson.RegisterFieldValidator[RecipientPreferencesCategoryParam](
-		"source", "subscription", "list", "recipient",
-	)
-}
-
-// The property Channel is required.
-type RecipientPreferencesCategoryChannelPreferenceParam struct {
-	// Any of "direct_message", "email", "push", "sms", "webhook", "inbox".
-	Channel string `json:"channel,omitzero,required"`
-	paramObj
-}
-
-func (r RecipientPreferencesCategoryChannelPreferenceParam) MarshalJSON() (data []byte, err error) {
-	type shadow RecipientPreferencesCategoryChannelPreferenceParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *RecipientPreferencesCategoryChannelPreferenceParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[RecipientPreferencesCategoryChannelPreferenceParam](
-		"channel", "direct_message", "email", "push", "sms", "webhook", "inbox",
-	)
-}
-
-// The property Until is required.
-type RecipientPreferencesCategoryRuleParam struct {
-	Until string            `json:"until,required"`
-	Start param.Opt[string] `json:"start,omitzero"`
-	paramObj
-}
-
-func (r RecipientPreferencesCategoryRuleParam) MarshalJSON() (data []byte, err error) {
-	type shadow RecipientPreferencesCategoryRuleParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *RecipientPreferencesCategoryRuleParam) UnmarshalJSON(data []byte) error {
+func (r *UtmParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -400,7 +360,7 @@ func init() {
 }
 
 type SendMessageParamsMessageChannelMetadata struct {
-	Utm SendMessageParamsMessageChannelMetadataUtm `json:"utm,omitzero"`
+	Utm UtmParam `json:"utm,omitzero"`
 	paramObj
 }
 
@@ -409,23 +369,6 @@ func (r SendMessageParamsMessageChannelMetadata) MarshalJSON() (data []byte, err
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *SendMessageParamsMessageChannelMetadata) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type SendMessageParamsMessageChannelMetadataUtm struct {
-	Campaign param.Opt[string] `json:"campaign,omitzero"`
-	Content  param.Opt[string] `json:"content,omitzero"`
-	Medium   param.Opt[string] `json:"medium,omitzero"`
-	Source   param.Opt[string] `json:"source,omitzero"`
-	Term     param.Opt[string] `json:"term,omitzero"`
-	paramObj
-}
-
-func (r SendMessageParamsMessageChannelMetadataUtm) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageChannelMetadataUtm
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SendMessageParamsMessageChannelMetadataUtm) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -502,10 +445,10 @@ func (u *SendMessageParamsMessageExpiryExpiresInUnion) asAny() any {
 }
 
 type SendMessageParamsMessageMetadata struct {
-	Event   param.Opt[string]                   `json:"event,omitzero"`
-	TraceID param.Opt[string]                   `json:"trace_id,omitzero"`
-	Tags    []string                            `json:"tags,omitzero"`
-	Utm     SendMessageParamsMessageMetadataUtm `json:"utm,omitzero"`
+	Event   param.Opt[string] `json:"event,omitzero"`
+	TraceID param.Opt[string] `json:"trace_id,omitzero"`
+	Tags    []string          `json:"tags,omitzero"`
+	Utm     UtmParam          `json:"utm,omitzero"`
 	paramObj
 }
 
@@ -514,23 +457,6 @@ func (r SendMessageParamsMessageMetadata) MarshalJSON() (data []byte, err error)
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *SendMessageParamsMessageMetadata) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type SendMessageParamsMessageMetadataUtm struct {
-	Campaign param.Opt[string] `json:"campaign,omitzero"`
-	Content  param.Opt[string] `json:"content,omitzero"`
-	Medium   param.Opt[string] `json:"medium,omitzero"`
-	Source   param.Opt[string] `json:"source,omitzero"`
-	Term     param.Opt[string] `json:"term,omitzero"`
-	paramObj
-}
-
-func (r SendMessageParamsMessageMetadataUtm) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageMetadataUtm
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SendMessageParamsMessageMetadataUtm) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -568,7 +494,7 @@ func (r *SendMessageParamsMessageProvider) UnmarshalJSON(data []byte) error {
 }
 
 type SendMessageParamsMessageProviderMetadata struct {
-	Utm SendMessageParamsMessageProviderMetadataUtm `json:"utm,omitzero"`
+	Utm UtmParam `json:"utm,omitzero"`
 	paramObj
 }
 
@@ -577,23 +503,6 @@ func (r SendMessageParamsMessageProviderMetadata) MarshalJSON() (data []byte, er
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *SendMessageParamsMessageProviderMetadata) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type SendMessageParamsMessageProviderMetadataUtm struct {
-	Campaign param.Opt[string] `json:"campaign,omitzero"`
-	Content  param.Opt[string] `json:"content,omitzero"`
-	Medium   param.Opt[string] `json:"medium,omitzero"`
-	Source   param.Opt[string] `json:"source,omitzero"`
-	Term     param.Opt[string] `json:"term,omitzero"`
-	paramObj
-}
-
-func (r SendMessageParamsMessageProviderMetadataUtm) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageProviderMetadataUtm
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SendMessageParamsMessageProviderMetadataUtm) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -698,9 +607,9 @@ func (r *SendMessageParamsMessageToObject) UnmarshalJSON(data []byte) error {
 
 // The property Notifications is required.
 type SendMessageParamsMessageToObjectPreferences struct {
-	Notifications map[string]SendMessageParamsMessageToObjectPreferencesNotification `json:"notifications,omitzero,required"`
-	TemplateID    param.Opt[string]                                                  `json:"templateId,omitzero"`
-	Categories    map[string]SendMessageParamsMessageToObjectPreferencesCategory     `json:"categories,omitzero"`
+	Notifications map[string]PreferenceParam `json:"notifications,omitzero,required"`
+	TemplateID    param.Opt[string]          `json:"templateId,omitzero"`
+	Categories    map[string]PreferenceParam `json:"categories,omitzero"`
 	paramObj
 }
 
@@ -709,133 +618,5 @@ func (r SendMessageParamsMessageToObjectPreferences) MarshalJSON() (data []byte,
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *SendMessageParamsMessageToObjectPreferences) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The property Status is required.
-type SendMessageParamsMessageToObjectPreferencesNotification struct {
-	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
-	Status             string                                                                     `json:"status,omitzero,required"`
-	ChannelPreferences []SendMessageParamsMessageToObjectPreferencesNotificationChannelPreference `json:"channel_preferences,omitzero"`
-	Rules              []SendMessageParamsMessageToObjectPreferencesNotificationRule              `json:"rules,omitzero"`
-	// Any of "subscription", "list", "recipient".
-	Source string `json:"source,omitzero"`
-	paramObj
-}
-
-func (r SendMessageParamsMessageToObjectPreferencesNotification) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageToObjectPreferencesNotification
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SendMessageParamsMessageToObjectPreferencesNotification) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[SendMessageParamsMessageToObjectPreferencesNotification](
-		"status", "OPTED_IN", "OPTED_OUT", "REQUIRED",
-	)
-	apijson.RegisterFieldValidator[SendMessageParamsMessageToObjectPreferencesNotification](
-		"source", "subscription", "list", "recipient",
-	)
-}
-
-// The property Channel is required.
-type SendMessageParamsMessageToObjectPreferencesNotificationChannelPreference struct {
-	// Any of "direct_message", "email", "push", "sms", "webhook", "inbox".
-	Channel string `json:"channel,omitzero,required"`
-	paramObj
-}
-
-func (r SendMessageParamsMessageToObjectPreferencesNotificationChannelPreference) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageToObjectPreferencesNotificationChannelPreference
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SendMessageParamsMessageToObjectPreferencesNotificationChannelPreference) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[SendMessageParamsMessageToObjectPreferencesNotificationChannelPreference](
-		"channel", "direct_message", "email", "push", "sms", "webhook", "inbox",
-	)
-}
-
-// The property Until is required.
-type SendMessageParamsMessageToObjectPreferencesNotificationRule struct {
-	Until string            `json:"until,required"`
-	Start param.Opt[string] `json:"start,omitzero"`
-	paramObj
-}
-
-func (r SendMessageParamsMessageToObjectPreferencesNotificationRule) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageToObjectPreferencesNotificationRule
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SendMessageParamsMessageToObjectPreferencesNotificationRule) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The property Status is required.
-type SendMessageParamsMessageToObjectPreferencesCategory struct {
-	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
-	Status             string                                                                 `json:"status,omitzero,required"`
-	ChannelPreferences []SendMessageParamsMessageToObjectPreferencesCategoryChannelPreference `json:"channel_preferences,omitzero"`
-	Rules              []SendMessageParamsMessageToObjectPreferencesCategoryRule              `json:"rules,omitzero"`
-	// Any of "subscription", "list", "recipient".
-	Source string `json:"source,omitzero"`
-	paramObj
-}
-
-func (r SendMessageParamsMessageToObjectPreferencesCategory) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageToObjectPreferencesCategory
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SendMessageParamsMessageToObjectPreferencesCategory) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[SendMessageParamsMessageToObjectPreferencesCategory](
-		"status", "OPTED_IN", "OPTED_OUT", "REQUIRED",
-	)
-	apijson.RegisterFieldValidator[SendMessageParamsMessageToObjectPreferencesCategory](
-		"source", "subscription", "list", "recipient",
-	)
-}
-
-// The property Channel is required.
-type SendMessageParamsMessageToObjectPreferencesCategoryChannelPreference struct {
-	// Any of "direct_message", "email", "push", "sms", "webhook", "inbox".
-	Channel string `json:"channel,omitzero,required"`
-	paramObj
-}
-
-func (r SendMessageParamsMessageToObjectPreferencesCategoryChannelPreference) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageToObjectPreferencesCategoryChannelPreference
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SendMessageParamsMessageToObjectPreferencesCategoryChannelPreference) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[SendMessageParamsMessageToObjectPreferencesCategoryChannelPreference](
-		"channel", "direct_message", "email", "push", "sms", "webhook", "inbox",
-	)
-}
-
-// The property Until is required.
-type SendMessageParamsMessageToObjectPreferencesCategoryRule struct {
-	Until string            `json:"until,required"`
-	Start param.Opt[string] `json:"start,omitzero"`
-	paramObj
-}
-
-func (r SendMessageParamsMessageToObjectPreferencesCategoryRule) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageToObjectPreferencesCategoryRule
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SendMessageParamsMessageToObjectPreferencesCategoryRule) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
