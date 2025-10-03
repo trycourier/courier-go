@@ -38,7 +38,7 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 					BrandID: courier.String("brand_id"),
 					If:      courier.String("if"),
 					Metadata: courier.SendMessageParamsMessageChannelMetadata{
-						Utm: courier.SendMessageParamsMessageChannelMetadataUtm{
+						Utm: courier.UtmParam{
 							Campaign: courier.String("campaign"),
 							Content:  courier.String("content"),
 							Medium:   courier.String("medium"),
@@ -77,7 +77,7 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 				Event:   courier.String("event"),
 				Tags:    []string{"string"},
 				TraceID: courier.String("trace_id"),
-				Utm: courier.SendMessageParamsMessageMetadataUtm{
+				Utm: courier.UtmParam{
 					Campaign: courier.String("campaign"),
 					Content:  courier.String("content"),
 					Medium:   courier.String("medium"),
@@ -92,7 +92,7 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 				"foo": {
 					If: courier.String("if"),
 					Metadata: courier.SendMessageParamsMessageProviderMetadata{
-						Utm: courier.SendMessageParamsMessageProviderMetadataUtm{
+						Utm: courier.UtmParam{
 							Campaign: courier.String("campaign"),
 							Content:  courier.String("content"),
 							Medium:   courier.String("medium"),
@@ -136,30 +136,30 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 					Locale:      courier.String("locale"),
 					PhoneNumber: courier.String("phone_number"),
 					Preferences: courier.SendMessageParamsMessageToObjectPreferences{
-						Notifications: map[string]courier.SendMessageParamsMessageToObjectPreferencesNotification{
+						Notifications: map[string]courier.PreferenceParam{
 							"foo": {
-								Status: "OPTED_IN",
-								ChannelPreferences: []courier.SendMessageParamsMessageToObjectPreferencesNotificationChannelPreference{{
+								Status: courier.PreferenceStatusOptedIn,
+								ChannelPreferences: []courier.PreferenceChannelPreferenceParam{{
 									Channel: "direct_message",
 								}},
-								Rules: []courier.SendMessageParamsMessageToObjectPreferencesNotificationRule{{
+								Rules: []courier.PreferenceRuleParam{{
 									Until: "until",
 									Start: courier.String("start"),
 								}},
-								Source: "subscription",
+								Source: courier.PreferenceSourceSubscription,
 							},
 						},
-						Categories: map[string]courier.SendMessageParamsMessageToObjectPreferencesCategory{
+						Categories: map[string]courier.PreferenceParam{
 							"foo": {
-								Status: "OPTED_IN",
-								ChannelPreferences: []courier.SendMessageParamsMessageToObjectPreferencesCategoryChannelPreference{{
+								Status: courier.PreferenceStatusOptedIn,
+								ChannelPreferences: []courier.PreferenceChannelPreferenceParam{{
 									Channel: "direct_message",
 								}},
-								Rules: []courier.SendMessageParamsMessageToObjectPreferencesCategoryRule{{
+								Rules: []courier.PreferenceRuleParam{{
 									Until: "until",
 									Start: courier.String("start"),
 								}},
-								Source: "subscription",
+								Source: courier.PreferenceSourceSubscription,
 							},
 						},
 						TemplateID: courier.String("templateId"),
