@@ -24,20 +24,11 @@ func TestUsage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	response, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
-		Message: courier.MessageUnionParam{
-			OfTemplateMessage: &courier.MessageTemplateMessageParam{
-				BaseMessageParam: courier.BaseMessageParam{
-					Data: map[string]any{
-						"foo": "bar",
-					},
-				},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{
-					To: courier.BaseMessageSendToToUnionParam{
-						OfBaseMessageSendToToObject: &courier.BaseMessageSendToToObjectParam{},
-					},
-				},
-				Template: "your_template",
+	response, err := client.Send.SendMessage(context.TODO(), courier.SendSendMessageParams{
+		Message: courier.SendSendMessageParamsMessage{
+			Content: courier.SendSendMessageParamsMessageContent{
+				Body:  "body",
+				Title: "title",
 			},
 		},
 	})
