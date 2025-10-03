@@ -56,20 +56,11 @@ func main() {
 	client := courier.NewClient(
 		option.WithAPIKey("My API Key"), // defaults to os.LookupEnv("COURIER_API_KEY")
 	)
-	response, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
-		Message: courier.MessageUnionParam{
-			OfTemplateMessage: &courier.MessageTemplateMessageParam{
-				BaseMessageParam: courier.BaseMessageParam{
-					Data: map[string]any{
-						"foo": "bar",
-					},
-				},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{
-					To: courier.BaseMessageSendToToUnionParam{
-						OfBaseMessageSendToToObject: &courier.BaseMessageSendToToObjectParam{},
-					},
-				},
-				Template: "your_template",
+	response, err := client.Send.SendMessage(context.TODO(), courier.SendSendMessageParams{
+		Message: courier.SendSendMessageParamsMessage{
+			Content: courier.SendSendMessageParamsMessageContent{
+				Body:  "body",
+				Title: "title",
 			},
 		},
 	})
@@ -282,7 +273,7 @@ client := courier.NewClient(
 	option.WithHeader("X-Some-Header", "custom_header_info"),
 )
 
-client.Send.Message(context.TODO(), ...,
+client.Send.SendMessage(context.TODO(), ...,
 	// Override the header
 	option.WithHeader("X-Some-Header", "some_other_custom_header_info"),
 	// Add an undocumented field to the request body, using sjson syntax
@@ -313,20 +304,11 @@ When the API returns a non-success status code, we return an error with type
 To handle errors, we recommend that you use the `errors.As` pattern:
 
 ```go
-_, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
-	Message: courier.MessageUnionParam{
-		OfTemplateMessage: &courier.MessageTemplateMessageParam{
-			BaseMessageParam: courier.BaseMessageParam{
-				Data: map[string]any{
-					"foo": "bar",
-				},
-			},
-			BaseMessageSendToParam: courier.BaseMessageSendToParam{
-				To: courier.BaseMessageSendToToUnionParam{
-					OfBaseMessageSendToToObject: &courier.BaseMessageSendToToObjectParam{},
-				},
-			},
-			Template: "your_template",
+_, err := client.Send.SendMessage(context.TODO(), courier.SendSendMessageParams{
+	Message: courier.SendSendMessageParamsMessage{
+		Content: courier.SendSendMessageParamsMessageContent{
+			Body:  "body",
+			Title: "title",
 		},
 	},
 })
@@ -354,22 +336,13 @@ To set a per-retry timeout, use `option.WithRequestTimeout()`.
 // This sets the timeout for the request, including all the retries.
 ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 defer cancel()
-client.Send.Message(
+client.Send.SendMessage(
 	ctx,
-	courier.SendMessageParams{
-		Message: courier.MessageUnionParam{
-			OfTemplateMessage: &courier.MessageTemplateMessageParam{
-				BaseMessageParam: courier.BaseMessageParam{
-					Data: map[string]any{
-						"foo": "bar",
-					},
-				},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{
-					To: courier.BaseMessageSendToToUnionParam{
-						OfBaseMessageSendToToObject: &courier.BaseMessageSendToToObjectParam{},
-					},
-				},
-				Template: "your_template",
+	courier.SendSendMessageParams{
+		Message: courier.SendSendMessageParamsMessage{
+			Content: courier.SendSendMessageParamsMessageContent{
+				Body:  "body",
+				Title: "title",
 			},
 		},
 	},
@@ -406,22 +379,13 @@ client := courier.NewClient(
 )
 
 // Override per-request:
-client.Send.Message(
+client.Send.SendMessage(
 	context.TODO(),
-	courier.SendMessageParams{
-		Message: courier.MessageUnionParam{
-			OfTemplateMessage: &courier.MessageTemplateMessageParam{
-				BaseMessageParam: courier.BaseMessageParam{
-					Data: map[string]any{
-						"foo": "bar",
-					},
-				},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{
-					To: courier.BaseMessageSendToToUnionParam{
-						OfBaseMessageSendToToObject: &courier.BaseMessageSendToToObjectParam{},
-					},
-				},
-				Template: "your_template",
+	courier.SendSendMessageParams{
+		Message: courier.SendSendMessageParamsMessage{
+			Content: courier.SendSendMessageParamsMessageContent{
+				Body:  "body",
+				Title: "title",
 			},
 		},
 	},
@@ -437,22 +401,13 @@ you need to examine response headers, status codes, or other details.
 ```go
 // Create a variable to store the HTTP response
 var response *http.Response
-response, err := client.Send.Message(
+response, err := client.Send.SendMessage(
 	context.TODO(),
-	courier.SendMessageParams{
-		Message: courier.MessageUnionParam{
-			OfTemplateMessage: &courier.MessageTemplateMessageParam{
-				BaseMessageParam: courier.BaseMessageParam{
-					Data: map[string]any{
-						"foo": "bar",
-					},
-				},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{
-					To: courier.BaseMessageSendToToUnionParam{
-						OfBaseMessageSendToToObject: &courier.BaseMessageSendToToObjectParam{},
-					},
-				},
-				Template: "your_template",
+	courier.SendSendMessageParams{
+		Message: courier.SendSendMessageParamsMessage{
+			Content: courier.SendSendMessageParamsMessageContent{
+				Body:  "body",
+				Title: "title",
 			},
 		},
 	},
