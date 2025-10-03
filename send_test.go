@@ -13,7 +13,7 @@ import (
 	"github.com/trycourier/courier-go/option"
 )
 
-func TestSendSendMessageWithOptionalParams(t *testing.T) {
+func TestSendMessageWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,19 +26,19 @@ func TestSendSendMessageWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Send.SendMessage(context.TODO(), courier.SendSendMessageParams{
-		Message: courier.SendSendMessageParamsMessage{
-			Content: courier.SendSendMessageParamsMessageContent{
+	_, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
+		Message: courier.SendMessageParamsMessage{
+			Content: courier.SendMessageParamsMessageContent{
 				Body:  "Thanks for signing up, {{name}}",
 				Title: "Welcome!",
 			},
 			BrandID: courier.String("brand_id"),
-			Channels: map[string]courier.SendSendMessageParamsMessageChannel{
+			Channels: map[string]courier.SendMessageParamsMessageChannel{
 				"foo": {
 					BrandID: courier.String("brand_id"),
 					If:      courier.String("if"),
-					Metadata: courier.SendSendMessageParamsMessageChannelMetadata{
-						Utm: courier.SendSendMessageParamsMessageChannelMetadataUtm{
+					Metadata: courier.SendMessageParamsMessageChannelMetadata{
+						Utm: courier.SendMessageParamsMessageChannelMetadataUtm{
 							Campaign: courier.String("campaign"),
 							Content:  courier.String("content"),
 							Medium:   courier.String("medium"),
@@ -51,7 +51,7 @@ func TestSendSendMessageWithOptionalParams(t *testing.T) {
 					},
 					Providers:     []string{"string"},
 					RoutingMethod: "all",
-					Timeouts: courier.SendSendMessageParamsMessageChannelTimeouts{
+					Timeouts: courier.SendMessageParamsMessageChannelTimeouts{
 						Channel:  courier.Int(0),
 						Provider: courier.Int(0),
 					},
@@ -63,21 +63,21 @@ func TestSendSendMessageWithOptionalParams(t *testing.T) {
 			Data: map[string]any{
 				"name": "bar",
 			},
-			Delay: courier.SendSendMessageParamsMessageDelay{
+			Delay: courier.SendMessageParamsMessageDelay{
 				Duration: courier.Int(0),
 				Until:    courier.String("until"),
 			},
-			Expiry: courier.SendSendMessageParamsMessageExpiry{
-				ExpiresIn: courier.SendSendMessageParamsMessageExpiryExpiresInUnion{
+			Expiry: courier.SendMessageParamsMessageExpiry{
+				ExpiresIn: courier.SendMessageParamsMessageExpiryExpiresInUnion{
 					OfString: courier.String("string"),
 				},
 				ExpiresAt: courier.String("expires_at"),
 			},
-			Metadata: courier.SendSendMessageParamsMessageMetadata{
+			Metadata: courier.SendMessageParamsMessageMetadata{
 				Event:   courier.String("event"),
 				Tags:    []string{"string"},
 				TraceID: courier.String("trace_id"),
-				Utm: courier.SendSendMessageParamsMessageMetadataUtm{
+				Utm: courier.SendMessageParamsMessageMetadataUtm{
 					Campaign: courier.String("campaign"),
 					Content:  courier.String("content"),
 					Medium:   courier.String("medium"),
@@ -85,14 +85,14 @@ func TestSendSendMessageWithOptionalParams(t *testing.T) {
 					Term:     courier.String("term"),
 				},
 			},
-			Preferences: courier.SendSendMessageParamsMessagePreferences{
+			Preferences: courier.SendMessageParamsMessagePreferences{
 				SubscriptionTopicID: "subscription_topic_id",
 			},
-			Providers: map[string]courier.SendSendMessageParamsMessageProvider{
+			Providers: map[string]courier.SendMessageParamsMessageProvider{
 				"foo": {
 					If: courier.String("if"),
-					Metadata: courier.SendSendMessageParamsMessageProviderMetadata{
-						Utm: courier.SendSendMessageParamsMessageProviderMetadataUtm{
+					Metadata: courier.SendMessageParamsMessageProviderMetadata{
+						Utm: courier.SendMessageParamsMessageProviderMetadataUtm{
 							Campaign: courier.String("campaign"),
 							Content:  courier.String("content"),
 							Medium:   courier.String("medium"),
@@ -106,13 +106,13 @@ func TestSendSendMessageWithOptionalParams(t *testing.T) {
 					Timeouts: courier.Int(0),
 				},
 			},
-			Routing: courier.SendSendMessageParamsMessageRouting{
+			Routing: courier.SendMessageParamsMessageRouting{
 				Channels: []courier.MessageRoutingChannelUnionParam{{
 					OfString: courier.String("email"),
 				}},
 				Method: "single",
 			},
-			Timeout: courier.SendSendMessageParamsMessageTimeout{
+			Timeout: courier.SendMessageParamsMessageTimeout{
 				Channel: map[string]int64{
 					"foo": 0,
 				},
@@ -123,8 +123,8 @@ func TestSendSendMessageWithOptionalParams(t *testing.T) {
 					"foo": 0,
 				},
 			},
-			To: courier.SendSendMessageParamsMessageToUnion{
-				OfSendSendMessagesMessageToObject: &courier.SendSendMessageParamsMessageToObject{
+			To: courier.SendMessageParamsMessageToUnion{
+				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
 					AccountID: courier.String("account_id"),
 					Context: courier.MessageContextParam{
 						TenantID: courier.String("tenant_id"),
@@ -135,27 +135,27 @@ func TestSendSendMessageWithOptionalParams(t *testing.T) {
 					Email:       courier.String("email@example.com"),
 					Locale:      courier.String("locale"),
 					PhoneNumber: courier.String("phone_number"),
-					Preferences: courier.SendSendMessageParamsMessageToObjectPreferences{
-						Notifications: map[string]courier.SendSendMessageParamsMessageToObjectPreferencesNotification{
+					Preferences: courier.SendMessageParamsMessageToObjectPreferences{
+						Notifications: map[string]courier.SendMessageParamsMessageToObjectPreferencesNotification{
 							"foo": {
 								Status: "OPTED_IN",
-								ChannelPreferences: []courier.SendSendMessageParamsMessageToObjectPreferencesNotificationChannelPreference{{
+								ChannelPreferences: []courier.SendMessageParamsMessageToObjectPreferencesNotificationChannelPreference{{
 									Channel: "direct_message",
 								}},
-								Rules: []courier.SendSendMessageParamsMessageToObjectPreferencesNotificationRule{{
+								Rules: []courier.SendMessageParamsMessageToObjectPreferencesNotificationRule{{
 									Until: "until",
 									Start: courier.String("start"),
 								}},
 								Source: "subscription",
 							},
 						},
-						Categories: map[string]courier.SendSendMessageParamsMessageToObjectPreferencesCategory{
+						Categories: map[string]courier.SendMessageParamsMessageToObjectPreferencesCategory{
 							"foo": {
 								Status: "OPTED_IN",
-								ChannelPreferences: []courier.SendSendMessageParamsMessageToObjectPreferencesCategoryChannelPreference{{
+								ChannelPreferences: []courier.SendMessageParamsMessageToObjectPreferencesCategoryChannelPreference{{
 									Channel: "direct_message",
 								}},
-								Rules: []courier.SendSendMessageParamsMessageToObjectPreferencesCategoryRule{{
+								Rules: []courier.SendMessageParamsMessageToObjectPreferencesCategoryRule{{
 									Until: "until",
 									Start: courier.String("start"),
 								}},

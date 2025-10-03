@@ -38,9 +38,9 @@ func TestUserAgentHeader(t *testing.T) {
 			},
 		}),
 	)
-	client.Send.SendMessage(context.Background(), courier.SendSendMessageParams{
-		Message: courier.SendSendMessageParamsMessage{
-			Content: courier.SendSendMessageParamsMessageContent{
+	client.Send.Message(context.Background(), courier.SendMessageParams{
+		Message: courier.SendMessageParamsMessage{
+			Content: courier.SendMessageParamsMessageContent{
 				Body:  "body",
 				Title: "title",
 			},
@@ -69,9 +69,9 @@ func TestRetryAfter(t *testing.T) {
 			},
 		}),
 	)
-	_, err := client.Send.SendMessage(context.Background(), courier.SendSendMessageParams{
-		Message: courier.SendSendMessageParamsMessage{
-			Content: courier.SendSendMessageParamsMessageContent{
+	_, err := client.Send.Message(context.Background(), courier.SendMessageParams{
+		Message: courier.SendMessageParamsMessage{
+			Content: courier.SendMessageParamsMessageContent{
 				Body:  "body",
 				Title: "title",
 			},
@@ -111,9 +111,9 @@ func TestDeleteRetryCountHeader(t *testing.T) {
 		}),
 		option.WithHeaderDel("X-Stainless-Retry-Count"),
 	)
-	_, err := client.Send.SendMessage(context.Background(), courier.SendSendMessageParams{
-		Message: courier.SendSendMessageParamsMessage{
-			Content: courier.SendSendMessageParamsMessageContent{
+	_, err := client.Send.Message(context.Background(), courier.SendMessageParams{
+		Message: courier.SendMessageParamsMessage{
+			Content: courier.SendMessageParamsMessageContent{
 				Body:  "body",
 				Title: "title",
 			},
@@ -148,9 +148,9 @@ func TestOverwriteRetryCountHeader(t *testing.T) {
 		}),
 		option.WithHeader("X-Stainless-Retry-Count", "42"),
 	)
-	_, err := client.Send.SendMessage(context.Background(), courier.SendSendMessageParams{
-		Message: courier.SendSendMessageParamsMessage{
-			Content: courier.SendSendMessageParamsMessageContent{
+	_, err := client.Send.Message(context.Background(), courier.SendMessageParams{
+		Message: courier.SendMessageParamsMessage{
+			Content: courier.SendMessageParamsMessageContent{
 				Body:  "body",
 				Title: "title",
 			},
@@ -184,9 +184,9 @@ func TestRetryAfterMs(t *testing.T) {
 			},
 		}),
 	)
-	_, err := client.Send.SendMessage(context.Background(), courier.SendSendMessageParams{
-		Message: courier.SendSendMessageParamsMessage{
-			Content: courier.SendSendMessageParamsMessageContent{
+	_, err := client.Send.Message(context.Background(), courier.SendMessageParams{
+		Message: courier.SendMessageParamsMessage{
+			Content: courier.SendMessageParamsMessageContent{
 				Body:  "body",
 				Title: "title",
 			},
@@ -214,9 +214,9 @@ func TestContextCancel(t *testing.T) {
 	)
 	cancelCtx, cancel := context.WithCancel(context.Background())
 	cancel()
-	_, err := client.Send.SendMessage(cancelCtx, courier.SendSendMessageParams{
-		Message: courier.SendSendMessageParamsMessage{
-			Content: courier.SendSendMessageParamsMessageContent{
+	_, err := client.Send.Message(cancelCtx, courier.SendMessageParams{
+		Message: courier.SendMessageParamsMessage{
+			Content: courier.SendMessageParamsMessageContent{
 				Body:  "body",
 				Title: "title",
 			},
@@ -241,9 +241,9 @@ func TestContextCancelDelay(t *testing.T) {
 	)
 	cancelCtx, cancel := context.WithTimeout(context.Background(), 2*time.Millisecond)
 	defer cancel()
-	_, err := client.Send.SendMessage(cancelCtx, courier.SendSendMessageParams{
-		Message: courier.SendSendMessageParamsMessage{
-			Content: courier.SendSendMessageParamsMessageContent{
+	_, err := client.Send.Message(cancelCtx, courier.SendMessageParams{
+		Message: courier.SendMessageParamsMessage{
+			Content: courier.SendMessageParamsMessageContent{
 				Body:  "body",
 				Title: "title",
 			},
@@ -274,9 +274,9 @@ func TestContextDeadline(t *testing.T) {
 				},
 			}),
 		)
-		_, err := client.Send.SendMessage(deadlineCtx, courier.SendSendMessageParams{
-			Message: courier.SendSendMessageParamsMessage{
-				Content: courier.SendSendMessageParamsMessageContent{
+		_, err := client.Send.Message(deadlineCtx, courier.SendMessageParams{
+			Message: courier.SendMessageParamsMessage{
+				Content: courier.SendMessageParamsMessageContent{
 					Body:  "body",
 					Title: "title",
 				},
