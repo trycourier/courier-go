@@ -41,30 +41,54 @@ func (r *SendService) Message(ctx context.Context, body SendMessageParams, opts 
 	return
 }
 
-// The property Channel is required.
-type ElementalChannelNodeParam struct {
-	// The channel the contents of this element should be applied to. Can be `email`,
-	// `push`, `direct_message`, `sms` or a provider such as slack
-	Channel  string            `json:"channel,required"`
+type Alignment string
+
+const (
+	AlignmentCenter Alignment = "center"
+	AlignmentLeft   Alignment = "left"
+	AlignmentRight  Alignment = "right"
+	AlignmentFull   Alignment = "full"
+)
+
+type ElementalBaseNodeParam struct {
 	If       param.Opt[string] `json:"if,omitzero"`
 	Loop     param.Opt[string] `json:"loop,omitzero"`
 	Ref      param.Opt[string] `json:"ref,omitzero"`
 	Channels []string          `json:"channels,omitzero"`
-	// An array of elements to apply to the channel. If `raw` has not been specified,
-	// `elements` is `required`.
-	Elements []ElementalNodeUnionParam `json:"elements,omitzero"`
+	paramObj
+}
+
+func (r ElementalBaseNodeParam) MarshalJSON() (data []byte, err error) {
+	type shadow ElementalBaseNodeParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ElementalBaseNodeParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The channel element allows a notification to be customized based on which
+// channel it is sent through. For example, you may want to display a detailed
+// message when the notification is sent through email, and a more concise message
+// in a push notification. Channel elements are only valid as top-level elements;
+// you cannot nest channel elements. If there is a channel element specified at the
+// top-level of the document, all sibling elements must be channel elements. Note:
+// As an alternative, most elements support a `channel` property. Which allows you
+// to selectively display an individual element on a per channel basis. See the
+// [control flow docs](https://www.courier.com/docs/platform/content/elemental/control-flow/)
+// for more details.
+type ElementalChannelNodeParam struct {
+	// The channel the contents of this element should be applied to. Can be `email`,
+	// `push`, `direct_message`, `sms` or a provider such as slack
+	Channel string `json:"channel,required"`
 	// Raw data to apply to the channel. If `elements` has not been specified, `raw` is
 	// `required`.
 	Raw map[string]any `json:"raw,omitzero"`
-	paramObj
+	ElementalBaseNodeParam
 }
 
 func (r ElementalChannelNodeParam) MarshalJSON() (data []byte, err error) {
 	type shadow ElementalChannelNodeParam
 	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ElementalChannelNodeParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }
 
 func ElementalNodeParamOfVariant3(channel string) ElementalNodeUnionParam {
@@ -124,14 +148,6 @@ func (u ElementalNodeUnionParam) GetChannel() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetElements() []ElementalNodeUnionParam {
-	if vt := u.OfVariant3; vt != nil {
-		return vt.Elements
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
 func (u ElementalNodeUnionParam) GetRaw() map[string]any {
 	if vt := u.OfVariant3; vt != nil {
 		return vt.Raw
@@ -150,7 +166,7 @@ func (u ElementalNodeUnionParam) GetActionID() *string {
 // Returns a pointer to the underlying variant's property, if present.
 func (u ElementalNodeUnionParam) GetAlign() *string {
 	if vt := u.OfVariant3; vt != nil {
-		return &vt.Align
+		return (*string)(&vt.Align)
 	}
 	return nil
 }
@@ -288,27 +304,13 @@ func (u ElementalNodeUnionParam) GetChannels() []string {
 }
 
 type ElementalNodeObjectParam struct {
-	If       param.Opt[string] `json:"if,omitzero"`
-	Loop     param.Opt[string] `json:"loop,omitzero"`
-	Ref      param.Opt[string] `json:"ref,omitzero"`
-	Channels []string          `json:"channels,omitzero"`
-	// Any of "text".
 	Type string `json:"type,omitzero"`
-	paramObj
+	ElementalBaseNodeParam
 }
 
 func (r ElementalNodeObjectParam) MarshalJSON() (data []byte, err error) {
 	type shadow ElementalNodeObjectParam
 	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ElementalNodeObjectParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[ElementalNodeObjectParam](
-		"type", "text",
-	)
 }
 
 type MessageContextParam struct {
