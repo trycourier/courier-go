@@ -67,34 +67,9 @@ func (r *ElementalChannelNodeParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The property Elements is required.
-type ElementalGroupNodeParam struct {
-	// Sub elements to render.
-	Elements []ElementalNodeUnionParam `json:"elements,omitzero,required"`
-	If       param.Opt[string]         `json:"if,omitzero"`
-	Loop     param.Opt[string]         `json:"loop,omitzero"`
-	Ref      param.Opt[string]         `json:"ref,omitzero"`
-	Channels []string                  `json:"channels,omitzero"`
-	paramObj
-}
-
-func (r ElementalGroupNodeParam) MarshalJSON() (data []byte, err error) {
-	type shadow ElementalGroupNodeParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ElementalGroupNodeParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 func ElementalNodeParamOfVariant3(channel string) ElementalNodeUnionParam {
 	var variant ElementalNodeObjectParam
 	variant.Channel = channel
-	return ElementalNodeUnionParam{OfVariant3: &variant}
-}
-
-func ElementalNodeParamOfVariant3(elements []ElementalNodeUnionParam) ElementalNodeUnionParam {
-	var variant ElementalNodeObjectParam
-	variant.Elements = elements
 	return ElementalNodeUnionParam{OfVariant3: &variant}
 }
 
@@ -111,7 +86,6 @@ type ElementalNodeUnionParam struct {
 func (u ElementalNodeUnionParam) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfElementalNodeObject,
 		u.OfVariant2,
-		u.OfVariant3,
 		u.OfVariant3,
 		u.OfVariant3,
 		u.OfVariant3,
@@ -137,8 +111,6 @@ func (u *ElementalNodeUnionParam) asAny() any {
 		return u.OfVariant3
 	} else if !param.IsOmitted(u.OfVariant3) {
 		return u.OfVariant3
-	} else if !param.IsOmitted(u.OfVariant3) {
-		return u.OfVariant3
 	}
 	return nil
 }
@@ -147,6 +119,14 @@ func (u *ElementalNodeUnionParam) asAny() any {
 func (u ElementalNodeUnionParam) GetChannel() *string {
 	if vt := u.OfVariant3; vt != nil {
 		return &vt.Channel
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetElements() []ElementalNodeUnionParam {
+	if vt := u.OfVariant3; vt != nil {
+		return vt.Elements
 	}
 	return nil
 }
@@ -229,8 +209,6 @@ func (u ElementalNodeUnionParam) GetIf() *string {
 		return &vt.If.Value
 	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
 		return &vt.If.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
-		return &vt.If.Value
 	}
 	return nil
 }
@@ -249,8 +227,6 @@ func (u ElementalNodeUnionParam) GetLoop() *string {
 		return &vt.Loop.Value
 	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
 		return &vt.Loop.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
-		return &vt.Loop.Value
 	}
 	return nil
 }
@@ -260,8 +236,6 @@ func (u ElementalNodeUnionParam) GetRef() *string {
 	if vt := u.OfElementalNodeObject; vt != nil && vt.Ref.Valid() {
 		return &vt.Ref.Value
 	} else if vt := u.OfVariant2; vt != nil && vt.Ref.Valid() {
-		return &vt.Ref.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
 		return &vt.Ref.Value
 	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
 		return &vt.Ref.Value
@@ -291,8 +265,6 @@ func (u ElementalNodeUnionParam) GetType() *string {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfVariant3; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfVariant3; vt != nil {
-		return (*string)(&vt.Type)
 	}
 	return nil
 }
@@ -311,18 +283,6 @@ func (u ElementalNodeUnionParam) GetChannels() []string {
 		return vt.Channels
 	} else if vt := u.OfVariant3; vt != nil {
 		return vt.Channels
-	} else if vt := u.OfVariant3; vt != nil {
-		return vt.Channels
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's Elements property, if present.
-func (u ElementalNodeUnionParam) GetElements() []ElementalNodeUnionParam {
-	if vt := u.OfVariant3; vt != nil {
-		return vt.Elements
-	} else if vt := u.OfVariant3; vt != nil {
-		return vt.Elements
 	}
 	return nil
 }
