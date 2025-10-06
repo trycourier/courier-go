@@ -629,8 +629,8 @@ func (r *SendMessageParamsMessageContentElementalContentSugar) UnmarshalJSON(dat
 type SendMessageParamsMessageContentElementalContent struct {
 	Elements []ElementalNodeUnionParam `json:"elements,omitzero,required"`
 	// For example, "2022-01-01"
-	Version string `json:"version,required"`
-	Brand   any    `json:"brand,omitzero"`
+	Version string            `json:"version,required"`
+	Brand   param.Opt[string] `json:"brand,omitzero"`
 	paramObj
 }
 
