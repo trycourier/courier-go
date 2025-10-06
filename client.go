@@ -16,8 +16,23 @@ import (
 // interacting with the courier API. You should not instantiate this client
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options []option.RequestOption
-	Send    SendService
+	Options       []option.RequestOption
+	Send          SendService
+	Tenants       TenantService
+	Audiences     AudienceService
+	Bulk          BulkService
+	Users         UserService
+	AuditEvents   AuditEventService
+	Automations   AutomationService
+	Brands        BrandService
+	Lists         ListService
+	Messages      MessageService
+	Notifications NotificationService
+	Auth          AuthService
+	Inbound       InboundService
+	Requests      RequestService
+	Profiles      ProfileService
+	Translations  TranslationService
 }
 
 // DefaultClientOptions read from the environment (COURIER_API_KEY,
@@ -43,6 +58,21 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r = Client{Options: opts}
 
 	r.Send = NewSendService(opts...)
+	r.Tenants = NewTenantService(opts...)
+	r.Audiences = NewAudienceService(opts...)
+	r.Bulk = NewBulkService(opts...)
+	r.Users = NewUserService(opts...)
+	r.AuditEvents = NewAuditEventService(opts...)
+	r.Automations = NewAutomationService(opts...)
+	r.Brands = NewBrandService(opts...)
+	r.Lists = NewListService(opts...)
+	r.Messages = NewMessageService(opts...)
+	r.Notifications = NewNotificationService(opts...)
+	r.Auth = NewAuthService(opts...)
+	r.Inbound = NewInboundService(opts...)
+	r.Requests = NewRequestService(opts...)
+	r.Profiles = NewProfileService(opts...)
+	r.Translations = NewTranslationService(opts...)
 
 	return
 }
