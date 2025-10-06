@@ -64,6 +64,14 @@ func main() {
 					Title: "title",
 				},
 			},
+			Data: map[string]any{
+				"foo": "bar",
+			},
+			To: courier.SendMessageParamsMessageToUnion{
+				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+					UserID: courier.String("your_user_id"),
+				},
+			},
 		},
 	})
 	if err != nil {
@@ -314,6 +322,14 @@ _, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
 				Title: "title",
 			},
 		},
+		Data: map[string]any{
+			"foo": "bar",
+		},
+		To: courier.SendMessageParamsMessageToUnion{
+			OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+				UserID: courier.String("your_user_id"),
+			},
+		},
 	},
 })
 if err != nil {
@@ -348,6 +364,14 @@ client.Send.Message(
 				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
 					Body:  "body",
 					Title: "title",
+				},
+			},
+			Data: map[string]any{
+				"foo": "bar",
+			},
+			To: courier.SendMessageParamsMessageToUnion{
+				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+					UserID: courier.String("your_user_id"),
 				},
 			},
 		},
@@ -395,6 +419,14 @@ client.Send.Message(
 					Title: "title",
 				},
 			},
+			Data: map[string]any{
+				"foo": "bar",
+			},
+			To: courier.SendMessageParamsMessageToUnion{
+				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+					UserID: courier.String("your_user_id"),
+				},
+			},
 		},
 	},
 	option.WithMaxRetries(5),
@@ -417,6 +449,14 @@ response, err := client.Send.Message(
 				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
 					Body:  "body",
 					Title: "title",
+				},
+			},
+			Data: map[string]any{
+				"foo": "bar",
+			},
+			To: courier.SendMessageParamsMessageToUnion{
+				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+					UserID: courier.String("your_user_id"),
 				},
 			},
 		},
