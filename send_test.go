@@ -28,12 +28,6 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
-			Content: courier.SendMessageParamsMessageContentUnion{
-				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
-					Body:  "body",
-					Title: "title",
-				},
-			},
 			BrandID: courier.String("brand_id"),
 			Channels: map[string]courier.SendMessageParamsMessageChannel{
 				"foo": {
@@ -57,6 +51,12 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 						Channel:  courier.Int(0),
 						Provider: courier.Int(0),
 					},
+				},
+			},
+			Content: courier.SendMessageParamsMessageContentUnion{
+				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
+					Body:  "body",
+					Title: "title",
 				},
 			},
 			Context: courier.MessageContextParam{
