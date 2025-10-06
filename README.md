@@ -58,9 +58,11 @@ func main() {
 	)
 	response, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
-			Content: courier.SendMessageParamsMessageContent{
-				Body:  "body",
-				Title: "title",
+			Content: courier.SendMessageParamsMessageContentUnion{
+				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
+					Body:  "body",
+					Title: "title",
+				},
 			},
 		},
 	})
@@ -306,9 +308,11 @@ To handle errors, we recommend that you use the `errors.As` pattern:
 ```go
 _, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
 	Message: courier.SendMessageParamsMessage{
-		Content: courier.SendMessageParamsMessageContent{
-			Body:  "body",
-			Title: "title",
+		Content: courier.SendMessageParamsMessageContentUnion{
+			OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
+				Body:  "body",
+				Title: "title",
+			},
 		},
 	},
 })
@@ -340,9 +344,11 @@ client.Send.Message(
 	ctx,
 	courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
-			Content: courier.SendMessageParamsMessageContent{
-				Body:  "body",
-				Title: "title",
+			Content: courier.SendMessageParamsMessageContentUnion{
+				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
+					Body:  "body",
+					Title: "title",
+				},
 			},
 		},
 	},
@@ -383,9 +389,11 @@ client.Send.Message(
 	context.TODO(),
 	courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
-			Content: courier.SendMessageParamsMessageContent{
-				Body:  "body",
-				Title: "title",
+			Content: courier.SendMessageParamsMessageContentUnion{
+				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
+					Body:  "body",
+					Title: "title",
+				},
 			},
 		},
 	},
@@ -405,9 +413,11 @@ response, err := client.Send.Message(
 	context.TODO(),
 	courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
-			Content: courier.SendMessageParamsMessageContent{
-				Body:  "body",
-				Title: "title",
+			Content: courier.SendMessageParamsMessageContentUnion{
+				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
+					Body:  "body",
+					Title: "title",
+				},
 			},
 		},
 	},

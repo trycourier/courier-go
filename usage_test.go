@@ -26,9 +26,11 @@ func TestUsage(t *testing.T) {
 	)
 	response, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
-			Content: courier.SendMessageParamsMessageContent{
-				Body:  "body",
-				Title: "title",
+			Content: courier.SendMessageParamsMessageContentUnion{
+				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
+					Body:  "body",
+					Title: "title",
+				},
 			},
 		},
 	})
