@@ -41,7 +41,7 @@ func TestUserAgentHeader(t *testing.T) {
 	client.Send.Message(context.Background(), courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
 			To: courier.SendMessageParamsMessageToUnion{
-				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+				OfUserRecipient: &courier.UserRecipientParam{
 					UserID: courier.String("your_user_id"),
 				},
 			},
@@ -76,7 +76,7 @@ func TestRetryAfter(t *testing.T) {
 	_, err := client.Send.Message(context.Background(), courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
 			To: courier.SendMessageParamsMessageToUnion{
-				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+				OfUserRecipient: &courier.UserRecipientParam{
 					UserID: courier.String("your_user_id"),
 				},
 			},
@@ -122,7 +122,7 @@ func TestDeleteRetryCountHeader(t *testing.T) {
 	_, err := client.Send.Message(context.Background(), courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
 			To: courier.SendMessageParamsMessageToUnion{
-				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+				OfUserRecipient: &courier.UserRecipientParam{
 					UserID: courier.String("your_user_id"),
 				},
 			},
@@ -163,7 +163,7 @@ func TestOverwriteRetryCountHeader(t *testing.T) {
 	_, err := client.Send.Message(context.Background(), courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
 			To: courier.SendMessageParamsMessageToUnion{
-				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+				OfUserRecipient: &courier.UserRecipientParam{
 					UserID: courier.String("your_user_id"),
 				},
 			},
@@ -203,7 +203,7 @@ func TestRetryAfterMs(t *testing.T) {
 	_, err := client.Send.Message(context.Background(), courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
 			To: courier.SendMessageParamsMessageToUnion{
-				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+				OfUserRecipient: &courier.UserRecipientParam{
 					UserID: courier.String("your_user_id"),
 				},
 			},
@@ -237,7 +237,7 @@ func TestContextCancel(t *testing.T) {
 	_, err := client.Send.Message(cancelCtx, courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
 			To: courier.SendMessageParamsMessageToUnion{
-				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+				OfUserRecipient: &courier.UserRecipientParam{
 					UserID: courier.String("your_user_id"),
 				},
 			},
@@ -268,7 +268,7 @@ func TestContextCancelDelay(t *testing.T) {
 	_, err := client.Send.Message(cancelCtx, courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
 			To: courier.SendMessageParamsMessageToUnion{
-				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+				OfUserRecipient: &courier.UserRecipientParam{
 					UserID: courier.String("your_user_id"),
 				},
 			},
@@ -305,7 +305,7 @@ func TestContextDeadline(t *testing.T) {
 		_, err := client.Send.Message(deadlineCtx, courier.SendMessageParams{
 			Message: courier.SendMessageParamsMessage{
 				To: courier.SendMessageParamsMessageToUnion{
-					OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+					OfUserRecipient: &courier.UserRecipientParam{
 						UserID: courier.String("your_user_id"),
 					},
 				},

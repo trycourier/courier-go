@@ -11,6 +11,7 @@ import (
 	"github.com/trycourier/courier-go"
 	"github.com/trycourier/courier-go/internal/testutil"
 	"github.com/trycourier/courier-go/option"
+	"github.com/trycourier/courier-go/shared"
 )
 
 func TestSendMessageWithOptionalParams(t *testing.T) {
@@ -53,8 +54,8 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 					},
 				},
 			},
-			Content: courier.SendMessageParamsMessageContentUnion{
-				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
+			Content: courier.ContentUnionParam{
+				OfElementalContentSugar: &courier.ContentElementalContentSugarParam{
 					Body:  "body",
 					Title: "title",
 				},
@@ -126,7 +127,7 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 				},
 			},
 			To: courier.SendMessageParamsMessageToUnion{
-				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+				OfUserRecipient: &courier.UserRecipientParam{
 					AccountID: courier.String("account_id"),
 					Context: courier.MessageContextParam{
 						TenantID: courier.String("tenant_id"),
@@ -137,14 +138,14 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 					Email:       courier.String("email"),
 					Locale:      courier.String("locale"),
 					PhoneNumber: courier.String("phone_number"),
-					Preferences: courier.SendMessageParamsMessageToObjectPreferences{
+					Preferences: courier.UserRecipientPreferencesParam{
 						Notifications: map[string]courier.PreferenceParam{
 							"foo": {
 								Status: courier.PreferenceStatusOptedIn,
-								ChannelPreferences: []courier.PreferenceChannelPreferenceParam{{
-									Channel: "direct_message",
+								ChannelPreferences: []shared.ChannelPreferenceParam{{
+									Channel: courier.ChannelClassificationDirectMessage,
 								}},
-								Rules: []courier.PreferenceRuleParam{{
+								Rules: []shared.RuleParam{{
 									Until: "until",
 									Start: courier.String("start"),
 								}},
@@ -154,10 +155,10 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 						Categories: map[string]courier.PreferenceParam{
 							"foo": {
 								Status: courier.PreferenceStatusOptedIn,
-								ChannelPreferences: []courier.PreferenceChannelPreferenceParam{{
-									Channel: "direct_message",
+								ChannelPreferences: []shared.ChannelPreferenceParam{{
+									Channel: courier.ChannelClassificationDirectMessage,
 								}},
-								Rules: []courier.PreferenceRuleParam{{
+								Rules: []shared.RuleParam{{
 									Until: "until",
 									Start: courier.String("start"),
 								}},

@@ -4,6 +4,7 @@ package courier_test
 
 import (
 	"context"
+	"errors"
 	"os"
 	"testing"
 
@@ -12,7 +13,8 @@ import (
 	"github.com/trycourier/courier-go/option"
 )
 
-func TestUsage(t *testing.T) {
+func TestInboundTrackEventWithOptionalParams(t *testing.T) {
+	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -24,20 +26,22 @@ func TestUsage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	response, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
-		Message: courier.SendMessageParamsMessage{
-			To: courier.SendMessageParamsMessageToUnion{
-				OfUserRecipient: &courier.UserRecipientParam{
-					UserID: courier.String("your_user_id"),
-				},
-			},
-			Data: map[string]any{
-				"foo": "bar",
-			},
+	_, err := client.Inbound.TrackEvent(context.TODO(), courier.InboundTrackEventParams{
+		Event:     "New Order Placed",
+		MessageID: "4c62c457-b329-4bea-9bfc-17bba86c393f",
+		Properties: map[string]any{
+			"order_id":      "bar",
+			"total_orders":  "bar",
+			"last_order_id": "bar",
 		},
+		Type:   courier.InboundTrackEventParamsTypeTrack,
+		UserID: courier.String("1234"),
 	})
 	if err != nil {
+		var apierr *courier.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
-	t.Logf("%+v\n", response.RequestID)
 }
