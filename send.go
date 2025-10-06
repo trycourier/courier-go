@@ -41,6 +41,63 @@ func (r *SendService) Message(ctx context.Context, body SendMessageParams, opts 
 	return
 }
 
+// The property Channel is required.
+type ElementalChannelNodeParam struct {
+	// The channel the contents of this element should be applied to. Can be `email`,
+	// `push`, `direct_message`, `sms` or a provider such as slack
+	Channel  string            `json:"channel,required"`
+	If       param.Opt[string] `json:"if,omitzero"`
+	Loop     param.Opt[string] `json:"loop,omitzero"`
+	Ref      param.Opt[string] `json:"ref,omitzero"`
+	Channels []string          `json:"channels,omitzero"`
+	// An array of elements to apply to the channel. If `raw` has not been specified,
+	// `elements` is `required`.
+	Elements []ElementalNodeUnionParam `json:"elements,omitzero"`
+	// Raw data to apply to the channel. If `elements` has not been specified, `raw` is
+	// `required`.
+	Raw map[string]any `json:"raw,omitzero"`
+	paramObj
+}
+
+func (r ElementalChannelNodeParam) MarshalJSON() (data []byte, err error) {
+	type shadow ElementalChannelNodeParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ElementalChannelNodeParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Elements is required.
+type ElementalGroupNodeParam struct {
+	// Sub elements to render.
+	Elements []ElementalNodeUnionParam `json:"elements,omitzero,required"`
+	If       param.Opt[string]         `json:"if,omitzero"`
+	Loop     param.Opt[string]         `json:"loop,omitzero"`
+	Ref      param.Opt[string]         `json:"ref,omitzero"`
+	Channels []string                  `json:"channels,omitzero"`
+	paramObj
+}
+
+func (r ElementalGroupNodeParam) MarshalJSON() (data []byte, err error) {
+	type shadow ElementalGroupNodeParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ElementalGroupNodeParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func ElementalNodeParamOfVariant3(channel string) ElementalNodeUnionParam {
+	var variant ElementalNodeObjectParam
+	variant.Channel = channel
+	return ElementalNodeUnionParam{OfVariant3: &variant}
+}
+
+func ElementalNodeParamOfVariant3(elements []ElementalNodeUnionParam) ElementalNodeUnionParam {
+	var variant ElementalNodeObjectParam
+	variant.Elements = elements
+	return ElementalNodeUnionParam{OfVariant3: &variant}
+}
+
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
@@ -82,6 +139,22 @@ func (u *ElementalNodeUnionParam) asAny() any {
 		return u.OfVariant3
 	} else if !param.IsOmitted(u.OfVariant3) {
 		return u.OfVariant3
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetChannel() *string {
+	if vt := u.OfVariant3; vt != nil {
+		return &vt.Channel
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetRaw() map[string]any {
+	if vt := u.OfVariant3; vt != nil {
+		return vt.Raw
 	}
 	return nil
 }
@@ -240,6 +313,16 @@ func (u ElementalNodeUnionParam) GetChannels() []string {
 		return vt.Channels
 	} else if vt := u.OfVariant3; vt != nil {
 		return vt.Channels
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's Elements property, if present.
+func (u ElementalNodeUnionParam) GetElements() []ElementalNodeUnionParam {
+	if vt := u.OfVariant3; vt != nil {
+		return vt.Elements
+	} else if vt := u.OfVariant3; vt != nil {
+		return vt.Elements
 	}
 	return nil
 }
