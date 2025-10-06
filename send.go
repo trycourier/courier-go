@@ -41,6 +41,233 @@ func (r *SendService) Message(ctx context.Context, body SendMessageParams, opts 
 	return
 }
 
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type ElementalNodeUnionParam struct {
+	OfElementalNodeObject *ElementalNodeObjectParam `json:",omitzero,inline"`
+	OfVariant2            *ElementalNodeObjectParam `json:",omitzero,inline"`
+	OfVariant3            *ElementalNodeObjectParam `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u ElementalNodeUnionParam) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfElementalNodeObject,
+		u.OfVariant2,
+		u.OfVariant3,
+		u.OfVariant3,
+		u.OfVariant3,
+		u.OfVariant3,
+		u.OfVariant3,
+		u.OfVariant3)
+}
+func (u *ElementalNodeUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *ElementalNodeUnionParam) asAny() any {
+	if !param.IsOmitted(u.OfElementalNodeObject) {
+		return u.OfElementalNodeObject
+	} else if !param.IsOmitted(u.OfVariant2) {
+		return u.OfVariant2
+	} else if !param.IsOmitted(u.OfVariant3) {
+		return u.OfVariant3
+	} else if !param.IsOmitted(u.OfVariant3) {
+		return u.OfVariant3
+	} else if !param.IsOmitted(u.OfVariant3) {
+		return u.OfVariant3
+	} else if !param.IsOmitted(u.OfVariant3) {
+		return u.OfVariant3
+	} else if !param.IsOmitted(u.OfVariant3) {
+		return u.OfVariant3
+	} else if !param.IsOmitted(u.OfVariant3) {
+		return u.OfVariant3
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetActionID() *string {
+	if vt := u.OfVariant3; vt != nil && vt.ActionID.Valid() {
+		return &vt.ActionID.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetAlign() *string {
+	if vt := u.OfVariant3; vt != nil {
+		return &vt.Align
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetBackgroundColor() *string {
+	if vt := u.OfVariant3; vt != nil && vt.BackgroundColor.Valid() {
+		return &vt.BackgroundColor.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetContent() *string {
+	if vt := u.OfVariant3; vt != nil && vt.Content.Valid() {
+		return &vt.Content.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetHref() *string {
+	if vt := u.OfVariant3; vt != nil && vt.Href.Valid() {
+		return &vt.Href.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetLocales() map[string]ElementalNodeObjectLocaleParam {
+	if vt := u.OfVariant3; vt != nil {
+		return vt.Locales
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetStyle() *string {
+	if vt := u.OfVariant3; vt != nil {
+		return &vt.Style
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetIf() *string {
+	if vt := u.OfElementalNodeObject; vt != nil && vt.If.Valid() {
+		return &vt.If.Value
+	} else if vt := u.OfVariant2; vt != nil && vt.If.Valid() {
+		return &vt.If.Value
+	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
+		return &vt.If.Value
+	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
+		return &vt.If.Value
+	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
+		return &vt.If.Value
+	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
+		return &vt.If.Value
+	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
+		return &vt.If.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetLoop() *string {
+	if vt := u.OfElementalNodeObject; vt != nil && vt.Loop.Valid() {
+		return &vt.Loop.Value
+	} else if vt := u.OfVariant2; vt != nil && vt.Loop.Valid() {
+		return &vt.Loop.Value
+	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
+		return &vt.Loop.Value
+	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
+		return &vt.Loop.Value
+	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
+		return &vt.Loop.Value
+	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
+		return &vt.Loop.Value
+	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
+		return &vt.Loop.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetRef() *string {
+	if vt := u.OfElementalNodeObject; vt != nil && vt.Ref.Valid() {
+		return &vt.Ref.Value
+	} else if vt := u.OfVariant2; vt != nil && vt.Ref.Valid() {
+		return &vt.Ref.Value
+	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
+		return &vt.Ref.Value
+	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
+		return &vt.Ref.Value
+	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
+		return &vt.Ref.Value
+	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
+		return &vt.Ref.Value
+	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
+		return &vt.Ref.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetType() *string {
+	if vt := u.OfElementalNodeObject; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfVariant2; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfVariant3; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfVariant3; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfVariant3; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfVariant3; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfVariant3; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfVariant3; vt != nil {
+		return (*string)(&vt.Type)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's Channels property, if present.
+func (u ElementalNodeUnionParam) GetChannels() []string {
+	if vt := u.OfElementalNodeObject; vt != nil {
+		return vt.Channels
+	} else if vt := u.OfVariant2; vt != nil {
+		return vt.Channels
+	} else if vt := u.OfVariant3; vt != nil {
+		return vt.Channels
+	} else if vt := u.OfVariant3; vt != nil {
+		return vt.Channels
+	} else if vt := u.OfVariant3; vt != nil {
+		return vt.Channels
+	} else if vt := u.OfVariant3; vt != nil {
+		return vt.Channels
+	} else if vt := u.OfVariant3; vt != nil {
+		return vt.Channels
+	}
+	return nil
+}
+
+type ElementalNodeObjectParam struct {
+	If       param.Opt[string] `json:"if,omitzero"`
+	Loop     param.Opt[string] `json:"loop,omitzero"`
+	Ref      param.Opt[string] `json:"ref,omitzero"`
+	Channels []string          `json:"channels,omitzero"`
+	// Any of "text".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ElementalNodeObjectParam) MarshalJSON() (data []byte, err error) {
+	type shadow ElementalNodeObjectParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ElementalNodeObjectParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ElementalNodeObjectParam](
+		"type", "text",
+	)
+}
+
 type MessageContextParam struct {
 	// Tenant id used to load brand/default preferences/context.
 	TenantID param.Opt[string] `json:"tenant_id,omitzero"`
@@ -279,9 +506,10 @@ func (r *SendMessageParams) UnmarshalJSON(data []byte) error {
 //
 // The property Content is required.
 type SendMessageParamsMessage struct {
-	// Syntactic sugar to provide a fast shorthand for Courier Elemental Blocks.
-	Content SendMessageParamsMessageContent `json:"content,omitzero,required"`
-	BrandID param.Opt[string]               `json:"brand_id,omitzero"`
+	// Describes content that will work for email, inbox, push, chat, or any channel
+	// id.
+	Content SendMessageParamsMessageContentUnion `json:"content,omitzero,required"`
+	BrandID param.Opt[string]                    `json:"brand_id,omitzero"`
 	// Define run-time configuration for channels. Valid ChannelId's: email, sms, push,
 	// inbox, direct_message, banner, webhook.
 	Channels    map[string]SendMessageParamsMessageChannel  `json:"channels,omitzero"`
@@ -308,10 +536,35 @@ func (r *SendMessageParamsMessage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type SendMessageParamsMessageContentUnion struct {
+	OfElementalContentSugar *SendMessageParamsMessageContentElementalContentSugar `json:",omitzero,inline"`
+	OfElementalContent      *SendMessageParamsMessageContentElementalContent      `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u SendMessageParamsMessageContentUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfElementalContentSugar, u.OfElementalContent)
+}
+func (u *SendMessageParamsMessageContentUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *SendMessageParamsMessageContentUnion) asAny() any {
+	if !param.IsOmitted(u.OfElementalContentSugar) {
+		return u.OfElementalContentSugar
+	} else if !param.IsOmitted(u.OfElementalContent) {
+		return u.OfElementalContent
+	}
+	return nil
+}
+
 // Syntactic sugar to provide a fast shorthand for Courier Elemental Blocks.
 //
 // The properties Body, Title are required.
-type SendMessageParamsMessageContent struct {
+type SendMessageParamsMessageContentElementalContentSugar struct {
 	// The text content displayed in the notification.
 	Body string `json:"body,required"`
 	// Title/subject displayed by supported channels.
@@ -319,11 +572,28 @@ type SendMessageParamsMessageContent struct {
 	paramObj
 }
 
-func (r SendMessageParamsMessageContent) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageContent
+func (r SendMessageParamsMessageContentElementalContentSugar) MarshalJSON() (data []byte, err error) {
+	type shadow SendMessageParamsMessageContentElementalContentSugar
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *SendMessageParamsMessageContent) UnmarshalJSON(data []byte) error {
+func (r *SendMessageParamsMessageContentElementalContentSugar) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The properties Elements, Version are required.
+type SendMessageParamsMessageContentElementalContent struct {
+	Elements []ElementalNodeUnionParam `json:"elements,omitzero,required"`
+	// For example, "2022-01-01"
+	Version string `json:"version,required"`
+	Brand   any    `json:"brand,omitzero"`
+	paramObj
+}
+
+func (r SendMessageParamsMessageContentElementalContent) MarshalJSON() (data []byte, err error) {
+	type shadow SendMessageParamsMessageContentElementalContent
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *SendMessageParamsMessageContentElementalContent) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

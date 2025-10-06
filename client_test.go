@@ -40,9 +40,11 @@ func TestUserAgentHeader(t *testing.T) {
 	)
 	client.Send.Message(context.Background(), courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
-			Content: courier.SendMessageParamsMessageContent{
-				Body:  "body",
-				Title: "title",
+			Content: courier.SendMessageParamsMessageContentUnion{
+				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
+					Body:  "body",
+					Title: "title",
+				},
 			},
 		},
 	})
@@ -71,9 +73,11 @@ func TestRetryAfter(t *testing.T) {
 	)
 	_, err := client.Send.Message(context.Background(), courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
-			Content: courier.SendMessageParamsMessageContent{
-				Body:  "body",
-				Title: "title",
+			Content: courier.SendMessageParamsMessageContentUnion{
+				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
+					Body:  "body",
+					Title: "title",
+				},
 			},
 		},
 	})
@@ -113,9 +117,11 @@ func TestDeleteRetryCountHeader(t *testing.T) {
 	)
 	_, err := client.Send.Message(context.Background(), courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
-			Content: courier.SendMessageParamsMessageContent{
-				Body:  "body",
-				Title: "title",
+			Content: courier.SendMessageParamsMessageContentUnion{
+				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
+					Body:  "body",
+					Title: "title",
+				},
 			},
 		},
 	})
@@ -150,9 +156,11 @@ func TestOverwriteRetryCountHeader(t *testing.T) {
 	)
 	_, err := client.Send.Message(context.Background(), courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
-			Content: courier.SendMessageParamsMessageContent{
-				Body:  "body",
-				Title: "title",
+			Content: courier.SendMessageParamsMessageContentUnion{
+				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
+					Body:  "body",
+					Title: "title",
+				},
 			},
 		},
 	})
@@ -186,9 +194,11 @@ func TestRetryAfterMs(t *testing.T) {
 	)
 	_, err := client.Send.Message(context.Background(), courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
-			Content: courier.SendMessageParamsMessageContent{
-				Body:  "body",
-				Title: "title",
+			Content: courier.SendMessageParamsMessageContentUnion{
+				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
+					Body:  "body",
+					Title: "title",
+				},
 			},
 		},
 	})
@@ -216,9 +226,11 @@ func TestContextCancel(t *testing.T) {
 	cancel()
 	_, err := client.Send.Message(cancelCtx, courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
-			Content: courier.SendMessageParamsMessageContent{
-				Body:  "body",
-				Title: "title",
+			Content: courier.SendMessageParamsMessageContentUnion{
+				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
+					Body:  "body",
+					Title: "title",
+				},
 			},
 		},
 	})
@@ -243,9 +255,11 @@ func TestContextCancelDelay(t *testing.T) {
 	defer cancel()
 	_, err := client.Send.Message(cancelCtx, courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
-			Content: courier.SendMessageParamsMessageContent{
-				Body:  "body",
-				Title: "title",
+			Content: courier.SendMessageParamsMessageContentUnion{
+				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
+					Body:  "body",
+					Title: "title",
+				},
 			},
 		},
 	})
@@ -276,9 +290,11 @@ func TestContextDeadline(t *testing.T) {
 		)
 		_, err := client.Send.Message(deadlineCtx, courier.SendMessageParams{
 			Message: courier.SendMessageParamsMessage{
-				Content: courier.SendMessageParamsMessageContent{
-					Body:  "body",
-					Title: "title",
+				Content: courier.SendMessageParamsMessageContentUnion{
+					OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
+						Body:  "body",
+						Title: "title",
+					},
 				},
 			},
 		})
