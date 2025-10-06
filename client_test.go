@@ -46,6 +46,14 @@ func TestUserAgentHeader(t *testing.T) {
 					Title: "title",
 				},
 			},
+			Data: map[string]any{
+				"foo": "bar",
+			},
+			To: courier.SendMessageParamsMessageToUnion{
+				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+					UserID: courier.String("your_user_id"),
+				},
+			},
 		},
 	})
 	if userAgent != fmt.Sprintf("Courier/Go %s", internal.PackageVersion) {
@@ -77,6 +85,14 @@ func TestRetryAfter(t *testing.T) {
 				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
 					Body:  "body",
 					Title: "title",
+				},
+			},
+			Data: map[string]any{
+				"foo": "bar",
+			},
+			To: courier.SendMessageParamsMessageToUnion{
+				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+					UserID: courier.String("your_user_id"),
 				},
 			},
 		},
@@ -123,6 +139,14 @@ func TestDeleteRetryCountHeader(t *testing.T) {
 					Title: "title",
 				},
 			},
+			Data: map[string]any{
+				"foo": "bar",
+			},
+			To: courier.SendMessageParamsMessageToUnion{
+				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+					UserID: courier.String("your_user_id"),
+				},
+			},
 		},
 	})
 	if err == nil {
@@ -160,6 +184,14 @@ func TestOverwriteRetryCountHeader(t *testing.T) {
 				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
 					Body:  "body",
 					Title: "title",
+				},
+			},
+			Data: map[string]any{
+				"foo": "bar",
+			},
+			To: courier.SendMessageParamsMessageToUnion{
+				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+					UserID: courier.String("your_user_id"),
 				},
 			},
 		},
@@ -200,6 +232,14 @@ func TestRetryAfterMs(t *testing.T) {
 					Title: "title",
 				},
 			},
+			Data: map[string]any{
+				"foo": "bar",
+			},
+			To: courier.SendMessageParamsMessageToUnion{
+				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+					UserID: courier.String("your_user_id"),
+				},
+			},
 		},
 	})
 	if err == nil {
@@ -232,6 +272,14 @@ func TestContextCancel(t *testing.T) {
 					Title: "title",
 				},
 			},
+			Data: map[string]any{
+				"foo": "bar",
+			},
+			To: courier.SendMessageParamsMessageToUnion{
+				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+					UserID: courier.String("your_user_id"),
+				},
+			},
 		},
 	})
 	if err == nil {
@@ -259,6 +307,14 @@ func TestContextCancelDelay(t *testing.T) {
 				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
 					Body:  "body",
 					Title: "title",
+				},
+			},
+			Data: map[string]any{
+				"foo": "bar",
+			},
+			To: courier.SendMessageParamsMessageToUnion{
+				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+					UserID: courier.String("your_user_id"),
 				},
 			},
 		},
@@ -294,6 +350,14 @@ func TestContextDeadline(t *testing.T) {
 					OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
 						Body:  "body",
 						Title: "title",
+					},
+				},
+				Data: map[string]any{
+					"foo": "bar",
+				},
+				To: courier.SendMessageParamsMessageToUnion{
+					OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+						UserID: courier.String("your_user_id"),
 					},
 				},
 			},

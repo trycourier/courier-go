@@ -32,6 +32,14 @@ func TestUsage(t *testing.T) {
 					Title: "title",
 				},
 			},
+			Data: map[string]any{
+				"foo": "bar",
+			},
+			To: courier.SendMessageParamsMessageToUnion{
+				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
+					UserID: courier.String("your_user_id"),
+				},
+			},
 		},
 	})
 	if err != nil {
