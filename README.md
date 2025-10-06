@@ -58,19 +58,13 @@ func main() {
 	)
 	response, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
-			Content: courier.SendMessageParamsMessageContentUnion{
-				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
-					Body:  "body",
-					Title: "title",
-				},
-			},
-			Data: map[string]any{
-				"foo": "bar",
-			},
 			To: courier.SendMessageParamsMessageToUnion{
 				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
 					UserID: courier.String("your_user_id"),
 				},
+			},
+			Data: map[string]any{
+				"foo": "bar",
 			},
 		},
 	})
@@ -316,19 +310,13 @@ To handle errors, we recommend that you use the `errors.As` pattern:
 ```go
 _, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
 	Message: courier.SendMessageParamsMessage{
-		Content: courier.SendMessageParamsMessageContentUnion{
-			OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
-				Body:  "body",
-				Title: "title",
-			},
-		},
-		Data: map[string]any{
-			"foo": "bar",
-		},
 		To: courier.SendMessageParamsMessageToUnion{
 			OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
 				UserID: courier.String("your_user_id"),
 			},
+		},
+		Data: map[string]any{
+			"foo": "bar",
 		},
 	},
 })
@@ -360,19 +348,13 @@ client.Send.Message(
 	ctx,
 	courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
-			Content: courier.SendMessageParamsMessageContentUnion{
-				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
-					Body:  "body",
-					Title: "title",
-				},
-			},
-			Data: map[string]any{
-				"foo": "bar",
-			},
 			To: courier.SendMessageParamsMessageToUnion{
 				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
 					UserID: courier.String("your_user_id"),
 				},
+			},
+			Data: map[string]any{
+				"foo": "bar",
 			},
 		},
 	},
@@ -413,19 +395,13 @@ client.Send.Message(
 	context.TODO(),
 	courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
-			Content: courier.SendMessageParamsMessageContentUnion{
-				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
-					Body:  "body",
-					Title: "title",
-				},
-			},
-			Data: map[string]any{
-				"foo": "bar",
-			},
 			To: courier.SendMessageParamsMessageToUnion{
 				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
 					UserID: courier.String("your_user_id"),
 				},
+			},
+			Data: map[string]any{
+				"foo": "bar",
 			},
 		},
 	},
@@ -445,19 +421,13 @@ response, err := client.Send.Message(
 	context.TODO(),
 	courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
-			Content: courier.SendMessageParamsMessageContentUnion{
-				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
-					Body:  "body",
-					Title: "title",
-				},
-			},
-			Data: map[string]any{
-				"foo": "bar",
-			},
 			To: courier.SendMessageParamsMessageToUnion{
 				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
 					UserID: courier.String("your_user_id"),
 				},
+			},
+			Data: map[string]any{
+				"foo": "bar",
 			},
 		},
 	},

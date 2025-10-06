@@ -26,19 +26,13 @@ func TestUsage(t *testing.T) {
 	)
 	response, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
-			Content: courier.SendMessageParamsMessageContentUnion{
-				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
-					Body:  "body",
-					Title: "title",
-				},
-			},
-			Data: map[string]any{
-				"foo": "bar",
-			},
 			To: courier.SendMessageParamsMessageToUnion{
 				OfSendMessagesMessageToObject: &courier.SendMessageParamsMessageToObject{
 					UserID: courier.String("your_user_id"),
 				},
+			},
+			Data: map[string]any{
+				"foo": "bar",
 			},
 		},
 	})
