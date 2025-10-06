@@ -30,8 +30,8 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 		Message: courier.SendMessageParamsMessage{
 			Content: courier.SendMessageParamsMessageContentUnion{
 				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
-					Body:  "Thanks for signing up, {{name}}",
-					Title: "Welcome!",
+					Body:  "body",
+					Title: "title",
 				},
 			},
 			BrandID: courier.String("brand_id"),
@@ -110,9 +110,9 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 			},
 			Routing: courier.SendMessageParamsMessageRouting{
 				Channels: []courier.MessageRoutingChannelUnionParam{{
-					OfString: courier.String("email"),
+					OfString: courier.String("string"),
 				}},
-				Method: "single",
+				Method: "all",
 			},
 			Timeout: courier.SendMessageParamsMessageTimeout{
 				Channel: map[string]int64{
@@ -134,7 +134,7 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 					Data: map[string]any{
 						"foo": "bar",
 					},
-					Email:       courier.String("email@example.com"),
+					Email:       courier.String("email"),
 					Locale:      courier.String("locale"),
 					PhoneNumber: courier.String("phone_number"),
 					Preferences: courier.SendMessageParamsMessageToObjectPreferences{
@@ -167,7 +167,7 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 						TemplateID: courier.String("templateId"),
 					},
 					TenantID: courier.String("tenant_id"),
-					UserID:   courier.String("user_id"),
+					UserID:   courier.String("example_user"),
 				},
 			},
 		},
