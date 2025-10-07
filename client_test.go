@@ -45,6 +45,7 @@ func TestUserAgentHeader(t *testing.T) {
 					UserID: courier.String("your_user_id"),
 				},
 			},
+			Template: courier.String("your_template"),
 			Data: map[string]any{
 				"foo": "bar",
 			},
@@ -80,6 +81,7 @@ func TestRetryAfter(t *testing.T) {
 					UserID: courier.String("your_user_id"),
 				},
 			},
+			Template: courier.String("your_template"),
 			Data: map[string]any{
 				"foo": "bar",
 			},
@@ -126,6 +128,7 @@ func TestDeleteRetryCountHeader(t *testing.T) {
 					UserID: courier.String("your_user_id"),
 				},
 			},
+			Template: courier.String("your_template"),
 			Data: map[string]any{
 				"foo": "bar",
 			},
@@ -167,6 +170,7 @@ func TestOverwriteRetryCountHeader(t *testing.T) {
 					UserID: courier.String("your_user_id"),
 				},
 			},
+			Template: courier.String("your_template"),
 			Data: map[string]any{
 				"foo": "bar",
 			},
@@ -207,6 +211,7 @@ func TestRetryAfterMs(t *testing.T) {
 					UserID: courier.String("your_user_id"),
 				},
 			},
+			Template: courier.String("your_template"),
 			Data: map[string]any{
 				"foo": "bar",
 			},
@@ -241,6 +246,7 @@ func TestContextCancel(t *testing.T) {
 					UserID: courier.String("your_user_id"),
 				},
 			},
+			Template: courier.String("your_template"),
 			Data: map[string]any{
 				"foo": "bar",
 			},
@@ -272,6 +278,7 @@ func TestContextCancelDelay(t *testing.T) {
 					UserID: courier.String("your_user_id"),
 				},
 			},
+			Template: courier.String("your_template"),
 			Data: map[string]any{
 				"foo": "bar",
 			},
@@ -309,6 +316,7 @@ func TestContextDeadline(t *testing.T) {
 						UserID: courier.String("your_user_id"),
 					},
 				},
+				Template: courier.String("your_template"),
 				Data: map[string]any{
 					"foo": "bar",
 				},
