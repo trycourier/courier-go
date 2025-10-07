@@ -579,7 +579,8 @@ func (r *SendMessageParams) UnmarshalJSON(data []byte) error {
 // The message property has the following primary top-level properties. They define
 // the destination and content of the message.
 type SendMessageParamsMessage struct {
-	BrandID  param.Opt[string] `json:"brand_id,omitzero"`
+	BrandID param.Opt[string] `json:"brand_id,omitzero"`
+	// The id of the template you want to send
 	Template param.Opt[string] `json:"template,omitzero"`
 	// Define run-time configuration for channels. Valid ChannelId's: email, sms, push,
 	// inbox, direct_message, banner, webhook.
