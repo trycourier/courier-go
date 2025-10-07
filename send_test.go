@@ -14,7 +14,7 @@ import (
 	"github.com/trycourier/courier-go/shared"
 )
 
-func TestSendSendMessageWithOptionalParams(t *testing.T) {
+func TestSendMessageWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,14 +27,14 @@ func TestSendSendMessageWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Send.SendMessage(context.TODO(), courier.SendSendMessageParams{
-		Message: courier.SendSendMessageParamsMessage{
+	_, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
+		Message: courier.SendMessageParamsMessage{
 			BrandID: courier.String("brand_id"),
-			Channels: map[string]courier.SendSendMessageParamsMessageChannel{
+			Channels: map[string]courier.SendMessageParamsMessageChannel{
 				"foo": {
 					BrandID: courier.String("brand_id"),
 					If:      courier.String("if"),
-					Metadata: courier.SendSendMessageParamsMessageChannelMetadata{
+					Metadata: courier.SendMessageParamsMessageChannelMetadata{
 						Utm: courier.UtmParam{
 							Campaign: courier.String("campaign"),
 							Content:  courier.String("content"),
@@ -48,14 +48,14 @@ func TestSendSendMessageWithOptionalParams(t *testing.T) {
 					},
 					Providers:     []string{"string"},
 					RoutingMethod: "all",
-					Timeouts: courier.SendSendMessageParamsMessageChannelTimeouts{
+					Timeouts: courier.SendMessageParamsMessageChannelTimeouts{
 						Channel:  courier.Int(0),
 						Provider: courier.Int(0),
 					},
 				},
 			},
-			Content: courier.ContentUnionParam{
-				OfElementalContentSugar: &courier.ContentElementalContentSugarParam{
+			Content: courier.SendMessageParamsMessageContentUnion{
+				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
 					Body:  "body",
 					Title: "title",
 				},
@@ -66,17 +66,17 @@ func TestSendSendMessageWithOptionalParams(t *testing.T) {
 			Data: map[string]any{
 				"name": "bar",
 			},
-			Delay: courier.SendSendMessageParamsMessageDelay{
+			Delay: courier.SendMessageParamsMessageDelay{
 				Duration: courier.Int(0),
 				Until:    courier.String("until"),
 			},
-			Expiry: courier.SendSendMessageParamsMessageExpiry{
-				ExpiresIn: courier.SendSendMessageParamsMessageExpiryExpiresInUnion{
+			Expiry: courier.SendMessageParamsMessageExpiry{
+				ExpiresIn: courier.SendMessageParamsMessageExpiryExpiresInUnion{
 					OfString: courier.String("string"),
 				},
 				ExpiresAt: courier.String("expires_at"),
 			},
-			Metadata: courier.SendSendMessageParamsMessageMetadata{
+			Metadata: courier.SendMessageParamsMessageMetadata{
 				Event:   courier.String("event"),
 				Tags:    []string{"string"},
 				TraceID: courier.String("trace_id"),
@@ -88,13 +88,13 @@ func TestSendSendMessageWithOptionalParams(t *testing.T) {
 					Term:     courier.String("term"),
 				},
 			},
-			Preferences: courier.SendSendMessageParamsMessagePreferences{
+			Preferences: courier.SendMessageParamsMessagePreferences{
 				SubscriptionTopicID: "subscription_topic_id",
 			},
-			Providers: map[string]courier.SendSendMessageParamsMessageProvider{
+			Providers: map[string]courier.SendMessageParamsMessageProvider{
 				"foo": {
 					If: courier.String("if"),
-					Metadata: courier.SendSendMessageParamsMessageProviderMetadata{
+					Metadata: courier.SendMessageParamsMessageProviderMetadata{
 						Utm: courier.UtmParam{
 							Campaign: courier.String("campaign"),
 							Content:  courier.String("content"),
@@ -109,13 +109,13 @@ func TestSendSendMessageWithOptionalParams(t *testing.T) {
 					Timeouts: courier.Int(0),
 				},
 			},
-			Routing: courier.SendSendMessageParamsMessageRouting{
-				Channels: []courier.MessageRoutingChannelUnionParam{{
+			Routing: courier.SendMessageParamsMessageRouting{
+				Channels: []shared.MessageRoutingChannelUnionParam{{
 					OfString: courier.String("string"),
 				}},
 				Method: "all",
 			},
-			Timeout: courier.SendSendMessageParamsMessageTimeout{
+			Timeout: courier.SendMessageParamsMessageTimeout{
 				Channel: map[string]int64{
 					"foo": 0,
 				},
@@ -126,7 +126,7 @@ func TestSendSendMessageWithOptionalParams(t *testing.T) {
 					"foo": 0,
 				},
 			},
-			To: courier.SendSendMessageParamsMessageToUnion{
+			To: courier.SendMessageParamsMessageToUnion{
 				OfUserRecipient: &courier.UserRecipientParam{
 					AccountID: courier.String("account_id"),
 					Context: courier.MessageContextParam{

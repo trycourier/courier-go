@@ -17,10 +17,52 @@ type paramObj = param.APIObject
 type Error = apierror.Error
 
 // This is an alias to an internal type.
+type Alignment = shared.Alignment
+
+// Equals "center"
+const AlignmentCenter = shared.AlignmentCenter
+
+// Equals "left"
+const AlignmentLeft = shared.AlignmentLeft
+
+// Equals "right"
+const AlignmentRight = shared.AlignmentRight
+
+// Equals "full"
+const AlignmentFull = shared.AlignmentFull
+
+// This is an alias to an internal type.
 type ChannelPreference = shared.ChannelPreference
 
 // This is an alias to an internal type.
 type ChannelPreferenceParam = shared.ChannelPreferenceParam
+
+// This is an alias to an internal type.
+type ElementalBaseNode = shared.ElementalBaseNode
+
+// This is an alias to an internal type.
+type ElementalBaseNodeParam = shared.ElementalBaseNodeParam
+
+// This is an alias to an internal type.
+type MessageRouting = shared.MessageRouting
+
+// This is an alias to an internal type.
+type MessageRoutingMethod = shared.MessageRoutingMethod
+
+// Equals "all"
+const MessageRoutingMethodAll = shared.MessageRoutingMethodAll
+
+// Equals "single"
+const MessageRoutingMethodSingle = shared.MessageRoutingMethodSingle
+
+// This is an alias to an internal type.
+type MessageRoutingParam = shared.MessageRoutingParam
+
+// This is an alias to an internal type.
+type MessageRoutingChannelUnion = shared.MessageRoutingChannelUnion
+
+// This is an alias to an internal type.
+type MessageRoutingChannelUnionParam = shared.MessageRoutingChannelUnionParam
 
 // This is an alias to an internal type.
 type Preference = shared.Preference

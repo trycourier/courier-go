@@ -17,6 +17,7 @@ import (
 	"github.com/trycourier/courier-go/option"
 	"github.com/trycourier/courier-go/packages/param"
 	"github.com/trycourier/courier-go/packages/respjson"
+	"github.com/trycourier/courier-go/shared"
 )
 
 // NotificationService contains methods and other services that help with
@@ -58,138 +59,6 @@ func (r *NotificationService) GetContent(ctx context.Context, id string, opts ..
 	path := fmt.Sprintf("notifications/%s/content", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
-}
-
-type MessageRouting struct {
-	Channels []MessageRoutingChannelUnion `json:"channels,required"`
-	// Any of "all", "single".
-	Method MessageRoutingMethod `json:"method,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Channels    respjson.Field
-		Method      respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r MessageRouting) RawJSON() string { return r.JSON.raw }
-func (r *MessageRouting) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this MessageRouting to a MessageRoutingParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// MessageRoutingParam.Overrides()
-func (r MessageRouting) ToParam() MessageRoutingParam {
-	return param.Override[MessageRoutingParam](json.RawMessage(r.RawJSON()))
-}
-
-type MessageRoutingMethod string
-
-const (
-	MessageRoutingMethodAll    MessageRoutingMethod = "all"
-	MessageRoutingMethodSingle MessageRoutingMethod = "single"
-)
-
-// The properties Channels, Method are required.
-type MessageRoutingParam struct {
-	Channels []MessageRoutingChannelUnionParam `json:"channels,omitzero,required"`
-	// Any of "all", "single".
-	Method MessageRoutingMethod `json:"method,omitzero,required"`
-	paramObj
-}
-
-func (r MessageRoutingParam) MarshalJSON() (data []byte, err error) {
-	type shadow MessageRoutingParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *MessageRoutingParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// MessageRoutingChannelUnion contains all possible properties and values from
-// [string], [MessageRouting].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString]
-type MessageRoutingChannelUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field is from variant [MessageRouting].
-	Channels []MessageRoutingChannelUnion `json:"channels"`
-	// This field is from variant [MessageRouting].
-	Method MessageRoutingMethod `json:"method"`
-	JSON   struct {
-		OfString respjson.Field
-		Channels respjson.Field
-		Method   respjson.Field
-		raw      string
-	} `json:"-"`
-}
-
-func (u MessageRoutingChannelUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u MessageRoutingChannelUnion) AsMessageRouting() (v MessageRouting) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u MessageRoutingChannelUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *MessageRoutingChannelUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this MessageRoutingChannelUnion to a
-// MessageRoutingChannelUnionParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// MessageRoutingChannelUnionParam.Overrides()
-func (r MessageRoutingChannelUnion) ToParam() MessageRoutingChannelUnionParam {
-	return param.Override[MessageRoutingChannelUnionParam](json.RawMessage(r.RawJSON()))
-}
-
-func MessageRoutingChannelParamOfMessageRouting(channels []MessageRoutingChannelUnionParam, method MessageRoutingMethod) MessageRoutingChannelUnionParam {
-	var variant MessageRoutingParam
-	variant.Channels = channels
-	variant.Method = method
-	return MessageRoutingChannelUnionParam{OfMessageRouting: &variant}
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type MessageRoutingChannelUnionParam struct {
-	OfString         param.Opt[string]    `json:",omitzero,inline"`
-	OfMessageRouting *MessageRoutingParam `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u MessageRoutingChannelUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfMessageRouting)
-}
-func (u *MessageRoutingChannelUnionParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *MessageRoutingChannelUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfMessageRouting) {
-		return u.OfMessageRouting
-	}
-	return nil
 }
 
 type NotificationGetContent struct {
@@ -448,7 +317,7 @@ type NotificationListResponseResult struct {
 	ID        string                             `json:"id,required"`
 	CreatedAt int64                              `json:"created_at,required"`
 	Note      string                             `json:"note,required"`
-	Routing   MessageRouting                     `json:"routing,required"`
+	Routing   shared.MessageRouting              `json:"routing,required"`
 	TopicID   string                             `json:"topic_id,required"`
 	UpdatedAt int64                              `json:"updated_at,required"`
 	Tags      NotificationListResponseResultTags `json:"tags,nullable"`
