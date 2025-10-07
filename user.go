@@ -3,7 +3,7 @@
 package courier
 
 import (
-	"github.com/trycourier/courier-go/option"
+	"github.com/stainless-sdks/courier-go/option"
 )
 
 // UserService contains methods and other services that help with interacting with

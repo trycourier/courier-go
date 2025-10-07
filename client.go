@@ -8,8 +8,8 @@ import (
 	"os"
 	"slices"
 
-	"github.com/trycourier/courier-go/internal/requestconfig"
-	"github.com/trycourier/courier-go/option"
+	"github.com/stainless-sdks/courier-go/internal/requestconfig"
+	"github.com/stainless-sdks/courier-go/option"
 )
 
 // Client creates a struct with services and top level methods that help with
@@ -18,21 +18,21 @@ import (
 type Client struct {
 	Options       []option.RequestOption
 	Send          SendService
-	Tenants       TenantService
 	Audiences     AudienceService
-	Bulk          BulkService
-	Users         UserService
 	AuditEvents   AuditEventService
+	Auth          AuthService
 	Automations   AutomationService
 	Brands        BrandService
+	Bulk          BulkService
+	Inbound       InboundService
 	Lists         ListService
 	Messages      MessageService
-	Notifications NotificationService
-	Auth          AuthService
-	Inbound       InboundService
 	Requests      RequestService
+	Notifications NotificationService
 	Profiles      ProfileService
+	Tenants       TenantService
 	Translations  TranslationService
+	Users         UserService
 }
 
 // DefaultClientOptions read from the environment (COURIER_API_KEY,
@@ -58,21 +58,21 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r = Client{Options: opts}
 
 	r.Send = NewSendService(opts...)
-	r.Tenants = NewTenantService(opts...)
 	r.Audiences = NewAudienceService(opts...)
-	r.Bulk = NewBulkService(opts...)
-	r.Users = NewUserService(opts...)
 	r.AuditEvents = NewAuditEventService(opts...)
+	r.Auth = NewAuthService(opts...)
 	r.Automations = NewAutomationService(opts...)
 	r.Brands = NewBrandService(opts...)
+	r.Bulk = NewBulkService(opts...)
+	r.Inbound = NewInboundService(opts...)
 	r.Lists = NewListService(opts...)
 	r.Messages = NewMessageService(opts...)
-	r.Notifications = NewNotificationService(opts...)
-	r.Auth = NewAuthService(opts...)
-	r.Inbound = NewInboundService(opts...)
 	r.Requests = NewRequestService(opts...)
+	r.Notifications = NewNotificationService(opts...)
 	r.Profiles = NewProfileService(opts...)
+	r.Tenants = NewTenantService(opts...)
 	r.Translations = NewTranslationService(opts...)
+	r.Users = NewUserService(opts...)
 
 	return
 }

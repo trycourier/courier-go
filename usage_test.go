@@ -7,9 +7,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/trycourier/courier-go"
-	"github.com/trycourier/courier-go/internal/testutil"
-	"github.com/trycourier/courier-go/option"
+	"github.com/stainless-sdks/courier-go"
+	"github.com/stainless-sdks/courier-go/internal/testutil"
+	"github.com/stainless-sdks/courier-go/option"
 )
 
 func TestUsage(t *testing.T) {
@@ -24,9 +24,9 @@ func TestUsage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	response, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
-		Message: courier.SendMessageParamsMessage{
-			To: courier.SendMessageParamsMessageToUnion{
+	response, err := client.Send.SendMessage(context.TODO(), courier.SendSendMessageParams{
+		Message: courier.SendSendMessageParamsMessage{
+			To: courier.SendSendMessageParamsMessageToUnion{
 				OfUserRecipient: &courier.UserRecipientParam{
 					UserID: courier.String("your_user_id"),
 				},

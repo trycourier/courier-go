@@ -3,8 +3,8 @@ package apijson_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/trycourier/courier-go/internal/apijson"
-	"github.com/trycourier/courier-go/packages/param"
+	"github.com/stainless-sdks/courier-go/internal/apijson"
+	"github.com/stainless-sdks/courier-go/packages/param"
 	"reflect"
 	"testing"
 )

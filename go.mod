@@ -1,4 +1,4 @@
-module github.com/trycourier/courier-go
+module github.com/stainless-sdks/courier-go
 
 go 1.22
 
