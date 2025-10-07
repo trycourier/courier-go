@@ -3,9 +3,9 @@
 package courier
 
 import (
-	"github.com/stainless-sdks/courier-go/internal/apierror"
-	"github.com/stainless-sdks/courier-go/packages/param"
-	"github.com/stainless-sdks/courier-go/shared"
+	"github.com/trycourier/courier-go/internal/apierror"
+	"github.com/trycourier/courier-go/packages/param"
+	"github.com/trycourier/courier-go/shared"
 )
 
 // aliased to make [param.APIUnion] private when embedding

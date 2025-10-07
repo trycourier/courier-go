@@ -7,7 +7,7 @@ package apijson
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stainless-sdks/courier-go/packages/param"
+	"github.com/trycourier/courier-go/packages/param"
 	"reflect"
 	"strconv"
 	"sync"

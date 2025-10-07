@@ -3,7 +3,7 @@
 package constant
 
 import (
-	shimjson "github.com/stainless-sdks/courier-go/internal/encoding/json"
+	shimjson "github.com/trycourier/courier-go/internal/encoding/json"
 )
 
 type Constant[T any] interface {
