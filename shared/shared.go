@@ -114,6 +114,55 @@ func (r *ElementalBaseNodeParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Syntactic sugar to provide a fast shorthand for Courier Elemental Blocks.
+type ElementalContentSugar struct {
+	// The text content displayed in the notification.
+	Body string `json:"body,required"`
+	// Title/subject displayed by supported channels.
+	Title string `json:"title,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Body        respjson.Field
+		Title       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ElementalContentSugar) RawJSON() string { return r.JSON.raw }
+func (r *ElementalContentSugar) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this ElementalContentSugar to a ElementalContentSugarParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// ElementalContentSugarParam.Overrides()
+func (r ElementalContentSugar) ToParam() ElementalContentSugarParam {
+	return param.Override[ElementalContentSugarParam](json.RawMessage(r.RawJSON()))
+}
+
+// Syntactic sugar to provide a fast shorthand for Courier Elemental Blocks.
+//
+// The properties Body, Title are required.
+type ElementalContentSugarParam struct {
+	// The text content displayed in the notification.
+	Body string `json:"body,required"`
+	// Title/subject displayed by supported channels.
+	Title string `json:"title,required"`
+	paramObj
+}
+
+func (r ElementalContentSugarParam) MarshalJSON() (data []byte, err error) {
+	type shadow ElementalContentSugarParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ElementalContentSugarParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type MessageRouting struct {
 	Channels []MessageRoutingChannelUnion `json:"channels,required"`
 	// Any of "all", "single".

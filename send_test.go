@@ -55,7 +55,7 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 				},
 			},
 			Content: courier.SendMessageParamsMessageContentUnion{
-				OfElementalContentSugar: &courier.SendMessageParamsMessageContentElementalContentSugar{
+				OfElementalContentSugar: &shared.ElementalContentSugarParam{
 					Body:  "body",
 					Title: "title",
 				},
