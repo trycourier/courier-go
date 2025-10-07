@@ -43,6 +43,16 @@ type ElementalBaseNode = shared.ElementalBaseNode
 // This is an alias to an internal type.
 type ElementalBaseNodeParam = shared.ElementalBaseNodeParam
 
+// Syntactic sugar to provide a fast shorthand for Courier Elemental Blocks.
+//
+// This is an alias to an internal type.
+type ElementalContentSugar = shared.ElementalContentSugar
+
+// Syntactic sugar to provide a fast shorthand for Courier Elemental Blocks.
+//
+// This is an alias to an internal type.
+type ElementalContentSugarParam = shared.ElementalContentSugarParam
+
 // This is an alias to an internal type.
 type MessageRouting = shared.MessageRouting
 

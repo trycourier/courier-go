@@ -672,8 +672,8 @@ func (r *SendMessageParamsMessageChannelTimeouts) UnmarshalJSON(data []byte) err
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type SendMessageParamsMessageContentUnion struct {
-	OfElementalContentSugar *SendMessageParamsMessageContentElementalContentSugar `json:",omitzero,inline"`
-	OfElementalContent      *ElementalContentParam                                `json:",omitzero,inline"`
+	OfElementalContentSugar *shared.ElementalContentSugarParam `json:",omitzero,inline"`
+	OfElementalContent      *ElementalContentParam             `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -691,25 +691,6 @@ func (u *SendMessageParamsMessageContentUnion) asAny() any {
 		return u.OfElementalContent
 	}
 	return nil
-}
-
-// Syntactic sugar to provide a fast shorthand for Courier Elemental Blocks.
-//
-// The properties Body, Title are required.
-type SendMessageParamsMessageContentElementalContentSugar struct {
-	// The text content displayed in the notification.
-	Body string `json:"body,required"`
-	// Title/subject displayed by supported channels.
-	Title string `json:"title,required"`
-	paramObj
-}
-
-func (r SendMessageParamsMessageContentElementalContentSugar) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageContentElementalContentSugar
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SendMessageParamsMessageContentElementalContentSugar) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }
 
 type SendMessageParamsMessageDelay struct {
