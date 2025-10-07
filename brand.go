@@ -494,8 +494,8 @@ func (r *BrandTemplateParam) UnmarshalJSON(data []byte) error {
 }
 
 type EmailFooter struct {
-	Content        any  `json:"content"`
-	InheritDefault bool `json:"inheritDefault,nullable"`
+	Content        string `json:"content,nullable"`
+	InheritDefault bool   `json:"inheritDefault,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content        respjson.Field
@@ -521,8 +521,8 @@ func (r EmailFooter) ToParam() EmailFooterParam {
 }
 
 type EmailFooterParam struct {
-	InheritDefault param.Opt[bool] `json:"inheritDefault,omitzero"`
-	Content        any             `json:"content,omitzero"`
+	Content        param.Opt[string] `json:"content,omitzero"`
+	InheritDefault param.Opt[bool]   `json:"inheritDefault,omitzero"`
 	paramObj
 }
 
