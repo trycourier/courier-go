@@ -8,12 +8,11 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/trycourier/courier-go/internal/apijson"
-	"github.com/trycourier/courier-go/internal/requestconfig"
-	"github.com/trycourier/courier-go/option"
-	"github.com/trycourier/courier-go/packages/param"
-	"github.com/trycourier/courier-go/packages/respjson"
-	"github.com/trycourier/courier-go/shared"
+	"github.com/stainless-sdks/courier-go/internal/apijson"
+	"github.com/stainless-sdks/courier-go/internal/requestconfig"
+	"github.com/stainless-sdks/courier-go/option"
+	"github.com/stainless-sdks/courier-go/packages/param"
+	"github.com/stainless-sdks/courier-go/packages/respjson"
 )
 
 // SendService contains methods and other services that help with interacting with
@@ -36,21 +35,12 @@ func NewSendService(opts ...option.RequestOption) (r SendService) {
 }
 
 // Use the send API to send a message to one or more recipients.
-func (r *SendService) Message(ctx context.Context, body SendMessageParams, opts ...option.RequestOption) (res *SendMessageResponse, err error) {
+func (r *SendService) SendMessage(ctx context.Context, body SendSendMessageParams, opts ...option.RequestOption) (res *SendSendMessageResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "send"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
-
-type Alignment string
-
-const (
-	AlignmentCenter Alignment = "center"
-	AlignmentLeft   Alignment = "left"
-	AlignmentRight  Alignment = "right"
-	AlignmentFull   Alignment = "full"
-)
 
 // ContentUnion contains all possible properties and values from
 // [ContentElementalContentSugar], [ElementalContent].
@@ -62,7 +52,7 @@ type ContentUnion struct {
 	// This field is from variant [ContentElementalContentSugar].
 	Title string `json:"title"`
 	// This field is from variant [ElementalContent].
-	Elements []ElementalNodeUnion `json:"elements"`
+	Elements []ElementalContentElementUnion `json:"elements"`
 	// This field is from variant [ElementalContent].
 	Version string `json:"version"`
 	// This field is from variant [ElementalContent].
@@ -131,7 +121,7 @@ func ContentParamOfElementalContentSugar(body string, title string) ContentUnion
 	return ContentUnionParam{OfElementalContentSugar: &variant}
 }
 
-func ContentParamOfElementalContent(elements []ElementalNodeUnionParam, version string) ContentUnionParam {
+func ContentParamOfElementalContent(elements []ElementalContentElementUnionParam, version string) ContentUnionParam {
 	var variant ElementalContentParam
 	variant.Elements = elements
 	variant.Version = version
@@ -182,453 +172,6 @@ func (r *ContentElementalContentSugarParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type ElementalBaseNode struct {
-	Channels []string `json:"channels,nullable"`
-	If       string   `json:"if,nullable"`
-	Loop     string   `json:"loop,nullable"`
-	Ref      string   `json:"ref,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Channels    respjson.Field
-		If          respjson.Field
-		Loop        respjson.Field
-		Ref         respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ElementalBaseNode) RawJSON() string { return r.JSON.raw }
-func (r *ElementalBaseNode) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this ElementalBaseNode to a ElementalBaseNodeParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// ElementalBaseNodeParam.Overrides()
-func (r ElementalBaseNode) ToParam() ElementalBaseNodeParam {
-	return param.Override[ElementalBaseNodeParam](json.RawMessage(r.RawJSON()))
-}
-
-type ElementalBaseNodeParam struct {
-	If       param.Opt[string] `json:"if,omitzero"`
-	Loop     param.Opt[string] `json:"loop,omitzero"`
-	Ref      param.Opt[string] `json:"ref,omitzero"`
-	Channels []string          `json:"channels,omitzero"`
-	paramObj
-}
-
-func (r ElementalBaseNodeParam) MarshalJSON() (data []byte, err error) {
-	type shadow ElementalBaseNodeParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ElementalBaseNodeParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The channel element allows a notification to be customized based on which
-// channel it is sent through. For example, you may want to display a detailed
-// message when the notification is sent through email, and a more concise message
-// in a push notification. Channel elements are only valid as top-level elements;
-// you cannot nest channel elements. If there is a channel element specified at the
-// top-level of the document, all sibling elements must be channel elements. Note:
-// As an alternative, most elements support a `channel` property. Which allows you
-// to selectively display an individual element on a per channel basis. See the
-// [control flow docs](https://www.courier.com/docs/platform/content/elemental/control-flow/)
-// for more details.
-type ElementalChannelNode struct {
-	// The channel the contents of this element should be applied to. Can be `email`,
-	// `push`, `direct_message`, `sms` or a provider such as slack
-	Channel string `json:"channel,required"`
-	// Raw data to apply to the channel. If `elements` has not been specified, `raw` is
-	// `required`.
-	Raw map[string]any `json:"raw,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Channel     respjson.Field
-		Raw         respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-	ElementalBaseNode
-}
-
-// Returns the unmodified JSON received from the API
-func (r ElementalChannelNode) RawJSON() string { return r.JSON.raw }
-func (r *ElementalChannelNode) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this ElementalChannelNode to a ElementalChannelNodeParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// ElementalChannelNodeParam.Overrides()
-func (r ElementalChannelNode) ToParam() ElementalChannelNodeParam {
-	return param.Override[ElementalChannelNodeParam](json.RawMessage(r.RawJSON()))
-}
-
-// The channel element allows a notification to be customized based on which
-// channel it is sent through. For example, you may want to display a detailed
-// message when the notification is sent through email, and a more concise message
-// in a push notification. Channel elements are only valid as top-level elements;
-// you cannot nest channel elements. If there is a channel element specified at the
-// top-level of the document, all sibling elements must be channel elements. Note:
-// As an alternative, most elements support a `channel` property. Which allows you
-// to selectively display an individual element on a per channel basis. See the
-// [control flow docs](https://www.courier.com/docs/platform/content/elemental/control-flow/)
-// for more details.
-type ElementalChannelNodeParam struct {
-	// The channel the contents of this element should be applied to. Can be `email`,
-	// `push`, `direct_message`, `sms` or a provider such as slack
-	Channel string `json:"channel,required"`
-	// Raw data to apply to the channel. If `elements` has not been specified, `raw` is
-	// `required`.
-	Raw map[string]any `json:"raw,omitzero"`
-	ElementalBaseNodeParam
-}
-
-func (r ElementalChannelNodeParam) MarshalJSON() (data []byte, err error) {
-	type shadow ElementalChannelNodeParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-
-// ElementalNodeUnion contains all possible properties and values from
-// [ElementalNodeObject], [ElementalNodeObject], [ElementalNodeObject],
-// [ElementalNodeObject], [ElementalNodeObject], [ElementalNodeObject],
-// [ElementalNodeObject].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-type ElementalNodeUnion struct {
-	// This field is from variant [ElementalNodeObject], [ElementalNodeObject],
-	// [ElementalNodeObject], [ElementalNodeObject], [ElementalNodeObject],
-	// [ElementalNodeObject].
-	Channels []string `json:"channels"`
-	// This field is from variant [ElementalNodeObject], [ElementalNodeObject],
-	// [ElementalNodeObject], [ElementalNodeObject], [ElementalNodeObject],
-	// [ElementalNodeObject].
-	If string `json:"if"`
-	// This field is from variant [ElementalNodeObject], [ElementalNodeObject],
-	// [ElementalNodeObject], [ElementalNodeObject], [ElementalNodeObject],
-	// [ElementalNodeObject].
-	Loop string `json:"loop"`
-	// This field is from variant [ElementalNodeObject], [ElementalNodeObject],
-	// [ElementalNodeObject], [ElementalNodeObject], [ElementalNodeObject],
-	// [ElementalNodeObject].
-	Ref string `json:"ref"`
-	// This field is from variant [ElementalNodeObject].
-	Type string `json:"type"`
-	// This field is from variant [ElementalNodeObject].
-	Channel string `json:"channel"`
-	// This field is from variant [ElementalNodeObject].
-	Raw map[string]any `json:"raw"`
-	// This field is from variant [ElementalNodeObject].
-	ActionID string `json:"action_id"`
-	// This field is from variant [ElementalNodeObject].
-	Align Alignment `json:"align"`
-	// This field is from variant [ElementalNodeObject].
-	BackgroundColor string `json:"background_color"`
-	// This field is from variant [ElementalNodeObject].
-	Content string `json:"content"`
-	// This field is from variant [ElementalNodeObject].
-	Href string `json:"href"`
-	// This field is from variant [ElementalNodeObject].
-	Locales map[string]ElementalNodeObjectLocale `json:"locales"`
-	// This field is from variant [ElementalNodeObject].
-	Style string `json:"style"`
-	JSON  struct {
-		Channels        respjson.Field
-		If              respjson.Field
-		Loop            respjson.Field
-		Ref             respjson.Field
-		Type            respjson.Field
-		Channel         respjson.Field
-		Raw             respjson.Field
-		ActionID        respjson.Field
-		Align           respjson.Field
-		BackgroundColor respjson.Field
-		Content         respjson.Field
-		Href            respjson.Field
-		Locales         respjson.Field
-		Style           respjson.Field
-		raw             string
-	} `json:"-"`
-}
-
-func (u ElementalNodeUnion) AsElementalNodeObject() (v ElementalNodeObject) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ElementalNodeUnion) AsVariant2() (v ElementalNodeObject) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ElementalNodeUnion) AsVariant3() (v ElementalNodeObject) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ElementalNodeUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ElementalNodeUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this ElementalNodeUnion to a ElementalNodeUnionParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// ElementalNodeUnionParam.Overrides()
-func (r ElementalNodeUnion) ToParam() ElementalNodeUnionParam {
-	return param.Override[ElementalNodeUnionParam](json.RawMessage(r.RawJSON()))
-}
-
-type ElementalNodeObject struct {
-	// Any of "text".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-	ElementalBaseNode
-}
-
-// Returns the unmodified JSON received from the API
-func (r ElementalNodeObject) RawJSON() string { return r.JSON.raw }
-func (r *ElementalNodeObject) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func ElementalNodeParamOfVariant3(channel string) ElementalNodeUnionParam {
-	var variant ElementalNodeObjectParam
-	variant.Channel = channel
-	return ElementalNodeUnionParam{OfVariant3: &variant}
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type ElementalNodeUnionParam struct {
-	OfElementalNodeObject *ElementalNodeObjectParam `json:",omitzero,inline"`
-	OfVariant2            *ElementalNodeObjectParam `json:",omitzero,inline"`
-	OfVariant3            *ElementalNodeObjectParam `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u ElementalNodeUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfElementalNodeObject,
-		u.OfVariant2,
-		u.OfVariant3,
-		u.OfVariant3,
-		u.OfVariant3,
-		u.OfVariant3,
-		u.OfVariant3)
-}
-func (u *ElementalNodeUnionParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *ElementalNodeUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfElementalNodeObject) {
-		return u.OfElementalNodeObject
-	} else if !param.IsOmitted(u.OfVariant2) {
-		return u.OfVariant2
-	} else if !param.IsOmitted(u.OfVariant3) {
-		return u.OfVariant3
-	} else if !param.IsOmitted(u.OfVariant3) {
-		return u.OfVariant3
-	} else if !param.IsOmitted(u.OfVariant3) {
-		return u.OfVariant3
-	} else if !param.IsOmitted(u.OfVariant3) {
-		return u.OfVariant3
-	} else if !param.IsOmitted(u.OfVariant3) {
-		return u.OfVariant3
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetChannel() *string {
-	if vt := u.OfVariant3; vt != nil {
-		return &vt.Channel
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetRaw() map[string]any {
-	if vt := u.OfVariant3; vt != nil {
-		return vt.Raw
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetActionID() *string {
-	if vt := u.OfVariant3; vt != nil && vt.ActionID.Valid() {
-		return &vt.ActionID.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetAlign() *string {
-	if vt := u.OfVariant3; vt != nil {
-		return (*string)(&vt.Align)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetBackgroundColor() *string {
-	if vt := u.OfVariant3; vt != nil && vt.BackgroundColor.Valid() {
-		return &vt.BackgroundColor.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetContent() *string {
-	if vt := u.OfVariant3; vt != nil && vt.Content.Valid() {
-		return &vt.Content.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetHref() *string {
-	if vt := u.OfVariant3; vt != nil && vt.Href.Valid() {
-		return &vt.Href.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetLocales() map[string]ElementalNodeObjectLocaleParam {
-	if vt := u.OfVariant3; vt != nil {
-		return vt.Locales
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetStyle() *string {
-	if vt := u.OfVariant3; vt != nil {
-		return &vt.Style
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetIf() *string {
-	if vt := u.OfElementalNodeObject; vt != nil && vt.If.Valid() {
-		return &vt.If.Value
-	} else if vt := u.OfVariant2; vt != nil && vt.If.Valid() {
-		return &vt.If.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
-		return &vt.If.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
-		return &vt.If.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
-		return &vt.If.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
-		return &vt.If.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetLoop() *string {
-	if vt := u.OfElementalNodeObject; vt != nil && vt.Loop.Valid() {
-		return &vt.Loop.Value
-	} else if vt := u.OfVariant2; vt != nil && vt.Loop.Valid() {
-		return &vt.Loop.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
-		return &vt.Loop.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
-		return &vt.Loop.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
-		return &vt.Loop.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
-		return &vt.Loop.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetRef() *string {
-	if vt := u.OfElementalNodeObject; vt != nil && vt.Ref.Valid() {
-		return &vt.Ref.Value
-	} else if vt := u.OfVariant2; vt != nil && vt.Ref.Valid() {
-		return &vt.Ref.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
-		return &vt.Ref.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
-		return &vt.Ref.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
-		return &vt.Ref.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
-		return &vt.Ref.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetType() *string {
-	if vt := u.OfElementalNodeObject; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfVariant2; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfVariant3; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfVariant3; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfVariant3; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfVariant3; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfVariant3; vt != nil {
-		return (*string)(&vt.Type)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's Channels property, if present.
-func (u ElementalNodeUnionParam) GetChannels() []string {
-	if vt := u.OfElementalNodeObject; vt != nil {
-		return vt.Channels
-	} else if vt := u.OfVariant2; vt != nil {
-		return vt.Channels
-	} else if vt := u.OfVariant3; vt != nil {
-		return vt.Channels
-	} else if vt := u.OfVariant3; vt != nil {
-		return vt.Channels
-	} else if vt := u.OfVariant3; vt != nil {
-		return vt.Channels
-	} else if vt := u.OfVariant3; vt != nil {
-		return vt.Channels
-	}
-	return nil
-}
-
-type ElementalNodeObjectParam struct {
-	Type string `json:"type,omitzero"`
-	ElementalBaseNodeParam
-}
-
-func (r ElementalNodeObjectParam) MarshalJSON() (data []byte, err error) {
-	type shadow ElementalNodeObjectParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-
 type MessageContext struct {
 	// Tenant id used to load brand/default preferences/context.
 	TenantID string `json:"tenant_id,nullable"`
@@ -669,198 +212,6 @@ func (r *MessageContextParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type MessageRouting struct {
-	Channels []MessageRoutingChannelUnion `json:"channels,required"`
-	// Any of "all", "single".
-	Method MessageRoutingMethod `json:"method,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Channels    respjson.Field
-		Method      respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r MessageRouting) RawJSON() string { return r.JSON.raw }
-func (r *MessageRouting) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this MessageRouting to a MessageRoutingParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// MessageRoutingParam.Overrides()
-func (r MessageRouting) ToParam() MessageRoutingParam {
-	return param.Override[MessageRoutingParam](json.RawMessage(r.RawJSON()))
-}
-
-type MessageRoutingMethod string
-
-const (
-	MessageRoutingMethodAll    MessageRoutingMethod = "all"
-	MessageRoutingMethodSingle MessageRoutingMethod = "single"
-)
-
-// The properties Channels, Method are required.
-type MessageRoutingParam struct {
-	Channels []MessageRoutingChannelUnionParam `json:"channels,omitzero,required"`
-	// Any of "all", "single".
-	Method MessageRoutingMethod `json:"method,omitzero,required"`
-	paramObj
-}
-
-func (r MessageRoutingParam) MarshalJSON() (data []byte, err error) {
-	type shadow MessageRoutingParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *MessageRoutingParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// MessageRoutingChannelUnion contains all possible properties and values from
-// [string], [MessageRouting].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString]
-type MessageRoutingChannelUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field is from variant [MessageRouting].
-	Channels []MessageRoutingChannelUnion `json:"channels"`
-	// This field is from variant [MessageRouting].
-	Method MessageRoutingMethod `json:"method"`
-	JSON   struct {
-		OfString respjson.Field
-		Channels respjson.Field
-		Method   respjson.Field
-		raw      string
-	} `json:"-"`
-}
-
-func (u MessageRoutingChannelUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u MessageRoutingChannelUnion) AsMessageRouting() (v MessageRouting) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u MessageRoutingChannelUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *MessageRoutingChannelUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this MessageRoutingChannelUnion to a
-// MessageRoutingChannelUnionParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// MessageRoutingChannelUnionParam.Overrides()
-func (r MessageRoutingChannelUnion) ToParam() MessageRoutingChannelUnionParam {
-	return param.Override[MessageRoutingChannelUnionParam](json.RawMessage(r.RawJSON()))
-}
-
-func MessageRoutingChannelParamOfMessageRouting(channels []MessageRoutingChannelUnionParam, method MessageRoutingMethod) MessageRoutingChannelUnionParam {
-	var variant MessageRoutingParam
-	variant.Channels = channels
-	variant.Method = method
-	return MessageRoutingChannelUnionParam{OfMessageRouting: &variant}
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type MessageRoutingChannelUnionParam struct {
-	OfString         param.Opt[string]    `json:",omitzero,inline"`
-	OfMessageRouting *MessageRoutingParam `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u MessageRoutingChannelUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfMessageRouting)
-}
-func (u *MessageRoutingChannelUnionParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *MessageRoutingChannelUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfMessageRouting) {
-		return u.OfMessageRouting
-	}
-	return nil
-}
-
-type Preference struct {
-	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
-	Status             PreferenceStatus           `json:"status,required"`
-	ChannelPreferences []shared.ChannelPreference `json:"channel_preferences,nullable"`
-	Rules              []shared.Rule              `json:"rules,nullable"`
-	// Any of "subscription", "list", "recipient".
-	Source PreferenceSource `json:"source,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Status             respjson.Field
-		ChannelPreferences respjson.Field
-		Rules              respjson.Field
-		Source             respjson.Field
-		ExtraFields        map[string]respjson.Field
-		raw                string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r Preference) RawJSON() string { return r.JSON.raw }
-func (r *Preference) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this Preference to a PreferenceParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// PreferenceParam.Overrides()
-func (r Preference) ToParam() PreferenceParam {
-	return param.Override[PreferenceParam](json.RawMessage(r.RawJSON()))
-}
-
-type PreferenceSource string
-
-const (
-	PreferenceSourceSubscription PreferenceSource = "subscription"
-	PreferenceSourceList         PreferenceSource = "list"
-	PreferenceSourceRecipient    PreferenceSource = "recipient"
-)
-
-// The property Status is required.
-type PreferenceParam struct {
-	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
-	Status             PreferenceStatus                `json:"status,omitzero,required"`
-	ChannelPreferences []shared.ChannelPreferenceParam `json:"channel_preferences,omitzero"`
-	Rules              []shared.RuleParam              `json:"rules,omitzero"`
-	// Any of "subscription", "list", "recipient".
-	Source PreferenceSource `json:"source,omitzero"`
-	paramObj
-}
-
-func (r PreferenceParam) MarshalJSON() (data []byte, err error) {
-	type shadow PreferenceParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *PreferenceParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type RecipientParam struct {
 	// Use `tenant_id` instead.
 	AccountID param.Opt[string] `json:"account_id,omitzero"`
@@ -888,9 +239,9 @@ func (r *RecipientParam) UnmarshalJSON(data []byte) error {
 
 // The property Notifications is required.
 type RecipientPreferencesParam struct {
-	Notifications map[string]PreferenceParam `json:"notifications,omitzero,required"`
-	TemplateID    param.Opt[string]          `json:"templateId,omitzero"`
-	Categories    map[string]PreferenceParam `json:"categories,omitzero"`
+	Notifications map[string]RecipientPreferencesNotificationParam `json:"notifications,omitzero,required"`
+	TemplateID    param.Opt[string]                                `json:"templateId,omitzero"`
+	Categories    map[string]RecipientPreferencesCategoryParam     `json:"categories,omitzero"`
 	paramObj
 }
 
@@ -902,24 +253,117 @@ func (r *RecipientPreferencesParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type UtmParam struct {
-	Campaign param.Opt[string] `json:"campaign,omitzero"`
-	Content  param.Opt[string] `json:"content,omitzero"`
-	Medium   param.Opt[string] `json:"medium,omitzero"`
-	Source   param.Opt[string] `json:"source,omitzero"`
-	Term     param.Opt[string] `json:"term,omitzero"`
+// The property Status is required.
+type RecipientPreferencesNotificationParam struct {
+	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
+	Status             PreferenceStatus                                         `json:"status,omitzero,required"`
+	ChannelPreferences []RecipientPreferencesNotificationChannelPreferenceParam `json:"channel_preferences,omitzero"`
+	Rules              []RecipientPreferencesNotificationRuleParam              `json:"rules,omitzero"`
+	// Any of "subscription", "list", "recipient".
+	Source string `json:"source,omitzero"`
 	paramObj
 }
 
-func (r UtmParam) MarshalJSON() (data []byte, err error) {
-	type shadow UtmParam
+func (r RecipientPreferencesNotificationParam) MarshalJSON() (data []byte, err error) {
+	type shadow RecipientPreferencesNotificationParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *UtmParam) UnmarshalJSON(data []byte) error {
+func (r *RecipientPreferencesNotificationParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type SendMessageResponse struct {
+func init() {
+	apijson.RegisterFieldValidator[RecipientPreferencesNotificationParam](
+		"source", "subscription", "list", "recipient",
+	)
+}
+
+// The property Channel is required.
+type RecipientPreferencesNotificationChannelPreferenceParam struct {
+	// Any of "direct_message", "email", "push", "sms", "webhook", "inbox".
+	Channel ChannelClassification `json:"channel,omitzero,required"`
+	paramObj
+}
+
+func (r RecipientPreferencesNotificationChannelPreferenceParam) MarshalJSON() (data []byte, err error) {
+	type shadow RecipientPreferencesNotificationChannelPreferenceParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *RecipientPreferencesNotificationChannelPreferenceParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Until is required.
+type RecipientPreferencesNotificationRuleParam struct {
+	Until string            `json:"until,required"`
+	Start param.Opt[string] `json:"start,omitzero"`
+	paramObj
+}
+
+func (r RecipientPreferencesNotificationRuleParam) MarshalJSON() (data []byte, err error) {
+	type shadow RecipientPreferencesNotificationRuleParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *RecipientPreferencesNotificationRuleParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Status is required.
+type RecipientPreferencesCategoryParam struct {
+	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
+	Status             PreferenceStatus                                     `json:"status,omitzero,required"`
+	ChannelPreferences []RecipientPreferencesCategoryChannelPreferenceParam `json:"channel_preferences,omitzero"`
+	Rules              []RecipientPreferencesCategoryRuleParam              `json:"rules,omitzero"`
+	// Any of "subscription", "list", "recipient".
+	Source string `json:"source,omitzero"`
+	paramObj
+}
+
+func (r RecipientPreferencesCategoryParam) MarshalJSON() (data []byte, err error) {
+	type shadow RecipientPreferencesCategoryParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *RecipientPreferencesCategoryParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[RecipientPreferencesCategoryParam](
+		"source", "subscription", "list", "recipient",
+	)
+}
+
+// The property Channel is required.
+type RecipientPreferencesCategoryChannelPreferenceParam struct {
+	// Any of "direct_message", "email", "push", "sms", "webhook", "inbox".
+	Channel ChannelClassification `json:"channel,omitzero,required"`
+	paramObj
+}
+
+func (r RecipientPreferencesCategoryChannelPreferenceParam) MarshalJSON() (data []byte, err error) {
+	type shadow RecipientPreferencesCategoryChannelPreferenceParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *RecipientPreferencesCategoryChannelPreferenceParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Until is required.
+type RecipientPreferencesCategoryRuleParam struct {
+	Until string            `json:"until,required"`
+	Start param.Opt[string] `json:"start,omitzero"`
+	paramObj
+}
+
+func (r RecipientPreferencesCategoryRuleParam) MarshalJSON() (data []byte, err error) {
+	type shadow RecipientPreferencesCategoryRuleParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *RecipientPreferencesCategoryRuleParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type SendSendMessageResponse struct {
 	// A successful call to `POST /send` returns a `202` status code along with a
 	// `requestId` in the response body. For single-recipient requests, the `requestId`
 	// is the derived message_id. For multiple recipients, Courier assigns a unique
@@ -934,44 +378,44 @@ type SendMessageResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r SendMessageResponse) RawJSON() string { return r.JSON.raw }
-func (r *SendMessageResponse) UnmarshalJSON(data []byte) error {
+func (r SendSendMessageResponse) RawJSON() string { return r.JSON.raw }
+func (r *SendSendMessageResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type SendMessageParams struct {
+type SendSendMessageParams struct {
 	// The message property has the following primary top-level properties. They define
 	// the destination and content of the message.
-	Message SendMessageParamsMessage `json:"message,omitzero,required"`
+	Message SendSendMessageParamsMessage `json:"message,omitzero,required"`
 	paramObj
 }
 
-func (r SendMessageParams) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParams
+func (r SendSendMessageParams) MarshalJSON() (data []byte, err error) {
+	type shadow SendSendMessageParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *SendMessageParams) UnmarshalJSON(data []byte) error {
+func (r *SendSendMessageParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The message property has the following primary top-level properties. They define
 // the destination and content of the message.
-type SendMessageParamsMessage struct {
+type SendSendMessageParamsMessage struct {
 	BrandID param.Opt[string] `json:"brand_id,omitzero"`
 	// Define run-time configuration for channels. Valid ChannelId's: email, sms, push,
 	// inbox, direct_message, banner, webhook.
-	Channels    map[string]SendMessageParamsMessageChannel  `json:"channels,omitzero"`
-	Data        map[string]any                              `json:"data,omitzero"`
-	Delay       SendMessageParamsMessageDelay               `json:"delay,omitzero"`
-	Expiry      SendMessageParamsMessageExpiry              `json:"expiry,omitzero"`
-	Metadata    SendMessageParamsMessageMetadata            `json:"metadata,omitzero"`
-	Preferences SendMessageParamsMessagePreferences         `json:"preferences,omitzero"`
-	Providers   map[string]SendMessageParamsMessageProvider `json:"providers,omitzero"`
+	Channels    map[string]SendSendMessageParamsMessageChannel  `json:"channels,omitzero"`
+	Data        map[string]any                                  `json:"data,omitzero"`
+	Delay       SendSendMessageParamsMessageDelay               `json:"delay,omitzero"`
+	Expiry      SendSendMessageParamsMessageExpiry              `json:"expiry,omitzero"`
+	Metadata    SendSendMessageParamsMessageMetadata            `json:"metadata,omitzero"`
+	Preferences SendSendMessageParamsMessagePreferences         `json:"preferences,omitzero"`
+	Providers   map[string]SendSendMessageParamsMessageProvider `json:"providers,omitzero"`
 	// Customize which channels/providers Courier may deliver the message through.
-	Routing SendMessageParamsMessageRouting `json:"routing,omitzero"`
-	Timeout SendMessageParamsMessageTimeout `json:"timeout,omitzero"`
+	Routing SendSendMessageParamsMessageRouting `json:"routing,omitzero"`
+	Timeout SendSendMessageParamsMessageTimeout `json:"timeout,omitzero"`
 	// The recipient or a list of recipients of the message
-	To SendMessageParamsMessageToUnion `json:"to,omitzero"`
+	To SendSendMessageParamsMessageToUnion `json:"to,omitzero"`
 	// Describes content that will work for email, inbox, push, chat, or any channel
 	// id.
 	Content ContentUnionParam   `json:"content,omitzero"`
@@ -979,20 +423,20 @@ type SendMessageParamsMessage struct {
 	paramObj
 }
 
-func (r SendMessageParamsMessage) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessage
+func (r SendSendMessageParamsMessage) MarshalJSON() (data []byte, err error) {
+	type shadow SendSendMessageParamsMessage
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *SendMessageParamsMessage) UnmarshalJSON(data []byte) error {
+func (r *SendSendMessageParamsMessage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type SendMessageParamsMessageChannel struct {
+type SendSendMessageParamsMessageChannel struct {
 	// Brand id used for rendering.
 	BrandID param.Opt[string] `json:"brand_id,omitzero"`
 	// JS conditional with access to data/profile.
-	If       param.Opt[string]                       `json:"if,omitzero"`
-	Metadata SendMessageParamsMessageChannelMetadata `json:"metadata,omitzero"`
+	If       param.Opt[string]                           `json:"if,omitzero"`
+	Metadata SendSendMessageParamsMessageChannelMetadata `json:"metadata,omitzero"`
 	// Channel specific overrides.
 	Override map[string]any `json:"override,omitzero"`
 	// Providers enabled for this channel.
@@ -1000,53 +444,70 @@ type SendMessageParamsMessageChannel struct {
 	// Defaults to `single`.
 	//
 	// Any of "all", "single".
-	RoutingMethod string                                  `json:"routing_method,omitzero"`
-	Timeouts      SendMessageParamsMessageChannelTimeouts `json:"timeouts,omitzero"`
+	RoutingMethod string                                      `json:"routing_method,omitzero"`
+	Timeouts      SendSendMessageParamsMessageChannelTimeouts `json:"timeouts,omitzero"`
 	paramObj
 }
 
-func (r SendMessageParamsMessageChannel) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageChannel
+func (r SendSendMessageParamsMessageChannel) MarshalJSON() (data []byte, err error) {
+	type shadow SendSendMessageParamsMessageChannel
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *SendMessageParamsMessageChannel) UnmarshalJSON(data []byte) error {
+func (r *SendSendMessageParamsMessageChannel) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[SendMessageParamsMessageChannel](
+	apijson.RegisterFieldValidator[SendSendMessageParamsMessageChannel](
 		"routing_method", "all", "single",
 	)
 }
 
-type SendMessageParamsMessageChannelMetadata struct {
-	Utm UtmParam `json:"utm,omitzero"`
+type SendSendMessageParamsMessageChannelMetadata struct {
+	Utm SendSendMessageParamsMessageChannelMetadataUtm `json:"utm,omitzero"`
 	paramObj
 }
 
-func (r SendMessageParamsMessageChannelMetadata) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageChannelMetadata
+func (r SendSendMessageParamsMessageChannelMetadata) MarshalJSON() (data []byte, err error) {
+	type shadow SendSendMessageParamsMessageChannelMetadata
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *SendMessageParamsMessageChannelMetadata) UnmarshalJSON(data []byte) error {
+func (r *SendSendMessageParamsMessageChannelMetadata) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type SendMessageParamsMessageChannelTimeouts struct {
+type SendSendMessageParamsMessageChannelMetadataUtm struct {
+	Campaign param.Opt[string] `json:"campaign,omitzero"`
+	Content  param.Opt[string] `json:"content,omitzero"`
+	Medium   param.Opt[string] `json:"medium,omitzero"`
+	Source   param.Opt[string] `json:"source,omitzero"`
+	Term     param.Opt[string] `json:"term,omitzero"`
+	paramObj
+}
+
+func (r SendSendMessageParamsMessageChannelMetadataUtm) MarshalJSON() (data []byte, err error) {
+	type shadow SendSendMessageParamsMessageChannelMetadataUtm
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *SendSendMessageParamsMessageChannelMetadataUtm) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type SendSendMessageParamsMessageChannelTimeouts struct {
 	Channel  param.Opt[int64] `json:"channel,omitzero"`
 	Provider param.Opt[int64] `json:"provider,omitzero"`
 	paramObj
 }
 
-func (r SendMessageParamsMessageChannelTimeouts) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageChannelTimeouts
+func (r SendSendMessageParamsMessageChannelTimeouts) MarshalJSON() (data []byte, err error) {
+	type shadow SendSendMessageParamsMessageChannelTimeouts
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *SendMessageParamsMessageChannelTimeouts) UnmarshalJSON(data []byte) error {
+func (r *SendSendMessageParamsMessageChannelTimeouts) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type SendMessageParamsMessageDelay struct {
+type SendSendMessageParamsMessageDelay struct {
 	// The duration of the delay in milliseconds.
 	Duration param.Opt[int64] `json:"duration,omitzero"`
 	// ISO 8601 timestamp or opening_hours-like format.
@@ -1054,48 +515,48 @@ type SendMessageParamsMessageDelay struct {
 	paramObj
 }
 
-func (r SendMessageParamsMessageDelay) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageDelay
+func (r SendSendMessageParamsMessageDelay) MarshalJSON() (data []byte, err error) {
+	type shadow SendSendMessageParamsMessageDelay
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *SendMessageParamsMessageDelay) UnmarshalJSON(data []byte) error {
+func (r *SendSendMessageParamsMessageDelay) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The property ExpiresIn is required.
-type SendMessageParamsMessageExpiry struct {
+type SendSendMessageParamsMessageExpiry struct {
 	// Duration in ms or ISO8601 duration (e.g. P1DT4H).
-	ExpiresIn SendMessageParamsMessageExpiryExpiresInUnion `json:"expires_in,omitzero,required"`
+	ExpiresIn SendSendMessageParamsMessageExpiryExpiresInUnion `json:"expires_in,omitzero,required"`
 	// Epoch or ISO8601 timestamp with timezone.
 	ExpiresAt param.Opt[string] `json:"expires_at,omitzero"`
 	paramObj
 }
 
-func (r SendMessageParamsMessageExpiry) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageExpiry
+func (r SendSendMessageParamsMessageExpiry) MarshalJSON() (data []byte, err error) {
+	type shadow SendSendMessageParamsMessageExpiry
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *SendMessageParamsMessageExpiry) UnmarshalJSON(data []byte) error {
+func (r *SendSendMessageParamsMessageExpiry) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type SendMessageParamsMessageExpiryExpiresInUnion struct {
+type SendSendMessageParamsMessageExpiryExpiresInUnion struct {
 	OfString param.Opt[string] `json:",omitzero,inline"`
 	OfInt    param.Opt[int64]  `json:",omitzero,inline"`
 	paramUnion
 }
 
-func (u SendMessageParamsMessageExpiryExpiresInUnion) MarshalJSON() ([]byte, error) {
+func (u SendSendMessageParamsMessageExpiryExpiresInUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfString, u.OfInt)
 }
-func (u *SendMessageParamsMessageExpiryExpiresInUnion) UnmarshalJSON(data []byte) error {
+func (u *SendSendMessageParamsMessageExpiryExpiresInUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *SendMessageParamsMessageExpiryExpiresInUnion) asAny() any {
+func (u *SendSendMessageParamsMessageExpiryExpiresInUnion) asAny() any {
 	if !param.IsOmitted(u.OfString) {
 		return &u.OfString.Value
 	} else if !param.IsOmitted(u.OfInt) {
@@ -1104,72 +565,106 @@ func (u *SendMessageParamsMessageExpiryExpiresInUnion) asAny() any {
 	return nil
 }
 
-type SendMessageParamsMessageMetadata struct {
-	Event   param.Opt[string] `json:"event,omitzero"`
-	TraceID param.Opt[string] `json:"trace_id,omitzero"`
-	Tags    []string          `json:"tags,omitzero"`
-	Utm     UtmParam          `json:"utm,omitzero"`
+type SendSendMessageParamsMessageMetadata struct {
+	Event   param.Opt[string]                       `json:"event,omitzero"`
+	TraceID param.Opt[string]                       `json:"trace_id,omitzero"`
+	Tags    []string                                `json:"tags,omitzero"`
+	Utm     SendSendMessageParamsMessageMetadataUtm `json:"utm,omitzero"`
 	paramObj
 }
 
-func (r SendMessageParamsMessageMetadata) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageMetadata
+func (r SendSendMessageParamsMessageMetadata) MarshalJSON() (data []byte, err error) {
+	type shadow SendSendMessageParamsMessageMetadata
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *SendMessageParamsMessageMetadata) UnmarshalJSON(data []byte) error {
+func (r *SendSendMessageParamsMessageMetadata) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type SendSendMessageParamsMessageMetadataUtm struct {
+	Campaign param.Opt[string] `json:"campaign,omitzero"`
+	Content  param.Opt[string] `json:"content,omitzero"`
+	Medium   param.Opt[string] `json:"medium,omitzero"`
+	Source   param.Opt[string] `json:"source,omitzero"`
+	Term     param.Opt[string] `json:"term,omitzero"`
+	paramObj
+}
+
+func (r SendSendMessageParamsMessageMetadataUtm) MarshalJSON() (data []byte, err error) {
+	type shadow SendSendMessageParamsMessageMetadataUtm
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *SendSendMessageParamsMessageMetadataUtm) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The property SubscriptionTopicID is required.
-type SendMessageParamsMessagePreferences struct {
+type SendSendMessageParamsMessagePreferences struct {
 	// The subscription topic to apply to the message.
 	SubscriptionTopicID string `json:"subscription_topic_id,required"`
 	paramObj
 }
 
-func (r SendMessageParamsMessagePreferences) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessagePreferences
+func (r SendSendMessageParamsMessagePreferences) MarshalJSON() (data []byte, err error) {
+	type shadow SendSendMessageParamsMessagePreferences
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *SendMessageParamsMessagePreferences) UnmarshalJSON(data []byte) error {
+func (r *SendSendMessageParamsMessagePreferences) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type SendMessageParamsMessageProvider struct {
+type SendSendMessageParamsMessageProvider struct {
 	// JS conditional with access to data/profile.
-	If       param.Opt[string]                        `json:"if,omitzero"`
-	Timeouts param.Opt[int64]                         `json:"timeouts,omitzero"`
-	Metadata SendMessageParamsMessageProviderMetadata `json:"metadata,omitzero"`
+	If       param.Opt[string]                            `json:"if,omitzero"`
+	Timeouts param.Opt[int64]                             `json:"timeouts,omitzero"`
+	Metadata SendSendMessageParamsMessageProviderMetadata `json:"metadata,omitzero"`
 	// Provider-specific overrides.
 	Override map[string]any `json:"override,omitzero"`
 	paramObj
 }
 
-func (r SendMessageParamsMessageProvider) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageProvider
+func (r SendSendMessageParamsMessageProvider) MarshalJSON() (data []byte, err error) {
+	type shadow SendSendMessageParamsMessageProvider
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *SendMessageParamsMessageProvider) UnmarshalJSON(data []byte) error {
+func (r *SendSendMessageParamsMessageProvider) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type SendMessageParamsMessageProviderMetadata struct {
-	Utm UtmParam `json:"utm,omitzero"`
+type SendSendMessageParamsMessageProviderMetadata struct {
+	Utm SendSendMessageParamsMessageProviderMetadataUtm `json:"utm,omitzero"`
 	paramObj
 }
 
-func (r SendMessageParamsMessageProviderMetadata) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageProviderMetadata
+func (r SendSendMessageParamsMessageProviderMetadata) MarshalJSON() (data []byte, err error) {
+	type shadow SendSendMessageParamsMessageProviderMetadata
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *SendMessageParamsMessageProviderMetadata) UnmarshalJSON(data []byte) error {
+func (r *SendSendMessageParamsMessageProviderMetadata) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type SendSendMessageParamsMessageProviderMetadataUtm struct {
+	Campaign param.Opt[string] `json:"campaign,omitzero"`
+	Content  param.Opt[string] `json:"content,omitzero"`
+	Medium   param.Opt[string] `json:"medium,omitzero"`
+	Source   param.Opt[string] `json:"source,omitzero"`
+	Term     param.Opt[string] `json:"term,omitzero"`
+	paramObj
+}
+
+func (r SendSendMessageParamsMessageProviderMetadataUtm) MarshalJSON() (data []byte, err error) {
+	type shadow SendSendMessageParamsMessageProviderMetadataUtm
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *SendSendMessageParamsMessageProviderMetadataUtm) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Customize which channels/providers Courier may deliver the message through.
 //
 // The properties Channels, Method are required.
-type SendMessageParamsMessageRouting struct {
+type SendSendMessageParamsMessageRouting struct {
 	// A list of channels or providers (or nested routing rules).
 	Channels []MessageRoutingChannelUnionParam `json:"channels,omitzero,required"`
 	// Any of "all", "single".
@@ -1177,21 +672,21 @@ type SendMessageParamsMessageRouting struct {
 	paramObj
 }
 
-func (r SendMessageParamsMessageRouting) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageRouting
+func (r SendSendMessageParamsMessageRouting) MarshalJSON() (data []byte, err error) {
+	type shadow SendSendMessageParamsMessageRouting
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *SendMessageParamsMessageRouting) UnmarshalJSON(data []byte) error {
+func (r *SendSendMessageParamsMessageRouting) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[SendMessageParamsMessageRouting](
+	apijson.RegisterFieldValidator[SendSendMessageParamsMessageRouting](
 		"method", "all", "single",
 	)
 }
 
-type SendMessageParamsMessageTimeout struct {
+type SendSendMessageParamsMessageTimeout struct {
 	Escalation param.Opt[int64] `json:"escalation,omitzero"`
 	Message    param.Opt[int64] `json:"message,omitzero"`
 	Channel    map[string]int64 `json:"channel,omitzero"`
@@ -1201,16 +696,16 @@ type SendMessageParamsMessageTimeout struct {
 	paramObj
 }
 
-func (r SendMessageParamsMessageTimeout) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageTimeout
+func (r SendSendMessageParamsMessageTimeout) MarshalJSON() (data []byte, err error) {
+	type shadow SendSendMessageParamsMessageTimeout
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *SendMessageParamsMessageTimeout) UnmarshalJSON(data []byte) error {
+func (r *SendSendMessageParamsMessageTimeout) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[SendMessageParamsMessageTimeout](
+	apijson.RegisterFieldValidator[SendSendMessageParamsMessageTimeout](
 		"criteria", "no-escalation", "delivered", "viewed", "engaged",
 	)
 }
@@ -1218,20 +713,20 @@ func init() {
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type SendMessageParamsMessageToUnion struct {
+type SendSendMessageParamsMessageToUnion struct {
 	OfUserRecipient  *UserRecipientParam `json:",omitzero,inline"`
 	OfRecipientArray []RecipientParam    `json:",omitzero,inline"`
 	paramUnion
 }
 
-func (u SendMessageParamsMessageToUnion) MarshalJSON() ([]byte, error) {
+func (u SendSendMessageParamsMessageToUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfUserRecipient, u.OfRecipientArray)
 }
-func (u *SendMessageParamsMessageToUnion) UnmarshalJSON(data []byte) error {
+func (u *SendSendMessageParamsMessageToUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *SendMessageParamsMessageToUnion) asAny() any {
+func (u *SendSendMessageParamsMessageToUnion) asAny() any {
 	if !param.IsOmitted(u.OfUserRecipient) {
 		return u.OfUserRecipient
 	} else if !param.IsOmitted(u.OfRecipientArray) {

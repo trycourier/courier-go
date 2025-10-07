@@ -11,12 +11,12 @@ import (
 	"net/url"
 	"slices"
 
-	"github.com/trycourier/courier-go/internal/apijson"
-	"github.com/trycourier/courier-go/internal/apiquery"
-	"github.com/trycourier/courier-go/internal/requestconfig"
-	"github.com/trycourier/courier-go/option"
-	"github.com/trycourier/courier-go/packages/param"
-	"github.com/trycourier/courier-go/packages/respjson"
+	"github.com/stainless-sdks/courier-go/internal/apijson"
+	"github.com/stainless-sdks/courier-go/internal/apiquery"
+	"github.com/stainless-sdks/courier-go/internal/requestconfig"
+	"github.com/stainless-sdks/courier-go/option"
+	"github.com/stainless-sdks/courier-go/packages/param"
+	"github.com/stainless-sdks/courier-go/packages/respjson"
 )
 
 // NotificationService contains methods and other services that help with
@@ -27,8 +27,8 @@ import (
 // the [NewNotificationService] method instead.
 type NotificationService struct {
 	Options []option.RequestOption
-	Checks  NotificationCheckService
 	Draft   NotificationDraftService
+	Checks  NotificationCheckService
 }
 
 // NewNotificationService generates a new service that applies the given options to
@@ -37,8 +37,8 @@ type NotificationService struct {
 func NewNotificationService(opts ...option.RequestOption) (r NotificationService) {
 	r = NotificationService{}
 	r.Options = opts
-	r.Checks = NewNotificationCheckService(opts...)
 	r.Draft = NewNotificationDraftService(opts...)
+	r.Checks = NewNotificationCheckService(opts...)
 	return
 }
 
@@ -49,7 +49,7 @@ func (r *NotificationService) List(ctx context.Context, query NotificationListPa
 	return
 }
 
-func (r *NotificationService) GetContent(ctx context.Context, id string, opts ...option.RequestOption) (res *NotificationContent, err error) {
+func (r *NotificationService) GetContent(ctx context.Context, id string, opts ...option.RequestOption) (res *NotificationGetContent, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -60,10 +60,142 @@ func (r *NotificationService) GetContent(ctx context.Context, id string, opts ..
 	return
 }
 
-type NotificationContent struct {
-	Blocks   []NotificationContentBlock   `json:"blocks,nullable"`
-	Channels []NotificationContentChannel `json:"channels,nullable"`
-	Checksum string                       `json:"checksum,nullable"`
+type MessageRouting struct {
+	Channels []MessageRoutingChannelUnion `json:"channels,required"`
+	// Any of "all", "single".
+	Method MessageRoutingMethod `json:"method,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Channels    respjson.Field
+		Method      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MessageRouting) RawJSON() string { return r.JSON.raw }
+func (r *MessageRouting) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this MessageRouting to a MessageRoutingParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// MessageRoutingParam.Overrides()
+func (r MessageRouting) ToParam() MessageRoutingParam {
+	return param.Override[MessageRoutingParam](json.RawMessage(r.RawJSON()))
+}
+
+type MessageRoutingMethod string
+
+const (
+	MessageRoutingMethodAll    MessageRoutingMethod = "all"
+	MessageRoutingMethodSingle MessageRoutingMethod = "single"
+)
+
+// The properties Channels, Method are required.
+type MessageRoutingParam struct {
+	Channels []MessageRoutingChannelUnionParam `json:"channels,omitzero,required"`
+	// Any of "all", "single".
+	Method MessageRoutingMethod `json:"method,omitzero,required"`
+	paramObj
+}
+
+func (r MessageRoutingParam) MarshalJSON() (data []byte, err error) {
+	type shadow MessageRoutingParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageRoutingParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// MessageRoutingChannelUnion contains all possible properties and values from
+// [string], [MessageRouting].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfString]
+type MessageRoutingChannelUnion struct {
+	// This field will be present if the value is a [string] instead of an object.
+	OfString string `json:",inline"`
+	// This field is from variant [MessageRouting].
+	Channels []MessageRoutingChannelUnion `json:"channels"`
+	// This field is from variant [MessageRouting].
+	Method MessageRoutingMethod `json:"method"`
+	JSON   struct {
+		OfString respjson.Field
+		Channels respjson.Field
+		Method   respjson.Field
+		raw      string
+	} `json:"-"`
+}
+
+func (u MessageRoutingChannelUnion) AsString() (v string) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u MessageRoutingChannelUnion) AsMessageRouting() (v MessageRouting) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u MessageRoutingChannelUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *MessageRoutingChannelUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this MessageRoutingChannelUnion to a
+// MessageRoutingChannelUnionParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// MessageRoutingChannelUnionParam.Overrides()
+func (r MessageRoutingChannelUnion) ToParam() MessageRoutingChannelUnionParam {
+	return param.Override[MessageRoutingChannelUnionParam](json.RawMessage(r.RawJSON()))
+}
+
+func MessageRoutingChannelParamOfMessageRouting(channels []MessageRoutingChannelUnionParam, method MessageRoutingMethod) MessageRoutingChannelUnionParam {
+	var variant MessageRoutingParam
+	variant.Channels = channels
+	variant.Method = method
+	return MessageRoutingChannelUnionParam{OfMessageRouting: &variant}
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type MessageRoutingChannelUnionParam struct {
+	OfString         param.Opt[string]    `json:",omitzero,inline"`
+	OfMessageRouting *MessageRoutingParam `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u MessageRoutingChannelUnionParam) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfString, u.OfMessageRouting)
+}
+func (u *MessageRoutingChannelUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *MessageRoutingChannelUnionParam) asAny() any {
+	if !param.IsOmitted(u.OfString) {
+		return &u.OfString.Value
+	} else if !param.IsOmitted(u.OfMessageRouting) {
+		return u.OfMessageRouting
+	}
+	return nil
+}
+
+type NotificationGetContent struct {
+	Blocks   []NotificationGetContentBlock   `json:"blocks,nullable"`
+	Channels []NotificationGetContentChannel `json:"channels,nullable"`
+	Checksum string                          `json:"checksum,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Blocks      respjson.Field
@@ -75,21 +207,21 @@ type NotificationContent struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r NotificationContent) RawJSON() string { return r.JSON.raw }
-func (r *NotificationContent) UnmarshalJSON(data []byte) error {
+func (r NotificationGetContent) RawJSON() string { return r.JSON.raw }
+func (r *NotificationGetContent) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type NotificationContentBlock struct {
+type NotificationGetContentBlock struct {
 	ID string `json:"id,required"`
 	// Any of "action", "divider", "image", "jsonnet", "list", "markdown", "quote",
 	// "template", "text".
-	Type     string                                         `json:"type,required"`
-	Alias    string                                         `json:"alias,nullable"`
-	Checksum string                                         `json:"checksum,nullable"`
-	Content  NotificationContentBlockContentUnion           `json:"content,nullable"`
-	Context  string                                         `json:"context,nullable"`
-	Locales  map[string]NotificationContentBlockLocaleUnion `json:"locales,nullable"`
+	Type     string                                            `json:"type,required"`
+	Alias    string                                            `json:"alias,nullable"`
+	Checksum string                                            `json:"checksum,nullable"`
+	Content  NotificationGetContentBlockContentUnion           `json:"content,nullable"`
+	Context  string                                            `json:"context,nullable"`
+	Locales  map[string]NotificationGetContentBlockLocaleUnion `json:"locales,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -105,26 +237,27 @@ type NotificationContentBlock struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r NotificationContentBlock) RawJSON() string { return r.JSON.raw }
-func (r *NotificationContentBlock) UnmarshalJSON(data []byte) error {
+func (r NotificationGetContentBlock) RawJSON() string { return r.JSON.raw }
+func (r *NotificationGetContentBlock) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// NotificationContentBlockContentUnion contains all possible properties and values
-// from [string], [NotificationContentBlockContentNotificationContentHierarchy].
+// NotificationGetContentBlockContentUnion contains all possible properties and
+// values from [string],
+// [NotificationGetContentBlockContentNotificationContentHierarchy].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 //
 // If the underlying value is not a json object, one of the following properties
 // will be valid: OfString]
-type NotificationContentBlockContentUnion struct {
+type NotificationGetContentBlockContentUnion struct {
 	// This field will be present if the value is a [string] instead of an object.
 	OfString string `json:",inline"`
 	// This field is from variant
-	// [NotificationContentBlockContentNotificationContentHierarchy].
+	// [NotificationGetContentBlockContentNotificationContentHierarchy].
 	Children string `json:"children"`
 	// This field is from variant
-	// [NotificationContentBlockContentNotificationContentHierarchy].
+	// [NotificationGetContentBlockContentNotificationContentHierarchy].
 	Parent string `json:"parent"`
 	JSON   struct {
 		OfString respjson.Field
@@ -134,24 +267,24 @@ type NotificationContentBlockContentUnion struct {
 	} `json:"-"`
 }
 
-func (u NotificationContentBlockContentUnion) AsString() (v string) {
+func (u NotificationGetContentBlockContentUnion) AsString() (v string) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u NotificationContentBlockContentUnion) AsNotificationContentHierarchy() (v NotificationContentBlockContentNotificationContentHierarchy) {
+func (u NotificationGetContentBlockContentUnion) AsNotificationContentHierarchy() (v NotificationGetContentBlockContentNotificationContentHierarchy) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u NotificationContentBlockContentUnion) RawJSON() string { return u.JSON.raw }
+func (u NotificationGetContentBlockContentUnion) RawJSON() string { return u.JSON.raw }
 
-func (r *NotificationContentBlockContentUnion) UnmarshalJSON(data []byte) error {
+func (r *NotificationGetContentBlockContentUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type NotificationContentBlockContentNotificationContentHierarchy struct {
+type NotificationGetContentBlockContentNotificationContentHierarchy struct {
 	Children string `json:"children,nullable"`
 	Parent   string `json:"parent,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -164,28 +297,29 @@ type NotificationContentBlockContentNotificationContentHierarchy struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r NotificationContentBlockContentNotificationContentHierarchy) RawJSON() string {
+func (r NotificationGetContentBlockContentNotificationContentHierarchy) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *NotificationContentBlockContentNotificationContentHierarchy) UnmarshalJSON(data []byte) error {
+func (r *NotificationGetContentBlockContentNotificationContentHierarchy) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// NotificationContentBlockLocaleUnion contains all possible properties and values
-// from [string], [NotificationContentBlockLocaleNotificationContentHierarchy].
+// NotificationGetContentBlockLocaleUnion contains all possible properties and
+// values from [string],
+// [NotificationGetContentBlockLocaleNotificationContentHierarchy].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 //
 // If the underlying value is not a json object, one of the following properties
 // will be valid: OfString]
-type NotificationContentBlockLocaleUnion struct {
+type NotificationGetContentBlockLocaleUnion struct {
 	// This field will be present if the value is a [string] instead of an object.
 	OfString string `json:",inline"`
 	// This field is from variant
-	// [NotificationContentBlockLocaleNotificationContentHierarchy].
+	// [NotificationGetContentBlockLocaleNotificationContentHierarchy].
 	Children string `json:"children"`
 	// This field is from variant
-	// [NotificationContentBlockLocaleNotificationContentHierarchy].
+	// [NotificationGetContentBlockLocaleNotificationContentHierarchy].
 	Parent string `json:"parent"`
 	JSON   struct {
 		OfString respjson.Field
@@ -195,24 +329,24 @@ type NotificationContentBlockLocaleUnion struct {
 	} `json:"-"`
 }
 
-func (u NotificationContentBlockLocaleUnion) AsString() (v string) {
+func (u NotificationGetContentBlockLocaleUnion) AsString() (v string) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u NotificationContentBlockLocaleUnion) AsNotificationContentHierarchy() (v NotificationContentBlockLocaleNotificationContentHierarchy) {
+func (u NotificationGetContentBlockLocaleUnion) AsNotificationContentHierarchy() (v NotificationGetContentBlockLocaleNotificationContentHierarchy) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u NotificationContentBlockLocaleUnion) RawJSON() string { return u.JSON.raw }
+func (u NotificationGetContentBlockLocaleUnion) RawJSON() string { return u.JSON.raw }
 
-func (r *NotificationContentBlockLocaleUnion) UnmarshalJSON(data []byte) error {
+func (r *NotificationGetContentBlockLocaleUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type NotificationContentBlockLocaleNotificationContentHierarchy struct {
+type NotificationGetContentBlockLocaleNotificationContentHierarchy struct {
 	Children string `json:"children,nullable"`
 	Parent   string `json:"parent,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -225,19 +359,19 @@ type NotificationContentBlockLocaleNotificationContentHierarchy struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r NotificationContentBlockLocaleNotificationContentHierarchy) RawJSON() string {
+func (r NotificationGetContentBlockLocaleNotificationContentHierarchy) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *NotificationContentBlockLocaleNotificationContentHierarchy) UnmarshalJSON(data []byte) error {
+func (r *NotificationGetContentBlockLocaleNotificationContentHierarchy) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type NotificationContentChannel struct {
-	ID       string                                      `json:"id,required"`
-	Checksum string                                      `json:"checksum,nullable"`
-	Content  NotificationContentChannelContent           `json:"content,nullable"`
-	Locales  map[string]NotificationContentChannelLocale `json:"locales,nullable"`
-	Type     string                                      `json:"type,nullable"`
+type NotificationGetContentChannel struct {
+	ID       string                                         `json:"id,required"`
+	Checksum string                                         `json:"checksum,nullable"`
+	Content  NotificationGetContentChannelContent           `json:"content,nullable"`
+	Locales  map[string]NotificationGetContentChannelLocale `json:"locales,nullable"`
+	Type     string                                         `json:"type,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -251,12 +385,12 @@ type NotificationContentChannel struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r NotificationContentChannel) RawJSON() string { return r.JSON.raw }
-func (r *NotificationContentChannel) UnmarshalJSON(data []byte) error {
+func (r NotificationGetContentChannel) RawJSON() string { return r.JSON.raw }
+func (r *NotificationGetContentChannel) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type NotificationContentChannelContent struct {
+type NotificationGetContentChannelContent struct {
 	Subject string `json:"subject,nullable"`
 	Title   string `json:"title,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -269,12 +403,12 @@ type NotificationContentChannelContent struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r NotificationContentChannelContent) RawJSON() string { return r.JSON.raw }
-func (r *NotificationContentChannelContent) UnmarshalJSON(data []byte) error {
+func (r NotificationGetContentChannelContent) RawJSON() string { return r.JSON.raw }
+func (r *NotificationGetContentChannelContent) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type NotificationContentChannelLocale struct {
+type NotificationGetContentChannelLocale struct {
 	Subject string `json:"subject,nullable"`
 	Title   string `json:"title,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -287,8 +421,8 @@ type NotificationContentChannelLocale struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r NotificationContentChannelLocale) RawJSON() string { return r.JSON.raw }
-func (r *NotificationContentChannelLocale) UnmarshalJSON(data []byte) error {
+func (r NotificationGetContentChannelLocale) RawJSON() string { return r.JSON.raw }
+func (r *NotificationGetContentChannelLocale) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

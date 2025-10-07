@@ -2,7 +2,7 @@ package apiform
 
 import (
 	"bytes"
-	"github.com/trycourier/courier-go/packages/param"
+	"github.com/stainless-sdks/courier-go/packages/param"
 	"io"
 	"mime/multipart"
 	"strings"

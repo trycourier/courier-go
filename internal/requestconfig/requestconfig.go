@@ -18,10 +18,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/trycourier/courier-go/internal"
-	"github.com/trycourier/courier-go/internal/apierror"
-	"github.com/trycourier/courier-go/internal/apiform"
-	"github.com/trycourier/courier-go/internal/apiquery"
+	"github.com/stainless-sdks/courier-go/internal"
+	"github.com/stainless-sdks/courier-go/internal/apierror"
+	"github.com/stainless-sdks/courier-go/internal/apiform"
+	"github.com/stainless-sdks/courier-go/internal/apiquery"
 )
 
 func getDefaultHeaders() map[string]string {

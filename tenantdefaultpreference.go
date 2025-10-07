@@ -3,7 +3,7 @@
 package courier
 
 import (
-	"github.com/trycourier/courier-go/option"
+	"github.com/stainless-sdks/courier-go/option"
 )
 
 // TenantDefaultPreferenceService contains methods and other services that help

@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/trycourier/courier-go/packages/param"
+	"github.com/stainless-sdks/courier-go/packages/param"
 )
 
 var encoders sync.Map // map[encoderEntry]encoderFunc

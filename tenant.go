@@ -11,12 +11,12 @@ import (
 	"net/url"
 	"slices"
 
-	"github.com/trycourier/courier-go/internal/apijson"
-	"github.com/trycourier/courier-go/internal/apiquery"
-	"github.com/trycourier/courier-go/internal/requestconfig"
-	"github.com/trycourier/courier-go/option"
-	"github.com/trycourier/courier-go/packages/param"
-	"github.com/trycourier/courier-go/packages/respjson"
+	"github.com/stainless-sdks/courier-go/internal/apijson"
+	"github.com/stainless-sdks/courier-go/internal/apiquery"
+	"github.com/stainless-sdks/courier-go/internal/requestconfig"
+	"github.com/stainless-sdks/courier-go/option"
+	"github.com/stainless-sdks/courier-go/packages/param"
+	"github.com/stainless-sdks/courier-go/packages/respjson"
 )
 
 // TenantService contains methods and other services that help with interacting
@@ -27,8 +27,8 @@ import (
 // the [NewTenantService] method instead.
 type TenantService struct {
 	Options            []option.RequestOption
-	Templates          TenantTemplateService
 	DefaultPreferences TenantDefaultPreferenceService
+	Templates          TenantTemplateService
 }
 
 // NewTenantService generates a new service that applies the given options to each
@@ -37,8 +37,8 @@ type TenantService struct {
 func NewTenantService(opts ...option.RequestOption) (r TenantService) {
 	r = TenantService{}
 	r.Options = opts
-	r.Templates = NewTenantTemplateService(opts...)
 	r.DefaultPreferences = NewTenantDefaultPreferenceService(opts...)
+	r.Templates = NewTenantTemplateService(opts...)
 	return
 }
 

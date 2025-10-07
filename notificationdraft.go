@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/trycourier/courier-go/internal/requestconfig"
-	"github.com/trycourier/courier-go/option"
+	"github.com/stainless-sdks/courier-go/internal/requestconfig"
+	"github.com/stainless-sdks/courier-go/option"
 )
 
 // NotificationDraftService contains methods and other services that help with
@@ -32,7 +32,7 @@ func NewNotificationDraftService(opts ...option.RequestOption) (r NotificationDr
 	return
 }
 
-func (r *NotificationDraftService) GetContent(ctx context.Context, id string, opts ...option.RequestOption) (res *NotificationContent, err error) {
+func (r *NotificationDraftService) GetContent(ctx context.Context, id string, opts ...option.RequestOption) (res *NotificationGetContent, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
