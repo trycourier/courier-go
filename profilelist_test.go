@@ -11,6 +11,7 @@ import (
 	"github.com/stainless-sdks/courier-go"
 	"github.com/stainless-sdks/courier-go/internal/testutil"
 	"github.com/stainless-sdks/courier-go/option"
+	"github.com/stainless-sdks/courier-go/shared"
 )
 
 func TestProfileListGetWithOptionalParams(t *testing.T) {
@@ -85,25 +86,25 @@ func TestProfileListSubscribe(t *testing.T) {
 			Lists: []courier.ProfileListSubscribeParamsList{{
 				ListID: "listId",
 				Preferences: courier.RecipientPreferencesParam{
-					Categories: map[string]courier.RecipientPreferencesCategoryParam{
+					Categories: map[string]courier.NotificationPreferenceDetailsParam{
 						"foo": {
 							Status: courier.PreferenceStatusOptedIn,
-							ChannelPreferences: []courier.RecipientPreferencesCategoryChannelPreferenceParam{{
+							ChannelPreferences: []shared.ChannelPreferenceParam{{
 								Channel: courier.ChannelClassificationDirectMessage,
 							}},
-							Rules: []courier.RecipientPreferencesCategoryRuleParam{{
+							Rules: []shared.RuleParam{{
 								Until: "until",
 								Start: courier.String("start"),
 							}},
 						},
 					},
-					Notifications: map[string]courier.RecipientPreferencesNotificationParam{
+					Notifications: map[string]courier.NotificationPreferenceDetailsParam{
 						"foo": {
 							Status: courier.PreferenceStatusOptedIn,
-							ChannelPreferences: []courier.RecipientPreferencesNotificationChannelPreferenceParam{{
+							ChannelPreferences: []shared.ChannelPreferenceParam{{
 								Channel: courier.ChannelClassificationDirectMessage,
 							}},
-							Rules: []courier.RecipientPreferencesNotificationRuleParam{{
+							Rules: []shared.RuleParam{{
 								Until: "until",
 								Start: courier.String("start"),
 							}},

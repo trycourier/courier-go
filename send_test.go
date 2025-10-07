@@ -11,6 +11,7 @@ import (
 	"github.com/stainless-sdks/courier-go"
 	"github.com/stainless-sdks/courier-go/internal/testutil"
 	"github.com/stainless-sdks/courier-go/option"
+	"github.com/stainless-sdks/courier-go/shared"
 )
 
 func TestSendSendMessageWithOptionalParams(t *testing.T) {
@@ -34,7 +35,7 @@ func TestSendSendMessageWithOptionalParams(t *testing.T) {
 					BrandID: courier.String("brand_id"),
 					If:      courier.String("if"),
 					Metadata: courier.SendSendMessageParamsMessageChannelMetadata{
-						Utm: courier.SendSendMessageParamsMessageChannelMetadataUtm{
+						Utm: courier.UtmParam{
 							Campaign: courier.String("campaign"),
 							Content:  courier.String("content"),
 							Medium:   courier.String("medium"),
@@ -79,7 +80,7 @@ func TestSendSendMessageWithOptionalParams(t *testing.T) {
 				Event:   courier.String("event"),
 				Tags:    []string{"string"},
 				TraceID: courier.String("trace_id"),
-				Utm: courier.SendSendMessageParamsMessageMetadataUtm{
+				Utm: courier.UtmParam{
 					Campaign: courier.String("campaign"),
 					Content:  courier.String("content"),
 					Medium:   courier.String("medium"),
@@ -94,7 +95,7 @@ func TestSendSendMessageWithOptionalParams(t *testing.T) {
 				"foo": {
 					If: courier.String("if"),
 					Metadata: courier.SendSendMessageParamsMessageProviderMetadata{
-						Utm: courier.SendSendMessageParamsMessageProviderMetadataUtm{
+						Utm: courier.UtmParam{
 							Campaign: courier.String("campaign"),
 							Content:  courier.String("content"),
 							Medium:   courier.String("medium"),
@@ -138,30 +139,30 @@ func TestSendSendMessageWithOptionalParams(t *testing.T) {
 					Locale:      courier.String("locale"),
 					PhoneNumber: courier.String("phone_number"),
 					Preferences: courier.UserRecipientPreferencesParam{
-						Notifications: map[string]courier.UserRecipientPreferencesNotificationParam{
+						Notifications: map[string]shared.PreferenceParam{
 							"foo": {
 								Status: courier.PreferenceStatusOptedIn,
-								ChannelPreferences: []courier.UserRecipientPreferencesNotificationChannelPreferenceParam{{
+								ChannelPreferences: []shared.ChannelPreferenceParam{{
 									Channel: courier.ChannelClassificationDirectMessage,
 								}},
-								Rules: []courier.UserRecipientPreferencesNotificationRuleParam{{
+								Rules: []shared.RuleParam{{
 									Until: "until",
 									Start: courier.String("start"),
 								}},
-								Source: "subscription",
+								Source: shared.PreferenceSourceSubscription,
 							},
 						},
-						Categories: map[string]courier.UserRecipientPreferencesCategoryParam{
+						Categories: map[string]shared.PreferenceParam{
 							"foo": {
 								Status: courier.PreferenceStatusOptedIn,
-								ChannelPreferences: []courier.UserRecipientPreferencesCategoryChannelPreferenceParam{{
+								ChannelPreferences: []shared.ChannelPreferenceParam{{
 									Channel: courier.ChannelClassificationDirectMessage,
 								}},
-								Rules: []courier.UserRecipientPreferencesCategoryRuleParam{{
+								Rules: []shared.RuleParam{{
 									Until: "until",
 									Start: courier.String("start"),
 								}},
-								Source: "subscription",
+								Source: shared.PreferenceSourceSubscription,
 							},
 						},
 						TemplateID: courier.String("templateId"),

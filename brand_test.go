@@ -30,21 +30,21 @@ func TestBrandNewWithOptionalParams(t *testing.T) {
 		Name: "name",
 		ID:   courier.String("id"),
 		Settings: courier.BrandSettingsParam{
-			Colors: courier.BrandSettingsColorsParam{
+			Colors: courier.BrandColorsParam{
 				Primary:   courier.String("primary"),
 				Secondary: courier.String("secondary"),
 			},
 			Email: courier.BrandSettingsEmailParam{
-				Footer: courier.BrandSettingsEmailFooterParam{
+				Footer: courier.EmailFooterParam{
 					Content:        courier.String("content"),
 					InheritDefault: courier.Bool(true),
 				},
-				Head: courier.BrandSettingsEmailHeadParam{
+				Head: courier.EmailHeadParam{
 					InheritDefault: true,
 					Content:        courier.String("content"),
 				},
-				Header: courier.BrandSettingsEmailHeaderParam{
-					Logo: courier.BrandSettingsEmailHeaderLogoParam{
+				Header: courier.EmailHeaderParam{
+					Logo: courier.LogoParam{
 						Href:  courier.String("href"),
 						Image: courier.String("image"),
 					},
@@ -74,27 +74,27 @@ func TestBrandNewWithOptionalParams(t *testing.T) {
 					FooterFullWidth:       courier.Bool(true),
 				},
 			},
-			Inapp: courier.BrandSettingsInappParam{
-				Colors: courier.BrandSettingsInappColorsParam{
+			Inapp: courier.BrandSettingsInAppParam{
+				Colors: courier.BrandColorsParam{
 					Primary:   courier.String("primary"),
 					Secondary: courier.String("secondary"),
 				},
-				Icons: courier.BrandSettingsInappIconsParam{
+				Icons: courier.IconsParam{
 					Bell:    courier.String("bell"),
 					Message: courier.String("message"),
 				},
-				WidgetBackground: courier.BrandSettingsInappWidgetBackgroundParam{
+				WidgetBackground: courier.WidgetBackgroundParam{
 					BottomColor: courier.String("bottomColor"),
 					TopColor:    courier.String("topColor"),
 				},
 				BorderRadius:       courier.String("borderRadius"),
 				DisableMessageIcon: courier.Bool(true),
 				FontFamily:         courier.String("fontFamily"),
-				Placement:          "top",
+				Placement:          courier.BrandSettingsInAppPlacementTop,
 			},
 		},
 		Snippets: courier.BrandSnippetsParam{
-			Items: []courier.BrandSnippetsItemParam{{
+			Items: []courier.BrandSnippetParam{{
 				Name:  "name",
 				Value: "value",
 			}},
@@ -151,21 +151,21 @@ func TestBrandUpdateWithOptionalParams(t *testing.T) {
 		courier.BrandUpdateParams{
 			Name: "name",
 			Settings: courier.BrandSettingsParam{
-				Colors: courier.BrandSettingsColorsParam{
+				Colors: courier.BrandColorsParam{
 					Primary:   courier.String("primary"),
 					Secondary: courier.String("secondary"),
 				},
 				Email: courier.BrandSettingsEmailParam{
-					Footer: courier.BrandSettingsEmailFooterParam{
+					Footer: courier.EmailFooterParam{
 						Content:        courier.String("content"),
 						InheritDefault: courier.Bool(true),
 					},
-					Head: courier.BrandSettingsEmailHeadParam{
+					Head: courier.EmailHeadParam{
 						InheritDefault: true,
 						Content:        courier.String("content"),
 					},
-					Header: courier.BrandSettingsEmailHeaderParam{
-						Logo: courier.BrandSettingsEmailHeaderLogoParam{
+					Header: courier.EmailHeaderParam{
+						Logo: courier.LogoParam{
 							Href:  courier.String("href"),
 							Image: courier.String("image"),
 						},
@@ -195,27 +195,27 @@ func TestBrandUpdateWithOptionalParams(t *testing.T) {
 						FooterFullWidth:       courier.Bool(true),
 					},
 				},
-				Inapp: courier.BrandSettingsInappParam{
-					Colors: courier.BrandSettingsInappColorsParam{
+				Inapp: courier.BrandSettingsInAppParam{
+					Colors: courier.BrandColorsParam{
 						Primary:   courier.String("primary"),
 						Secondary: courier.String("secondary"),
 					},
-					Icons: courier.BrandSettingsInappIconsParam{
+					Icons: courier.IconsParam{
 						Bell:    courier.String("bell"),
 						Message: courier.String("message"),
 					},
-					WidgetBackground: courier.BrandSettingsInappWidgetBackgroundParam{
+					WidgetBackground: courier.WidgetBackgroundParam{
 						BottomColor: courier.String("bottomColor"),
 						TopColor:    courier.String("topColor"),
 					},
 					BorderRadius:       courier.String("borderRadius"),
 					DisableMessageIcon: courier.Bool(true),
 					FontFamily:         courier.String("fontFamily"),
-					Placement:          "top",
+					Placement:          courier.BrandSettingsInAppPlacementTop,
 				},
 			},
 			Snippets: courier.BrandSnippetsParam{
-				Items: []courier.BrandSnippetsItemParam{{
+				Items: []courier.BrandSnippetParam{{
 					Name:  "name",
 					Value: "value",
 				}},

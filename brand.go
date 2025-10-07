@@ -121,10 +121,53 @@ func (r *Brand) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type BrandColors struct {
+	Primary     string            `json:"primary,nullable"`
+	Secondary   string            `json:"secondary,nullable"`
+	ExtraFields map[string]string `json:",extras"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Primary     respjson.Field
+		Secondary   respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r BrandColors) RawJSON() string { return r.JSON.raw }
+func (r *BrandColors) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this BrandColors to a BrandColorsParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// BrandColorsParam.Overrides()
+func (r BrandColors) ToParam() BrandColorsParam {
+	return param.Override[BrandColorsParam](json.RawMessage(r.RawJSON()))
+}
+
+type BrandColorsParam struct {
+	Primary     param.Opt[string] `json:"primary,omitzero"`
+	Secondary   param.Opt[string] `json:"secondary,omitzero"`
+	ExtraFields map[string]string `json:"-"`
+	paramObj
+}
+
+func (r BrandColorsParam) MarshalJSON() (data []byte, err error) {
+	type shadow BrandColorsParam
+	return param.MarshalWithExtras(r, (*shadow)(&r), r.ExtraFields)
+}
+func (r *BrandColorsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type BrandSettings struct {
-	Colors BrandSettingsColors `json:"colors,nullable"`
-	Email  BrandSettingsEmail  `json:"email,nullable"`
-	Inapp  BrandSettingsInapp  `json:"inapp,nullable"`
+	Colors BrandColors        `json:"colors,nullable"`
+	Email  BrandSettingsEmail `json:"email,nullable"`
+	Inapp  BrandSettingsInApp `json:"inapp,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Colors      respjson.Field
@@ -150,29 +193,25 @@ func (r BrandSettings) ToParam() BrandSettingsParam {
 	return param.Override[BrandSettingsParam](json.RawMessage(r.RawJSON()))
 }
 
-type BrandSettingsColors struct {
-	Primary     string            `json:"primary,nullable"`
-	Secondary   string            `json:"secondary,nullable"`
-	ExtraFields map[string]string `json:",extras"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Primary     respjson.Field
-		Secondary   respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
+type BrandSettingsParam struct {
+	Colors BrandColorsParam        `json:"colors,omitzero"`
+	Email  BrandSettingsEmailParam `json:"email,omitzero"`
+	Inapp  BrandSettingsInAppParam `json:"inapp,omitzero"`
+	paramObj
 }
 
-// Returns the unmodified JSON received from the API
-func (r BrandSettingsColors) RawJSON() string { return r.JSON.raw }
-func (r *BrandSettingsColors) UnmarshalJSON(data []byte) error {
+func (r BrandSettingsParam) MarshalJSON() (data []byte, err error) {
+	type shadow BrandSettingsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *BrandSettingsParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 type BrandSettingsEmail struct {
-	Footer           BrandSettingsEmailFooter           `json:"footer,nullable"`
-	Head             BrandSettingsEmailHead             `json:"head,nullable"`
-	Header           BrandSettingsEmailHeader           `json:"header,nullable"`
+	Footer           EmailFooter                        `json:"footer,nullable"`
+	Head             EmailHead                          `json:"head,nullable"`
+	Header           EmailHeader                        `json:"header,nullable"`
 	TemplateOverride BrandSettingsEmailTemplateOverride `json:"templateOverride,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -191,78 +230,13 @@ func (r *BrandSettingsEmail) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type BrandSettingsEmailFooter struct {
-	Content        string `json:"content,nullable"`
-	InheritDefault bool   `json:"inheritDefault,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Content        respjson.Field
-		InheritDefault respjson.Field
-		ExtraFields    map[string]respjson.Field
-		raw            string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r BrandSettingsEmailFooter) RawJSON() string { return r.JSON.raw }
-func (r *BrandSettingsEmailFooter) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type BrandSettingsEmailHead struct {
-	InheritDefault bool   `json:"inheritDefault,required"`
-	Content        string `json:"content,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		InheritDefault respjson.Field
-		Content        respjson.Field
-		ExtraFields    map[string]respjson.Field
-		raw            string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r BrandSettingsEmailHead) RawJSON() string { return r.JSON.raw }
-func (r *BrandSettingsEmailHead) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type BrandSettingsEmailHeader struct {
-	Logo           BrandSettingsEmailHeaderLogo `json:"logo,required"`
-	BarColor       string                       `json:"barColor,nullable"`
-	InheritDefault bool                         `json:"inheritDefault,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Logo           respjson.Field
-		BarColor       respjson.Field
-		InheritDefault respjson.Field
-		ExtraFields    map[string]respjson.Field
-		raw            string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r BrandSettingsEmailHeader) RawJSON() string { return r.JSON.raw }
-func (r *BrandSettingsEmailHeader) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type BrandSettingsEmailHeaderLogo struct {
-	Href  string `json:"href,nullable"`
-	Image string `json:"image,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Href        respjson.Field
-		Image       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r BrandSettingsEmailHeaderLogo) RawJSON() string { return r.JSON.raw }
-func (r *BrandSettingsEmailHeaderLogo) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+// ToParam converts this BrandSettingsEmail to a BrandSettingsEmailParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// BrandSettingsEmailParam.Overrides()
+func (r BrandSettingsEmail) ToParam() BrandSettingsEmailParam {
+	return param.Override[BrandSettingsEmailParam](json.RawMessage(r.RawJSON()))
 }
 
 type BrandSettingsEmailTemplateOverride struct {
@@ -286,125 +260,11 @@ func (r *BrandSettingsEmailTemplateOverride) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type BrandSettingsInapp struct {
-	Colors             BrandSettingsInappColors           `json:"colors,required"`
-	Icons              BrandSettingsInappIcons            `json:"icons,required"`
-	WidgetBackground   BrandSettingsInappWidgetBackground `json:"widgetBackground,required"`
-	BorderRadius       string                             `json:"borderRadius,nullable"`
-	DisableMessageIcon bool                               `json:"disableMessageIcon,nullable"`
-	FontFamily         string                             `json:"fontFamily,nullable"`
-	// Any of "top", "bottom", "left", "right".
-	Placement string `json:"placement,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Colors             respjson.Field
-		Icons              respjson.Field
-		WidgetBackground   respjson.Field
-		BorderRadius       respjson.Field
-		DisableMessageIcon respjson.Field
-		FontFamily         respjson.Field
-		Placement          respjson.Field
-		ExtraFields        map[string]respjson.Field
-		raw                string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r BrandSettingsInapp) RawJSON() string { return r.JSON.raw }
-func (r *BrandSettingsInapp) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type BrandSettingsInappColors struct {
-	Primary     string            `json:"primary,nullable"`
-	Secondary   string            `json:"secondary,nullable"`
-	ExtraFields map[string]string `json:",extras"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Primary     respjson.Field
-		Secondary   respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r BrandSettingsInappColors) RawJSON() string { return r.JSON.raw }
-func (r *BrandSettingsInappColors) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type BrandSettingsInappIcons struct {
-	Bell    string `json:"bell,nullable"`
-	Message string `json:"message,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Bell        respjson.Field
-		Message     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r BrandSettingsInappIcons) RawJSON() string { return r.JSON.raw }
-func (r *BrandSettingsInappIcons) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type BrandSettingsInappWidgetBackground struct {
-	BottomColor string `json:"bottomColor,nullable"`
-	TopColor    string `json:"topColor,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		BottomColor respjson.Field
-		TopColor    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r BrandSettingsInappWidgetBackground) RawJSON() string { return r.JSON.raw }
-func (r *BrandSettingsInappWidgetBackground) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type BrandSettingsParam struct {
-	Colors BrandSettingsColorsParam `json:"colors,omitzero"`
-	Email  BrandSettingsEmailParam  `json:"email,omitzero"`
-	Inapp  BrandSettingsInappParam  `json:"inapp,omitzero"`
-	paramObj
-}
-
-func (r BrandSettingsParam) MarshalJSON() (data []byte, err error) {
-	type shadow BrandSettingsParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *BrandSettingsParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type BrandSettingsColorsParam struct {
-	Primary     param.Opt[string] `json:"primary,omitzero"`
-	Secondary   param.Opt[string] `json:"secondary,omitzero"`
-	ExtraFields map[string]string `json:"-"`
-	paramObj
-}
-
-func (r BrandSettingsColorsParam) MarshalJSON() (data []byte, err error) {
-	type shadow BrandSettingsColorsParam
-	return param.MarshalWithExtras(r, (*shadow)(&r), r.ExtraFields)
-}
-func (r *BrandSettingsColorsParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type BrandSettingsEmailParam struct {
-	Footer           BrandSettingsEmailFooterParam           `json:"footer,omitzero"`
-	Head             BrandSettingsEmailHeadParam             `json:"head,omitzero"`
-	Header           BrandSettingsEmailHeaderParam           `json:"header,omitzero"`
 	TemplateOverride BrandSettingsEmailTemplateOverrideParam `json:"templateOverride,omitzero"`
+	Footer           EmailFooterParam                        `json:"footer,omitzero"`
+	Head             EmailHeadParam                          `json:"head,omitzero"`
+	Header           EmailHeaderParam                        `json:"header,omitzero"`
 	paramObj
 }
 
@@ -413,65 +273,6 @@ func (r BrandSettingsEmailParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *BrandSettingsEmailParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type BrandSettingsEmailFooterParam struct {
-	Content        param.Opt[string] `json:"content,omitzero"`
-	InheritDefault param.Opt[bool]   `json:"inheritDefault,omitzero"`
-	paramObj
-}
-
-func (r BrandSettingsEmailFooterParam) MarshalJSON() (data []byte, err error) {
-	type shadow BrandSettingsEmailFooterParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *BrandSettingsEmailFooterParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The property InheritDefault is required.
-type BrandSettingsEmailHeadParam struct {
-	InheritDefault bool              `json:"inheritDefault,required"`
-	Content        param.Opt[string] `json:"content,omitzero"`
-	paramObj
-}
-
-func (r BrandSettingsEmailHeadParam) MarshalJSON() (data []byte, err error) {
-	type shadow BrandSettingsEmailHeadParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *BrandSettingsEmailHeadParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The property Logo is required.
-type BrandSettingsEmailHeaderParam struct {
-	Logo           BrandSettingsEmailHeaderLogoParam `json:"logo,omitzero,required"`
-	BarColor       param.Opt[string]                 `json:"barColor,omitzero"`
-	InheritDefault param.Opt[bool]                   `json:"inheritDefault,omitzero"`
-	paramObj
-}
-
-func (r BrandSettingsEmailHeaderParam) MarshalJSON() (data []byte, err error) {
-	type shadow BrandSettingsEmailHeaderParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *BrandSettingsEmailHeaderParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type BrandSettingsEmailHeaderLogoParam struct {
-	Href  param.Opt[string] `json:"href,omitzero"`
-	Image param.Opt[string] `json:"image,omitzero"`
-	paramObj
-}
-
-func (r BrandSettingsEmailHeaderLogoParam) MarshalJSON() (data []byte, err error) {
-	type shadow BrandSettingsEmailHeaderLogoParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *BrandSettingsEmailHeaderLogoParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -487,78 +288,118 @@ func (r BrandSettingsEmailTemplateOverrideParam) MarshalJSON() (data []byte, err
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 
-// The properties Colors, Icons, WidgetBackground are required.
-type BrandSettingsInappParam struct {
-	Colors             BrandSettingsInappColorsParam           `json:"colors,omitzero,required"`
-	Icons              BrandSettingsInappIconsParam            `json:"icons,omitzero,required"`
-	WidgetBackground   BrandSettingsInappWidgetBackgroundParam `json:"widgetBackground,omitzero,required"`
-	BorderRadius       param.Opt[string]                       `json:"borderRadius,omitzero"`
-	DisableMessageIcon param.Opt[bool]                         `json:"disableMessageIcon,omitzero"`
-	FontFamily         param.Opt[string]                       `json:"fontFamily,omitzero"`
+type BrandSettingsInApp struct {
+	Colors             BrandColors      `json:"colors,required"`
+	Icons              Icons            `json:"icons,required"`
+	WidgetBackground   WidgetBackground `json:"widgetBackground,required"`
+	BorderRadius       string           `json:"borderRadius,nullable"`
+	DisableMessageIcon bool             `json:"disableMessageIcon,nullable"`
+	FontFamily         string           `json:"fontFamily,nullable"`
 	// Any of "top", "bottom", "left", "right".
-	Placement string `json:"placement,omitzero"`
-	paramObj
+	Placement BrandSettingsInAppPlacement `json:"placement,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Colors             respjson.Field
+		Icons              respjson.Field
+		WidgetBackground   respjson.Field
+		BorderRadius       respjson.Field
+		DisableMessageIcon respjson.Field
+		FontFamily         respjson.Field
+		Placement          respjson.Field
+		ExtraFields        map[string]respjson.Field
+		raw                string
+	} `json:"-"`
 }
 
-func (r BrandSettingsInappParam) MarshalJSON() (data []byte, err error) {
-	type shadow BrandSettingsInappParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *BrandSettingsInappParam) UnmarshalJSON(data []byte) error {
+// Returns the unmodified JSON received from the API
+func (r BrandSettingsInApp) RawJSON() string { return r.JSON.raw }
+func (r *BrandSettingsInApp) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func init() {
-	apijson.RegisterFieldValidator[BrandSettingsInappParam](
-		"placement", "top", "bottom", "left", "right",
-	)
+// ToParam converts this BrandSettingsInApp to a BrandSettingsInAppParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// BrandSettingsInAppParam.Overrides()
+func (r BrandSettingsInApp) ToParam() BrandSettingsInAppParam {
+	return param.Override[BrandSettingsInAppParam](json.RawMessage(r.RawJSON()))
 }
 
-type BrandSettingsInappColorsParam struct {
-	Primary     param.Opt[string] `json:"primary,omitzero"`
-	Secondary   param.Opt[string] `json:"secondary,omitzero"`
-	ExtraFields map[string]string `json:"-"`
+type BrandSettingsInAppPlacement string
+
+const (
+	BrandSettingsInAppPlacementTop    BrandSettingsInAppPlacement = "top"
+	BrandSettingsInAppPlacementBottom BrandSettingsInAppPlacement = "bottom"
+	BrandSettingsInAppPlacementLeft   BrandSettingsInAppPlacement = "left"
+	BrandSettingsInAppPlacementRight  BrandSettingsInAppPlacement = "right"
+)
+
+// The properties Colors, Icons, WidgetBackground are required.
+type BrandSettingsInAppParam struct {
+	Colors             BrandColorsParam      `json:"colors,omitzero,required"`
+	Icons              IconsParam            `json:"icons,omitzero,required"`
+	WidgetBackground   WidgetBackgroundParam `json:"widgetBackground,omitzero,required"`
+	BorderRadius       param.Opt[string]     `json:"borderRadius,omitzero"`
+	DisableMessageIcon param.Opt[bool]       `json:"disableMessageIcon,omitzero"`
+	FontFamily         param.Opt[string]     `json:"fontFamily,omitzero"`
+	// Any of "top", "bottom", "left", "right".
+	Placement BrandSettingsInAppPlacement `json:"placement,omitzero"`
 	paramObj
 }
 
-func (r BrandSettingsInappColorsParam) MarshalJSON() (data []byte, err error) {
-	type shadow BrandSettingsInappColorsParam
-	return param.MarshalWithExtras(r, (*shadow)(&r), r.ExtraFields)
+func (r BrandSettingsInAppParam) MarshalJSON() (data []byte, err error) {
+	type shadow BrandSettingsInAppParam
+	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *BrandSettingsInappColorsParam) UnmarshalJSON(data []byte) error {
+func (r *BrandSettingsInAppParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type BrandSettingsInappIconsParam struct {
-	Bell    param.Opt[string] `json:"bell,omitzero"`
-	Message param.Opt[string] `json:"message,omitzero"`
-	paramObj
+type BrandSnippet struct {
+	Name  string `json:"name,required"`
+	Value string `json:"value,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Name        respjson.Field
+		Value       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
 }
 
-func (r BrandSettingsInappIconsParam) MarshalJSON() (data []byte, err error) {
-	type shadow BrandSettingsInappIconsParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *BrandSettingsInappIconsParam) UnmarshalJSON(data []byte) error {
+// Returns the unmodified JSON received from the API
+func (r BrandSnippet) RawJSON() string { return r.JSON.raw }
+func (r *BrandSnippet) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type BrandSettingsInappWidgetBackgroundParam struct {
-	BottomColor param.Opt[string] `json:"bottomColor,omitzero"`
-	TopColor    param.Opt[string] `json:"topColor,omitzero"`
+// ToParam converts this BrandSnippet to a BrandSnippetParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// BrandSnippetParam.Overrides()
+func (r BrandSnippet) ToParam() BrandSnippetParam {
+	return param.Override[BrandSnippetParam](json.RawMessage(r.RawJSON()))
+}
+
+// The properties Name, Value are required.
+type BrandSnippetParam struct {
+	Name  string `json:"name,required"`
+	Value string `json:"value,required"`
 	paramObj
 }
 
-func (r BrandSettingsInappWidgetBackgroundParam) MarshalJSON() (data []byte, err error) {
-	type shadow BrandSettingsInappWidgetBackgroundParam
+func (r BrandSnippetParam) MarshalJSON() (data []byte, err error) {
+	type shadow BrandSnippetParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *BrandSettingsInappWidgetBackgroundParam) UnmarshalJSON(data []byte) error {
+func (r *BrandSnippetParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 type BrandSnippets struct {
-	Items []BrandSnippetsItem `json:"items,nullable"`
+	Items []BrandSnippet `json:"items,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Items       respjson.Field
@@ -582,26 +423,8 @@ func (r BrandSnippets) ToParam() BrandSnippetsParam {
 	return param.Override[BrandSnippetsParam](json.RawMessage(r.RawJSON()))
 }
 
-type BrandSnippetsItem struct {
-	Name  string `json:"name,required"`
-	Value string `json:"value,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Name        respjson.Field
-		Value       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r BrandSnippetsItem) RawJSON() string { return r.JSON.raw }
-func (r *BrandSnippetsItem) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type BrandSnippetsParam struct {
-	Items []BrandSnippetsItemParam `json:"items,omitzero"`
+	Items []BrandSnippetParam `json:"items,omitzero"`
 	paramObj
 }
 
@@ -610,21 +433,6 @@ func (r BrandSnippetsParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *BrandSnippetsParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The properties Name, Value are required.
-type BrandSnippetsItemParam struct {
-	Name  string `json:"name,required"`
-	Value string `json:"value,required"`
-	paramObj
-}
-
-func (r BrandSnippetsItemParam) MarshalJSON() (data []byte, err error) {
-	type shadow BrandSnippetsItemParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *BrandSnippetsItemParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -682,6 +490,257 @@ func (r BrandTemplateParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *BrandTemplateParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type EmailFooter struct {
+	Content        string `json:"content,nullable"`
+	InheritDefault bool   `json:"inheritDefault,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Content        respjson.Field
+		InheritDefault respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r EmailFooter) RawJSON() string { return r.JSON.raw }
+func (r *EmailFooter) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this EmailFooter to a EmailFooterParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// EmailFooterParam.Overrides()
+func (r EmailFooter) ToParam() EmailFooterParam {
+	return param.Override[EmailFooterParam](json.RawMessage(r.RawJSON()))
+}
+
+type EmailFooterParam struct {
+	Content        param.Opt[string] `json:"content,omitzero"`
+	InheritDefault param.Opt[bool]   `json:"inheritDefault,omitzero"`
+	paramObj
+}
+
+func (r EmailFooterParam) MarshalJSON() (data []byte, err error) {
+	type shadow EmailFooterParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailFooterParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type EmailHead struct {
+	InheritDefault bool   `json:"inheritDefault,required"`
+	Content        string `json:"content,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		InheritDefault respjson.Field
+		Content        respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r EmailHead) RawJSON() string { return r.JSON.raw }
+func (r *EmailHead) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this EmailHead to a EmailHeadParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// EmailHeadParam.Overrides()
+func (r EmailHead) ToParam() EmailHeadParam {
+	return param.Override[EmailHeadParam](json.RawMessage(r.RawJSON()))
+}
+
+// The property InheritDefault is required.
+type EmailHeadParam struct {
+	InheritDefault bool              `json:"inheritDefault,required"`
+	Content        param.Opt[string] `json:"content,omitzero"`
+	paramObj
+}
+
+func (r EmailHeadParam) MarshalJSON() (data []byte, err error) {
+	type shadow EmailHeadParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailHeadParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type EmailHeader struct {
+	Logo           Logo   `json:"logo,required"`
+	BarColor       string `json:"barColor,nullable"`
+	InheritDefault bool   `json:"inheritDefault,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Logo           respjson.Field
+		BarColor       respjson.Field
+		InheritDefault respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r EmailHeader) RawJSON() string { return r.JSON.raw }
+func (r *EmailHeader) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this EmailHeader to a EmailHeaderParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// EmailHeaderParam.Overrides()
+func (r EmailHeader) ToParam() EmailHeaderParam {
+	return param.Override[EmailHeaderParam](json.RawMessage(r.RawJSON()))
+}
+
+// The property Logo is required.
+type EmailHeaderParam struct {
+	Logo           LogoParam         `json:"logo,omitzero,required"`
+	BarColor       param.Opt[string] `json:"barColor,omitzero"`
+	InheritDefault param.Opt[bool]   `json:"inheritDefault,omitzero"`
+	paramObj
+}
+
+func (r EmailHeaderParam) MarshalJSON() (data []byte, err error) {
+	type shadow EmailHeaderParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailHeaderParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type Icons struct {
+	Bell    string `json:"bell,nullable"`
+	Message string `json:"message,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Bell        respjson.Field
+		Message     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r Icons) RawJSON() string { return r.JSON.raw }
+func (r *Icons) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this Icons to a IconsParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// IconsParam.Overrides()
+func (r Icons) ToParam() IconsParam {
+	return param.Override[IconsParam](json.RawMessage(r.RawJSON()))
+}
+
+type IconsParam struct {
+	Bell    param.Opt[string] `json:"bell,omitzero"`
+	Message param.Opt[string] `json:"message,omitzero"`
+	paramObj
+}
+
+func (r IconsParam) MarshalJSON() (data []byte, err error) {
+	type shadow IconsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *IconsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type Logo struct {
+	Href  string `json:"href,nullable"`
+	Image string `json:"image,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Href        respjson.Field
+		Image       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r Logo) RawJSON() string { return r.JSON.raw }
+func (r *Logo) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this Logo to a LogoParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// LogoParam.Overrides()
+func (r Logo) ToParam() LogoParam {
+	return param.Override[LogoParam](json.RawMessage(r.RawJSON()))
+}
+
+type LogoParam struct {
+	Href  param.Opt[string] `json:"href,omitzero"`
+	Image param.Opt[string] `json:"image,omitzero"`
+	paramObj
+}
+
+func (r LogoParam) MarshalJSON() (data []byte, err error) {
+	type shadow LogoParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *LogoParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type WidgetBackground struct {
+	BottomColor string `json:"bottomColor,nullable"`
+	TopColor    string `json:"topColor,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		BottomColor respjson.Field
+		TopColor    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WidgetBackground) RawJSON() string { return r.JSON.raw }
+func (r *WidgetBackground) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this WidgetBackground to a WidgetBackgroundParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// WidgetBackgroundParam.Overrides()
+func (r WidgetBackground) ToParam() WidgetBackgroundParam {
+	return param.Override[WidgetBackgroundParam](json.RawMessage(r.RawJSON()))
+}
+
+type WidgetBackgroundParam struct {
+	BottomColor param.Opt[string] `json:"bottomColor,omitzero"`
+	TopColor    param.Opt[string] `json:"topColor,omitzero"`
+	paramObj
+}
+
+func (r WidgetBackgroundParam) MarshalJSON() (data []byte, err error) {
+	type shadow WidgetBackgroundParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WidgetBackgroundParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
