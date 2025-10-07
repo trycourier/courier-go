@@ -36,7 +36,7 @@ func TestBrandNewWithOptionalParams(t *testing.T) {
 			},
 			Email: courier.BrandSettingsEmailParam{
 				Footer: courier.EmailFooterParam{
-					Content:        map[string]interface{}{},
+					Content:        courier.String("content"),
 					InheritDefault: courier.Bool(true),
 				},
 				Head: courier.EmailHeadParam{
@@ -157,7 +157,7 @@ func TestBrandUpdateWithOptionalParams(t *testing.T) {
 				},
 				Email: courier.BrandSettingsEmailParam{
 					Footer: courier.EmailFooterParam{
-						Content:        map[string]interface{}{},
+						Content:        courier.String("content"),
 						InheritDefault: courier.Bool(true),
 					},
 					Head: courier.EmailHeadParam{
