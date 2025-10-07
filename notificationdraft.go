@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/stainless-sdks/courier-go/internal/requestconfig"
-	"github.com/stainless-sdks/courier-go/option"
+	"github.com/trycourier/courier-go/internal/requestconfig"
+	"github.com/trycourier/courier-go/option"
 )
 
 // NotificationDraftService contains methods and other services that help with

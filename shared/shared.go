@@ -5,10 +5,10 @@ package shared
 import (
 	"encoding/json"
 
-	"github.com/stainless-sdks/courier-go"
-	"github.com/stainless-sdks/courier-go/internal/apijson"
-	"github.com/stainless-sdks/courier-go/packages/param"
-	"github.com/stainless-sdks/courier-go/packages/respjson"
+	"github.com/trycourier/courier-go"
+	"github.com/trycourier/courier-go/internal/apijson"
+	"github.com/trycourier/courier-go/packages/param"
+	"github.com/trycourier/courier-go/packages/respjson"
 )
 
 // aliased to make [param.APIUnion] private when embedding

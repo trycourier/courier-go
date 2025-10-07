@@ -2,7 +2,7 @@ package param
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/courier-go/internal/encoding/json/sentinel"
+	"github.com/trycourier/courier-go/internal/encoding/json/sentinel"
 	"reflect"
 )
 

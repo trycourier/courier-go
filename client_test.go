@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/courier-go"
-	"github.com/stainless-sdks/courier-go/internal"
-	"github.com/stainless-sdks/courier-go/option"
+	"github.com/trycourier/courier-go"
+	"github.com/trycourier/courier-go/internal"
+	"github.com/trycourier/courier-go/option"
 )
 
 type closureTransport struct {

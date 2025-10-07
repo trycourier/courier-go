@@ -10,12 +10,12 @@ import (
 	"net/url"
 	"slices"
 
-	"github.com/stainless-sdks/courier-go/internal/apijson"
-	"github.com/stainless-sdks/courier-go/internal/apiquery"
-	"github.com/stainless-sdks/courier-go/internal/requestconfig"
-	"github.com/stainless-sdks/courier-go/option"
-	"github.com/stainless-sdks/courier-go/packages/param"
-	"github.com/stainless-sdks/courier-go/packages/respjson"
+	"github.com/trycourier/courier-go/internal/apijson"
+	"github.com/trycourier/courier-go/internal/apiquery"
+	"github.com/trycourier/courier-go/internal/requestconfig"
+	"github.com/trycourier/courier-go/option"
+	"github.com/trycourier/courier-go/packages/param"
+	"github.com/trycourier/courier-go/packages/respjson"
 )
 
 // AuditEventService contains methods and other services that help with interacting

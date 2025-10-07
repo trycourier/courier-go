@@ -1,7 +1,7 @@
 package apiform
 
 import (
-	"github.com/stainless-sdks/courier-go/packages/param"
+	"github.com/trycourier/courier-go/packages/param"
 	"mime/multipart"
 	"reflect"
 )

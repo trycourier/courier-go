@@ -3,7 +3,7 @@
 package courier
 
 import (
-	"github.com/stainless-sdks/courier-go/option"
+	"github.com/trycourier/courier-go/option"
 )
 
 // AutomationService contains methods and other services that help with interacting

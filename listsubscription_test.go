@@ -8,10 +8,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/courier-go"
-	"github.com/stainless-sdks/courier-go/internal/testutil"
-	"github.com/stainless-sdks/courier-go/option"
-	"github.com/stainless-sdks/courier-go/shared"
+	"github.com/trycourier/courier-go"
+	"github.com/trycourier/courier-go/internal/testutil"
+	"github.com/trycourier/courier-go/option"
+	"github.com/trycourier/courier-go/shared"
 )
 
 func TestListSubscriptionListWithOptionalParams(t *testing.T) {
