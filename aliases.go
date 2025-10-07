@@ -5,6 +5,7 @@ package courier
 import (
 	"github.com/stainless-sdks/courier-go/internal/apierror"
 	"github.com/stainless-sdks/courier-go/packages/param"
+	"github.com/stainless-sdks/courier-go/shared"
 )
 
 // aliased to make [param.APIUnion] private when embedding
@@ -14,3 +15,33 @@ type paramUnion = param.APIUnion
 type paramObj = param.APIObject
 
 type Error = apierror.Error
+
+// This is an alias to an internal type.
+type ChannelPreference = shared.ChannelPreference
+
+// This is an alias to an internal type.
+type ChannelPreferenceParam = shared.ChannelPreferenceParam
+
+// This is an alias to an internal type.
+type Preference = shared.Preference
+
+// This is an alias to an internal type.
+type PreferenceSource = shared.PreferenceSource
+
+// Equals "subscription"
+const PreferenceSourceSubscription = shared.PreferenceSourceSubscription
+
+// Equals "list"
+const PreferenceSourceList = shared.PreferenceSourceList
+
+// Equals "recipient"
+const PreferenceSourceRecipient = shared.PreferenceSourceRecipient
+
+// This is an alias to an internal type.
+type PreferenceParam = shared.PreferenceParam
+
+// This is an alias to an internal type.
+type Rule = shared.Rule
+
+// This is an alias to an internal type.
+type RuleParam = shared.RuleParam

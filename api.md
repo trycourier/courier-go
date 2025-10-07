@@ -1,3 +1,15 @@
+# Shared Params Types
+
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go/shared#ChannelPreferenceParam">ChannelPreferenceParam</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go/shared#PreferenceParam">PreferenceParam</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go/shared#RuleParam">RuleParam</a>
+
+# Shared Response Types
+
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go/shared#ChannelPreference">ChannelPreference</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go/shared#Preference">Preference</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go/shared#Rule">Rule</a>
+
 # Send
 
 Params Types:
@@ -5,6 +17,7 @@ Params Types:
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#ContentUnionParam">ContentUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#MessageContextParam">MessageContextParam</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#RecipientParam">RecipientParam</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#UtmParam">UtmParam</a>
 
 Response Types:
 
@@ -82,16 +95,36 @@ Methods:
 
 Params Types:
 
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#BrandColorsParam">BrandColorsParam</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#BrandSettingsParam">BrandSettingsParam</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#BrandSettingsEmailParam">BrandSettingsEmailParam</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#BrandSettingsInAppParam">BrandSettingsInAppParam</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#BrandSnippetParam">BrandSnippetParam</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#BrandSnippetsParam">BrandSnippetsParam</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#BrandTemplateParam">BrandTemplateParam</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#EmailFooterParam">EmailFooterParam</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#EmailHeadParam">EmailHeadParam</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#EmailHeaderParam">EmailHeaderParam</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#IconsParam">IconsParam</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#LogoParam">LogoParam</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#WidgetBackgroundParam">WidgetBackgroundParam</a>
 
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#Brand">Brand</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#BrandColors">BrandColors</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#BrandSettings">BrandSettings</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#BrandSettingsEmail">BrandSettingsEmail</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#BrandSettingsInApp">BrandSettingsInApp</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#BrandSnippet">BrandSnippet</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#BrandSnippets">BrandSnippets</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#BrandTemplate">BrandTemplate</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#EmailFooter">EmailFooter</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#EmailHead">EmailHead</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#EmailHeader">EmailHeader</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#Icons">Icons</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#Logo">Logo</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#WidgetBackground">WidgetBackground</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#BrandListResponse">BrandListResponse</a>
 
 Methods:
@@ -156,11 +189,13 @@ Methods:
 
 Params Types:
 
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#NotificationPreferenceDetailsParam">NotificationPreferenceDetailsParam</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#PutSubscriptionsRecipientParam">PutSubscriptionsRecipientParam</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#RecipientPreferencesParam">RecipientPreferencesParam</a>
 
 Response Types:
 
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#NotificationPreferenceDetails">NotificationPreferenceDetails</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#RecipientPreferences">RecipientPreferences</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#ListSubscriptionListResponse">ListSubscriptionListResponse</a>
 
