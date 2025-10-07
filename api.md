@@ -33,16 +33,12 @@ Methods:
 
 Params Types:
 
-- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#FilterUnionParam">FilterUnionParam</a>
-- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#FilterConfigUnionParam">FilterConfigUnionParam</a>
-- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#NestedFilterConfigParam">NestedFilterConfigParam</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#FilterParam">FilterParam</a>
 
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#Audience">Audience</a>
-- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#FilterUnion">FilterUnion</a>
-- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#FilterConfigUnion">FilterConfigUnion</a>
-- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#NestedFilterConfig">NestedFilterConfig</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#Filter">Filter</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#Paging">Paging</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#AudienceUpdateResponse">AudienceUpdateResponse</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go#AudienceListResponse">AudienceListResponse</a>
