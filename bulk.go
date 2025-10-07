@@ -111,7 +111,7 @@ type InboundBulkMessageUnion struct {
 	Locale   any    `json:"locale"`
 	Override any    `json:"override"`
 	// This field is from variant [InboundBulkMessageInboundBulkContentMessage].
-	Content ContentUnion `json:"content"`
+	Content InboundBulkMessageInboundBulkContentMessageContentUnion `json:"content"`
 	JSON    struct {
 		Template respjson.Field
 		Brand    respjson.Field
@@ -178,12 +178,12 @@ func (r *InboundBulkMessageInboundBulkTemplateMessage) UnmarshalJSON(data []byte
 
 type InboundBulkMessageInboundBulkContentMessage struct {
 	// Syntactic sugar to provide a fast shorthand for Courier Elemental Blocks.
-	Content  ContentUnion              `json:"content,required"`
-	Brand    string                    `json:"brand,nullable"`
-	Data     map[string]any            `json:"data,nullable"`
-	Event    string                    `json:"event,nullable"`
-	Locale   map[string]map[string]any `json:"locale,nullable"`
-	Override map[string]any            `json:"override,nullable"`
+	Content  InboundBulkMessageInboundBulkContentMessageContentUnion `json:"content,required"`
+	Brand    string                                                  `json:"brand,nullable"`
+	Data     map[string]any                                          `json:"data,nullable"`
+	Event    string                                                  `json:"event,nullable"`
+	Locale   map[string]map[string]any                               `json:"locale,nullable"`
+	Override map[string]any                                          `json:"override,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content     respjson.Field
@@ -203,6 +203,75 @@ func (r *InboundBulkMessageInboundBulkContentMessage) UnmarshalJSON(data []byte)
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// InboundBulkMessageInboundBulkContentMessageContentUnion contains all possible
+// properties and values from
+// [InboundBulkMessageInboundBulkContentMessageContentElementalContentSugar],
+// [ElementalContent].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type InboundBulkMessageInboundBulkContentMessageContentUnion struct {
+	// This field is from variant
+	// [InboundBulkMessageInboundBulkContentMessageContentElementalContentSugar].
+	Body string `json:"body"`
+	// This field is from variant
+	// [InboundBulkMessageInboundBulkContentMessageContentElementalContentSugar].
+	Title string `json:"title"`
+	// This field is from variant [ElementalContent].
+	Elements []ElementalNodeUnion `json:"elements"`
+	// This field is from variant [ElementalContent].
+	Version string `json:"version"`
+	// This field is from variant [ElementalContent].
+	Brand string `json:"brand"`
+	JSON  struct {
+		Body     respjson.Field
+		Title    respjson.Field
+		Elements respjson.Field
+		Version  respjson.Field
+		Brand    respjson.Field
+		raw      string
+	} `json:"-"`
+}
+
+func (u InboundBulkMessageInboundBulkContentMessageContentUnion) AsElementalContentSugar() (v InboundBulkMessageInboundBulkContentMessageContentElementalContentSugar) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u InboundBulkMessageInboundBulkContentMessageContentUnion) AsElementalContent() (v ElementalContent) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u InboundBulkMessageInboundBulkContentMessageContentUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *InboundBulkMessageInboundBulkContentMessageContentUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Syntactic sugar to provide a fast shorthand for Courier Elemental Blocks.
+type InboundBulkMessageInboundBulkContentMessageContentElementalContentSugar struct {
+	// The text content displayed in the notification.
+	Body string `json:"body,required"`
+	// Title/subject displayed by supported channels.
+	Title string `json:"title,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Body        respjson.Field
+		Title       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r InboundBulkMessageInboundBulkContentMessageContentElementalContentSugar) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *InboundBulkMessageInboundBulkContentMessageContentElementalContentSugar) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 func InboundBulkMessageParamOfInboundBulkTemplateMessage(template string) InboundBulkMessageUnionParam {
 	var variant InboundBulkMessageInboundBulkTemplateMessageParam
 	variant.Template = template
@@ -210,11 +279,11 @@ func InboundBulkMessageParamOfInboundBulkTemplateMessage(template string) Inboun
 }
 
 func InboundBulkMessageParamOfInboundBulkContentMessage[
-	T ContentElementalContentSugarParam | ElementalContentParam,
+	T InboundBulkMessageInboundBulkContentMessageContentElementalContentSugarParam | ElementalContentParam,
 ](content T) InboundBulkMessageUnionParam {
 	var variant InboundBulkMessageInboundBulkContentMessageParam
 	switch v := any(content).(type) {
-	case ContentElementalContentSugarParam:
+	case InboundBulkMessageInboundBulkContentMessageContentElementalContentSugarParam:
 		variant.Content.OfElementalContentSugar = &v
 	case ElementalContentParam:
 		variant.Content.OfElementalContent = &v
@@ -256,7 +325,7 @@ func (u InboundBulkMessageUnionParam) GetTemplate() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u InboundBulkMessageUnionParam) GetContent() *ContentUnionParam {
+func (u InboundBulkMessageUnionParam) GetContent() *InboundBulkMessageInboundBulkContentMessageContentUnionParam {
 	if vt := u.OfInboundBulkContentMessage; vt != nil {
 		return &vt.Content
 	}
@@ -335,12 +404,12 @@ func (r *InboundBulkMessageInboundBulkTemplateMessageParam) UnmarshalJSON(data [
 // The property Content is required.
 type InboundBulkMessageInboundBulkContentMessageParam struct {
 	// Syntactic sugar to provide a fast shorthand for Courier Elemental Blocks.
-	Content  ContentUnionParam         `json:"content,omitzero,required"`
-	Brand    param.Opt[string]         `json:"brand,omitzero"`
-	Event    param.Opt[string]         `json:"event,omitzero"`
-	Data     map[string]any            `json:"data,omitzero"`
-	Locale   map[string]map[string]any `json:"locale,omitzero"`
-	Override map[string]any            `json:"override,omitzero"`
+	Content  InboundBulkMessageInboundBulkContentMessageContentUnionParam `json:"content,omitzero,required"`
+	Brand    param.Opt[string]                                            `json:"brand,omitzero"`
+	Event    param.Opt[string]                                            `json:"event,omitzero"`
+	Data     map[string]any                                               `json:"data,omitzero"`
+	Locale   map[string]map[string]any                                    `json:"locale,omitzero"`
+	Override map[string]any                                               `json:"override,omitzero"`
 	paramObj
 }
 
@@ -349,6 +418,50 @@ func (r InboundBulkMessageInboundBulkContentMessageParam) MarshalJSON() (data []
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *InboundBulkMessageInboundBulkContentMessageParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type InboundBulkMessageInboundBulkContentMessageContentUnionParam struct {
+	OfElementalContentSugar *InboundBulkMessageInboundBulkContentMessageContentElementalContentSugarParam `json:",omitzero,inline"`
+	OfElementalContent      *ElementalContentParam                                                        `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u InboundBulkMessageInboundBulkContentMessageContentUnionParam) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfElementalContentSugar, u.OfElementalContent)
+}
+func (u *InboundBulkMessageInboundBulkContentMessageContentUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *InboundBulkMessageInboundBulkContentMessageContentUnionParam) asAny() any {
+	if !param.IsOmitted(u.OfElementalContentSugar) {
+		return u.OfElementalContentSugar
+	} else if !param.IsOmitted(u.OfElementalContent) {
+		return u.OfElementalContent
+	}
+	return nil
+}
+
+// Syntactic sugar to provide a fast shorthand for Courier Elemental Blocks.
+//
+// The properties Body, Title are required.
+type InboundBulkMessageInboundBulkContentMessageContentElementalContentSugarParam struct {
+	// The text content displayed in the notification.
+	Body string `json:"body,required"`
+	// Title/subject displayed by supported channels.
+	Title string `json:"title,required"`
+	paramObj
+}
+
+func (r InboundBulkMessageInboundBulkContentMessageContentElementalContentSugarParam) MarshalJSON() (data []byte, err error) {
+	type shadow InboundBulkMessageInboundBulkContentMessageContentElementalContentSugarParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *InboundBulkMessageInboundBulkContentMessageContentElementalContentSugarParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
