@@ -50,6 +50,7 @@ import (
 
 	"github.com/trycourier/courier-go"
 	"github.com/trycourier/courier-go/option"
+	"github.com/trycourier/courier-go/shared"
 )
 
 func main() {
@@ -59,7 +60,7 @@ func main() {
 	response, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
 			To: courier.SendMessageParamsMessageToUnion{
-				OfUserRecipient: &courier.UserRecipientParam{
+				OfUserRecipient: &shared.UserRecipientParam{
 					UserID: courier.String("your_user_id"),
 				},
 			},
@@ -312,7 +313,7 @@ To handle errors, we recommend that you use the `errors.As` pattern:
 _, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
 	Message: courier.SendMessageParamsMessage{
 		To: courier.SendMessageParamsMessageToUnion{
-			OfUserRecipient: &courier.UserRecipientParam{
+			OfUserRecipient: &shared.UserRecipientParam{
 				UserID: courier.String("your_user_id"),
 			},
 		},
@@ -351,7 +352,7 @@ client.Send.Message(
 	courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
 			To: courier.SendMessageParamsMessageToUnion{
-				OfUserRecipient: &courier.UserRecipientParam{
+				OfUserRecipient: &shared.UserRecipientParam{
 					UserID: courier.String("your_user_id"),
 				},
 			},
@@ -399,7 +400,7 @@ client.Send.Message(
 	courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
 			To: courier.SendMessageParamsMessageToUnion{
-				OfUserRecipient: &courier.UserRecipientParam{
+				OfUserRecipient: &shared.UserRecipientParam{
 					UserID: courier.String("your_user_id"),
 				},
 			},
@@ -426,7 +427,7 @@ response, err := client.Send.Message(
 	courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
 			To: courier.SendMessageParamsMessageToUnion{
-				OfUserRecipient: &courier.UserRecipientParam{
+				OfUserRecipient: &shared.UserRecipientParam{
 					UserID: courier.String("your_user_id"),
 				},
 			},

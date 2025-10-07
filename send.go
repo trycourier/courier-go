@@ -483,45 +483,111 @@ func (r *MessageContextParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type RecipientParam struct {
-	// Use `tenant_id` instead.
-	AccountID param.Opt[string] `json:"account_id,omitzero"`
-	Email     param.Opt[string] `json:"email,omitzero"`
-	// The user's preferred ISO 639-1 language code.
-	Locale      param.Opt[string] `json:"locale,omitzero"`
-	PhoneNumber param.Opt[string] `json:"phone_number,omitzero"`
-	// Tenant id. Will load brand, default preferences and base context data.
-	TenantID    param.Opt[string]         `json:"tenant_id,omitzero"`
-	UserID      param.Opt[string]         `json:"user_id,omitzero"`
-	Data        map[string]any            `json:"data,omitzero"`
-	Preferences RecipientPreferencesParam `json:"preferences,omitzero"`
-	// Context such as tenant_id to send the notification with.
-	Context MessageContextParam `json:"context,omitzero"`
-	paramObj
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type RecipientUnionParam struct {
+	OfUserRecipient *shared.UserRecipientParam `json:",omitzero,inline"`
+	OfListRecipient *shared.ListRecipientParam `json:",omitzero,inline"`
+	paramUnion
 }
 
-func (r RecipientParam) MarshalJSON() (data []byte, err error) {
-	type shadow RecipientParam
-	return param.MarshalObject(r, (*shadow)(&r))
+func (u RecipientUnionParam) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfUserRecipient, u.OfListRecipient)
 }
-func (r *RecipientParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The property Notifications is required.
-type RecipientPreferencesParam struct {
-	Notifications map[string]shared.PreferenceParam `json:"notifications,omitzero,required"`
-	TemplateID    param.Opt[string]                 `json:"templateId,omitzero"`
-	Categories    map[string]shared.PreferenceParam `json:"categories,omitzero"`
-	paramObj
+func (u *RecipientUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
 }
 
-func (r RecipientPreferencesParam) MarshalJSON() (data []byte, err error) {
-	type shadow RecipientPreferencesParam
-	return param.MarshalObject(r, (*shadow)(&r))
+func (u *RecipientUnionParam) asAny() any {
+	if !param.IsOmitted(u.OfUserRecipient) {
+		return u.OfUserRecipient
+	} else if !param.IsOmitted(u.OfListRecipient) {
+		return u.OfListRecipient
+	}
+	return nil
 }
-func (r *RecipientPreferencesParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u RecipientUnionParam) GetAccountID() *string {
+	if vt := u.OfUserRecipient; vt != nil && vt.AccountID.Valid() {
+		return &vt.AccountID.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u RecipientUnionParam) GetContext() *MessageContextParam {
+	if vt := u.OfUserRecipient; vt != nil {
+		return &vt.Context
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u RecipientUnionParam) GetEmail() *string {
+	if vt := u.OfUserRecipient; vt != nil && vt.Email.Valid() {
+		return &vt.Email.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u RecipientUnionParam) GetLocale() *string {
+	if vt := u.OfUserRecipient; vt != nil && vt.Locale.Valid() {
+		return &vt.Locale.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u RecipientUnionParam) GetPhoneNumber() *string {
+	if vt := u.OfUserRecipient; vt != nil && vt.PhoneNumber.Valid() {
+		return &vt.PhoneNumber.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u RecipientUnionParam) GetPreferences() *shared.UserRecipientPreferencesParam {
+	if vt := u.OfUserRecipient; vt != nil {
+		return &vt.Preferences
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u RecipientUnionParam) GetTenantID() *string {
+	if vt := u.OfUserRecipient; vt != nil && vt.TenantID.Valid() {
+		return &vt.TenantID.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u RecipientUnionParam) GetUserID() *string {
+	if vt := u.OfUserRecipient; vt != nil && vt.UserID.Valid() {
+		return &vt.UserID.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u RecipientUnionParam) GetListID() *string {
+	if vt := u.OfListRecipient; vt != nil && vt.ListID.Valid() {
+		return &vt.ListID.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's Data property, if present.
+func (u RecipientUnionParam) GetData() map[string]any {
+	if vt := u.OfUserRecipient; vt != nil {
+		return vt.Data
+	} else if vt := u.OfListRecipient; vt != nil {
+		return vt.Data
+	}
+	return nil
 }
 
 type UtmParam struct {
@@ -868,13 +934,14 @@ func init() {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type SendMessageParamsMessageToUnion struct {
-	OfUserRecipient  *UserRecipientParam `json:",omitzero,inline"`
-	OfRecipientArray []RecipientParam    `json:",omitzero,inline"`
+	OfUserRecipient  *shared.UserRecipientParam `json:",omitzero,inline"`
+	OfListRecipient  *shared.ListRecipientParam `json:",omitzero,inline"`
+	OfRecipientArray []RecipientUnionParam      `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u SendMessageParamsMessageToUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfUserRecipient, u.OfRecipientArray)
+	return param.MarshalUnion(u, u.OfUserRecipient, u.OfListRecipient, u.OfRecipientArray)
 }
 func (u *SendMessageParamsMessageToUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -883,8 +950,92 @@ func (u *SendMessageParamsMessageToUnion) UnmarshalJSON(data []byte) error {
 func (u *SendMessageParamsMessageToUnion) asAny() any {
 	if !param.IsOmitted(u.OfUserRecipient) {
 		return u.OfUserRecipient
+	} else if !param.IsOmitted(u.OfListRecipient) {
+		return u.OfListRecipient
 	} else if !param.IsOmitted(u.OfRecipientArray) {
 		return &u.OfRecipientArray
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetAccountID() *string {
+	if vt := u.OfUserRecipient; vt != nil && vt.AccountID.Valid() {
+		return &vt.AccountID.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetContext() *MessageContextParam {
+	if vt := u.OfUserRecipient; vt != nil {
+		return &vt.Context
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetEmail() *string {
+	if vt := u.OfUserRecipient; vt != nil && vt.Email.Valid() {
+		return &vt.Email.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetLocale() *string {
+	if vt := u.OfUserRecipient; vt != nil && vt.Locale.Valid() {
+		return &vt.Locale.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetPhoneNumber() *string {
+	if vt := u.OfUserRecipient; vt != nil && vt.PhoneNumber.Valid() {
+		return &vt.PhoneNumber.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetPreferences() *shared.UserRecipientPreferencesParam {
+	if vt := u.OfUserRecipient; vt != nil {
+		return &vt.Preferences
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetTenantID() *string {
+	if vt := u.OfUserRecipient; vt != nil && vt.TenantID.Valid() {
+		return &vt.TenantID.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetUserID() *string {
+	if vt := u.OfUserRecipient; vt != nil && vt.UserID.Valid() {
+		return &vt.UserID.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetListID() *string {
+	if vt := u.OfListRecipient; vt != nil && vt.ListID.Valid() {
+		return &vt.ListID.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's Data property, if present.
+func (u SendMessageParamsMessageToUnion) GetData() map[string]any {
+	if vt := u.OfUserRecipient; vt != nil {
+		return vt.Data
+	} else if vt := u.OfListRecipient; vt != nil {
+		return vt.Data
 	}
 	return nil
 }

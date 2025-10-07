@@ -4,10 +4,12 @@
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared#ChannelPreferenceParam">ChannelPreferenceParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared#ElementalBaseNodeParam">ElementalBaseNodeParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared#ElementalContentSugarParam">ElementalContentSugarParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared#ListRecipientParam">ListRecipientParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared#MessageRoutingParam">MessageRoutingParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared#MessageRoutingChannelUnionParam">MessageRoutingChannelUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared#PreferenceParam">PreferenceParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared#RuleParam">RuleParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared#UserRecipientParam">UserRecipientParam</a>
 
 # Shared Response Types
 
@@ -19,6 +21,7 @@
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared#MessageRoutingChannelUnion">MessageRoutingChannelUnion</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared#Preference">Preference</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared#Rule">Rule</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared#UserRecipient">UserRecipient</a>
 
 # Send
 
@@ -27,7 +30,7 @@ Params Types:
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalChannelNodeParam">ElementalChannelNodeParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#ElementalNodeUnionParam">ElementalNodeUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#MessageContextParam">MessageContextParam</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#RecipientParam">RecipientParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#RecipientUnionParam">RecipientUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UtmParam">UtmParam</a>
 
 Response Types:
@@ -149,13 +152,11 @@ Params Types:
 
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#InboundBulkMessageUnionParam">InboundBulkMessageUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#InboundBulkMessageUserParam">InboundBulkMessageUserParam</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UserRecipientParam">UserRecipientParam</a>
 
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#InboundBulkMessageUnion">InboundBulkMessageUnion</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#InboundBulkMessageUser">InboundBulkMessageUser</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#UserRecipient">UserRecipient</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#BulkNewJobResponse">BulkNewJobResponse</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#BulkListUsersResponse">BulkListUsersResponse</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go#BulkGetJobResponse">BulkGetJobResponse</a>
