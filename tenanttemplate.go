@@ -4,7 +4,6 @@ package courier
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -40,7 +39,7 @@ func NewTenantTemplateService(opts ...option.RequestOption) (r TenantTemplateSer
 }
 
 // Get a Template in Tenant
-func (r *TenantTemplateService) Get(ctx context.Context, templateID string, query TenantTemplateGetParams, opts ...option.RequestOption) (res *BaseTemplateTenantAssociation, err error) {
+func (r *TenantTemplateService) Get(ctx context.Context, templateID string, query TenantTemplateGetParams, opts ...option.RequestOption) (res *shared.BaseTemplateTenantAssociation, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if query.TenantID == "" {
 		err = errors.New("missing required tenant_id parameter")
@@ -65,82 +64,6 @@ func (r *TenantTemplateService) List(ctx context.Context, tenantID string, query
 	path := fmt.Sprintf("tenants/%s/templates", tenantID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
 	return
-}
-
-type BaseTemplateTenantAssociation struct {
-	// The template's id
-	ID string `json:"id,required"`
-	// The timestamp at which the template was created
-	CreatedAt string `json:"created_at,required"`
-	// The timestamp at which the template was published
-	PublishedAt string `json:"published_at,required"`
-	// The timestamp at which the template was last updated
-	UpdatedAt string `json:"updated_at,required"`
-	// The version of the template
-	Version string `json:"version,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		CreatedAt   respjson.Field
-		PublishedAt respjson.Field
-		UpdatedAt   respjson.Field
-		Version     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r BaseTemplateTenantAssociation) RawJSON() string { return r.JSON.raw }
-func (r *BaseTemplateTenantAssociation) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ElementalContent struct {
-	Elements []ElementalNodeUnion `json:"elements,required"`
-	// For example, "2022-01-01"
-	Version string `json:"version,required"`
-	Brand   string `json:"brand,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Elements    respjson.Field
-		Version     respjson.Field
-		Brand       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ElementalContent) RawJSON() string { return r.JSON.raw }
-func (r *ElementalContent) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this ElementalContent to a ElementalContentParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// ElementalContentParam.Overrides()
-func (r ElementalContent) ToParam() ElementalContentParam {
-	return param.Override[ElementalContentParam](json.RawMessage(r.RawJSON()))
-}
-
-// The properties Elements, Version are required.
-type ElementalContentParam struct {
-	Elements []ElementalNodeUnionParam `json:"elements,omitzero,required"`
-	// For example, "2022-01-01"
-	Version string            `json:"version,required"`
-	Brand   param.Opt[string] `json:"brand,omitzero"`
-	paramObj
-}
-
-func (r ElementalContentParam) MarshalJSON() (data []byte, err error) {
-	type shadow ElementalContentParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ElementalContentParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }
 
 type TenantTemplateListResponse struct {
@@ -194,7 +117,7 @@ type TenantTemplateListResponseItem struct {
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	BaseTemplateTenantAssociation
+	shared.BaseTemplateTenantAssociation
 }
 
 // Returns the unmodified JSON received from the API

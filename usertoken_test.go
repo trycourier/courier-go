@@ -11,6 +11,7 @@ import (
 	"github.com/trycourier/courier-go"
 	"github.com/trycourier/courier-go/internal/testutil"
 	"github.com/trycourier/courier-go/option"
+	"github.com/trycourier/courier-go/shared"
 )
 
 func TestUserTokenGet(t *testing.T) {
@@ -169,10 +170,10 @@ func TestUserTokenAddSingleWithOptionalParams(t *testing.T) {
 		"token",
 		courier.UserTokenAddSingleParams{
 			UserID: "user_id",
-			UserToken: courier.UserTokenParam{
-				ProviderKey: courier.UserTokenProviderKeyFirebaseFcm,
+			UserToken: shared.UserTokenParam{
+				ProviderKey: shared.UserTokenProviderKeyFirebaseFcm,
 				Token:       courier.String("token"),
-				Device: courier.UserTokenDeviceParam{
+				Device: shared.UserTokenDeviceParam{
 					AdID:         courier.String("ad_id"),
 					AppID:        courier.String("app_id"),
 					DeviceID:     courier.String("device_id"),
@@ -180,11 +181,11 @@ func TestUserTokenAddSingleWithOptionalParams(t *testing.T) {
 					Model:        courier.String("model"),
 					Platform:     courier.String("platform"),
 				},
-				ExpiryDate: courier.UserTokenExpiryDateUnionParam{
+				ExpiryDate: shared.UserTokenExpiryDateUnionParam{
 					OfString: courier.String("string"),
 				},
 				Properties: map[string]interface{}{},
-				Tracking: courier.UserTokenTrackingParam{
+				Tracking: shared.UserTokenTrackingParam{
 					IP:        courier.String("ip"),
 					Lat:       courier.String("lat"),
 					Long:      courier.String("long"),

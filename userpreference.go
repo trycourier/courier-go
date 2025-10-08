@@ -16,6 +16,7 @@ import (
 	"github.com/trycourier/courier-go/option"
 	"github.com/trycourier/courier-go/packages/param"
 	"github.com/trycourier/courier-go/packages/respjson"
+	"github.com/trycourier/courier-go/shared"
 )
 
 // UserPreferenceService contains methods and other services that help with
@@ -81,48 +82,11 @@ func (r *UserPreferenceService) UpdateOrNewTopic(ctx context.Context, topicID st
 	return
 }
 
-type PreferenceStatus string
-
-const (
-	PreferenceStatusOptedIn  PreferenceStatus = "OPTED_IN"
-	PreferenceStatusOptedOut PreferenceStatus = "OPTED_OUT"
-	PreferenceStatusRequired PreferenceStatus = "REQUIRED"
-)
-
-type TopicPreference struct {
-	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
-	DefaultStatus PreferenceStatus `json:"default_status,required"`
-	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
-	Status    PreferenceStatus `json:"status,required"`
-	TopicID   string           `json:"topic_id,required"`
-	TopicName string           `json:"topic_name,required"`
-	// The Channels a user has chosen to receive notifications through for this topic
-	CustomRouting    []ChannelClassification `json:"custom_routing,nullable"`
-	HasCustomRouting bool                    `json:"has_custom_routing,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		DefaultStatus    respjson.Field
-		Status           respjson.Field
-		TopicID          respjson.Field
-		TopicName        respjson.Field
-		CustomRouting    respjson.Field
-		HasCustomRouting respjson.Field
-		ExtraFields      map[string]respjson.Field
-		raw              string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r TopicPreference) RawJSON() string { return r.JSON.raw }
-func (r *TopicPreference) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type UserPreferenceGetResponse struct {
 	// The Preferences associated with the user_id.
-	Items []TopicPreference `json:"items,required"`
+	Items []shared.TopicPreference `json:"items,required"`
 	// Deprecated - Paging not implemented on this endpoint
-	Paging Paging `json:"paging,required"`
+	Paging shared.Paging `json:"paging,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Items       respjson.Field
@@ -139,7 +103,7 @@ func (r *UserPreferenceGetResponse) UnmarshalJSON(data []byte) error {
 }
 
 type UserPreferenceGetTopicResponse struct {
-	Topic TopicPreference `json:"topic,required"`
+	Topic shared.TopicPreference `json:"topic,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Topic       respjson.Field
@@ -229,10 +193,10 @@ func (r UserPreferenceUpdateOrNewTopicParams) URLQuery() (v url.Values, err erro
 // The property Status is required.
 type UserPreferenceUpdateOrNewTopicParamsTopic struct {
 	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
-	Status           PreferenceStatus `json:"status,omitzero,required"`
-	HasCustomRouting param.Opt[bool]  `json:"has_custom_routing,omitzero"`
+	Status           shared.PreferenceStatus `json:"status,omitzero,required"`
+	HasCustomRouting param.Opt[bool]         `json:"has_custom_routing,omitzero"`
 	// The Channels a user has chosen to receive notifications through for this topic
-	CustomRouting []ChannelClassification `json:"custom_routing,omitzero"`
+	CustomRouting []shared.ChannelClassification `json:"custom_routing,omitzero"`
 	paramObj
 }
 

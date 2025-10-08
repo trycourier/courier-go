@@ -4,7 +4,6 @@ package courier
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 	"slices"
 
@@ -41,515 +40,6 @@ func (r *SendService) Message(ctx context.Context, body SendMessageParams, opts 
 	path := "send"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
-}
-
-// The channel element allows a notification to be customized based on which
-// channel it is sent through. For example, you may want to display a detailed
-// message when the notification is sent through email, and a more concise message
-// in a push notification. Channel elements are only valid as top-level elements;
-// you cannot nest channel elements. If there is a channel element specified at the
-// top-level of the document, all sibling elements must be channel elements. Note:
-// As an alternative, most elements support a `channel` property. Which allows you
-// to selectively display an individual element on a per channel basis. See the
-// [control flow docs](https://www.courier.com/docs/platform/content/elemental/control-flow/)
-// for more details.
-type ElementalChannelNode struct {
-	// The channel the contents of this element should be applied to. Can be `email`,
-	// `push`, `direct_message`, `sms` or a provider such as slack
-	Channel string `json:"channel,required"`
-	// Raw data to apply to the channel. If `elements` has not been specified, `raw` is
-	// `required`.
-	Raw map[string]any `json:"raw,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Channel     respjson.Field
-		Raw         respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-	shared.ElementalBaseNode
-}
-
-// Returns the unmodified JSON received from the API
-func (r ElementalChannelNode) RawJSON() string { return r.JSON.raw }
-func (r *ElementalChannelNode) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this ElementalChannelNode to a ElementalChannelNodeParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// ElementalChannelNodeParam.Overrides()
-func (r ElementalChannelNode) ToParam() ElementalChannelNodeParam {
-	return param.Override[ElementalChannelNodeParam](json.RawMessage(r.RawJSON()))
-}
-
-// The channel element allows a notification to be customized based on which
-// channel it is sent through. For example, you may want to display a detailed
-// message when the notification is sent through email, and a more concise message
-// in a push notification. Channel elements are only valid as top-level elements;
-// you cannot nest channel elements. If there is a channel element specified at the
-// top-level of the document, all sibling elements must be channel elements. Note:
-// As an alternative, most elements support a `channel` property. Which allows you
-// to selectively display an individual element on a per channel basis. See the
-// [control flow docs](https://www.courier.com/docs/platform/content/elemental/control-flow/)
-// for more details.
-type ElementalChannelNodeParam struct {
-	// The channel the contents of this element should be applied to. Can be `email`,
-	// `push`, `direct_message`, `sms` or a provider such as slack
-	Channel string `json:"channel,required"`
-	// Raw data to apply to the channel. If `elements` has not been specified, `raw` is
-	// `required`.
-	Raw map[string]any `json:"raw,omitzero"`
-	shared.ElementalBaseNodeParam
-}
-
-func (r ElementalChannelNodeParam) MarshalJSON() (data []byte, err error) {
-	type shadow ElementalChannelNodeParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-
-// ElementalNodeUnion contains all possible properties and values from
-// [ElementalNodeObject], [ElementalNodeObject], [ElementalNodeObject],
-// [ElementalNodeObject], [ElementalNodeObject], [ElementalNodeObject],
-// [ElementalNodeObject].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-type ElementalNodeUnion struct {
-	// This field is from variant [ElementalNodeObject], [ElementalNodeObject],
-	// [ElementalNodeObject], [ElementalNodeObject], [ElementalNodeObject],
-	// [ElementalNodeObject], [ElementalNodeObject].
-	Channels []string `json:"channels"`
-	// This field is from variant [ElementalNodeObject], [ElementalNodeObject],
-	// [ElementalNodeObject], [ElementalNodeObject], [ElementalNodeObject],
-	// [ElementalNodeObject], [ElementalNodeObject].
-	If string `json:"if"`
-	// This field is from variant [ElementalNodeObject], [ElementalNodeObject],
-	// [ElementalNodeObject], [ElementalNodeObject], [ElementalNodeObject],
-	// [ElementalNodeObject], [ElementalNodeObject].
-	Loop string `json:"loop"`
-	// This field is from variant [ElementalNodeObject], [ElementalNodeObject],
-	// [ElementalNodeObject], [ElementalNodeObject], [ElementalNodeObject],
-	// [ElementalNodeObject], [ElementalNodeObject].
-	Ref string `json:"ref"`
-	// This field is from variant [ElementalNodeObject].
-	Type string `json:"type"`
-	// This field is from variant [ElementalNodeObject].
-	Channel string `json:"channel"`
-	// This field is from variant [ElementalNodeObject].
-	Raw  map[string]any `json:"raw"`
-	JSON struct {
-		Channels respjson.Field
-		If       respjson.Field
-		Loop     respjson.Field
-		Ref      respjson.Field
-		Type     respjson.Field
-		Channel  respjson.Field
-		Raw      respjson.Field
-		raw      string
-	} `json:"-"`
-}
-
-func (u ElementalNodeUnion) AsElementalNodeObject() (v ElementalNodeObject) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ElementalNodeUnion) AsVariant2() (v ElementalNodeObject) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ElementalNodeUnion) AsVariant3() (v ElementalNodeObject) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ElementalNodeUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ElementalNodeUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this ElementalNodeUnion to a ElementalNodeUnionParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// ElementalNodeUnionParam.Overrides()
-func (r ElementalNodeUnion) ToParam() ElementalNodeUnionParam {
-	return param.Override[ElementalNodeUnionParam](json.RawMessage(r.RawJSON()))
-}
-
-type ElementalNodeObject struct {
-	// Any of "text".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-	shared.ElementalBaseNode
-}
-
-// Returns the unmodified JSON received from the API
-func (r ElementalNodeObject) RawJSON() string { return r.JSON.raw }
-func (r *ElementalNodeObject) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func ElementalNodeParamOfVariant3(channel string) ElementalNodeUnionParam {
-	var variant ElementalNodeObjectParam
-	variant.Channel = channel
-	return ElementalNodeUnionParam{OfVariant3: &variant}
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type ElementalNodeUnionParam struct {
-	OfElementalNodeObject *ElementalNodeObjectParam `json:",omitzero,inline"`
-	OfVariant2            *ElementalNodeObjectParam `json:",omitzero,inline"`
-	OfVariant3            *ElementalNodeObjectParam `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u ElementalNodeUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfElementalNodeObject,
-		u.OfVariant2,
-		u.OfVariant3,
-		u.OfVariant3,
-		u.OfVariant3,
-		u.OfVariant3,
-		u.OfVariant3)
-}
-func (u *ElementalNodeUnionParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *ElementalNodeUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfElementalNodeObject) {
-		return u.OfElementalNodeObject
-	} else if !param.IsOmitted(u.OfVariant2) {
-		return u.OfVariant2
-	} else if !param.IsOmitted(u.OfVariant3) {
-		return u.OfVariant3
-	} else if !param.IsOmitted(u.OfVariant3) {
-		return u.OfVariant3
-	} else if !param.IsOmitted(u.OfVariant3) {
-		return u.OfVariant3
-	} else if !param.IsOmitted(u.OfVariant3) {
-		return u.OfVariant3
-	} else if !param.IsOmitted(u.OfVariant3) {
-		return u.OfVariant3
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetChannel() *string {
-	if vt := u.OfVariant3; vt != nil {
-		return &vt.Channel
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetRaw() map[string]any {
-	if vt := u.OfVariant3; vt != nil {
-		return vt.Raw
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetIf() *string {
-	if vt := u.OfElementalNodeObject; vt != nil && vt.If.Valid() {
-		return &vt.If.Value
-	} else if vt := u.OfVariant2; vt != nil && vt.If.Valid() {
-		return &vt.If.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
-		return &vt.If.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
-		return &vt.If.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
-		return &vt.If.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
-		return &vt.If.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
-		return &vt.If.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetLoop() *string {
-	if vt := u.OfElementalNodeObject; vt != nil && vt.Loop.Valid() {
-		return &vt.Loop.Value
-	} else if vt := u.OfVariant2; vt != nil && vt.Loop.Valid() {
-		return &vt.Loop.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
-		return &vt.Loop.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
-		return &vt.Loop.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
-		return &vt.Loop.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
-		return &vt.Loop.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
-		return &vt.Loop.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetRef() *string {
-	if vt := u.OfElementalNodeObject; vt != nil && vt.Ref.Valid() {
-		return &vt.Ref.Value
-	} else if vt := u.OfVariant2; vt != nil && vt.Ref.Valid() {
-		return &vt.Ref.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
-		return &vt.Ref.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
-		return &vt.Ref.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
-		return &vt.Ref.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
-		return &vt.Ref.Value
-	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
-		return &vt.Ref.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetType() *string {
-	if vt := u.OfElementalNodeObject; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfVariant2; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfVariant3; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfVariant3; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfVariant3; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfVariant3; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfVariant3; vt != nil {
-		return (*string)(&vt.Type)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's Channels property, if present.
-func (u ElementalNodeUnionParam) GetChannels() []string {
-	if vt := u.OfElementalNodeObject; vt != nil {
-		return vt.Channels
-	} else if vt := u.OfVariant2; vt != nil {
-		return vt.Channels
-	} else if vt := u.OfVariant3; vt != nil {
-		return vt.Channels
-	} else if vt := u.OfVariant3; vt != nil {
-		return vt.Channels
-	} else if vt := u.OfVariant3; vt != nil {
-		return vt.Channels
-	} else if vt := u.OfVariant3; vt != nil {
-		return vt.Channels
-	} else if vt := u.OfVariant3; vt != nil {
-		return vt.Channels
-	}
-	return nil
-}
-
-type ElementalNodeObjectParam struct {
-	Type string `json:"type,omitzero"`
-	shared.ElementalBaseNodeParam
-}
-
-func (r ElementalNodeObjectParam) MarshalJSON() (data []byte, err error) {
-	type shadow ElementalNodeObjectParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-
-type MessageContext struct {
-	// Tenant id used to load brand/default preferences/context.
-	TenantID string `json:"tenant_id,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		TenantID    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r MessageContext) RawJSON() string { return r.JSON.raw }
-func (r *MessageContext) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this MessageContext to a MessageContextParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// MessageContextParam.Overrides()
-func (r MessageContext) ToParam() MessageContextParam {
-	return param.Override[MessageContextParam](json.RawMessage(r.RawJSON()))
-}
-
-type MessageContextParam struct {
-	// Tenant id used to load brand/default preferences/context.
-	TenantID param.Opt[string] `json:"tenant_id,omitzero"`
-	paramObj
-}
-
-func (r MessageContextParam) MarshalJSON() (data []byte, err error) {
-	type shadow MessageContextParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *MessageContextParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type RecipientUnionParam struct {
-	OfUserRecipient *UserRecipientParam          `json:",omitzero,inline"`
-	OfListRecipient *RecipientListRecipientParam `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u RecipientUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfUserRecipient, u.OfListRecipient)
-}
-func (u *RecipientUnionParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *RecipientUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfUserRecipient) {
-		return u.OfUserRecipient
-	} else if !param.IsOmitted(u.OfListRecipient) {
-		return u.OfListRecipient
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u RecipientUnionParam) GetAccountID() *string {
-	if vt := u.OfUserRecipient; vt != nil && vt.AccountID.Valid() {
-		return &vt.AccountID.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u RecipientUnionParam) GetContext() *MessageContextParam {
-	if vt := u.OfUserRecipient; vt != nil {
-		return &vt.Context
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u RecipientUnionParam) GetEmail() *string {
-	if vt := u.OfUserRecipient; vt != nil && vt.Email.Valid() {
-		return &vt.Email.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u RecipientUnionParam) GetLocale() *string {
-	if vt := u.OfUserRecipient; vt != nil && vt.Locale.Valid() {
-		return &vt.Locale.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u RecipientUnionParam) GetPhoneNumber() *string {
-	if vt := u.OfUserRecipient; vt != nil && vt.PhoneNumber.Valid() {
-		return &vt.PhoneNumber.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u RecipientUnionParam) GetPreferences() *UserRecipientPreferencesParam {
-	if vt := u.OfUserRecipient; vt != nil {
-		return &vt.Preferences
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u RecipientUnionParam) GetTenantID() *string {
-	if vt := u.OfUserRecipient; vt != nil && vt.TenantID.Valid() {
-		return &vt.TenantID.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u RecipientUnionParam) GetUserID() *string {
-	if vt := u.OfUserRecipient; vt != nil && vt.UserID.Valid() {
-		return &vt.UserID.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u RecipientUnionParam) GetListID() *string {
-	if vt := u.OfListRecipient; vt != nil && vt.ListID.Valid() {
-		return &vt.ListID.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's Data property, if present.
-func (u RecipientUnionParam) GetData() map[string]any {
-	if vt := u.OfUserRecipient; vt != nil {
-		return vt.Data
-	} else if vt := u.OfListRecipient; vt != nil {
-		return vt.Data
-	}
-	return nil
-}
-
-type RecipientListRecipientParam struct {
-	ListID param.Opt[string] `json:"list_id,omitzero"`
-	Data   map[string]any    `json:"data,omitzero"`
-	paramObj
-}
-
-func (r RecipientListRecipientParam) MarshalJSON() (data []byte, err error) {
-	type shadow RecipientListRecipientParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *RecipientListRecipientParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type UtmParam struct {
-	Campaign param.Opt[string] `json:"campaign,omitzero"`
-	Content  param.Opt[string] `json:"content,omitzero"`
-	Medium   param.Opt[string] `json:"medium,omitzero"`
-	Source   param.Opt[string] `json:"source,omitzero"`
-	Term     param.Opt[string] `json:"term,omitzero"`
-	paramObj
-}
-
-func (r UtmParam) MarshalJSON() (data []byte, err error) {
-	type shadow UtmParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *UtmParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }
 
 type SendMessageResponse struct {
@@ -591,8 +81,6 @@ func (r *SendMessageParams) UnmarshalJSON(data []byte) error {
 // the destination and content of the message.
 type SendMessageParamsMessage struct {
 	BrandID param.Opt[string] `json:"brand_id,omitzero"`
-	// The id of the template you want to send
-	Template param.Opt[string] `json:"template,omitzero"`
 	// Define run-time configuration for channels. Valid ChannelId's: email, sms, push,
 	// inbox, direct_message, banner, webhook.
 	Channels    map[string]SendMessageParamsMessageChannel  `json:"channels,omitzero"`
@@ -610,7 +98,7 @@ type SendMessageParamsMessage struct {
 	// Describes content that will work for email, inbox, push, chat, or any channel
 	// id.
 	Content SendMessageParamsMessageContentUnion `json:"content,omitzero"`
-	Context MessageContextParam                  `json:"context,omitzero"`
+	Context shared.MessageContextParam           `json:"context,omitzero"`
 	paramObj
 }
 
@@ -655,7 +143,7 @@ func init() {
 }
 
 type SendMessageParamsMessageChannelMetadata struct {
-	Utm UtmParam `json:"utm,omitzero"`
+	Utm shared.UtmParam `json:"utm,omitzero"`
 	paramObj
 }
 
@@ -686,7 +174,7 @@ func (r *SendMessageParamsMessageChannelTimeouts) UnmarshalJSON(data []byte) err
 // Use [param.IsOmitted] to confirm if a field is set.
 type SendMessageParamsMessageContentUnion struct {
 	OfElementalContentSugar *shared.ElementalContentSugarParam `json:",omitzero,inline"`
-	OfElementalContent      *ElementalContentParam             `json:",omitzero,inline"`
+	OfElementalContent      *shared.ElementalContentParam      `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -768,7 +256,7 @@ type SendMessageParamsMessageMetadata struct {
 	Event   param.Opt[string] `json:"event,omitzero"`
 	TraceID param.Opt[string] `json:"trace_id,omitzero"`
 	Tags    []string          `json:"tags,omitzero"`
-	Utm     UtmParam          `json:"utm,omitzero"`
+	Utm     shared.UtmParam   `json:"utm,omitzero"`
 	paramObj
 }
 
@@ -814,7 +302,7 @@ func (r *SendMessageParamsMessageProvider) UnmarshalJSON(data []byte) error {
 }
 
 type SendMessageParamsMessageProviderMetadata struct {
-	Utm UtmParam `json:"utm,omitzero"`
+	Utm shared.UtmParam `json:"utm,omitzero"`
 	paramObj
 }
 
@@ -879,14 +367,13 @@ func init() {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type SendMessageParamsMessageToUnion struct {
-	OfUserRecipient  *UserRecipientParam                      `json:",omitzero,inline"`
-	OfListRecipient  *SendMessageParamsMessageToListRecipient `json:",omitzero,inline"`
-	OfRecipientArray []RecipientUnionParam                    `json:",omitzero,inline"`
+	OfUserRecipient  *shared.UserRecipientParam `json:",omitzero,inline"`
+	OfRecipientArray []shared.RecipientParam    `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u SendMessageParamsMessageToUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfUserRecipient, u.OfListRecipient, u.OfRecipientArray)
+	return param.MarshalUnion(u, u.OfUserRecipient, u.OfRecipientArray)
 }
 func (u *SendMessageParamsMessageToUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -895,106 +382,8 @@ func (u *SendMessageParamsMessageToUnion) UnmarshalJSON(data []byte) error {
 func (u *SendMessageParamsMessageToUnion) asAny() any {
 	if !param.IsOmitted(u.OfUserRecipient) {
 		return u.OfUserRecipient
-	} else if !param.IsOmitted(u.OfListRecipient) {
-		return u.OfListRecipient
 	} else if !param.IsOmitted(u.OfRecipientArray) {
 		return &u.OfRecipientArray
 	}
 	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u SendMessageParamsMessageToUnion) GetAccountID() *string {
-	if vt := u.OfUserRecipient; vt != nil && vt.AccountID.Valid() {
-		return &vt.AccountID.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u SendMessageParamsMessageToUnion) GetContext() *MessageContextParam {
-	if vt := u.OfUserRecipient; vt != nil {
-		return &vt.Context
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u SendMessageParamsMessageToUnion) GetEmail() *string {
-	if vt := u.OfUserRecipient; vt != nil && vt.Email.Valid() {
-		return &vt.Email.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u SendMessageParamsMessageToUnion) GetLocale() *string {
-	if vt := u.OfUserRecipient; vt != nil && vt.Locale.Valid() {
-		return &vt.Locale.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u SendMessageParamsMessageToUnion) GetPhoneNumber() *string {
-	if vt := u.OfUserRecipient; vt != nil && vt.PhoneNumber.Valid() {
-		return &vt.PhoneNumber.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u SendMessageParamsMessageToUnion) GetPreferences() *UserRecipientPreferencesParam {
-	if vt := u.OfUserRecipient; vt != nil {
-		return &vt.Preferences
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u SendMessageParamsMessageToUnion) GetTenantID() *string {
-	if vt := u.OfUserRecipient; vt != nil && vt.TenantID.Valid() {
-		return &vt.TenantID.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u SendMessageParamsMessageToUnion) GetUserID() *string {
-	if vt := u.OfUserRecipient; vt != nil && vt.UserID.Valid() {
-		return &vt.UserID.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u SendMessageParamsMessageToUnion) GetListID() *string {
-	if vt := u.OfListRecipient; vt != nil && vt.ListID.Valid() {
-		return &vt.ListID.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's Data property, if present.
-func (u SendMessageParamsMessageToUnion) GetData() map[string]any {
-	if vt := u.OfUserRecipient; vt != nil {
-		return vt.Data
-	} else if vt := u.OfListRecipient; vt != nil {
-		return vt.Data
-	}
-	return nil
-}
-
-type SendMessageParamsMessageToListRecipient struct {
-	ListID param.Opt[string] `json:"list_id,omitzero"`
-	Data   map[string]any    `json:"data,omitzero"`
-	paramObj
-}
-
-func (r SendMessageParamsMessageToListRecipient) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageToListRecipient
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SendMessageParamsMessageToListRecipient) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }

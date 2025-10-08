@@ -4,7 +4,6 @@ package courier
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -114,113 +113,9 @@ func (r *ListSubscriptionService) UnsubscribeUser(ctx context.Context, userID st
 	return
 }
 
-type NotificationPreferenceDetails struct {
-	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
-	Status             PreferenceStatus           `json:"status,required"`
-	ChannelPreferences []shared.ChannelPreference `json:"channel_preferences,nullable"`
-	Rules              []shared.Rule              `json:"rules,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Status             respjson.Field
-		ChannelPreferences respjson.Field
-		Rules              respjson.Field
-		ExtraFields        map[string]respjson.Field
-		raw                string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r NotificationPreferenceDetails) RawJSON() string { return r.JSON.raw }
-func (r *NotificationPreferenceDetails) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this NotificationPreferenceDetails to a
-// NotificationPreferenceDetailsParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// NotificationPreferenceDetailsParam.Overrides()
-func (r NotificationPreferenceDetails) ToParam() NotificationPreferenceDetailsParam {
-	return param.Override[NotificationPreferenceDetailsParam](json.RawMessage(r.RawJSON()))
-}
-
-// The property Status is required.
-type NotificationPreferenceDetailsParam struct {
-	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
-	Status             PreferenceStatus                `json:"status,omitzero,required"`
-	ChannelPreferences []shared.ChannelPreferenceParam `json:"channel_preferences,omitzero"`
-	Rules              []shared.RuleParam              `json:"rules,omitzero"`
-	paramObj
-}
-
-func (r NotificationPreferenceDetailsParam) MarshalJSON() (data []byte, err error) {
-	type shadow NotificationPreferenceDetailsParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *NotificationPreferenceDetailsParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The property RecipientID is required.
-type PutSubscriptionsRecipientParam struct {
-	RecipientID string                    `json:"recipientId,required"`
-	Preferences RecipientPreferencesParam `json:"preferences,omitzero"`
-	paramObj
-}
-
-func (r PutSubscriptionsRecipientParam) MarshalJSON() (data []byte, err error) {
-	type shadow PutSubscriptionsRecipientParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *PutSubscriptionsRecipientParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type RecipientPreferences struct {
-	Categories    map[string]NotificationPreferenceDetails `json:"categories,nullable"`
-	Notifications map[string]NotificationPreferenceDetails `json:"notifications,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Categories    respjson.Field
-		Notifications respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r RecipientPreferences) RawJSON() string { return r.JSON.raw }
-func (r *RecipientPreferences) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this RecipientPreferences to a RecipientPreferencesParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// RecipientPreferencesParam.Overrides()
-func (r RecipientPreferences) ToParam() RecipientPreferencesParam {
-	return param.Override[RecipientPreferencesParam](json.RawMessage(r.RawJSON()))
-}
-
-type RecipientPreferencesParam struct {
-	Categories    map[string]NotificationPreferenceDetailsParam `json:"categories,omitzero"`
-	Notifications map[string]NotificationPreferenceDetailsParam `json:"notifications,omitzero"`
-	paramObj
-}
-
-func (r RecipientPreferencesParam) MarshalJSON() (data []byte, err error) {
-	type shadow RecipientPreferencesParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *RecipientPreferencesParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type ListSubscriptionListResponse struct {
 	Items  []ListSubscriptionListResponseItem `json:"items,required"`
-	Paging Paging                             `json:"paging,required"`
+	Paging shared.Paging                      `json:"paging,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Items       respjson.Field
@@ -237,9 +132,9 @@ func (r *ListSubscriptionListResponse) UnmarshalJSON(data []byte) error {
 }
 
 type ListSubscriptionListResponseItem struct {
-	RecipientID string               `json:"recipientId,required"`
-	Created     string               `json:"created,nullable"`
-	Preferences RecipientPreferences `json:"preferences,nullable"`
+	RecipientID string                      `json:"recipientId,required"`
+	Created     string                      `json:"created,nullable"`
+	Preferences shared.RecipientPreferences `json:"preferences,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		RecipientID respjson.Field
@@ -272,7 +167,7 @@ func (r ListSubscriptionListParams) URLQuery() (v url.Values, err error) {
 }
 
 type ListSubscriptionAddParams struct {
-	Recipients []PutSubscriptionsRecipientParam `json:"recipients,omitzero,required"`
+	Recipients []shared.PutSubscriptionsRecipientParam `json:"recipients,omitzero,required"`
 	paramObj
 }
 
@@ -285,7 +180,7 @@ func (r *ListSubscriptionAddParams) UnmarshalJSON(data []byte) error {
 }
 
 type ListSubscriptionSubscribeParams struct {
-	Recipients []PutSubscriptionsRecipientParam `json:"recipients,omitzero,required"`
+	Recipients []shared.PutSubscriptionsRecipientParam `json:"recipients,omitzero,required"`
 	paramObj
 }
 
@@ -298,8 +193,8 @@ func (r *ListSubscriptionSubscribeParams) UnmarshalJSON(data []byte) error {
 }
 
 type ListSubscriptionSubscribeUserParams struct {
-	ListID      string                    `path:"list_id,required" json:"-"`
-	Preferences RecipientPreferencesParam `json:"preferences,omitzero"`
+	ListID      string                           `path:"list_id,required" json:"-"`
+	Preferences shared.RecipientPreferencesParam `json:"preferences,omitzero"`
 	paramObj
 }
 

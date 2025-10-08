@@ -35,7 +35,7 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 					BrandID: courier.String("brand_id"),
 					If:      courier.String("if"),
 					Metadata: courier.SendMessageParamsMessageChannelMetadata{
-						Utm: courier.UtmParam{
+						Utm: shared.UtmParam{
 							Campaign: courier.String("campaign"),
 							Content:  courier.String("content"),
 							Medium:   courier.String("medium"),
@@ -60,7 +60,7 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 					Title: "title",
 				},
 			},
-			Context: courier.MessageContextParam{
+			Context: shared.MessageContextParam{
 				TenantID: courier.String("tenant_id"),
 			},
 			Data: map[string]any{
@@ -80,7 +80,7 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 				Event:   courier.String("event"),
 				Tags:    []string{"string"},
 				TraceID: courier.String("trace_id"),
-				Utm: courier.UtmParam{
+				Utm: shared.UtmParam{
 					Campaign: courier.String("campaign"),
 					Content:  courier.String("content"),
 					Medium:   courier.String("medium"),
@@ -95,7 +95,7 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 				"foo": {
 					If: courier.String("if"),
 					Metadata: courier.SendMessageParamsMessageProviderMetadata{
-						Utm: courier.UtmParam{
+						Utm: shared.UtmParam{
 							Campaign: courier.String("campaign"),
 							Content:  courier.String("content"),
 							Medium:   courier.String("medium"),
@@ -115,7 +115,6 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 				}},
 				Method: "all",
 			},
-			Template: courier.String("template_id"),
 			Timeout: courier.SendMessageParamsMessageTimeout{
 				Channel: map[string]int64{
 					"foo": 0,
@@ -128,9 +127,9 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 				},
 			},
 			To: courier.SendMessageParamsMessageToUnion{
-				OfUserRecipient: &courier.UserRecipientParam{
+				OfUserRecipient: &shared.UserRecipientParam{
 					AccountID: courier.String("account_id"),
-					Context: courier.MessageContextParam{
+					Context: shared.MessageContextParam{
 						TenantID: courier.String("tenant_id"),
 					},
 					Data: map[string]any{
@@ -139,12 +138,12 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 					Email:       courier.String("email"),
 					Locale:      courier.String("locale"),
 					PhoneNumber: courier.String("phone_number"),
-					Preferences: courier.UserRecipientPreferencesParam{
+					Preferences: shared.UserRecipientPreferencesParam{
 						Notifications: map[string]shared.PreferenceParam{
 							"foo": {
-								Status: courier.PreferenceStatusOptedIn,
+								Status: shared.PreferenceStatusOptedIn,
 								ChannelPreferences: []shared.ChannelPreferenceParam{{
-									Channel: courier.ChannelClassificationDirectMessage,
+									Channel: shared.ChannelClassificationDirectMessage,
 								}},
 								Rules: []shared.RuleParam{{
 									Until: "until",
@@ -155,9 +154,9 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 						},
 						Categories: map[string]shared.PreferenceParam{
 							"foo": {
-								Status: courier.PreferenceStatusOptedIn,
+								Status: shared.PreferenceStatusOptedIn,
 								ChannelPreferences: []shared.ChannelPreferenceParam{{
-									Channel: courier.ChannelClassificationDirectMessage,
+									Channel: shared.ChannelClassificationDirectMessage,
 								}},
 								Rules: []shared.RuleParam{{
 									Until: "until",

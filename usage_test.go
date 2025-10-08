@@ -10,6 +10,7 @@ import (
 	"github.com/trycourier/courier-go"
 	"github.com/trycourier/courier-go/internal/testutil"
 	"github.com/trycourier/courier-go/option"
+	"github.com/trycourier/courier-go/shared"
 )
 
 func TestUsage(t *testing.T) {
@@ -27,11 +28,10 @@ func TestUsage(t *testing.T) {
 	response, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
 			To: courier.SendMessageParamsMessageToUnion{
-				OfUserRecipient: &courier.UserRecipientParam{
+				OfUserRecipient: &shared.UserRecipientParam{
 					UserID: courier.String("your_user_id"),
 				},
 			},
-			Template: courier.String("your_template"),
 			Data: map[string]any{
 				"foo": "bar",
 			},

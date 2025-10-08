@@ -11,6 +11,7 @@ import (
 	"github.com/trycourier/courier-go"
 	"github.com/trycourier/courier-go/internal/testutil"
 	"github.com/trycourier/courier-go/option"
+	"github.com/trycourier/courier-go/shared"
 )
 
 func TestTenantGet(t *testing.T) {
@@ -55,11 +56,11 @@ func TestTenantUpdateWithOptionalParams(t *testing.T) {
 		courier.TenantUpdateParams{
 			Name:    "name",
 			BrandID: courier.String("brand_id"),
-			DefaultPreferences: courier.DefaultPreferencesParam{
-				Items: []courier.DefaultPreferencesItemParam{{
-					SubscriptionTopicNewParam: courier.SubscriptionTopicNewParam{
-						Status:           courier.SubscriptionTopicNewStatusOptedOut,
-						CustomRouting:    []courier.ChannelClassification{courier.ChannelClassificationDirectMessage},
+			DefaultPreferences: shared.DefaultPreferencesParam{
+				Items: []shared.DefaultPreferencesItemParam{{
+					SubscriptionTopicNewParam: shared.SubscriptionTopicNewParam{
+						Status:           shared.SubscriptionTopicNewStatusOptedOut,
+						CustomRouting:    []shared.ChannelClassification{shared.ChannelClassificationDirectMessage},
 						HasCustomRouting: courier.Bool(true),
 					},
 					ID: "id",

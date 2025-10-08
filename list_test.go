@@ -55,12 +55,12 @@ func TestListUpdateWithOptionalParams(t *testing.T) {
 		"list_id",
 		courier.ListUpdateParams{
 			Name: "name",
-			Preferences: courier.RecipientPreferencesParam{
-				Categories: map[string]courier.NotificationPreferenceDetailsParam{
+			Preferences: shared.RecipientPreferencesParam{
+				Categories: map[string]shared.NotificationPreferenceDetailsParam{
 					"foo": {
-						Status: courier.PreferenceStatusOptedIn,
+						Status: shared.PreferenceStatusOptedIn,
 						ChannelPreferences: []shared.ChannelPreferenceParam{{
-							Channel: courier.ChannelClassificationDirectMessage,
+							Channel: shared.ChannelClassificationDirectMessage,
 						}},
 						Rules: []shared.RuleParam{{
 							Until: "until",
@@ -68,11 +68,11 @@ func TestListUpdateWithOptionalParams(t *testing.T) {
 						}},
 					},
 				},
-				Notifications: map[string]courier.NotificationPreferenceDetailsParam{
+				Notifications: map[string]shared.NotificationPreferenceDetailsParam{
 					"foo": {
-						Status: courier.PreferenceStatusOptedIn,
+						Status: shared.PreferenceStatusOptedIn,
 						ChannelPreferences: []shared.ChannelPreferenceParam{{
-							Channel: courier.ChannelClassificationDirectMessage,
+							Channel: shared.ChannelClassificationDirectMessage,
 						}},
 						Rules: []shared.RuleParam{{
 							Until: "until",

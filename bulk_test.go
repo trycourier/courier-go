@@ -31,14 +31,14 @@ func TestBulkAddUsers(t *testing.T) {
 		context.TODO(),
 		"job_id",
 		courier.BulkAddUsersParams{
-			Users: []courier.InboundBulkMessageUserParam{{
+			Users: []shared.InboundBulkMessageUserParam{{
 				Data: map[string]interface{}{},
-				Preferences: courier.RecipientPreferencesParam{
-					Categories: map[string]courier.NotificationPreferenceDetailsParam{
+				Preferences: shared.RecipientPreferencesParam{
+					Categories: map[string]shared.NotificationPreferenceDetailsParam{
 						"foo": {
-							Status: courier.PreferenceStatusOptedIn,
+							Status: shared.PreferenceStatusOptedIn,
 							ChannelPreferences: []shared.ChannelPreferenceParam{{
-								Channel: courier.ChannelClassificationDirectMessage,
+								Channel: shared.ChannelClassificationDirectMessage,
 							}},
 							Rules: []shared.RuleParam{{
 								Until: "until",
@@ -46,11 +46,11 @@ func TestBulkAddUsers(t *testing.T) {
 							}},
 						},
 					},
-					Notifications: map[string]courier.NotificationPreferenceDetailsParam{
+					Notifications: map[string]shared.NotificationPreferenceDetailsParam{
 						"foo": {
-							Status: courier.PreferenceStatusOptedIn,
+							Status: shared.PreferenceStatusOptedIn,
 							ChannelPreferences: []shared.ChannelPreferenceParam{{
-								Channel: courier.ChannelClassificationDirectMessage,
+								Channel: shared.ChannelClassificationDirectMessage,
 							}},
 							Rules: []shared.RuleParam{{
 								Until: "until",
@@ -61,9 +61,9 @@ func TestBulkAddUsers(t *testing.T) {
 				},
 				Profile:   map[string]interface{}{},
 				Recipient: courier.String("recipient"),
-				To: courier.UserRecipientParam{
+				To: shared.UserRecipientParam{
 					AccountID: courier.String("account_id"),
-					Context: courier.MessageContextParam{
+					Context: shared.MessageContextParam{
 						TenantID: courier.String("tenant_id"),
 					},
 					Data: map[string]any{
@@ -72,12 +72,12 @@ func TestBulkAddUsers(t *testing.T) {
 					Email:       courier.String("email"),
 					Locale:      courier.String("locale"),
 					PhoneNumber: courier.String("phone_number"),
-					Preferences: courier.UserRecipientPreferencesParam{
+					Preferences: shared.UserRecipientPreferencesParam{
 						Notifications: map[string]shared.PreferenceParam{
 							"foo": {
-								Status: courier.PreferenceStatusOptedIn,
+								Status: shared.PreferenceStatusOptedIn,
 								ChannelPreferences: []shared.ChannelPreferenceParam{{
-									Channel: courier.ChannelClassificationDirectMessage,
+									Channel: shared.ChannelClassificationDirectMessage,
 								}},
 								Rules: []shared.RuleParam{{
 									Until: "until",
@@ -88,9 +88,9 @@ func TestBulkAddUsers(t *testing.T) {
 						},
 						Categories: map[string]shared.PreferenceParam{
 							"foo": {
-								Status: courier.PreferenceStatusOptedIn,
+								Status: shared.PreferenceStatusOptedIn,
 								ChannelPreferences: []shared.ChannelPreferenceParam{{
-									Channel: courier.ChannelClassificationDirectMessage,
+									Channel: shared.ChannelClassificationDirectMessage,
 								}},
 								Rules: []shared.RuleParam{{
 									Until: "until",
@@ -130,8 +130,8 @@ func TestBulkNewJobWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Bulk.NewJob(context.TODO(), courier.BulkNewJobParams{
-		Message: courier.InboundBulkMessageUnionParam{
-			OfInboundBulkTemplateMessage: &courier.InboundBulkMessageInboundBulkTemplateMessageParam{
+		Message: shared.InboundBulkMessageUnionParam{
+			OfInboundBulkTemplateMessage: &shared.InboundBulkMessageInboundBulkTemplateMessageParam{
 				Template: "template",
 				Brand:    courier.String("brand"),
 				Data: map[string]any{

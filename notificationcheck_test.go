@@ -11,6 +11,7 @@ import (
 	"github.com/trycourier/courier-go"
 	"github.com/trycourier/courier-go/internal/testutil"
 	"github.com/trycourier/courier-go/option"
+	"github.com/trycourier/courier-go/shared"
 )
 
 func TestNotificationCheckUpdate(t *testing.T) {
@@ -31,10 +32,10 @@ func TestNotificationCheckUpdate(t *testing.T) {
 		"submissionId",
 		courier.NotificationCheckUpdateParams{
 			ID: "id",
-			Checks: []courier.BaseCheckParam{{
+			Checks: []shared.BaseCheckParam{{
 				ID:     "id",
-				Status: courier.BaseCheckStatusResolved,
-				Type:   courier.BaseCheckTypeCustom,
+				Status: shared.BaseCheckStatusResolved,
+				Type:   shared.BaseCheckTypeCustom,
 			}},
 		},
 	)

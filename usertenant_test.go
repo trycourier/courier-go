@@ -11,6 +11,7 @@ import (
 	"github.com/trycourier/courier-go"
 	"github.com/trycourier/courier-go/internal/testutil"
 	"github.com/trycourier/courier-go/option"
+	"github.com/trycourier/courier-go/shared"
 )
 
 func TestUserTenantListWithOptionalParams(t *testing.T) {
@@ -60,12 +61,12 @@ func TestUserTenantAddMultiple(t *testing.T) {
 		context.TODO(),
 		"user_id",
 		courier.UserTenantAddMultipleParams{
-			Tenants: []courier.TenantAssociationParam{{
+			Tenants: []shared.TenantAssociationParam{{
 				TenantID: "tenant_id",
 				Profile: map[string]any{
 					"foo": "bar",
 				},
-				Type:   courier.TenantAssociationTypeUser,
+				Type:   shared.TenantAssociationTypeUser,
 				UserID: courier.String("user_id"),
 			}},
 		},
