@@ -424,7 +424,7 @@ type InboundBulkMessageUser struct {
 	Preferences RecipientPreferences `json:"preferences,nullable"`
 	Profile     any                  `json:"profile"`
 	Recipient   string               `json:"recipient,nullable"`
-	To          shared.UserRecipient `json:"to,nullable"`
+	To          UserRecipient        `json:"to,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -457,7 +457,7 @@ type InboundBulkMessageUserParam struct {
 	Data        any                       `json:"data,omitzero"`
 	Preferences RecipientPreferencesParam `json:"preferences,omitzero"`
 	Profile     any                       `json:"profile,omitzero"`
-	To          shared.UserRecipientParam `json:"to,omitzero"`
+	To          UserRecipientParam        `json:"to,omitzero"`
 	paramObj
 }
 
@@ -466,6 +466,112 @@ func (r InboundBulkMessageUserParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *InboundBulkMessageUserParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type UserRecipient struct {
+	// Use `tenant_id` instead.
+	AccountID string `json:"account_id,nullable"`
+	// Context such as tenant_id to send the notification with.
+	Context MessageContext `json:"context,nullable"`
+	Data    map[string]any `json:"data,nullable"`
+	Email   string         `json:"email,nullable"`
+	// The user's preferred ISO 639-1 language code.
+	Locale      string                   `json:"locale,nullable"`
+	PhoneNumber string                   `json:"phone_number,nullable"`
+	Preferences UserRecipientPreferences `json:"preferences,nullable"`
+	// Tenant id. Will load brand, default preferences and base context data.
+	TenantID string `json:"tenant_id,nullable"`
+	UserID   string `json:"user_id,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		AccountID   respjson.Field
+		Context     respjson.Field
+		Data        respjson.Field
+		Email       respjson.Field
+		Locale      respjson.Field
+		PhoneNumber respjson.Field
+		Preferences respjson.Field
+		TenantID    respjson.Field
+		UserID      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r UserRecipient) RawJSON() string { return r.JSON.raw }
+func (r *UserRecipient) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this UserRecipient to a UserRecipientParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// UserRecipientParam.Overrides()
+func (r UserRecipient) ToParam() UserRecipientParam {
+	return param.Override[UserRecipientParam](json.RawMessage(r.RawJSON()))
+}
+
+type UserRecipientPreferences struct {
+	Notifications map[string]shared.Preference `json:"notifications,required"`
+	Categories    map[string]shared.Preference `json:"categories,nullable"`
+	TemplateID    string                       `json:"templateId,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Notifications respjson.Field
+		Categories    respjson.Field
+		TemplateID    respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r UserRecipientPreferences) RawJSON() string { return r.JSON.raw }
+func (r *UserRecipientPreferences) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type UserRecipientParam struct {
+	// Use `tenant_id` instead.
+	AccountID param.Opt[string] `json:"account_id,omitzero"`
+	Email     param.Opt[string] `json:"email,omitzero"`
+	// The user's preferred ISO 639-1 language code.
+	Locale      param.Opt[string] `json:"locale,omitzero"`
+	PhoneNumber param.Opt[string] `json:"phone_number,omitzero"`
+	// Tenant id. Will load brand, default preferences and base context data.
+	TenantID    param.Opt[string]             `json:"tenant_id,omitzero"`
+	UserID      param.Opt[string]             `json:"user_id,omitzero"`
+	Data        map[string]any                `json:"data,omitzero"`
+	Preferences UserRecipientPreferencesParam `json:"preferences,omitzero"`
+	// Context such as tenant_id to send the notification with.
+	Context MessageContextParam `json:"context,omitzero"`
+	paramObj
+}
+
+func (r UserRecipientParam) MarshalJSON() (data []byte, err error) {
+	type shadow UserRecipientParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *UserRecipientParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Notifications is required.
+type UserRecipientPreferencesParam struct {
+	Notifications map[string]shared.PreferenceParam `json:"notifications,omitzero,required"`
+	TemplateID    param.Opt[string]                 `json:"templateId,omitzero"`
+	Categories    map[string]shared.PreferenceParam `json:"categories,omitzero"`
+	paramObj
+}
+
+func (r UserRecipientPreferencesParam) MarshalJSON() (data []byte, err error) {
+	type shadow UserRecipientPreferencesParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *UserRecipientPreferencesParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

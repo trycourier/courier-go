@@ -418,8 +418,8 @@ func (r *MessageContextParam) UnmarshalJSON(data []byte) error {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type RecipientUnionParam struct {
-	OfUserRecipient *shared.UserRecipientParam `json:",omitzero,inline"`
-	OfListRecipient *shared.ListRecipientParam `json:",omitzero,inline"`
+	OfUserRecipient *UserRecipientParam          `json:",omitzero,inline"`
+	OfListRecipient *RecipientListRecipientParam `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -480,7 +480,7 @@ func (u RecipientUnionParam) GetPhoneNumber() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u RecipientUnionParam) GetPreferences() *shared.UserRecipientPreferencesParam {
+func (u RecipientUnionParam) GetPreferences() *UserRecipientPreferencesParam {
 	if vt := u.OfUserRecipient; vt != nil {
 		return &vt.Preferences
 	}
@@ -519,6 +519,20 @@ func (u RecipientUnionParam) GetData() map[string]any {
 		return vt.Data
 	}
 	return nil
+}
+
+type RecipientListRecipientParam struct {
+	ListID param.Opt[string] `json:"list_id,omitzero"`
+	Data   map[string]any    `json:"data,omitzero"`
+	paramObj
+}
+
+func (r RecipientListRecipientParam) MarshalJSON() (data []byte, err error) {
+	type shadow RecipientListRecipientParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *RecipientListRecipientParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type UtmParam struct {
@@ -865,9 +879,9 @@ func init() {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type SendMessageParamsMessageToUnion struct {
-	OfUserRecipient  *shared.UserRecipientParam `json:",omitzero,inline"`
-	OfListRecipient  *shared.ListRecipientParam `json:",omitzero,inline"`
-	OfRecipientArray []RecipientUnionParam      `json:",omitzero,inline"`
+	OfUserRecipient  *UserRecipientParam                      `json:",omitzero,inline"`
+	OfListRecipient  *SendMessageParamsMessageToListRecipient `json:",omitzero,inline"`
+	OfRecipientArray []RecipientUnionParam                    `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -930,7 +944,7 @@ func (u SendMessageParamsMessageToUnion) GetPhoneNumber() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u SendMessageParamsMessageToUnion) GetPreferences() *shared.UserRecipientPreferencesParam {
+func (u SendMessageParamsMessageToUnion) GetPreferences() *UserRecipientPreferencesParam {
 	if vt := u.OfUserRecipient; vt != nil {
 		return &vt.Preferences
 	}
@@ -969,4 +983,18 @@ func (u SendMessageParamsMessageToUnion) GetData() map[string]any {
 		return vt.Data
 	}
 	return nil
+}
+
+type SendMessageParamsMessageToListRecipient struct {
+	ListID param.Opt[string] `json:"list_id,omitzero"`
+	Data   map[string]any    `json:"data,omitzero"`
+	paramObj
+}
+
+func (r SendMessageParamsMessageToListRecipient) MarshalJSON() (data []byte, err error) {
+	type shadow SendMessageParamsMessageToListRecipient
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *SendMessageParamsMessageToListRecipient) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }

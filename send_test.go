@@ -128,7 +128,7 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 				},
 			},
 			To: courier.SendMessageParamsMessageToUnion{
-				OfUserRecipient: &shared.UserRecipientParam{
+				OfUserRecipient: &courier.UserRecipientParam{
 					AccountID: courier.String("account_id"),
 					Context: courier.MessageContextParam{
 						TenantID: courier.String("tenant_id"),
@@ -139,7 +139,7 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 					Email:       courier.String("email"),
 					Locale:      courier.String("locale"),
 					PhoneNumber: courier.String("phone_number"),
-					Preferences: shared.UserRecipientPreferencesParam{
+					Preferences: courier.UserRecipientPreferencesParam{
 						Notifications: map[string]shared.PreferenceParam{
 							"foo": {
 								Status: courier.PreferenceStatusOptedIn,
