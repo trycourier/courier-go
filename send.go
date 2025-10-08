@@ -119,56 +119,35 @@ func (r ElementalChannelNodeParam) MarshalJSON() (data []byte, err error) {
 type ElementalNodeUnion struct {
 	// This field is from variant [ElementalNodeObject], [ElementalNodeObject],
 	// [ElementalNodeObject], [ElementalNodeObject], [ElementalNodeObject],
-	// [ElementalNodeObject].
+	// [ElementalNodeObject], [ElementalNodeObject].
 	Channels []string `json:"channels"`
 	// This field is from variant [ElementalNodeObject], [ElementalNodeObject],
 	// [ElementalNodeObject], [ElementalNodeObject], [ElementalNodeObject],
-	// [ElementalNodeObject].
+	// [ElementalNodeObject], [ElementalNodeObject].
 	If string `json:"if"`
 	// This field is from variant [ElementalNodeObject], [ElementalNodeObject],
 	// [ElementalNodeObject], [ElementalNodeObject], [ElementalNodeObject],
-	// [ElementalNodeObject].
+	// [ElementalNodeObject], [ElementalNodeObject].
 	Loop string `json:"loop"`
 	// This field is from variant [ElementalNodeObject], [ElementalNodeObject],
 	// [ElementalNodeObject], [ElementalNodeObject], [ElementalNodeObject],
-	// [ElementalNodeObject].
+	// [ElementalNodeObject], [ElementalNodeObject].
 	Ref string `json:"ref"`
 	// This field is from variant [ElementalNodeObject].
 	Type string `json:"type"`
 	// This field is from variant [ElementalNodeObject].
 	Channel string `json:"channel"`
 	// This field is from variant [ElementalNodeObject].
-	Raw map[string]any `json:"raw"`
-	// This field is from variant [ElementalNodeObject].
-	ActionID string `json:"action_id"`
-	// This field is from variant [ElementalNodeObject].
-	Align shared.Alignment `json:"align"`
-	// This field is from variant [ElementalNodeObject].
-	BackgroundColor string `json:"background_color"`
-	// This field is from variant [ElementalNodeObject].
-	Content string `json:"content"`
-	// This field is from variant [ElementalNodeObject].
-	Href string `json:"href"`
-	// This field is from variant [ElementalNodeObject].
-	Locales map[string]ElementalNodeObjectLocale `json:"locales"`
-	// This field is from variant [ElementalNodeObject].
-	Style string `json:"style"`
-	JSON  struct {
-		Channels        respjson.Field
-		If              respjson.Field
-		Loop            respjson.Field
-		Ref             respjson.Field
-		Type            respjson.Field
-		Channel         respjson.Field
-		Raw             respjson.Field
-		ActionID        respjson.Field
-		Align           respjson.Field
-		BackgroundColor respjson.Field
-		Content         respjson.Field
-		Href            respjson.Field
-		Locales         respjson.Field
-		Style           respjson.Field
-		raw             string
+	Raw  map[string]any `json:"raw"`
+	JSON struct {
+		Channels respjson.Field
+		If       respjson.Field
+		Loop     respjson.Field
+		Ref      respjson.Field
+		Type     respjson.Field
+		Channel  respjson.Field
+		Raw      respjson.Field
+		raw      string
 	} `json:"-"`
 }
 
@@ -286,66 +265,12 @@ func (u ElementalNodeUnionParam) GetRaw() map[string]any {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetActionID() *string {
-	if vt := u.OfVariant3; vt != nil && vt.ActionID.Valid() {
-		return &vt.ActionID.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetAlign() *string {
-	if vt := u.OfVariant3; vt != nil {
-		return (*string)(&vt.Align)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetBackgroundColor() *string {
-	if vt := u.OfVariant3; vt != nil && vt.BackgroundColor.Valid() {
-		return &vt.BackgroundColor.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetContent() *string {
-	if vt := u.OfVariant3; vt != nil && vt.Content.Valid() {
-		return &vt.Content.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetHref() *string {
-	if vt := u.OfVariant3; vt != nil && vt.Href.Valid() {
-		return &vt.Href.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetLocales() map[string]ElementalNodeObjectLocaleParam {
-	if vt := u.OfVariant3; vt != nil {
-		return vt.Locales
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetStyle() *string {
-	if vt := u.OfVariant3; vt != nil {
-		return &vt.Style
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
 func (u ElementalNodeUnionParam) GetIf() *string {
 	if vt := u.OfElementalNodeObject; vt != nil && vt.If.Valid() {
 		return &vt.If.Value
 	} else if vt := u.OfVariant2; vt != nil && vt.If.Valid() {
+		return &vt.If.Value
+	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
 		return &vt.If.Value
 	} else if vt := u.OfVariant3; vt != nil && vt.If.Valid() {
 		return &vt.If.Value
@@ -373,6 +298,8 @@ func (u ElementalNodeUnionParam) GetLoop() *string {
 		return &vt.Loop.Value
 	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
 		return &vt.Loop.Value
+	} else if vt := u.OfVariant3; vt != nil && vt.Loop.Valid() {
+		return &vt.Loop.Value
 	}
 	return nil
 }
@@ -382,6 +309,8 @@ func (u ElementalNodeUnionParam) GetRef() *string {
 	if vt := u.OfElementalNodeObject; vt != nil && vt.Ref.Valid() {
 		return &vt.Ref.Value
 	} else if vt := u.OfVariant2; vt != nil && vt.Ref.Valid() {
+		return &vt.Ref.Value
+	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
 		return &vt.Ref.Value
 	} else if vt := u.OfVariant3; vt != nil && vt.Ref.Valid() {
 		return &vt.Ref.Value
@@ -420,6 +349,8 @@ func (u ElementalNodeUnionParam) GetChannels() []string {
 	if vt := u.OfElementalNodeObject; vt != nil {
 		return vt.Channels
 	} else if vt := u.OfVariant2; vt != nil {
+		return vt.Channels
+	} else if vt := u.OfVariant3; vt != nil {
 		return vt.Channels
 	} else if vt := u.OfVariant3; vt != nil {
 		return vt.Channels

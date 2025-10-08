@@ -1,6 +1,5 @@
 # Shared Params Types
 
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared#Alignment">Alignment</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared#ChannelPreferenceParam">ChannelPreferenceParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared#ElementalBaseNodeParam">ElementalBaseNodeParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared#ElementalContentSugarParam">ElementalContentSugarParam</a>
@@ -13,7 +12,6 @@
 
 # Shared Response Types
 
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared#Alignment">Alignment</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared#ChannelPreference">ChannelPreference</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared#ElementalBaseNode">ElementalBaseNode</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/shared#ElementalContentSugar">ElementalContentSugar</a>
