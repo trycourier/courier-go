@@ -16,6 +16,7 @@ import (
 	"github.com/trycourier/courier-go/option"
 	"github.com/trycourier/courier-go/packages/param"
 	"github.com/trycourier/courier-go/packages/respjson"
+	"github.com/trycourier/courier-go/shared"
 )
 
 // ListService contains methods and other services that help with interacting with
@@ -40,7 +41,7 @@ func NewListService(opts ...option.RequestOption) (r ListService) {
 }
 
 // Returns a list based on the list ID provided.
-func (r *ListService) Get(ctx context.Context, listID string, opts ...option.RequestOption) (res *List, err error) {
+func (r *ListService) Get(ctx context.Context, listID string, opts ...option.RequestOption) (res *shared.List, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if listID == "" {
 		err = errors.New("missing required list_id parameter")
@@ -98,31 +99,9 @@ func (r *ListService) Restore(ctx context.Context, listID string, body ListResto
 	return
 }
 
-type List struct {
-	ID      string `json:"id,required"`
-	Name    string `json:"name,required"`
-	Created string `json:"created,nullable"`
-	Updated string `json:"updated,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Name        respjson.Field
-		Created     respjson.Field
-		Updated     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r List) RawJSON() string { return r.JSON.raw }
-func (r *List) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type ListListResponse struct {
-	Items  []List `json:"items,required"`
-	Paging Paging `json:"paging,required"`
+	Items  []shared.List `json:"items,required"`
+	Paging shared.Paging `json:"paging,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Items       respjson.Field
@@ -139,8 +118,8 @@ func (r *ListListResponse) UnmarshalJSON(data []byte) error {
 }
 
 type ListUpdateParams struct {
-	Name        string                    `json:"name,required"`
-	Preferences RecipientPreferencesParam `json:"preferences,omitzero"`
+	Name        string                           `json:"name,required"`
+	Preferences shared.RecipientPreferencesParam `json:"preferences,omitzero"`
 	paramObj
 }
 

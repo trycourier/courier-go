@@ -4,7 +4,6 @@ package courier
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -17,6 +16,7 @@ import (
 	"github.com/trycourier/courier-go/option"
 	"github.com/trycourier/courier-go/packages/param"
 	"github.com/trycourier/courier-go/packages/respjson"
+	"github.com/trycourier/courier-go/shared"
 )
 
 // AudienceService contains methods and other services that help with interacting
@@ -39,7 +39,7 @@ func NewAudienceService(opts ...option.RequestOption) (r AudienceService) {
 }
 
 // Returns the specified audience by id.
-func (r *AudienceService) Get(ctx context.Context, audienceID string, opts ...option.RequestOption) (res *Audience, err error) {
+func (r *AudienceService) Get(ctx context.Context, audienceID string, opts ...option.RequestOption) (res *shared.Audience, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if audienceID == "" {
 		err = errors.New("missing required audience_id parameter")
@@ -95,136 +95,8 @@ func (r *AudienceService) ListMembers(ctx context.Context, audienceID string, qu
 	return
 }
 
-type Audience struct {
-	// A unique identifier representing the audience_id
-	ID        string `json:"id,required"`
-	CreatedAt string `json:"created_at,required"`
-	// A description of the audience
-	Description string `json:"description,required"`
-	// A single filter to use for filtering
-	Filter Filter `json:"filter,required"`
-	// The name of the audience
-	Name      string `json:"name,required"`
-	UpdatedAt string `json:"updated_at,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		CreatedAt   respjson.Field
-		Description respjson.Field
-		Filter      respjson.Field
-		Name        respjson.Field
-		UpdatedAt   respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r Audience) RawJSON() string { return r.JSON.raw }
-func (r *Audience) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type Filter struct {
-	// The operator to use for filtering
-	//
-	// Any of "ENDS_WITH", "EQ", "EXISTS", "GT", "GTE", "INCLUDES", "IS_AFTER",
-	// "IS_BEFORE", "LT", "LTE", "NEQ", "OMIT", "STARTS_WITH", "AND", "OR".
-	Operator FilterOperator `json:"operator,required"`
-	// The attribe name from profile whose value will be operated against the filter
-	// value
-	Path string `json:"path,required"`
-	// The value to use for filtering
-	Value string `json:"value,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Operator    respjson.Field
-		Path        respjson.Field
-		Value       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r Filter) RawJSON() string { return r.JSON.raw }
-func (r *Filter) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this Filter to a FilterParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// FilterParam.Overrides()
-func (r Filter) ToParam() FilterParam {
-	return param.Override[FilterParam](json.RawMessage(r.RawJSON()))
-}
-
-// The operator to use for filtering
-type FilterOperator string
-
-const (
-	FilterOperatorEndsWith   FilterOperator = "ENDS_WITH"
-	FilterOperatorEq         FilterOperator = "EQ"
-	FilterOperatorExists     FilterOperator = "EXISTS"
-	FilterOperatorGt         FilterOperator = "GT"
-	FilterOperatorGte        FilterOperator = "GTE"
-	FilterOperatorIncludes   FilterOperator = "INCLUDES"
-	FilterOperatorIsAfter    FilterOperator = "IS_AFTER"
-	FilterOperatorIsBefore   FilterOperator = "IS_BEFORE"
-	FilterOperatorLt         FilterOperator = "LT"
-	FilterOperatorLte        FilterOperator = "LTE"
-	FilterOperatorNeq        FilterOperator = "NEQ"
-	FilterOperatorOmit       FilterOperator = "OMIT"
-	FilterOperatorStartsWith FilterOperator = "STARTS_WITH"
-	FilterOperatorAnd        FilterOperator = "AND"
-	FilterOperatorOr         FilterOperator = "OR"
-)
-
-// The properties Operator, Path, Value are required.
-type FilterParam struct {
-	// The operator to use for filtering
-	//
-	// Any of "ENDS_WITH", "EQ", "EXISTS", "GT", "GTE", "INCLUDES", "IS_AFTER",
-	// "IS_BEFORE", "LT", "LTE", "NEQ", "OMIT", "STARTS_WITH", "AND", "OR".
-	Operator FilterOperator `json:"operator,omitzero,required"`
-	// The attribe name from profile whose value will be operated against the filter
-	// value
-	Path string `json:"path,required"`
-	// The value to use for filtering
-	Value string `json:"value,required"`
-	paramObj
-}
-
-func (r FilterParam) MarshalJSON() (data []byte, err error) {
-	type shadow FilterParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *FilterParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type Paging struct {
-	More   bool   `json:"more,required"`
-	Cursor string `json:"cursor,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		More        respjson.Field
-		Cursor      respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r Paging) RawJSON() string { return r.JSON.raw }
-func (r *Paging) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type AudienceUpdateResponse struct {
-	Audience Audience `json:"audience,required"`
+	Audience shared.Audience `json:"audience,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Audience    respjson.Field
@@ -240,8 +112,8 @@ func (r *AudienceUpdateResponse) UnmarshalJSON(data []byte) error {
 }
 
 type AudienceListResponse struct {
-	Items  []Audience `json:"items,required"`
-	Paging Paging     `json:"paging,required"`
+	Items  []shared.Audience `json:"items,required"`
+	Paging shared.Paging     `json:"paging,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Items       respjson.Field
@@ -259,7 +131,7 @@ func (r *AudienceListResponse) UnmarshalJSON(data []byte) error {
 
 type AudienceListMembersResponse struct {
 	Items  []AudienceListMembersResponseItem `json:"items,required"`
-	Paging Paging                            `json:"paging,required"`
+	Paging shared.Paging                     `json:"paging,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Items       respjson.Field
@@ -305,7 +177,7 @@ type AudienceUpdateParams struct {
 	// The name of the audience
 	Name param.Opt[string] `json:"name,omitzero"`
 	// A single filter to use for filtering
-	Filter FilterParam `json:"filter,omitzero"`
+	Filter shared.FilterParam `json:"filter,omitzero"`
 	paramObj
 }
 

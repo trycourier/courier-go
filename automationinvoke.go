@@ -13,7 +13,7 @@ import (
 	"github.com/trycourier/courier-go/internal/requestconfig"
 	"github.com/trycourier/courier-go/option"
 	"github.com/trycourier/courier-go/packages/param"
-	"github.com/trycourier/courier-go/packages/respjson"
+	"github.com/trycourier/courier-go/shared"
 )
 
 // AutomationInvokeService contains methods and other services that help with
@@ -39,7 +39,7 @@ func NewAutomationInvokeService(opts ...option.RequestOption) (r AutomationInvok
 // series of automation steps. For information about what steps are available,
 // checkout the ad hoc automation guide
 // [here](https://www.courier.com/docs/automations/steps/).
-func (r *AutomationInvokeService) InvokeAdHoc(ctx context.Context, body AutomationInvokeInvokeAdHocParams, opts ...option.RequestOption) (res *AutomationInvokeResponse, err error) {
+func (r *AutomationInvokeService) InvokeAdHoc(ctx context.Context, body AutomationInvokeInvokeAdHocParams, opts ...option.RequestOption) (res *shared.AutomationInvokeResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "automations/invoke"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -47,7 +47,7 @@ func (r *AutomationInvokeService) InvokeAdHoc(ctx context.Context, body Automati
 }
 
 // Invoke an automation run from an automation template.
-func (r *AutomationInvokeService) InvokeByTemplate(ctx context.Context, templateID string, body AutomationInvokeInvokeByTemplateParams, opts ...option.RequestOption) (res *AutomationInvokeResponse, err error) {
+func (r *AutomationInvokeService) InvokeByTemplate(ctx context.Context, templateID string, body AutomationInvokeInvokeByTemplateParams, opts ...option.RequestOption) (res *shared.AutomationInvokeResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if templateID == "" {
 		err = errors.New("missing required templateId parameter")
@@ -56,22 +56,6 @@ func (r *AutomationInvokeService) InvokeByTemplate(ctx context.Context, template
 	path := fmt.Sprintf("automations/%s/invoke", templateID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
-}
-
-type AutomationInvokeResponse struct {
-	RunID string `json:"runId,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		RunID       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r AutomationInvokeResponse) RawJSON() string { return r.JSON.raw }
-func (r *AutomationInvokeResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }
 
 type AutomationInvokeInvokeAdHocParams struct {

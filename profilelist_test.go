@@ -85,12 +85,12 @@ func TestProfileListSubscribe(t *testing.T) {
 		courier.ProfileListSubscribeParams{
 			Lists: []courier.ProfileListSubscribeParamsList{{
 				ListID: "listId",
-				Preferences: courier.RecipientPreferencesParam{
-					Categories: map[string]courier.NotificationPreferenceDetailsParam{
+				Preferences: shared.RecipientPreferencesParam{
+					Categories: map[string]shared.NotificationPreferenceDetailsParam{
 						"foo": {
-							Status: courier.PreferenceStatusOptedIn,
+							Status: shared.PreferenceStatusOptedIn,
 							ChannelPreferences: []shared.ChannelPreferenceParam{{
-								Channel: courier.ChannelClassificationDirectMessage,
+								Channel: shared.ChannelClassificationDirectMessage,
 							}},
 							Rules: []shared.RuleParam{{
 								Until: "until",
@@ -98,11 +98,11 @@ func TestProfileListSubscribe(t *testing.T) {
 							}},
 						},
 					},
-					Notifications: map[string]courier.NotificationPreferenceDetailsParam{
+					Notifications: map[string]shared.NotificationPreferenceDetailsParam{
 						"foo": {
-							Status: courier.PreferenceStatusOptedIn,
+							Status: shared.PreferenceStatusOptedIn,
 							ChannelPreferences: []shared.ChannelPreferenceParam{{
-								Channel: courier.ChannelClassificationDirectMessage,
+								Channel: shared.ChannelClassificationDirectMessage,
 							}},
 							Rules: []shared.RuleParam{{
 								Until: "until",

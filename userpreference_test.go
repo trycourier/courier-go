@@ -11,6 +11,7 @@ import (
 	"github.com/trycourier/courier-go"
 	"github.com/trycourier/courier-go/internal/testutil"
 	"github.com/trycourier/courier-go/option"
+	"github.com/trycourier/courier-go/shared"
 )
 
 func TestUserPreferenceGetWithOptionalParams(t *testing.T) {
@@ -91,8 +92,8 @@ func TestUserPreferenceUpdateOrNewTopicWithOptionalParams(t *testing.T) {
 		courier.UserPreferenceUpdateOrNewTopicParams{
 			UserID: "user_id",
 			Topic: courier.UserPreferenceUpdateOrNewTopicParamsTopic{
-				Status:           courier.PreferenceStatusOptedIn,
-				CustomRouting:    []courier.ChannelClassification{courier.ChannelClassificationInbox, courier.ChannelClassificationEmail},
+				Status:           shared.PreferenceStatusOptedIn,
+				CustomRouting:    []shared.ChannelClassification{shared.ChannelClassificationInbox, shared.ChannelClassificationEmail},
 				HasCustomRouting: courier.Bool(true),
 			},
 			TenantID: courier.String("tenant_id"),

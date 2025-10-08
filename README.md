@@ -50,6 +50,7 @@ import (
 
 	"github.com/trycourier/courier-go"
 	"github.com/trycourier/courier-go/option"
+	"github.com/trycourier/courier-go/shared"
 )
 
 func main() {
@@ -59,11 +60,10 @@ func main() {
 	response, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
 			To: courier.SendMessageParamsMessageToUnion{
-				OfUserRecipient: &courier.UserRecipientParam{
+				OfUserRecipient: &shared.UserRecipientParam{
 					UserID: courier.String("your_user_id"),
 				},
 			},
-			Template: courier.String("your_template"),
 			Data: map[string]any{
 				"foo": "bar",
 			},
@@ -312,11 +312,10 @@ To handle errors, we recommend that you use the `errors.As` pattern:
 _, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
 	Message: courier.SendMessageParamsMessage{
 		To: courier.SendMessageParamsMessageToUnion{
-			OfUserRecipient: &courier.UserRecipientParam{
+			OfUserRecipient: &shared.UserRecipientParam{
 				UserID: courier.String("your_user_id"),
 			},
 		},
-		Template: courier.String("your_template"),
 		Data: map[string]any{
 			"foo": "bar",
 		},
@@ -351,11 +350,10 @@ client.Send.Message(
 	courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
 			To: courier.SendMessageParamsMessageToUnion{
-				OfUserRecipient: &courier.UserRecipientParam{
+				OfUserRecipient: &shared.UserRecipientParam{
 					UserID: courier.String("your_user_id"),
 				},
 			},
-			Template: courier.String("your_template"),
 			Data: map[string]any{
 				"foo": "bar",
 			},
@@ -399,11 +397,10 @@ client.Send.Message(
 	courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
 			To: courier.SendMessageParamsMessageToUnion{
-				OfUserRecipient: &courier.UserRecipientParam{
+				OfUserRecipient: &shared.UserRecipientParam{
 					UserID: courier.String("your_user_id"),
 				},
 			},
-			Template: courier.String("your_template"),
 			Data: map[string]any{
 				"foo": "bar",
 			},
@@ -426,11 +423,10 @@ response, err := client.Send.Message(
 	courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
 			To: courier.SendMessageParamsMessageToUnion{
-				OfUserRecipient: &courier.UserRecipientParam{
+				OfUserRecipient: &shared.UserRecipientParam{
 					UserID: courier.String("your_user_id"),
 				},
 			},
-			Template: courier.String("your_template"),
 			Data: map[string]any{
 				"foo": "bar",
 			},

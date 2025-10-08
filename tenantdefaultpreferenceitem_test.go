@@ -11,6 +11,7 @@ import (
 	"github.com/trycourier/courier-go"
 	"github.com/trycourier/courier-go/internal/testutil"
 	"github.com/trycourier/courier-go/option"
+	"github.com/trycourier/courier-go/shared"
 )
 
 func TestTenantDefaultPreferenceItemUpdateWithOptionalParams(t *testing.T) {
@@ -31,9 +32,9 @@ func TestTenantDefaultPreferenceItemUpdateWithOptionalParams(t *testing.T) {
 		"topic_id",
 		courier.TenantDefaultPreferenceItemUpdateParams{
 			TenantID: "tenant_id",
-			SubscriptionTopicNew: courier.SubscriptionTopicNewParam{
-				Status:           courier.SubscriptionTopicNewStatusOptedIn,
-				CustomRouting:    []courier.ChannelClassification{courier.ChannelClassificationInbox},
+			SubscriptionTopicNew: shared.SubscriptionTopicNewParam{
+				Status:           shared.SubscriptionTopicNewStatusOptedIn,
+				CustomRouting:    []shared.ChannelClassification{shared.ChannelClassificationInbox},
 				HasCustomRouting: courier.Bool(true),
 			},
 		},
