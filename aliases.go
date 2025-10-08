@@ -39,9 +39,6 @@ type ElementalContentSugar = shared.ElementalContentSugar
 type ElementalContentSugarParam = shared.ElementalContentSugarParam
 
 // This is an alias to an internal type.
-type ListRecipientParam = shared.ListRecipientParam
-
-// This is an alias to an internal type.
 type MessageRouting = shared.MessageRouting
 
 // This is an alias to an internal type.
@@ -85,15 +82,3 @@ type Rule = shared.Rule
 
 // This is an alias to an internal type.
 type RuleParam = shared.RuleParam
-
-// This is an alias to an internal type.
-type UserRecipient = shared.UserRecipient
-
-// This is an alias to an internal type.
-type UserRecipientPreferences = shared.UserRecipientPreferences
-
-// This is an alias to an internal type.
-type UserRecipientParam = shared.UserRecipientParam
-
-// This is an alias to an internal type.
-type UserRecipientPreferencesParam = shared.UserRecipientPreferencesParam
