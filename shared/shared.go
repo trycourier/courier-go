@@ -17,15 +17,6 @@ type paramUnion = param.APIUnion
 // aliased to make [param.APIObject] private when embedding
 type paramObj = param.APIObject
 
-type Alignment string
-
-const (
-	AlignmentCenter Alignment = "center"
-	AlignmentLeft   Alignment = "left"
-	AlignmentRight  Alignment = "right"
-	AlignmentFull   Alignment = "full"
-)
-
 type ChannelPreference struct {
 	// Any of "direct_message", "email", "push", "sms", "webhook", "inbox".
 	Channel courier.ChannelClassification `json:"channel,required"`

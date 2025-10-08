@@ -64,7 +64,7 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 				TenantID: courier.String("tenant_id"),
 			},
 			Data: map[string]any{
-				"name": "bar",
+				"foo": "bar",
 			},
 			Delay: courier.SendMessageParamsMessageDelay{
 				Duration: courier.Int(0),

@@ -17,21 +17,6 @@ type paramObj = param.APIObject
 type Error = apierror.Error
 
 // This is an alias to an internal type.
-type Alignment = shared.Alignment
-
-// Equals "center"
-const AlignmentCenter = shared.AlignmentCenter
-
-// Equals "left"
-const AlignmentLeft = shared.AlignmentLeft
-
-// Equals "right"
-const AlignmentRight = shared.AlignmentRight
-
-// Equals "full"
-const AlignmentFull = shared.AlignmentFull
-
-// This is an alias to an internal type.
 type ChannelPreference = shared.ChannelPreference
 
 // This is an alias to an internal type.
