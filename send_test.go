@@ -115,6 +115,7 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 				}},
 				Method: "all",
 			},
+			Template: courier.String("template_id"),
 			Timeout: courier.SendMessageParamsMessageTimeout{
 				Channel: map[string]int64{
 					"foo": 0,

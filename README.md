@@ -64,6 +64,7 @@ func main() {
 					UserID: courier.String("your_user_id"),
 				},
 			},
+			Template: courier.String("your_template"),
 			Data: map[string]any{
 				"foo": "bar",
 			},
@@ -316,6 +317,7 @@ _, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
 				UserID: courier.String("your_user_id"),
 			},
 		},
+		Template: courier.String("your_template"),
 		Data: map[string]any{
 			"foo": "bar",
 		},
@@ -354,6 +356,7 @@ client.Send.Message(
 					UserID: courier.String("your_user_id"),
 				},
 			},
+			Template: courier.String("your_template"),
 			Data: map[string]any{
 				"foo": "bar",
 			},
@@ -401,6 +404,7 @@ client.Send.Message(
 					UserID: courier.String("your_user_id"),
 				},
 			},
+			Template: courier.String("your_template"),
 			Data: map[string]any{
 				"foo": "bar",
 			},
@@ -427,6 +431,7 @@ response, err := client.Send.Message(
 					UserID: courier.String("your_user_id"),
 				},
 			},
+			Template: courier.String("your_template"),
 			Data: map[string]any{
 				"foo": "bar",
 			},
