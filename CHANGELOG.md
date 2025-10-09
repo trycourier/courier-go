@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.3.0-alpha1 (2025-10-09)
+
+Full Changelog: [v3.3.0-alpha0...v3.3.0-alpha1](https://github.com/trycourier/courier-go/compare/v3.3.0-alpha0...v3.3.0-alpha1)
+
+### Features
+
+* Template Id ([d1e43b8](https://github.com/trycourier/courier-go/commit/d1e43b80564e7815cf3379528426f09d04fc3b27))
+
 ## 3.3.0-alpha0 (2025-10-09)
 
 Full Changelog: [v0.0.1...v3.3.0-alpha0](https://github.com/trycourier/courier-go/compare/v0.0.1...v3.3.0-alpha0)
