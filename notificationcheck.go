@@ -4,17 +4,17 @@ package courier
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"slices"
 
-	"github.com/stainless-sdks/courier-go/internal/apijson"
-	"github.com/stainless-sdks/courier-go/internal/requestconfig"
-	"github.com/stainless-sdks/courier-go/option"
-	"github.com/stainless-sdks/courier-go/packages/param"
-	"github.com/stainless-sdks/courier-go/packages/respjson"
+	"github.com/trycourier/courier-go/v3/internal/apijson"
+	"github.com/trycourier/courier-go/v3/internal/requestconfig"
+	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/packages/param"
+	"github.com/trycourier/courier-go/v3/packages/respjson"
+	"github.com/trycourier/courier-go/v3/shared"
 )
 
 // NotificationCheckService contains methods and other services that help with
@@ -82,88 +82,8 @@ func (r *NotificationCheckService) Delete(ctx context.Context, submissionID stri
 	return
 }
 
-type BaseCheck struct {
-	ID string `json:"id,required"`
-	// Any of "RESOLVED", "FAILED", "PENDING".
-	Status BaseCheckStatus `json:"status,required"`
-	// Any of "custom".
-	Type BaseCheckType `json:"type,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Status      respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r BaseCheck) RawJSON() string { return r.JSON.raw }
-func (r *BaseCheck) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this BaseCheck to a BaseCheckParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// BaseCheckParam.Overrides()
-func (r BaseCheck) ToParam() BaseCheckParam {
-	return param.Override[BaseCheckParam](json.RawMessage(r.RawJSON()))
-}
-
-type BaseCheckStatus string
-
-const (
-	BaseCheckStatusResolved BaseCheckStatus = "RESOLVED"
-	BaseCheckStatusFailed   BaseCheckStatus = "FAILED"
-	BaseCheckStatusPending  BaseCheckStatus = "PENDING"
-)
-
-type BaseCheckType string
-
-const (
-	BaseCheckTypeCustom BaseCheckType = "custom"
-)
-
-// The properties ID, Status, Type are required.
-type BaseCheckParam struct {
-	ID string `json:"id,required"`
-	// Any of "RESOLVED", "FAILED", "PENDING".
-	Status BaseCheckStatus `json:"status,omitzero,required"`
-	// Any of "custom".
-	Type BaseCheckType `json:"type,omitzero,required"`
-	paramObj
-}
-
-func (r BaseCheckParam) MarshalJSON() (data []byte, err error) {
-	type shadow BaseCheckParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *BaseCheckParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type Check struct {
-	Updated int64 `json:"updated,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Updated     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-	BaseCheck
-}
-
-// Returns the unmodified JSON received from the API
-func (r Check) RawJSON() string { return r.JSON.raw }
-func (r *Check) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type NotificationCheckUpdateResponse struct {
-	Checks []Check `json:"checks,required"`
+	Checks []shared.Check `json:"checks,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Checks      respjson.Field
@@ -179,7 +99,7 @@ func (r *NotificationCheckUpdateResponse) UnmarshalJSON(data []byte) error {
 }
 
 type NotificationCheckListResponse struct {
-	Checks []Check `json:"checks,required"`
+	Checks []shared.Check `json:"checks,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Checks      respjson.Field
@@ -195,8 +115,8 @@ func (r *NotificationCheckListResponse) UnmarshalJSON(data []byte) error {
 }
 
 type NotificationCheckUpdateParams struct {
-	ID     string           `path:"id,required" json:"-"`
-	Checks []BaseCheckParam `json:"checks,omitzero,required"`
+	ID     string                  `path:"id,required" json:"-"`
+	Checks []shared.BaseCheckParam `json:"checks,omitzero,required"`
 	paramObj
 }
 

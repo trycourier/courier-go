@@ -7,11 +7,11 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/stainless-sdks/courier-go/internal/apijson"
-	"github.com/stainless-sdks/courier-go/internal/requestconfig"
-	"github.com/stainless-sdks/courier-go/option"
-	"github.com/stainless-sdks/courier-go/packages/param"
-	"github.com/stainless-sdks/courier-go/packages/respjson"
+	"github.com/trycourier/courier-go/v3/internal/apijson"
+	"github.com/trycourier/courier-go/v3/internal/requestconfig"
+	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/packages/param"
+	"github.com/trycourier/courier-go/v3/packages/respjson"
 )
 
 // InboundService contains methods and other services that help with interacting
@@ -69,7 +69,7 @@ type InboundTrackEventParams struct {
 	Properties map[string]any `json:"properties,omitzero,required"`
 	// Any of "track".
 	Type InboundTrackEventParamsType `json:"type,omitzero,required"`
-	// The user id associated with the track
+	// The user id associatiated with the track
 	UserID param.Opt[string] `json:"userId,omitzero"`
 	paramObj
 }

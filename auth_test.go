@@ -8,9 +8,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/courier-go"
-	"github.com/stainless-sdks/courier-go/internal/testutil"
-	"github.com/stainless-sdks/courier-go/option"
+	"github.com/trycourier/courier-go/v3"
+	"github.com/trycourier/courier-go/v3/internal/testutil"
+	"github.com/trycourier/courier-go/v3/option"
 )
 
 func TestAuthIssueToken(t *testing.T) {
@@ -28,7 +28,7 @@ func TestAuthIssueToken(t *testing.T) {
 	)
 	_, err := client.Auth.IssueToken(context.TODO(), courier.AuthIssueTokenParams{
 		ExpiresIn: "expires_in",
-		Scope:     courier.AuthIssueTokenParamsScopeReadPreferences,
+		Scope:     "scope",
 	})
 	if err != nil {
 		var apierr *courier.Error

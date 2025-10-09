@@ -8,12 +8,13 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/courier-go"
-	"github.com/stainless-sdks/courier-go/internal/testutil"
-	"github.com/stainless-sdks/courier-go/option"
+	"github.com/trycourier/courier-go/v3"
+	"github.com/trycourier/courier-go/v3/internal/testutil"
+	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/shared"
 )
 
-func TestSendSendMessage(t *testing.T) {
+func TestSendMessageWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,56 +27,15 @@ func TestSendSendMessage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Send.SendMessage(context.TODO(), courier.SendSendMessageParams{
-		Message: courier.MessageUnionParam{
-			OfContentMessage: &courier.MessageContentMessageParam{
-				BaseMessageParam: courier.BaseMessageParam{
+	_, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
+		Message: courier.SendMessageParamsMessage{
+			BrandID: courier.String("brand_id"),
+			Channels: map[string]courier.SendMessageParamsMessageChannel{
+				"foo": {
 					BrandID: courier.String("brand_id"),
-					Channels: map[string]courier.BaseMessageChannelParam{
-						"foo": {
-							BrandID: courier.String("brand_id"),
-							If:      courier.String("if"),
-							Metadata: courier.BaseMessageChannelMetadataParam{
-								Utm: courier.UtmParam{
-									Campaign: courier.String("campaign"),
-									Content:  courier.String("content"),
-									Medium:   courier.String("medium"),
-									Source:   courier.String("source"),
-									Term:     courier.String("term"),
-								},
-							},
-							Override: map[string]any{
-								"foo": "bar",
-							},
-							Providers:     []string{"string"},
-							RoutingMethod: courier.RoutingMethodAll,
-							Timeouts: courier.BaseMessageChannelTimeoutsParam{
-								Channel:  courier.Int(0),
-								Provider: courier.Int(0),
-							},
-						},
-					},
-					Context: courier.MessageContextParam{
-						TenantID: courier.String("tenant_id"),
-					},
-					Data: map[string]any{
-						"foo": "bar",
-					},
-					Delay: courier.BaseMessageDelayParam{
-						Duration: courier.Int(0),
-						Until:    courier.String("until"),
-					},
-					Expiry: courier.BaseMessageExpiryParam{
-						ExpiresIn: courier.BaseMessageExpiryExpiresInUnionParam{
-							OfString: courier.String("string"),
-						},
-						ExpiresAt: courier.String("expires_at"),
-					},
-					Metadata: courier.BaseMessageMetadataParam{
-						Event:   courier.String("event"),
-						Tags:    []string{"string"},
-						TraceID: courier.String("trace_id"),
-						Utm: courier.UtmParam{
+					If:      courier.String("if"),
+					Metadata: courier.SendMessageParamsMessageChannelMetadata{
+						Utm: shared.UtmParam{
 							Campaign: courier.String("campaign"),
 							Content:  courier.String("content"),
 							Medium:   courier.String("medium"),
@@ -83,99 +43,132 @@ func TestSendSendMessage(t *testing.T) {
 							Term:     courier.String("term"),
 						},
 					},
-					Preferences: courier.BaseMessagePreferencesParam{
-						SubscriptionTopicID: "subscription_topic_id",
+					Override: map[string]any{
+						"foo": "bar",
 					},
-					Providers: map[string]courier.BaseMessageProviderParam{
-						"foo": {
-							If: courier.String("if"),
-							Metadata: courier.BaseMessageProviderMetadataParam{
-								Utm: courier.UtmParam{
-									Campaign: courier.String("campaign"),
-									Content:  courier.String("content"),
-									Medium:   courier.String("medium"),
-									Source:   courier.String("source"),
-									Term:     courier.String("term"),
-								},
-							},
-							Override: map[string]any{
-								"foo": "bar",
-							},
-							Timeouts: courier.Int(0),
-						},
-					},
-					Routing: courier.BaseMessageRoutingParam{
-						Channels: []courier.BaseMessageRoutingChannelUnionParam{{
-							OfRoutingStrategyChannel: &courier.BaseMessageRoutingChannelRoutingStrategyChannelParam{
-								Channel: "channel",
-								Config: map[string]any{
-									"foo": "bar",
-								},
-								If:     courier.String("if"),
-								Method: courier.RoutingMethodAll,
-								Providers: map[string]courier.BaseMessageRoutingChannelRoutingStrategyChannelProviderParam{
-									"foo": {
-										If: courier.String("if"),
-										Metadata: courier.BaseMessageRoutingChannelRoutingStrategyChannelProviderMetadataParam{
-											Utm: courier.UtmParam{
-												Campaign: courier.String("campaign"),
-												Content:  courier.String("content"),
-												Medium:   courier.String("medium"),
-												Source:   courier.String("source"),
-												Term:     courier.String("term"),
-											},
-										},
-										Override: map[string]any{
-											"foo": "bar",
-										},
-										Timeouts: courier.Int(0),
-									},
-								},
-							},
-						}},
-						Method: courier.RoutingMethodAll,
-					},
-					Timeout: courier.BaseMessageTimeoutParam{
-						Channel: map[string]int64{
-							"foo": 0,
-						},
-						Criteria:   "no-escalation",
-						Escalation: courier.Int(0),
-						Message:    courier.Int(0),
-						Provider: map[string]int64{
-							"foo": 0,
-						},
+					Providers:     []string{"string"},
+					RoutingMethod: "all",
+					Timeouts: courier.SendMessageParamsMessageChannelTimeouts{
+						Channel:  courier.Int(0),
+						Provider: courier.Int(0),
 					},
 				},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{
-					To: courier.BaseMessageSendToToUnionParam{
-						OfAudienceRecipient: &courier.BaseMessageSendToToAudienceRecipientParam{
-							AudienceID: "audience_id",
-							Data: map[string]any{
-								"foo": "bar",
-							},
-							Filters: []courier.BaseMessageSendToToAudienceRecipientFilterParam{{
-								Operator: "MEMBER_OF",
-								Path:     "account_id",
-								Value:    "value",
-							}},
+			},
+			Content: courier.SendMessageParamsMessageContentUnion{
+				OfElementalContentSugar: &shared.ElementalContentSugarParam{
+					Body:  "body",
+					Title: "title",
+				},
+			},
+			Context: shared.MessageContextParam{
+				TenantID: courier.String("tenant_id"),
+			},
+			Data: map[string]any{
+				"foo": "bar",
+			},
+			Delay: courier.SendMessageParamsMessageDelay{
+				Duration: courier.Int(0),
+				Until:    courier.String("until"),
+			},
+			Expiry: courier.SendMessageParamsMessageExpiry{
+				ExpiresIn: courier.SendMessageParamsMessageExpiryExpiresInUnion{
+					OfString: courier.String("string"),
+				},
+				ExpiresAt: courier.String("expires_at"),
+			},
+			Metadata: courier.SendMessageParamsMessageMetadata{
+				Event:   courier.String("event"),
+				Tags:    []string{"string"},
+				TraceID: courier.String("trace_id"),
+				Utm: shared.UtmParam{
+					Campaign: courier.String("campaign"),
+					Content:  courier.String("content"),
+					Medium:   courier.String("medium"),
+					Source:   courier.String("source"),
+					Term:     courier.String("term"),
+				},
+			},
+			Preferences: courier.SendMessageParamsMessagePreferences{
+				SubscriptionTopicID: "subscription_topic_id",
+			},
+			Providers: map[string]courier.SendMessageParamsMessageProvider{
+				"foo": {
+					If: courier.String("if"),
+					Metadata: courier.SendMessageParamsMessageProviderMetadata{
+						Utm: shared.UtmParam{
+							Campaign: courier.String("campaign"),
+							Content:  courier.String("content"),
+							Medium:   courier.String("medium"),
+							Source:   courier.String("source"),
+							Term:     courier.String("term"),
 						},
 					},
-				},
-				Content: courier.ContentUnionParam{
-					OfElementalContent: &courier.ContentElementalContentParam{
-						Elements: []courier.ElementalNodeUnionParam{{
-							OfElementalNodeObject: &courier.ElementalNodeObjectParam{
-								Channels: []string{"string"},
-								If:       courier.String("if"),
-								Loop:     courier.String("loop"),
-								Ref:      courier.String("ref"),
-								Type:     "text",
-							},
-						}},
-						Version: "version",
-						Brand:   map[string]interface{}{},
+					Override: map[string]any{
+						"foo": "bar",
 					},
+					Timeouts: courier.Int(0),
+				},
+			},
+			Routing: courier.SendMessageParamsMessageRouting{
+				Channels: []shared.MessageRoutingChannelUnionParam{{
+					OfString: courier.String("string"),
+				}},
+				Method: "all",
+			},
+			Timeout: courier.SendMessageParamsMessageTimeout{
+				Channel: map[string]int64{
+					"foo": 0,
+				},
+				Criteria:   "no-escalation",
+				Escalation: courier.Int(0),
+				Message:    courier.Int(0),
+				Provider: map[string]int64{
+					"foo": 0,
+				},
+			},
+			To: courier.SendMessageParamsMessageToUnion{
+				OfUserRecipient: &shared.UserRecipientParam{
+					AccountID: courier.String("account_id"),
+					Context: shared.MessageContextParam{
+						TenantID: courier.String("tenant_id"),
+					},
+					Data: map[string]any{
+						"foo": "bar",
+					},
+					Email:       courier.String("email"),
+					Locale:      courier.String("locale"),
+					PhoneNumber: courier.String("phone_number"),
+					Preferences: shared.UserRecipientPreferencesParam{
+						Notifications: map[string]shared.PreferenceParam{
+							"foo": {
+								Status: shared.PreferenceStatusOptedIn,
+								ChannelPreferences: []shared.ChannelPreferenceParam{{
+									Channel: shared.ChannelClassificationDirectMessage,
+								}},
+								Rules: []shared.RuleParam{{
+									Until: "until",
+									Start: courier.String("start"),
+								}},
+								Source: shared.PreferenceSourceSubscription,
+							},
+						},
+						Categories: map[string]shared.PreferenceParam{
+							"foo": {
+								Status: shared.PreferenceStatusOptedIn,
+								ChannelPreferences: []shared.ChannelPreferenceParam{{
+									Channel: shared.ChannelClassificationDirectMessage,
+								}},
+								Rules: []shared.RuleParam{{
+									Until: "until",
+									Start: courier.String("start"),
+								}},
+								Source: shared.PreferenceSourceSubscription,
+							},
+						},
+						TemplateID: courier.String("templateId"),
+					},
+					TenantID: courier.String("tenant_id"),
+					UserID:   courier.String("example_user"),
 				},
 			},
 		},

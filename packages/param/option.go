@@ -3,7 +3,7 @@ package param
 import (
 	"encoding/json"
 	"fmt"
-	shimjson "github.com/stainless-sdks/courier-go/internal/encoding/json"
+	shimjson "github.com/trycourier/courier-go/v3/internal/encoding/json"
 	"time"
 )
 

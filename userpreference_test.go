@@ -8,9 +8,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/courier-go"
-	"github.com/stainless-sdks/courier-go/internal/testutil"
-	"github.com/stainless-sdks/courier-go/option"
+	"github.com/trycourier/courier-go/v3"
+	"github.com/trycourier/courier-go/v3/internal/testutil"
+	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/shared"
 )
 
 func TestUserPreferenceGetWithOptionalParams(t *testing.T) {
@@ -91,8 +92,8 @@ func TestUserPreferenceUpdateOrNewTopicWithOptionalParams(t *testing.T) {
 		courier.UserPreferenceUpdateOrNewTopicParams{
 			UserID: "user_id",
 			Topic: courier.UserPreferenceUpdateOrNewTopicParamsTopic{
-				Status:           courier.PreferenceStatusOptedIn,
-				CustomRouting:    []courier.ChannelClassification{courier.ChannelClassificationInbox, courier.ChannelClassificationEmail},
+				Status:           shared.PreferenceStatusOptedIn,
+				CustomRouting:    []shared.ChannelClassification{shared.ChannelClassificationInbox, shared.ChannelClassificationEmail},
 				HasCustomRouting: courier.Bool(true),
 			},
 			TenantID: courier.String("tenant_id"),

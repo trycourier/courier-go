@@ -8,9 +8,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/courier-go"
-	"github.com/stainless-sdks/courier-go/internal/testutil"
-	"github.com/stainless-sdks/courier-go/option"
+	"github.com/trycourier/courier-go/v3"
+	"github.com/trycourier/courier-go/v3/internal/testutil"
+	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/shared"
 )
 
 func TestBrandNewWithOptionalParams(t *testing.T) {
@@ -28,24 +29,75 @@ func TestBrandNewWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Brands.New(context.TODO(), courier.BrandNewParams{
 		Name: "name",
-		Settings: courier.BrandSettingsParam{
-			Colors: courier.BrandSettingsColorsParam{
+		ID:   courier.String("id"),
+		Settings: shared.BrandSettingsParam{
+			Colors: shared.BrandColorsParam{
 				Primary:   courier.String("primary"),
 				Secondary: courier.String("secondary"),
-				Tertiary:  courier.String("tertiary"),
 			},
-			Email: courier.BrandSettingsEmailParam{
-				Footer: map[string]interface{}{},
-				Header: map[string]interface{}{},
+			Email: shared.BrandSettingsEmailParam{
+				Footer: shared.EmailFooterParam{
+					Content:        courier.String("content"),
+					InheritDefault: courier.Bool(true),
+				},
+				Head: shared.EmailHeadParam{
+					InheritDefault: true,
+					Content:        courier.String("content"),
+				},
+				Header: shared.EmailHeaderParam{
+					Logo: shared.LogoParam{
+						Href:  courier.String("href"),
+						Image: courier.String("image"),
+					},
+					BarColor:       courier.String("barColor"),
+					InheritDefault: courier.Bool(true),
+				},
+				TemplateOverride: shared.BrandSettingsEmailTemplateOverrideParam{
+					BrandTemplateParam: shared.BrandTemplateParam{
+						Enabled:               true,
+						BackgroundColor:       courier.String("backgroundColor"),
+						BlocksBackgroundColor: courier.String("blocksBackgroundColor"),
+						Footer:                courier.String("footer"),
+						Head:                  courier.String("head"),
+						Header:                courier.String("header"),
+						Width:                 courier.String("width"),
+					},
+					Mjml: shared.BrandTemplateParam{
+						Enabled:               true,
+						BackgroundColor:       courier.String("backgroundColor"),
+						BlocksBackgroundColor: courier.String("blocksBackgroundColor"),
+						Footer:                courier.String("footer"),
+						Head:                  courier.String("head"),
+						Header:                courier.String("header"),
+						Width:                 courier.String("width"),
+					},
+					FooterBackgroundColor: courier.String("footerBackgroundColor"),
+					FooterFullWidth:       courier.Bool(true),
+				},
 			},
-			Inapp: map[string]interface{}{},
+			Inapp: shared.BrandSettingsInAppParam{
+				Colors: shared.BrandColorsParam{
+					Primary:   courier.String("primary"),
+					Secondary: courier.String("secondary"),
+				},
+				Icons: shared.IconsParam{
+					Bell:    courier.String("bell"),
+					Message: courier.String("message"),
+				},
+				WidgetBackground: shared.WidgetBackgroundParam{
+					BottomColor: courier.String("bottomColor"),
+					TopColor:    courier.String("topColor"),
+				},
+				BorderRadius:       courier.String("borderRadius"),
+				DisableMessageIcon: courier.Bool(true),
+				FontFamily:         courier.String("fontFamily"),
+				Placement:          shared.BrandSettingsInAppPlacementTop,
+			},
 		},
-		ID: courier.String("id"),
-		Snippets: courier.BrandSnippetsParam{
-			Items: []courier.BrandSnippetsItemParam{{
-				Format: "handlebars",
-				Name:   "name",
-				Value:  "value",
+		Snippets: shared.BrandSnippetsParam{
+			Items: []shared.BrandSnippetParam{{
+				Name:  "name",
+				Value: "value",
 			}},
 		},
 	})
@@ -99,23 +151,74 @@ func TestBrandUpdateWithOptionalParams(t *testing.T) {
 		"brand_id",
 		courier.BrandUpdateParams{
 			Name: "name",
-			Settings: courier.BrandSettingsParam{
-				Colors: courier.BrandSettingsColorsParam{
+			Settings: shared.BrandSettingsParam{
+				Colors: shared.BrandColorsParam{
 					Primary:   courier.String("primary"),
 					Secondary: courier.String("secondary"),
-					Tertiary:  courier.String("tertiary"),
 				},
-				Email: courier.BrandSettingsEmailParam{
-					Footer: map[string]interface{}{},
-					Header: map[string]interface{}{},
+				Email: shared.BrandSettingsEmailParam{
+					Footer: shared.EmailFooterParam{
+						Content:        courier.String("content"),
+						InheritDefault: courier.Bool(true),
+					},
+					Head: shared.EmailHeadParam{
+						InheritDefault: true,
+						Content:        courier.String("content"),
+					},
+					Header: shared.EmailHeaderParam{
+						Logo: shared.LogoParam{
+							Href:  courier.String("href"),
+							Image: courier.String("image"),
+						},
+						BarColor:       courier.String("barColor"),
+						InheritDefault: courier.Bool(true),
+					},
+					TemplateOverride: shared.BrandSettingsEmailTemplateOverrideParam{
+						BrandTemplateParam: shared.BrandTemplateParam{
+							Enabled:               true,
+							BackgroundColor:       courier.String("backgroundColor"),
+							BlocksBackgroundColor: courier.String("blocksBackgroundColor"),
+							Footer:                courier.String("footer"),
+							Head:                  courier.String("head"),
+							Header:                courier.String("header"),
+							Width:                 courier.String("width"),
+						},
+						Mjml: shared.BrandTemplateParam{
+							Enabled:               true,
+							BackgroundColor:       courier.String("backgroundColor"),
+							BlocksBackgroundColor: courier.String("blocksBackgroundColor"),
+							Footer:                courier.String("footer"),
+							Head:                  courier.String("head"),
+							Header:                courier.String("header"),
+							Width:                 courier.String("width"),
+						},
+						FooterBackgroundColor: courier.String("footerBackgroundColor"),
+						FooterFullWidth:       courier.Bool(true),
+					},
 				},
-				Inapp: map[string]interface{}{},
+				Inapp: shared.BrandSettingsInAppParam{
+					Colors: shared.BrandColorsParam{
+						Primary:   courier.String("primary"),
+						Secondary: courier.String("secondary"),
+					},
+					Icons: shared.IconsParam{
+						Bell:    courier.String("bell"),
+						Message: courier.String("message"),
+					},
+					WidgetBackground: shared.WidgetBackgroundParam{
+						BottomColor: courier.String("bottomColor"),
+						TopColor:    courier.String("topColor"),
+					},
+					BorderRadius:       courier.String("borderRadius"),
+					DisableMessageIcon: courier.Bool(true),
+					FontFamily:         courier.String("fontFamily"),
+					Placement:          shared.BrandSettingsInAppPlacementTop,
+				},
 			},
-			Snippets: courier.BrandSnippetsParam{
-				Items: []courier.BrandSnippetsItemParam{{
-					Format: "handlebars",
-					Name:   "name",
-					Value:  "value",
+			Snippets: shared.BrandSnippetsParam{
+				Items: []shared.BrandSnippetParam{{
+					Name:  "name",
+					Value: "value",
 				}},
 			},
 		},

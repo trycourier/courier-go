@@ -7,11 +7,11 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/stainless-sdks/courier-go/internal/apijson"
-	"github.com/stainless-sdks/courier-go/internal/requestconfig"
-	"github.com/stainless-sdks/courier-go/option"
-	"github.com/stainless-sdks/courier-go/packages/param"
-	"github.com/stainless-sdks/courier-go/packages/respjson"
+	"github.com/trycourier/courier-go/v3/internal/apijson"
+	"github.com/trycourier/courier-go/v3/internal/requestconfig"
+	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/packages/param"
+	"github.com/trycourier/courier-go/v3/packages/respjson"
 )
 
 // AuthService contains methods and other services that help with interacting with
@@ -42,7 +42,7 @@ func (r *AuthService) IssueToken(ctx context.Context, body AuthIssueTokenParams,
 }
 
 type AuthIssueTokenResponse struct {
-	Token string `json:"token,nullable"`
+	Token string `json:"token,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -59,12 +59,7 @@ func (r *AuthIssueTokenResponse) UnmarshalJSON(data []byte) error {
 
 type AuthIssueTokenParams struct {
 	ExpiresIn string `json:"expires_in,required"`
-	// Any of "read:preferences", "write:preferences", "read:user-tokens",
-	// "write:user-tokens", "read:brands", "write:brands", "read:brands{:id}",
-	// "write:brands{:id}", "write:track", "inbox:read:messages",
-	// "inbox:write:messages", "inbox:write:event", "inbox:write:events",
-	// "user_id:$YOUR_USER_ID".
-	Scope AuthIssueTokenParamsScope `json:"scope,omitzero,required"`
+	Scope     string `json:"scope,required"`
 	paramObj
 }
 
@@ -75,22 +70,3 @@ func (r AuthIssueTokenParams) MarshalJSON() (data []byte, err error) {
 func (r *AuthIssueTokenParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
-
-type AuthIssueTokenParamsScope string
-
-const (
-	AuthIssueTokenParamsScopeReadPreferences    AuthIssueTokenParamsScope = "read:preferences"
-	AuthIssueTokenParamsScopeWritePreferences   AuthIssueTokenParamsScope = "write:preferences"
-	AuthIssueTokenParamsScopeReadUserTokens     AuthIssueTokenParamsScope = "read:user-tokens"
-	AuthIssueTokenParamsScopeWriteUserTokens    AuthIssueTokenParamsScope = "write:user-tokens"
-	AuthIssueTokenParamsScopeReadBrands         AuthIssueTokenParamsScope = "read:brands"
-	AuthIssueTokenParamsScopeWriteBrands        AuthIssueTokenParamsScope = "write:brands"
-	AuthIssueTokenParamsScopeReadBrandsID       AuthIssueTokenParamsScope = "read:brands{:id}"
-	AuthIssueTokenParamsScopeWriteBrandsID      AuthIssueTokenParamsScope = "write:brands{:id}"
-	AuthIssueTokenParamsScopeWriteTrack         AuthIssueTokenParamsScope = "write:track"
-	AuthIssueTokenParamsScopeInboxReadMessages  AuthIssueTokenParamsScope = "inbox:read:messages"
-	AuthIssueTokenParamsScopeInboxWriteMessages AuthIssueTokenParamsScope = "inbox:write:messages"
-	AuthIssueTokenParamsScopeInboxWriteEvent    AuthIssueTokenParamsScope = "inbox:write:event"
-	AuthIssueTokenParamsScopeInboxWriteEvents   AuthIssueTokenParamsScope = "inbox:write:events"
-	AuthIssueTokenParamsScopeUserIDYourUserID   AuthIssueTokenParamsScope = "user_id:$YOUR_USER_ID"
-)

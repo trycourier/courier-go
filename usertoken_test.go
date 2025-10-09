@@ -8,10 +8,40 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/courier-go"
-	"github.com/stainless-sdks/courier-go/internal/testutil"
-	"github.com/stainless-sdks/courier-go/option"
+	"github.com/trycourier/courier-go/v3"
+	"github.com/trycourier/courier-go/v3/internal/testutil"
+	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/shared"
 )
+
+func TestUserTokenGet(t *testing.T) {
+	t.Skip("Prism tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := courier.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Users.Tokens.Get(
+		context.TODO(),
+		"token",
+		courier.UserTokenGetParams{
+			UserID: "user_id",
+		},
+	)
+	if err != nil {
+		var apierr *courier.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
 
 func TestUserTokenUpdate(t *testing.T) {
 	t.Skip("Prism tests are disabled")
@@ -140,10 +170,10 @@ func TestUserTokenAddSingleWithOptionalParams(t *testing.T) {
 		"token",
 		courier.UserTokenAddSingleParams{
 			UserID: "user_id",
-			UserToken: courier.UserTokenParam{
-				ProviderKey: courier.UserTokenProviderKeyFirebaseFcm,
+			UserToken: shared.UserTokenParam{
+				ProviderKey: shared.UserTokenProviderKeyFirebaseFcm,
 				Token:       courier.String("token"),
-				Device: courier.UserTokenDeviceParam{
+				Device: shared.UserTokenDeviceParam{
 					AdID:         courier.String("ad_id"),
 					AppID:        courier.String("app_id"),
 					DeviceID:     courier.String("device_id"),
@@ -151,46 +181,17 @@ func TestUserTokenAddSingleWithOptionalParams(t *testing.T) {
 					Model:        courier.String("model"),
 					Platform:     courier.String("platform"),
 				},
-				ExpiryDate: courier.UserTokenExpiryDateUnionParam{
+				ExpiryDate: shared.UserTokenExpiryDateUnionParam{
 					OfString: courier.String("string"),
 				},
 				Properties: map[string]interface{}{},
-				Tracking: courier.UserTokenTrackingParam{
+				Tracking: shared.UserTokenTrackingParam{
 					IP:        courier.String("ip"),
 					Lat:       courier.String("lat"),
 					Long:      courier.String("long"),
 					OsVersion: courier.String("os_version"),
 				},
 			},
-		},
-	)
-	if err != nil {
-		var apierr *courier.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestUserTokenGetSingle(t *testing.T) {
-	t.Skip("Prism tests are disabled")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := courier.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
-	)
-	_, err := client.Users.Tokens.GetSingle(
-		context.TODO(),
-		"token",
-		courier.UserTokenGetSingleParams{
-			UserID: "user_id",
 		},
 	)
 	if err != nil {

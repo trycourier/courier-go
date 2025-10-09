@@ -4,19 +4,19 @@ package courier
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
 	"slices"
 
-	"github.com/stainless-sdks/courier-go/internal/apijson"
-	"github.com/stainless-sdks/courier-go/internal/apiquery"
-	"github.com/stainless-sdks/courier-go/internal/requestconfig"
-	"github.com/stainless-sdks/courier-go/option"
-	"github.com/stainless-sdks/courier-go/packages/param"
-	"github.com/stainless-sdks/courier-go/packages/respjson"
+	"github.com/trycourier/courier-go/v3/internal/apijson"
+	"github.com/trycourier/courier-go/v3/internal/apiquery"
+	"github.com/trycourier/courier-go/v3/internal/requestconfig"
+	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/packages/param"
+	"github.com/trycourier/courier-go/v3/packages/respjson"
+	"github.com/trycourier/courier-go/v3/shared"
 )
 
 // UserTenantService contains methods and other services that help with interacting
@@ -115,70 +115,6 @@ func (r *UserTenantService) RemoveSingle(ctx context.Context, tenantID string, b
 	return
 }
 
-type TenantAssociation struct {
-	// Tenant ID for the association between tenant and user
-	TenantID string `json:"tenant_id,required"`
-	// Additional metadata to be applied to a user profile when used in a tenant
-	// context
-	Profile map[string]any `json:"profile,nullable"`
-	// Any of "user".
-	Type TenantAssociationType `json:"type,nullable"`
-	// User ID for the association between tenant and user
-	UserID string `json:"user_id,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		TenantID    respjson.Field
-		Profile     respjson.Field
-		Type        respjson.Field
-		UserID      respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r TenantAssociation) RawJSON() string { return r.JSON.raw }
-func (r *TenantAssociation) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this TenantAssociation to a TenantAssociationParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// TenantAssociationParam.Overrides()
-func (r TenantAssociation) ToParam() TenantAssociationParam {
-	return param.Override[TenantAssociationParam](json.RawMessage(r.RawJSON()))
-}
-
-type TenantAssociationType string
-
-const (
-	TenantAssociationTypeUser TenantAssociationType = "user"
-)
-
-// The property TenantID is required.
-type TenantAssociationParam struct {
-	// Tenant ID for the association between tenant and user
-	TenantID string `json:"tenant_id,required"`
-	// User ID for the association between tenant and user
-	UserID param.Opt[string] `json:"user_id,omitzero"`
-	// Additional metadata to be applied to a user profile when used in a tenant
-	// context
-	Profile map[string]any `json:"profile,omitzero"`
-	// Any of "user".
-	Type TenantAssociationType `json:"type,omitzero"`
-	paramObj
-}
-
-func (r TenantAssociationParam) MarshalJSON() (data []byte, err error) {
-	type shadow TenantAssociationParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *TenantAssociationParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type UserTenantListResponse struct {
 	// Set to true when there are more pages that can be retrieved.
 	HasMore bool `json:"has_more,required"`
@@ -190,8 +126,8 @@ type UserTenantListResponse struct {
 	URL string `json:"url,required"`
 	// A pointer to the next page of results. Defined only when `has_more` is set to
 	// true
-	Cursor string              `json:"cursor,nullable"`
-	Items  []TenantAssociation `json:"items,nullable"`
+	Cursor string                     `json:"cursor,nullable"`
+	Items  []shared.TenantAssociation `json:"items,nullable"`
 	// A url that may be used to generate fetch the next set of results. Defined only
 	// when `has_more` is set to true
 	NextURL string `json:"next_url,nullable"`
@@ -238,7 +174,7 @@ func (r UserTenantListParams) URLQuery() (v url.Values, err error) {
 }
 
 type UserTenantAddMultipleParams struct {
-	Tenants []TenantAssociationParam `json:"tenants,omitzero,required"`
+	Tenants []shared.TenantAssociationParam `json:"tenants,omitzero,required"`
 	paramObj
 }
 

@@ -10,12 +10,13 @@ import (
 	"net/url"
 	"slices"
 
-	"github.com/stainless-sdks/courier-go/internal/apijson"
-	"github.com/stainless-sdks/courier-go/internal/apiquery"
-	"github.com/stainless-sdks/courier-go/internal/requestconfig"
-	"github.com/stainless-sdks/courier-go/option"
-	"github.com/stainless-sdks/courier-go/packages/param"
-	"github.com/stainless-sdks/courier-go/packages/respjson"
+	"github.com/trycourier/courier-go/v3/internal/apijson"
+	"github.com/trycourier/courier-go/v3/internal/apiquery"
+	"github.com/trycourier/courier-go/v3/internal/requestconfig"
+	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/packages/param"
+	"github.com/trycourier/courier-go/v3/packages/respjson"
+	"github.com/trycourier/courier-go/v3/shared"
 )
 
 // ListService contains methods and other services that help with interacting with
@@ -40,7 +41,7 @@ func NewListService(opts ...option.RequestOption) (r ListService) {
 }
 
 // Returns a list based on the list ID provided.
-func (r *ListService) Get(ctx context.Context, listID string, opts ...option.RequestOption) (res *List, err error) {
+func (r *ListService) Get(ctx context.Context, listID string, opts ...option.RequestOption) (res *shared.UserList, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if listID == "" {
 		err = errors.New("missing required list_id parameter")
@@ -52,14 +53,15 @@ func (r *ListService) Get(ctx context.Context, listID string, opts ...option.Req
 }
 
 // Create or replace an existing list with the supplied values.
-func (r *ListService) Update(ctx context.Context, listID string, body ListUpdateParams, opts ...option.RequestOption) (res *List, err error) {
+func (r *ListService) Update(ctx context.Context, listID string, body ListUpdateParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	if listID == "" {
 		err = errors.New("missing required list_id parameter")
 		return
 	}
 	path := fmt.Sprintf("lists/%s", listID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, nil, opts...)
 	return
 }
 
@@ -85,7 +87,7 @@ func (r *ListService) Delete(ctx context.Context, listID string, opts ...option.
 }
 
 // Restore a previously deleted list.
-func (r *ListService) Restore(ctx context.Context, listID string, opts ...option.RequestOption) (err error) {
+func (r *ListService) Restore(ctx context.Context, listID string, body ListRestoreParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	if listID == "" {
@@ -93,35 +95,13 @@ func (r *ListService) Restore(ctx context.Context, listID string, opts ...option
 		return
 	}
 	path := fmt.Sprintf("lists/%s/restore", listID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, nil, nil, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, nil, opts...)
 	return
 }
 
-type List struct {
-	ID      string `json:"id,required"`
-	Name    string `json:"name,required"`
-	Created int64  `json:"created,nullable"`
-	Updated int64  `json:"updated,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Name        respjson.Field
-		Created     respjson.Field
-		Updated     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r List) RawJSON() string { return r.JSON.raw }
-func (r *List) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type ListListResponse struct {
-	Items  []List `json:"items,required"`
-	Paging Paging `json:"paging,required"`
+	Items  []shared.UserList `json:"items,required"`
+	Paging shared.Paging     `json:"paging,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Items       respjson.Field
@@ -138,8 +118,8 @@ func (r *ListListResponse) UnmarshalJSON(data []byte) error {
 }
 
 type ListUpdateParams struct {
-	Name        string                    `json:"name,required"`
-	Preferences RecipientPreferencesParam `json:"preferences,omitzero"`
+	Name        string                           `json:"name,required"`
+	Preferences shared.RecipientPreferencesParam `json:"preferences,omitzero"`
 	paramObj
 }
 
@@ -168,4 +148,16 @@ func (r ListListParams) URLQuery() (v url.Values, err error) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+type ListRestoreParams struct {
+	paramObj
+}
+
+func (r ListRestoreParams) MarshalJSON() (data []byte, err error) {
+	type shadow ListRestoreParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ListRestoreParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }

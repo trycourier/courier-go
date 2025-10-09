@@ -8,9 +8,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/courier-go"
-	"github.com/stainless-sdks/courier-go/internal/testutil"
-	"github.com/stainless-sdks/courier-go/option"
+	"github.com/trycourier/courier-go/v3"
+	"github.com/trycourier/courier-go/v3/internal/testutil"
+	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/shared"
 )
 
 func TestProfileListGetWithOptionalParams(t *testing.T) {
@@ -84,26 +85,26 @@ func TestProfileListSubscribe(t *testing.T) {
 		courier.ProfileListSubscribeParams{
 			Lists: []courier.ProfileListSubscribeParamsList{{
 				ListID: "listId",
-				Preferences: courier.RecipientPreferencesParam{
-					Categories: map[string]courier.RecipientPreferencesCategoryParam{
+				Preferences: shared.RecipientPreferencesParam{
+					Categories: map[string]shared.NotificationPreferenceDetailsParam{
 						"foo": {
-							Status: courier.PreferenceStatusOptedIn,
-							ChannelPreferences: []courier.RecipientPreferencesCategoryChannelPreferenceParam{{
-								Channel: courier.ChannelClassificationDirectMessage,
+							Status: shared.PreferenceStatusOptedIn,
+							ChannelPreferences: []shared.ChannelPreferenceParam{{
+								Channel: shared.ChannelClassificationDirectMessage,
 							}},
-							Rules: []courier.RecipientPreferencesCategoryRuleParam{{
+							Rules: []shared.RuleParam{{
 								Until: "until",
 								Start: courier.String("start"),
 							}},
 						},
 					},
-					Notifications: map[string]courier.RecipientPreferencesNotificationParam{
+					Notifications: map[string]shared.NotificationPreferenceDetailsParam{
 						"foo": {
-							Status: courier.PreferenceStatusOptedIn,
-							ChannelPreferences: []courier.RecipientPreferencesNotificationChannelPreferenceParam{{
-								Channel: courier.ChannelClassificationDirectMessage,
+							Status: shared.PreferenceStatusOptedIn,
+							ChannelPreferences: []shared.ChannelPreferenceParam{{
+								Channel: shared.ChannelClassificationDirectMessage,
 							}},
-							Rules: []courier.RecipientPreferencesNotificationRuleParam{{
+							Rules: []shared.RuleParam{{
 								Until: "until",
 								Start: courier.String("start"),
 							}},

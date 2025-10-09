@@ -8,9 +8,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/courier-go"
-	"github.com/stainless-sdks/courier-go/internal/testutil"
-	"github.com/stainless-sdks/courier-go/option"
+	"github.com/trycourier/courier-go/v3"
+	"github.com/trycourier/courier-go/v3/internal/testutil"
+	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/shared"
 )
 
 func TestNotificationCheckUpdate(t *testing.T) {
@@ -31,10 +32,10 @@ func TestNotificationCheckUpdate(t *testing.T) {
 		"submissionId",
 		courier.NotificationCheckUpdateParams{
 			ID: "id",
-			Checks: []courier.BaseCheckParam{{
+			Checks: []shared.BaseCheckParam{{
 				ID:     "id",
-				Status: courier.BaseCheckStatusResolved,
-				Type:   courier.BaseCheckTypeCustom,
+				Status: shared.BaseCheckStatusResolved,
+				Type:   shared.BaseCheckTypeCustom,
 			}},
 		},
 	)

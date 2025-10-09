@@ -10,9 +10,9 @@ import (
 	"net/http"
 	"slices"
 
-	shimjson "github.com/stainless-sdks/courier-go/internal/encoding/json"
-	"github.com/stainless-sdks/courier-go/internal/requestconfig"
-	"github.com/stainless-sdks/courier-go/option"
+	shimjson "github.com/trycourier/courier-go/v3/internal/encoding/json"
+	"github.com/trycourier/courier-go/v3/internal/requestconfig"
+	"github.com/trycourier/courier-go/v3/option"
 )
 
 // TranslationService contains methods and other services that help with

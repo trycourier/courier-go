@@ -8,9 +8,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/courier-go"
-	"github.com/stainless-sdks/courier-go/internal/testutil"
-	"github.com/stainless-sdks/courier-go/option"
+	"github.com/trycourier/courier-go/v3"
+	"github.com/trycourier/courier-go/v3/internal/testutil"
+	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/shared"
 )
 
 func TestAudienceGet(t *testing.T) {
@@ -54,12 +55,10 @@ func TestAudienceUpdateWithOptionalParams(t *testing.T) {
 		"audience_id",
 		courier.AudienceUpdateParams{
 			Description: courier.String("description"),
-			Filter: courier.FilterUnionParam{
-				OfFilterObject: &courier.FilterObjectParam{
-					Operator: courier.FilterObjectOperatorEndsWith,
-					Path:     "path",
-					Value:    "value",
-				},
+			Filter: shared.FilterParam{
+				Operator: shared.FilterOperatorEndsWith,
+				Path:     "path",
+				Value:    "value",
 			},
 			Name: courier.String("name"),
 		},

@@ -13,7 +13,7 @@ import (
 	"github.com/trycourier/courier-go/v3/option"
 )
 
-func TestAuditEventGet(t *testing.T) {
+func TestTenantTemplateGet(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,7 +26,13 @@ func TestAuditEventGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.AuditEvents.Get(context.TODO(), "audit-event-id")
+	_, err := client.Tenants.Templates.Get(
+		context.TODO(),
+		"template_id",
+		courier.TenantTemplateGetParams{
+			TenantID: "tenant_id",
+		},
+	)
 	if err != nil {
 		var apierr *courier.Error
 		if errors.As(err, &apierr) {
@@ -36,7 +42,7 @@ func TestAuditEventGet(t *testing.T) {
 	}
 }
 
-func TestAuditEventListWithOptionalParams(t *testing.T) {
+func TestTenantTemplateListWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -49,9 +55,14 @@ func TestAuditEventListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.AuditEvents.List(context.TODO(), courier.AuditEventListParams{
-		Cursor: courier.String("cursor"),
-	})
+	_, err := client.Tenants.Templates.List(
+		context.TODO(),
+		"tenant_id",
+		courier.TenantTemplateListParams{
+			Cursor: courier.String("cursor"),
+			Limit:  courier.Int(0),
+		},
+	)
 	if err != nil {
 		var apierr *courier.Error
 		if errors.As(err, &apierr) {

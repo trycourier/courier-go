@@ -10,12 +10,10 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/stainless-sdks/courier-go/internal/apijson"
-	shimjson "github.com/stainless-sdks/courier-go/internal/encoding/json"
-	"github.com/stainless-sdks/courier-go/internal/requestconfig"
-	"github.com/stainless-sdks/courier-go/option"
-	"github.com/stainless-sdks/courier-go/packages/param"
-	"github.com/stainless-sdks/courier-go/packages/respjson"
+	shimjson "github.com/trycourier/courier-go/v3/internal/encoding/json"
+	"github.com/trycourier/courier-go/v3/internal/requestconfig"
+	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/shared"
 )
 
 // TenantDefaultPreferenceItemService contains methods and other services that help
@@ -71,83 +69,9 @@ func (r *TenantDefaultPreferenceItemService) Delete(ctx context.Context, topicID
 	return
 }
 
-type ChannelClassification string
-
-const (
-	ChannelClassificationDirectMessage ChannelClassification = "direct_message"
-	ChannelClassificationEmail         ChannelClassification = "email"
-	ChannelClassificationPush          ChannelClassification = "push"
-	ChannelClassificationSMS           ChannelClassification = "sms"
-	ChannelClassificationWebhook       ChannelClassification = "webhook"
-	ChannelClassificationInbox         ChannelClassification = "inbox"
-)
-
-type SubscriptionTopicNew struct {
-	// Any of "OPTED_OUT", "OPTED_IN", "REQUIRED".
-	Status SubscriptionTopicNewStatus `json:"status,required"`
-	// The default channels to send to this tenant when has_custom_routing is enabled
-	CustomRouting []ChannelClassification `json:"custom_routing,nullable"`
-	// Override channel routing with custom preferences. This will override any
-	// template prefernces that are set, but a user can still customize their
-	// preferences
-	HasCustomRouting bool `json:"has_custom_routing,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Status           respjson.Field
-		CustomRouting    respjson.Field
-		HasCustomRouting respjson.Field
-		ExtraFields      map[string]respjson.Field
-		raw              string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r SubscriptionTopicNew) RawJSON() string { return r.JSON.raw }
-func (r *SubscriptionTopicNew) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this SubscriptionTopicNew to a SubscriptionTopicNewParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// SubscriptionTopicNewParam.Overrides()
-func (r SubscriptionTopicNew) ToParam() SubscriptionTopicNewParam {
-	return param.Override[SubscriptionTopicNewParam](json.RawMessage(r.RawJSON()))
-}
-
-type SubscriptionTopicNewStatus string
-
-const (
-	SubscriptionTopicNewStatusOptedOut SubscriptionTopicNewStatus = "OPTED_OUT"
-	SubscriptionTopicNewStatusOptedIn  SubscriptionTopicNewStatus = "OPTED_IN"
-	SubscriptionTopicNewStatusRequired SubscriptionTopicNewStatus = "REQUIRED"
-)
-
-// The property Status is required.
-type SubscriptionTopicNewParam struct {
-	// Any of "OPTED_OUT", "OPTED_IN", "REQUIRED".
-	Status SubscriptionTopicNewStatus `json:"status,omitzero,required"`
-	// Override channel routing with custom preferences. This will override any
-	// template prefernces that are set, but a user can still customize their
-	// preferences
-	HasCustomRouting param.Opt[bool] `json:"has_custom_routing,omitzero"`
-	// The default channels to send to this tenant when has_custom_routing is enabled
-	CustomRouting []ChannelClassification `json:"custom_routing,omitzero"`
-	paramObj
-}
-
-func (r SubscriptionTopicNewParam) MarshalJSON() (data []byte, err error) {
-	type shadow SubscriptionTopicNewParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SubscriptionTopicNewParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type TenantDefaultPreferenceItemUpdateParams struct {
 	TenantID             string `path:"tenant_id,required" json:"-"`
-	SubscriptionTopicNew SubscriptionTopicNewParam
+	SubscriptionTopicNew shared.SubscriptionTopicNewParam
 	paramObj
 }
 

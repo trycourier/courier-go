@@ -8,9 +8,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/courier-go"
-	"github.com/stainless-sdks/courier-go/internal/testutil"
-	"github.com/stainless-sdks/courier-go/option"
+	"github.com/trycourier/courier-go/v3"
+	"github.com/trycourier/courier-go/v3/internal/testutil"
+	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/shared"
 )
 
 func TestBulkAddUsers(t *testing.T) {
@@ -30,28 +31,28 @@ func TestBulkAddUsers(t *testing.T) {
 		context.TODO(),
 		"job_id",
 		courier.BulkAddUsersParams{
-			Users: []courier.InboundBulkMessageUserParam{{
+			Users: []shared.InboundBulkMessageUserParam{{
 				Data: map[string]interface{}{},
-				Preferences: courier.RecipientPreferencesParam{
-					Categories: map[string]courier.RecipientPreferencesCategoryParam{
+				Preferences: shared.RecipientPreferencesParam{
+					Categories: map[string]shared.NotificationPreferenceDetailsParam{
 						"foo": {
-							Status: courier.PreferenceStatusOptedIn,
-							ChannelPreferences: []courier.RecipientPreferencesCategoryChannelPreferenceParam{{
-								Channel: courier.ChannelClassificationDirectMessage,
+							Status: shared.PreferenceStatusOptedIn,
+							ChannelPreferences: []shared.ChannelPreferenceParam{{
+								Channel: shared.ChannelClassificationDirectMessage,
 							}},
-							Rules: []courier.RecipientPreferencesCategoryRuleParam{{
+							Rules: []shared.RuleParam{{
 								Until: "until",
 								Start: courier.String("start"),
 							}},
 						},
 					},
-					Notifications: map[string]courier.RecipientPreferencesNotificationParam{
+					Notifications: map[string]shared.NotificationPreferenceDetailsParam{
 						"foo": {
-							Status: courier.PreferenceStatusOptedIn,
-							ChannelPreferences: []courier.RecipientPreferencesNotificationChannelPreferenceParam{{
-								Channel: courier.ChannelClassificationDirectMessage,
+							Status: shared.PreferenceStatusOptedIn,
+							ChannelPreferences: []shared.ChannelPreferenceParam{{
+								Channel: shared.ChannelClassificationDirectMessage,
 							}},
-							Rules: []courier.RecipientPreferencesNotificationRuleParam{{
+							Rules: []shared.RuleParam{{
 								Until: "until",
 								Start: courier.String("start"),
 							}},
@@ -60,9 +61,9 @@ func TestBulkAddUsers(t *testing.T) {
 				},
 				Profile:   map[string]interface{}{},
 				Recipient: courier.String("recipient"),
-				To: courier.UserRecipientParam{
+				To: shared.UserRecipientParam{
 					AccountID: courier.String("account_id"),
-					Context: courier.MessageContextParam{
+					Context: shared.MessageContextParam{
 						TenantID: courier.String("tenant_id"),
 					},
 					Data: map[string]any{
@@ -71,31 +72,31 @@ func TestBulkAddUsers(t *testing.T) {
 					Email:       courier.String("email"),
 					Locale:      courier.String("locale"),
 					PhoneNumber: courier.String("phone_number"),
-					Preferences: courier.UserRecipientPreferencesParam{
-						Notifications: map[string]courier.UserRecipientPreferencesNotificationParam{
+					Preferences: shared.UserRecipientPreferencesParam{
+						Notifications: map[string]shared.PreferenceParam{
 							"foo": {
-								Status: courier.PreferenceStatusOptedIn,
-								ChannelPreferences: []courier.UserRecipientPreferencesNotificationChannelPreferenceParam{{
-									Channel: courier.ChannelClassificationDirectMessage,
+								Status: shared.PreferenceStatusOptedIn,
+								ChannelPreferences: []shared.ChannelPreferenceParam{{
+									Channel: shared.ChannelClassificationDirectMessage,
 								}},
-								Rules: []courier.UserRecipientPreferencesNotificationRuleParam{{
+								Rules: []shared.RuleParam{{
 									Until: "until",
 									Start: courier.String("start"),
 								}},
-								Source: "subscription",
+								Source: shared.PreferenceSourceSubscription,
 							},
 						},
-						Categories: map[string]courier.UserRecipientPreferencesCategoryParam{
+						Categories: map[string]shared.PreferenceParam{
 							"foo": {
-								Status: courier.PreferenceStatusOptedIn,
-								ChannelPreferences: []courier.UserRecipientPreferencesCategoryChannelPreferenceParam{{
-									Channel: courier.ChannelClassificationDirectMessage,
+								Status: shared.PreferenceStatusOptedIn,
+								ChannelPreferences: []shared.ChannelPreferenceParam{{
+									Channel: shared.ChannelClassificationDirectMessage,
 								}},
-								Rules: []courier.UserRecipientPreferencesCategoryRuleParam{{
+								Rules: []shared.RuleParam{{
 									Until: "until",
 									Start: courier.String("start"),
 								}},
-								Source: "subscription",
+								Source: shared.PreferenceSourceSubscription,
 							},
 						},
 						TemplateID: courier.String("templateId"),
@@ -129,139 +130,23 @@ func TestBulkNewJobWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Bulk.NewJob(context.TODO(), courier.BulkNewJobParams{
-		Message: courier.InboundBulkMessageParam{
-			Brand: courier.String("brand"),
-			Data: map[string]any{
-				"foo": "bar",
-			},
-			Event: courier.String("event"),
-			Locale: map[string]any{
-				"foo": "bar",
-			},
-			Message: courier.InboundBulkMessageMessageUnionParam{
-				OfInboundBulkTemplateMessage: &courier.InboundBulkMessageMessageInboundBulkTemplateMessageParam{
-					BaseMessageParam: courier.BaseMessageParam{
-						BrandID: courier.String("brand_id"),
-						Channels: map[string]courier.BaseMessageChannelParam{
-							"foo": {
-								BrandID: courier.String("brand_id"),
-								If:      courier.String("if"),
-								Metadata: courier.BaseMessageChannelMetadataParam{
-									Utm: courier.UtmParam{
-										Campaign: courier.String("campaign"),
-										Content:  courier.String("content"),
-										Medium:   courier.String("medium"),
-										Source:   courier.String("source"),
-										Term:     courier.String("term"),
-									},
-								},
-								Override: map[string]any{
-									"foo": "bar",
-								},
-								Providers:     []string{"string"},
-								RoutingMethod: courier.RoutingMethodAll,
-								Timeouts: courier.BaseMessageChannelTimeoutsParam{
-									Channel:  courier.Int(0),
-									Provider: courier.Int(0),
-								},
-							},
-						},
-						Context: courier.MessageContextParam{
-							TenantID: courier.String("tenant_id"),
-						},
-						Data: map[string]any{
-							"foo": "bar",
-						},
-						Delay: courier.BaseMessageDelayParam{
-							Duration: courier.Int(0),
-							Until:    courier.String("until"),
-						},
-						Expiry: courier.BaseMessageExpiryParam{
-							ExpiresIn: courier.BaseMessageExpiryExpiresInUnionParam{
-								OfString: courier.String("string"),
-							},
-							ExpiresAt: courier.String("expires_at"),
-						},
-						Metadata: courier.BaseMessageMetadataParam{
-							Event:   courier.String("event"),
-							Tags:    []string{"string"},
-							TraceID: courier.String("trace_id"),
-							Utm: courier.UtmParam{
-								Campaign: courier.String("campaign"),
-								Content:  courier.String("content"),
-								Medium:   courier.String("medium"),
-								Source:   courier.String("source"),
-								Term:     courier.String("term"),
-							},
-						},
-						Preferences: courier.BaseMessagePreferencesParam{
-							SubscriptionTopicID: "subscription_topic_id",
-						},
-						Providers: map[string]courier.BaseMessageProviderParam{
-							"foo": {
-								If: courier.String("if"),
-								Metadata: courier.BaseMessageProviderMetadataParam{
-									Utm: courier.UtmParam{
-										Campaign: courier.String("campaign"),
-										Content:  courier.String("content"),
-										Medium:   courier.String("medium"),
-										Source:   courier.String("source"),
-										Term:     courier.String("term"),
-									},
-								},
-								Override: map[string]any{
-									"foo": "bar",
-								},
-								Timeouts: courier.Int(0),
-							},
-						},
-						Routing: courier.BaseMessageRoutingParam{
-							Channels: []courier.BaseMessageRoutingChannelUnionParam{{
-								OfRoutingStrategyChannel: &courier.BaseMessageRoutingChannelRoutingStrategyChannelParam{
-									Channel: "channel",
-									Config: map[string]any{
-										"foo": "bar",
-									},
-									If:     courier.String("if"),
-									Method: courier.RoutingMethodAll,
-									Providers: map[string]courier.BaseMessageRoutingChannelRoutingStrategyChannelProviderParam{
-										"foo": {
-											If: courier.String("if"),
-											Metadata: courier.BaseMessageRoutingChannelRoutingStrategyChannelProviderMetadataParam{
-												Utm: courier.UtmParam{
-													Campaign: courier.String("campaign"),
-													Content:  courier.String("content"),
-													Medium:   courier.String("medium"),
-													Source:   courier.String("source"),
-													Term:     courier.String("term"),
-												},
-											},
-											Override: map[string]any{
-												"foo": "bar",
-											},
-											Timeouts: courier.Int(0),
-										},
-									},
-								},
-							}},
-							Method: courier.RoutingMethodAll,
-						},
-						Timeout: courier.BaseMessageTimeoutParam{
-							Channel: map[string]int64{
-								"foo": 0,
-							},
-							Criteria:   "no-escalation",
-							Escalation: courier.Int(0),
-							Message:    courier.Int(0),
-							Provider: map[string]int64{
-								"foo": 0,
-							},
-						},
+		Message: shared.InboundBulkMessageUnionParam{
+			OfInboundBulkTemplateMessage: &shared.InboundBulkMessageInboundBulkTemplateMessageParam{
+				Template: "template",
+				Brand:    courier.String("brand"),
+				Data: map[string]any{
+					"foo": "bar",
+				},
+				Event: courier.String("event"),
+				Locale: map[string]map[string]any{
+					"foo": {
+						"foo": "bar",
 					},
-					Template: "template",
+				},
+				Override: map[string]any{
+					"foo": "bar",
 				},
 			},
-			Override: map[string]interface{}{},
 		},
 	})
 	if err != nil {

@@ -2,7 +2,7 @@
 
 <!-- x-release-please-start-version -->
 
-<a href="https://pkg.go.dev/github.com/stainless-sdks/courier-go"><img src="https://pkg.go.dev/badge/github.com/stainless-sdks/courier-go.svg" alt="Go Reference"></a>
+<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v3"><img src="https://pkg.go.dev/badge/github.com/trycourier/courier-go.svg" alt="Go Reference"></a>
 
 <!-- x-release-please-end -->
 
@@ -13,17 +13,25 @@ It is generated with [Stainless](https://www.stainless.com/).
 
 ## Installation
 
+<!-- x-release-please-start-version -->
+
 ```go
 import (
-	"github.com/stainless-sdks/courier-go" // imported as courier
+	"github.com/trycourier/courier-go/v3" // imported as courier
 )
 ```
 
+<!-- x-release-please-end -->
+
 Or to pin the version:
 
+<!-- x-release-please-start-version -->
+
 ```sh
-go get -u 'github.com/stainless-sdks/courier-go@v0.0.1'
+go get -u 'github.com/trycourier/courier-go@v3.3.0-alpha0'
 ```
+
+<!-- x-release-please-end -->
 
 ## Requirements
 
@@ -40,27 +48,24 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/stainless-sdks/courier-go"
-	"github.com/stainless-sdks/courier-go/option"
+	"github.com/trycourier/courier-go/v3"
+	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/shared"
 )
 
 func main() {
 	client := courier.NewClient(
 		option.WithAPIKey("My API Key"), // defaults to os.LookupEnv("COURIER_API_KEY")
 	)
-	response, err := client.Send.SendMessage(context.TODO(), courier.SendSendMessageParams{
-		Message: courier.MessageUnionParam{
-			OfContentMessage: &courier.MessageContentMessageParam{
-				BaseMessageParam:       courier.BaseMessageParam{},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{},
-				Content: courier.ContentUnionParam{
-					OfElementalContent: &courier.ContentElementalContentParam{
-						Elements: []courier.ElementalNodeUnionParam{{
-							OfElementalNodeObject: &courier.ElementalNodeObjectParam{},
-						}},
-						Version: "version",
-					},
+	response, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
+		Message: courier.SendMessageParamsMessage{
+			To: courier.SendMessageParamsMessageToUnion{
+				OfUserRecipient: &shared.UserRecipientParam{
+					UserID: courier.String("your_user_id"),
 				},
+			},
+			Data: map[string]any{
+				"foo": "bar",
 			},
 		},
 	})
@@ -273,7 +278,7 @@ client := courier.NewClient(
 	option.WithHeader("X-Some-Header", "custom_header_info"),
 )
 
-client.Send.SendMessage(context.TODO(), ...,
+client.Send.Message(context.TODO(), ...,
 	// Override the header
 	option.WithHeader("X-Some-Header", "some_other_custom_header_info"),
 	// Add an undocumented field to the request body, using sjson syntax
@@ -283,7 +288,7 @@ client.Send.SendMessage(context.TODO(), ...,
 
 The request option `option.WithDebugLog(nil)` may be helpful while debugging.
 
-See the [full list of request options](https://pkg.go.dev/github.com/stainless-sdks/courier-go/option).
+See the [full list of request options](https://pkg.go.dev/github.com/trycourier/courier-go/option).
 
 ### Pagination
 
@@ -304,19 +309,15 @@ When the API returns a non-success status code, we return an error with type
 To handle errors, we recommend that you use the `errors.As` pattern:
 
 ```go
-_, err := client.Send.SendMessage(context.TODO(), courier.SendSendMessageParams{
-	Message: courier.MessageUnionParam{
-		OfContentMessage: &courier.MessageContentMessageParam{
-			BaseMessageParam:       courier.BaseMessageParam{},
-			BaseMessageSendToParam: courier.BaseMessageSendToParam{},
-			Content: courier.ContentUnionParam{
-				OfElementalContent: &courier.ContentElementalContentParam{
-					Elements: []courier.ElementalNodeUnionParam{{
-						OfElementalNodeObject: &courier.ElementalNodeObjectParam{},
-					}},
-					Version: "version",
-				},
+_, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
+	Message: courier.SendMessageParamsMessage{
+		To: courier.SendMessageParamsMessageToUnion{
+			OfUserRecipient: &shared.UserRecipientParam{
+				UserID: courier.String("your_user_id"),
 			},
+		},
+		Data: map[string]any{
+			"foo": "bar",
 		},
 	},
 })
@@ -344,21 +345,17 @@ To set a per-retry timeout, use `option.WithRequestTimeout()`.
 // This sets the timeout for the request, including all the retries.
 ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 defer cancel()
-client.Send.SendMessage(
+client.Send.Message(
 	ctx,
-	courier.SendSendMessageParams{
-		Message: courier.MessageUnionParam{
-			OfContentMessage: &courier.MessageContentMessageParam{
-				BaseMessageParam:       courier.BaseMessageParam{},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{},
-				Content: courier.ContentUnionParam{
-					OfElementalContent: &courier.ContentElementalContentParam{
-						Elements: []courier.ElementalNodeUnionParam{{
-							OfElementalNodeObject: &courier.ElementalNodeObjectParam{},
-						}},
-						Version: "version",
-					},
+	courier.SendMessageParams{
+		Message: courier.SendMessageParamsMessage{
+			To: courier.SendMessageParamsMessageToUnion{
+				OfUserRecipient: &shared.UserRecipientParam{
+					UserID: courier.String("your_user_id"),
 				},
+			},
+			Data: map[string]any{
+				"foo": "bar",
 			},
 		},
 	},
@@ -395,21 +392,17 @@ client := courier.NewClient(
 )
 
 // Override per-request:
-client.Send.SendMessage(
+client.Send.Message(
 	context.TODO(),
-	courier.SendSendMessageParams{
-		Message: courier.MessageUnionParam{
-			OfContentMessage: &courier.MessageContentMessageParam{
-				BaseMessageParam:       courier.BaseMessageParam{},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{},
-				Content: courier.ContentUnionParam{
-					OfElementalContent: &courier.ContentElementalContentParam{
-						Elements: []courier.ElementalNodeUnionParam{{
-							OfElementalNodeObject: &courier.ElementalNodeObjectParam{},
-						}},
-						Version: "version",
-					},
+	courier.SendMessageParams{
+		Message: courier.SendMessageParamsMessage{
+			To: courier.SendMessageParamsMessageToUnion{
+				OfUserRecipient: &shared.UserRecipientParam{
+					UserID: courier.String("your_user_id"),
 				},
+			},
+			Data: map[string]any{
+				"foo": "bar",
 			},
 		},
 	},
@@ -425,21 +418,17 @@ you need to examine response headers, status codes, or other details.
 ```go
 // Create a variable to store the HTTP response
 var response *http.Response
-response, err := client.Send.SendMessage(
+response, err := client.Send.Message(
 	context.TODO(),
-	courier.SendSendMessageParams{
-		Message: courier.MessageUnionParam{
-			OfContentMessage: &courier.MessageContentMessageParam{
-				BaseMessageParam:       courier.BaseMessageParam{},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{},
-				Content: courier.ContentUnionParam{
-					OfElementalContent: &courier.ContentElementalContentParam{
-						Elements: []courier.ElementalNodeUnionParam{{
-							OfElementalNodeObject: &courier.ElementalNodeObjectParam{},
-						}},
-						Version: "version",
-					},
+	courier.SendMessageParams{
+		Message: courier.SendMessageParamsMessage{
+			To: courier.SendMessageParamsMessageToUnion{
+				OfUserRecipient: &shared.UserRecipientParam{
+					UserID: courier.String("your_user_id"),
 				},
+			},
+			Data: map[string]any{
+				"foo": "bar",
 			},
 		},
 	},
@@ -549,7 +538,7 @@ This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) con
 
 We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/stainless-sdks/courier-go/issues) with questions, bugs, or suggestions.
+We are keen for your feedback; please open an [issue](https://www.github.com/trycourier/courier-go/issues) with questions, bugs, or suggestions.
 
 ## Contributing
 

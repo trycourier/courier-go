@@ -1,8 +1,8 @@
 package sentinel_test
 
 import (
-	"github.com/stainless-sdks/courier-go/internal/encoding/json/sentinel"
-	"github.com/stainless-sdks/courier-go/packages/param"
+	"github.com/trycourier/courier-go/v3/internal/encoding/json/sentinel"
+	"github.com/trycourier/courier-go/v3/packages/param"
 	"reflect"
 	"slices"
 	"testing"

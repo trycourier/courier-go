@@ -7,9 +7,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/courier-go"
-	"github.com/stainless-sdks/courier-go/internal/testutil"
-	"github.com/stainless-sdks/courier-go/option"
+	"github.com/trycourier/courier-go/v3"
+	"github.com/trycourier/courier-go/v3/internal/testutil"
+	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/shared"
 )
 
 func TestUsage(t *testing.T) {
@@ -24,19 +25,15 @@ func TestUsage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	response, err := client.Send.SendMessage(context.TODO(), courier.SendSendMessageParams{
-		Message: courier.MessageUnionParam{
-			OfContentMessage: &courier.MessageContentMessageParam{
-				BaseMessageParam:       courier.BaseMessageParam{},
-				BaseMessageSendToParam: courier.BaseMessageSendToParam{},
-				Content: courier.ContentUnionParam{
-					OfElementalContent: &courier.ContentElementalContentParam{
-						Elements: []courier.ElementalNodeUnionParam{{
-							OfElementalNodeObject: &courier.ElementalNodeObjectParam{},
-						}},
-						Version: "version",
-					},
+	response, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
+		Message: courier.SendMessageParamsMessage{
+			To: courier.SendMessageParamsMessageToUnion{
+				OfUserRecipient: &shared.UserRecipientParam{
+					UserID: courier.String("your_user_id"),
 				},
+			},
+			Data: map[string]any{
+				"foo": "bar",
 			},
 		},
 	})

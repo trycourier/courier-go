@@ -10,12 +10,13 @@ import (
 	"net/url"
 	"slices"
 
-	"github.com/stainless-sdks/courier-go/internal/apijson"
-	"github.com/stainless-sdks/courier-go/internal/apiquery"
-	"github.com/stainless-sdks/courier-go/internal/requestconfig"
-	"github.com/stainless-sdks/courier-go/option"
-	"github.com/stainless-sdks/courier-go/packages/param"
-	"github.com/stainless-sdks/courier-go/packages/respjson"
+	"github.com/trycourier/courier-go/v3/internal/apijson"
+	"github.com/trycourier/courier-go/v3/internal/apiquery"
+	"github.com/trycourier/courier-go/v3/internal/requestconfig"
+	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/packages/param"
+	"github.com/trycourier/courier-go/v3/packages/respjson"
+	"github.com/trycourier/courier-go/v3/shared"
 )
 
 // ProfileListService contains methods and other services that help with
@@ -75,7 +76,7 @@ func (r *ProfileListService) Subscribe(ctx context.Context, userID string, body 
 }
 
 type ProfileListGetResponse struct {
-	Paging Paging `json:"paging,required"`
+	Paging shared.Paging `json:"paging,required"`
 	// An array of lists
 	Results []ProfileListGetResponseResult `json:"results,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -102,8 +103,8 @@ type ProfileListGetResponseResult struct {
 	Name string `json:"name,required"`
 	// The date/time of when the list was updated. Represented as a string in ISO
 	// format.
-	Updated     string               `json:"updated,required"`
-	Preferences RecipientPreferences `json:"preferences,nullable"`
+	Updated     string                      `json:"updated,required"`
+	Preferences shared.RecipientPreferences `json:"preferences,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -197,8 +198,8 @@ func (r *ProfileListSubscribeParams) UnmarshalJSON(data []byte) error {
 
 // The property ListID is required.
 type ProfileListSubscribeParamsList struct {
-	ListID      string                    `json:"listId,required"`
-	Preferences RecipientPreferencesParam `json:"preferences,omitzero"`
+	ListID      string                           `json:"listId,required"`
+	Preferences shared.RecipientPreferencesParam `json:"preferences,omitzero"`
 	paramObj
 }
 

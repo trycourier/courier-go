@@ -1,7 +1,7 @@
 package apiquery
 
 import (
-	"github.com/stainless-sdks/courier-go/packages/param"
+	"github.com/trycourier/courier-go/v3/packages/param"
 	"net/url"
 	"testing"
 	"time"

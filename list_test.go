@@ -8,9 +8,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/courier-go"
-	"github.com/stainless-sdks/courier-go/internal/testutil"
-	"github.com/stainless-sdks/courier-go/option"
+	"github.com/trycourier/courier-go/v3"
+	"github.com/trycourier/courier-go/v3/internal/testutil"
+	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/shared"
 )
 
 func TestListGet(t *testing.T) {
@@ -49,31 +50,31 @@ func TestListUpdateWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Lists.Update(
+	err := client.Lists.Update(
 		context.TODO(),
 		"list_id",
 		courier.ListUpdateParams{
 			Name: "name",
-			Preferences: courier.RecipientPreferencesParam{
-				Categories: map[string]courier.RecipientPreferencesCategoryParam{
+			Preferences: shared.RecipientPreferencesParam{
+				Categories: map[string]shared.NotificationPreferenceDetailsParam{
 					"foo": {
-						Status: courier.PreferenceStatusOptedIn,
-						ChannelPreferences: []courier.RecipientPreferencesCategoryChannelPreferenceParam{{
-							Channel: courier.ChannelClassificationDirectMessage,
+						Status: shared.PreferenceStatusOptedIn,
+						ChannelPreferences: []shared.ChannelPreferenceParam{{
+							Channel: shared.ChannelClassificationDirectMessage,
 						}},
-						Rules: []courier.RecipientPreferencesCategoryRuleParam{{
+						Rules: []shared.RuleParam{{
 							Until: "until",
 							Start: courier.String("start"),
 						}},
 					},
 				},
-				Notifications: map[string]courier.RecipientPreferencesNotificationParam{
+				Notifications: map[string]shared.NotificationPreferenceDetailsParam{
 					"foo": {
-						Status: courier.PreferenceStatusOptedIn,
-						ChannelPreferences: []courier.RecipientPreferencesNotificationChannelPreferenceParam{{
-							Channel: courier.ChannelClassificationDirectMessage,
+						Status: shared.PreferenceStatusOptedIn,
+						ChannelPreferences: []shared.ChannelPreferenceParam{{
+							Channel: shared.ChannelClassificationDirectMessage,
 						}},
-						Rules: []courier.RecipientPreferencesNotificationRuleParam{{
+						Rules: []shared.RuleParam{{
 							Until: "until",
 							Start: courier.String("start"),
 						}},
@@ -153,7 +154,11 @@ func TestListRestore(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	err := client.Lists.Restore(context.TODO(), "list_id")
+	err := client.Lists.Restore(
+		context.TODO(),
+		"list_id",
+		courier.ListRestoreParams{},
+	)
 	if err != nil {
 		var apierr *courier.Error
 		if errors.As(err, &apierr) {

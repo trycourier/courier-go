@@ -2,7 +2,7 @@
 package json
 
 import (
-	"github.com/stainless-sdks/courier-go/internal/encoding/json/shims"
+	"github.com/trycourier/courier-go/v3/internal/encoding/json/shims"
 	"reflect"
 	"time"
 )
