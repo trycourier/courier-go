@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/trycourier/courier-go/internal/requestconfig"
-	"github.com/trycourier/courier-go/option"
+	"github.com/trycourier/courier-go/v3/internal/requestconfig"
+	"github.com/trycourier/courier-go/v3/option"
 )
 
 // RequestService contains methods and other services that help with interacting

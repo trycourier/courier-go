@@ -8,9 +8,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/trycourier/courier-go"
-	"github.com/trycourier/courier-go/internal/testutil"
-	"github.com/trycourier/courier-go/option"
+	"github.com/trycourier/courier-go/v3"
+	"github.com/trycourier/courier-go/v3/internal/testutil"
+	"github.com/trycourier/courier-go/v3/option"
 )
 
 func TestMessageGet(t *testing.T) {

@@ -2,7 +2,7 @@
 
 <!-- x-release-please-start-version -->
 
-<a href="https://pkg.go.dev/github.com/trycourier/courier-go"><img src="https://pkg.go.dev/badge/github.com/trycourier/courier-go.svg" alt="Go Reference"></a>
+<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v3"><img src="https://pkg.go.dev/badge/github.com/trycourier/courier-go.svg" alt="Go Reference"></a>
 
 <!-- x-release-please-end -->
 
@@ -17,7 +17,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 
 ```go
 import (
-	"github.com/trycourier/courier-go" // imported as courier
+	"github.com/trycourier/courier-go/v3" // imported as courier
 )
 ```
 
@@ -28,7 +28,7 @@ Or to pin the version:
 <!-- x-release-please-start-version -->
 
 ```sh
-go get -u 'github.com/trycourier/courier-go@v0.0.1'
+go get -u 'github.com/trycourier/courier-go@v3.3.0-alpha0'
 ```
 
 <!-- x-release-please-end -->
@@ -48,9 +48,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/trycourier/courier-go"
-	"github.com/trycourier/courier-go/option"
-	"github.com/trycourier/courier-go/shared"
+	"github.com/trycourier/courier-go/v3"
+	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/shared"
 )
 
 func main() {

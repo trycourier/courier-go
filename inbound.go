@@ -7,11 +7,11 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/trycourier/courier-go/internal/apijson"
-	"github.com/trycourier/courier-go/internal/requestconfig"
-	"github.com/trycourier/courier-go/option"
-	"github.com/trycourier/courier-go/packages/param"
-	"github.com/trycourier/courier-go/packages/respjson"
+	"github.com/trycourier/courier-go/v3/internal/apijson"
+	"github.com/trycourier/courier-go/v3/internal/requestconfig"
+	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/packages/param"
+	"github.com/trycourier/courier-go/v3/packages/respjson"
 )
 
 // InboundService contains methods and other services that help with interacting

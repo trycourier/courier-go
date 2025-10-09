@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/tidwall/sjson"
-	"github.com/trycourier/courier-go/internal/requestconfig"
+	"github.com/trycourier/courier-go/v3/internal/requestconfig"
 )
 
 // RequestOption is an option for the requests made by the courier API Client

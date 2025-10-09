@@ -1,7 +1,7 @@
 package courier
 
 import (
-	"github.com/trycourier/courier-go/packages/param"
+	"github.com/trycourier/courier-go/v3/packages/param"
 	"io"
 	"time"
 )

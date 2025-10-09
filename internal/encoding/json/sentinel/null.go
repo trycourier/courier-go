@@ -1,7 +1,7 @@
 package sentinel
 
 import (
-	"github.com/trycourier/courier-go/internal/encoding/json/shims"
+	"github.com/trycourier/courier-go/v3/internal/encoding/json/shims"
 	"reflect"
 	"sync"
 )

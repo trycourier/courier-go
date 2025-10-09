@@ -3,8 +3,8 @@ package respjson_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/trycourier/courier-go/internal/apijson"
-	rj "github.com/trycourier/courier-go/packages/respjson"
+	"github.com/trycourier/courier-go/v3/internal/apijson"
+	rj "github.com/trycourier/courier-go/v3/packages/respjson"
 	"reflect"
 	"testing"
 )

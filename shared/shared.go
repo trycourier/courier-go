@@ -5,9 +5,9 @@ package shared
 import (
 	"encoding/json"
 
-	"github.com/trycourier/courier-go/internal/apijson"
-	"github.com/trycourier/courier-go/packages/param"
-	"github.com/trycourier/courier-go/packages/respjson"
+	"github.com/trycourier/courier-go/v3/internal/apijson"
+	"github.com/trycourier/courier-go/v3/packages/param"
+	"github.com/trycourier/courier-go/v3/packages/respjson"
 )
 
 // aliased to make [param.APIUnion] private when embedding
