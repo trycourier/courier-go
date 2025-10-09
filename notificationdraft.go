@@ -9,9 +9,9 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/trycourier/courier-go/internal/requestconfig"
-	"github.com/trycourier/courier-go/option"
-	"github.com/trycourier/courier-go/shared"
+	"github.com/trycourier/courier-go/v3/internal/requestconfig"
+	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/shared"
 )
 
 // NotificationDraftService contains methods and other services that help with

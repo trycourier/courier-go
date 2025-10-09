@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/trycourier/courier-go/packages/param"
+	"github.com/trycourier/courier-go/v3/packages/param"
 )
 
 type Struct struct {

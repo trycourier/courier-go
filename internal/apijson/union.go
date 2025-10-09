@@ -2,7 +2,7 @@ package apijson
 
 import (
 	"errors"
-	"github.com/trycourier/courier-go/packages/param"
+	"github.com/trycourier/courier-go/v3/packages/param"
 	"reflect"
 
 	"github.com/tidwall/gjson"

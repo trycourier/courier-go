@@ -2,7 +2,7 @@ package paramutil
 
 import (
 	"fmt"
-	"github.com/trycourier/courier-go/packages/param"
+	"github.com/trycourier/courier-go/v3/packages/param"
 	"reflect"
 )
 
