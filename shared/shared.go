@@ -229,8 +229,8 @@ func (r *Brand) UnmarshalJSON(data []byte) error {
 }
 
 type BrandColors struct {
-	Primary     string            `json:"primary,nullable"`
-	Secondary   string            `json:"secondary,nullable"`
+	Primary     string            `json:"primary"`
+	Secondary   string            `json:"secondary"`
 	ExtraFields map[string]string `json:",extras"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
