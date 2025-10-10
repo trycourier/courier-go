@@ -41,7 +41,7 @@ func NewListService(opts ...option.RequestOption) (r ListService) {
 }
 
 // Returns a list based on the list ID provided.
-func (r *ListService) Get(ctx context.Context, listID string, opts ...option.RequestOption) (res *shared.UserList, err error) {
+func (r *ListService) Get(ctx context.Context, listID string, opts ...option.RequestOption) (res *shared.SubscriptionList, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if listID == "" {
 		err = errors.New("missing required list_id parameter")
@@ -100,8 +100,8 @@ func (r *ListService) Restore(ctx context.Context, listID string, body ListResto
 }
 
 type ListListResponse struct {
-	Items  []shared.UserList `json:"items,required"`
-	Paging shared.Paging     `json:"paging,required"`
+	Items  []shared.SubscriptionList `json:"items,required"`
+	Paging shared.Paging             `json:"paging,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Items       respjson.Field
