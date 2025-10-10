@@ -2815,12 +2815,16 @@ func (r *PutSubscriptionsRecipientParam) UnmarshalJSON(data []byte) error {
 type RecipientParam struct {
 	// Use `tenant_id` instead.
 	AccountID param.Opt[string] `json:"account_id,omitzero"`
-	Email     param.Opt[string] `json:"email,omitzero"`
+	// The user's email address.
+	Email param.Opt[string] `json:"email,omitzero"`
 	// The user's preferred ISO 639-1 language code.
-	Locale      param.Opt[string] `json:"locale,omitzero"`
+	Locale param.Opt[string] `json:"locale,omitzero"`
+	// The user's phone number.
 	PhoneNumber param.Opt[string] `json:"phone_number,omitzero"`
-	// Tenant id. Will load brand, default preferences and base context data.
-	TenantID    param.Opt[string]         `json:"tenant_id,omitzero"`
+	// The id of the tenant the user is associated with.
+	TenantID param.Opt[string] `json:"tenant_id,omitzero"`
+	// The user's unique identifier. Typically, this will match the user id of a user
+	// in your system.
 	UserID      param.Opt[string]         `json:"user_id,omitzero"`
 	Data        map[string]any            `json:"data,omitzero"`
 	Preferences RecipientPreferencesParam `json:"preferences,omitzero"`
@@ -2919,6 +2923,28 @@ func (r RuleParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *RuleParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type SubscriptionList struct {
+	ID      string `json:"id,required"`
+	Name    string `json:"name,required"`
+	Created string `json:"created,nullable"`
+	Updated string `json:"updated,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Name        respjson.Field
+		Created     respjson.Field
+		Updated     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r SubscriptionList) RawJSON() string { return r.JSON.raw }
+func (r *SubscriptionList) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -3114,42 +3140,24 @@ func (r *TopicPreference) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type UserList struct {
-	ID      string `json:"id,required"`
-	Name    string `json:"name,required"`
-	Created string `json:"created,nullable"`
-	Updated string `json:"updated,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Name        respjson.Field
-		Created     respjson.Field
-		Updated     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r UserList) RawJSON() string { return r.JSON.raw }
-func (r *UserList) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type UserRecipient struct {
 	// Use `tenant_id` instead.
 	AccountID string `json:"account_id,nullable"`
 	// Context such as tenant_id to send the notification with.
 	Context MessageContext `json:"context,nullable"`
 	Data    map[string]any `json:"data,nullable"`
-	Email   string         `json:"email,nullable"`
+	// The user's email address.
+	Email string `json:"email,nullable"`
 	// The user's preferred ISO 639-1 language code.
-	Locale      string                   `json:"locale,nullable"`
+	Locale string `json:"locale,nullable"`
+	// The user's phone number.
 	PhoneNumber string                   `json:"phone_number,nullable"`
 	Preferences UserRecipientPreferences `json:"preferences,nullable"`
-	// Tenant id. Will load brand, default preferences and base context data.
+	// The id of the tenant the user is associated with.
 	TenantID string `json:"tenant_id,nullable"`
-	UserID   string `json:"user_id,nullable"`
+	// The user's unique identifier. Typically, this will match the user id of a user
+	// in your system.
+	UserID string `json:"user_id,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AccountID   respjson.Field
@@ -3204,12 +3212,16 @@ func (r *UserRecipientPreferences) UnmarshalJSON(data []byte) error {
 type UserRecipientParam struct {
 	// Use `tenant_id` instead.
 	AccountID param.Opt[string] `json:"account_id,omitzero"`
-	Email     param.Opt[string] `json:"email,omitzero"`
+	// The user's email address.
+	Email param.Opt[string] `json:"email,omitzero"`
 	// The user's preferred ISO 639-1 language code.
-	Locale      param.Opt[string] `json:"locale,omitzero"`
+	Locale param.Opt[string] `json:"locale,omitzero"`
+	// The user's phone number.
 	PhoneNumber param.Opt[string] `json:"phone_number,omitzero"`
-	// Tenant id. Will load brand, default preferences and base context data.
-	TenantID    param.Opt[string]             `json:"tenant_id,omitzero"`
+	// The id of the tenant the user is associated with.
+	TenantID param.Opt[string] `json:"tenant_id,omitzero"`
+	// The user's unique identifier. Typically, this will match the user id of a user
+	// in your system.
 	UserID      param.Opt[string]             `json:"user_id,omitzero"`
 	Data        map[string]any                `json:"data,omitzero"`
 	Preferences UserRecipientPreferencesParam `json:"preferences,omitzero"`
