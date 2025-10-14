@@ -622,6 +622,9 @@ type Rule = shared.Rule
 type RuleParam = shared.RuleParam
 
 // This is an alias to an internal type.
+type SubscriptionList = shared.SubscriptionList
+
+// This is an alias to an internal type.
 type SubscriptionTopicNew = shared.SubscriptionTopicNew
 
 // This is an alias to an internal type.
@@ -656,9 +659,6 @@ type TenantAssociationParam = shared.TenantAssociationParam
 
 // This is an alias to an internal type.
 type TopicPreference = shared.TopicPreference
-
-// This is an alias to an internal type.
-type UserList = shared.UserList
 
 // This is an alias to an internal type.
 type UserRecipient = shared.UserRecipient
