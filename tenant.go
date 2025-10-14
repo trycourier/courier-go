@@ -26,9 +26,9 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewTenantService] method instead.
 type TenantService struct {
-	Options            []option.RequestOption
-	DefaultPreferences TenantDefaultPreferenceService
-	Templates          TenantTemplateService
+	Options                  []option.RequestOption
+	TenantDefaultPreferences TenantTenantDefaultPreferenceService
+	Templates                TenantTemplateService
 }
 
 // NewTenantService generates a new service that applies the given options to each
@@ -37,7 +37,7 @@ type TenantService struct {
 func NewTenantService(opts ...option.RequestOption) (r TenantService) {
 	r = TenantService{}
 	r.Options = opts
-	r.DefaultPreferences = NewTenantDefaultPreferenceService(opts...)
+	r.TenantDefaultPreferences = NewTenantTenantDefaultPreferenceService(opts...)
 	r.Templates = NewTenantTemplateService(opts...)
 	return
 }
