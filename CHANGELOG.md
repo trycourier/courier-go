@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.3.0-alpha2 (2025-10-14)
+
+Full Changelog: [v3.3.0-alpha1...v3.3.0-alpha2](https://github.com/trycourier/courier-go/compare/v3.3.0-alpha1...v3.3.0-alpha2)
+
+### Features
+
+* Kick of merge attempt ([c47fed3](https://github.com/trycourier/courier-go/commit/c47fed302f24119b7a8d4f444bf0c96fc9f11860))
+* Polish and Kick of Java Kit Gen ([63588bc](https://github.com/trycourier/courier-go/commit/63588bc4ce5f8845ddc71656890899a20deafa4b))
+
 ## 3.3.0-alpha1 (2025-10-09)
 
 Full Changelog: [v3.3.0-alpha0...v3.3.0-alpha1](https://github.com/trycourier/courier-go/compare/v3.3.0-alpha0...v3.3.0-alpha1)
