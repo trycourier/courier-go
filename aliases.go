@@ -622,6 +622,9 @@ type Rule = shared.Rule
 type RuleParam = shared.RuleParam
 
 // This is an alias to an internal type.
+type SubscribeToListsRequestItemParam = shared.SubscribeToListsRequestItemParam
+
+// This is an alias to an internal type.
 type SubscriptionList = shared.SubscriptionList
 
 // This is an alias to an internal type.
