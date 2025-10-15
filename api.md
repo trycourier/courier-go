@@ -41,6 +41,7 @@
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v3/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v3/shared#RecipientParam">RecipientParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v3/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v3/shared#RecipientPreferencesParam">RecipientPreferencesParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v3/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v3/shared#RuleParam">RuleParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v3/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v3/shared#SubscribeToListsRequestItemParam">SubscribeToListsRequestItemParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v3/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v3/shared#SubscriptionTopicNewParam">SubscriptionTopicNewParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v3/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v3/shared#TenantAssociationParam">TenantAssociationParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v3/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v3/shared#UserRecipientParam">UserRecipientParam</a>

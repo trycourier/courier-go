@@ -184,7 +184,7 @@ func (r ProfileListGetParams) URLQuery() (v url.Values, err error) {
 }
 
 type ProfileListSubscribeParams struct {
-	Lists []ProfileListSubscribeParamsList `json:"lists,omitzero,required"`
+	Lists []shared.SubscribeToListsRequestItemParam `json:"lists,omitzero,required"`
 	paramObj
 }
 
@@ -193,20 +193,5 @@ func (r ProfileListSubscribeParams) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *ProfileListSubscribeParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The property ListID is required.
-type ProfileListSubscribeParamsList struct {
-	ListID      string                           `json:"listId,required"`
-	Preferences shared.RecipientPreferencesParam `json:"preferences,omitzero"`
-	paramObj
-}
-
-func (r ProfileListSubscribeParamsList) MarshalJSON() (data []byte, err error) {
-	type shadow ProfileListSubscribeParamsList
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ProfileListSubscribeParamsList) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }

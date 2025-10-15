@@ -2926,6 +2926,21 @@ func (r *RuleParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// The property ListID is required.
+type SubscribeToListsRequestItemParam struct {
+	ListID      string                    `json:"listId,required"`
+	Preferences RecipientPreferencesParam `json:"preferences,omitzero"`
+	paramObj
+}
+
+func (r SubscribeToListsRequestItemParam) MarshalJSON() (data []byte, err error) {
+	type shadow SubscribeToListsRequestItemParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *SubscribeToListsRequestItemParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type SubscriptionList struct {
 	ID      string `json:"id,required"`
 	Name    string `json:"name,required"`
