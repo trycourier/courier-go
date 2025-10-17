@@ -1,5 +1,19 @@
 # Changelog
 
+## 3.3.0-alpha3 (2025-10-17)
+
+Full Changelog: [v3.3.0-alpha2...v3.3.0-alpha3](https://github.com/trycourier/courier-go/compare/v3.3.0-alpha2...v3.3.0-alpha3)
+
+### Features
+
+* Changes to spec, examples and scripts ([ce585a5](https://github.com/trycourier/courier-go/commit/ce585a5714c7101ce074d07b8fb631c2ba27c3ff))
+* More PHP and attempted node automerge ([1a423ee](https://github.com/trycourier/courier-go/commit/1a423eee87e690b33bd8313a95c10ea846e37f16))
+
+
+### Bug Fixes
+
+* **tests:** use correct param type for preferences ([fc89e7a](https://github.com/trycourier/courier-go/commit/fc89e7a3af645c464055b556140dfd0c43704bbc))
+
 ## 3.3.0-alpha2 (2025-10-14)
 
 Full Changelog: [v3.3.0-alpha1...v3.3.0-alpha2](https://github.com/trycourier/courier-go/compare/v3.3.0-alpha1...v3.3.0-alpha2)
