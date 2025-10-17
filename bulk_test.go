@@ -31,7 +31,7 @@ func TestBulkAddUsers(t *testing.T) {
 		context.TODO(),
 		"job_id",
 		courier.BulkAddUsersParams{
-			Users: []shared.InboundBulkMessageUserParam{{
+			Users: []courier.InboundBulkMessageUserParam{{
 				Data: map[string]interface{}{},
 				Preferences: shared.RecipientPreferencesParam{
 					Categories: map[string]shared.PreferenceParam{
@@ -130,8 +130,8 @@ func TestBulkNewJobWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Bulk.NewJob(context.TODO(), courier.BulkNewJobParams{
-		Message: shared.InboundBulkMessageUnionParam{
-			OfInboundBulkTemplateMessage: &shared.InboundBulkMessageInboundBulkTemplateMessageParam{
+		Message: courier.InboundBulkMessageUnionParam{
+			OfInboundBulkTemplateMessage: &courier.InboundBulkMessageInboundBulkTemplateMessageParam{
 				Template: "template",
 				Brand:    courier.String("brand"),
 				Data: map[string]any{

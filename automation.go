@@ -3,7 +3,9 @@
 package courier
 
 import (
+	"github.com/trycourier/courier-go/v3/internal/apijson"
 	"github.com/trycourier/courier-go/v3/option"
+	"github.com/trycourier/courier-go/v3/packages/respjson"
 )
 
 // AutomationService contains methods and other services that help with interacting
@@ -25,4 +27,20 @@ func NewAutomationService(opts ...option.RequestOption) (r AutomationService) {
 	r.Options = opts
 	r.Invoke = NewAutomationInvokeService(opts...)
 	return
+}
+
+type AutomationInvokeResponse struct {
+	RunID string `json:"runId,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		RunID       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r AutomationInvokeResponse) RawJSON() string { return r.JSON.raw }
+func (r *AutomationInvokeResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }

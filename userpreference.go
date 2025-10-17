@@ -82,9 +82,38 @@ func (r *UserPreferenceService) UpdateOrNewTopic(ctx context.Context, topicID st
 	return
 }
 
+type TopicPreference struct {
+	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
+	DefaultStatus shared.PreferenceStatus `json:"default_status,required"`
+	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
+	Status    shared.PreferenceStatus `json:"status,required"`
+	TopicID   string                  `json:"topic_id,required"`
+	TopicName string                  `json:"topic_name,required"`
+	// The Channels a user has chosen to receive notifications through for this topic
+	CustomRouting    []shared.ChannelClassification `json:"custom_routing,nullable"`
+	HasCustomRouting bool                           `json:"has_custom_routing,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		DefaultStatus    respjson.Field
+		Status           respjson.Field
+		TopicID          respjson.Field
+		TopicName        respjson.Field
+		CustomRouting    respjson.Field
+		HasCustomRouting respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TopicPreference) RawJSON() string { return r.JSON.raw }
+func (r *TopicPreference) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type UserPreferenceGetResponse struct {
 	// The Preferences associated with the user_id.
-	Items []shared.TopicPreference `json:"items,required"`
+	Items []TopicPreference `json:"items,required"`
 	// Deprecated - Paging not implemented on this endpoint
 	Paging shared.Paging `json:"paging,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -103,7 +132,7 @@ func (r *UserPreferenceGetResponse) UnmarshalJSON(data []byte) error {
 }
 
 type UserPreferenceGetTopicResponse struct {
-	Topic shared.TopicPreference `json:"topic,required"`
+	Topic TopicPreference `json:"topic,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Topic       respjson.Field

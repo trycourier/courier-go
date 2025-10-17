@@ -83,7 +83,7 @@ func TestProfileListSubscribe(t *testing.T) {
 		context.TODO(),
 		"user_id",
 		courier.ProfileListSubscribeParams{
-			Lists: []shared.SubscribeToListsRequestItemParam{{
+			Lists: []courier.SubscribeToListsRequestItemParam{{
 				ListID: "listId",
 				Preferences: shared.RecipientPreferencesParam{
 					Categories: map[string]shared.PreferenceParam{

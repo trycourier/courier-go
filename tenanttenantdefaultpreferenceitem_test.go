@@ -32,8 +32,8 @@ func TestTenantTenantDefaultPreferenceItemUpdateWithOptionalParams(t *testing.T)
 		"topic_id",
 		courier.TenantTenantDefaultPreferenceItemUpdateParams{
 			TenantID: "tenant_id",
-			SubscriptionTopicNew: shared.SubscriptionTopicNewParam{
-				Status:           shared.SubscriptionTopicNewStatusOptedIn,
+			SubscriptionTopicNew: courier.SubscriptionTopicNewParam{
+				Status:           courier.SubscriptionTopicNewStatusOptedIn,
 				CustomRouting:    []shared.ChannelClassification{shared.ChannelClassificationInbox},
 				HasCustomRouting: courier.Bool(true),
 			},

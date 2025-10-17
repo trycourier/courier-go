@@ -11,7 +11,6 @@ import (
 	"github.com/trycourier/courier-go/v3"
 	"github.com/trycourier/courier-go/v3/internal/testutil"
 	"github.com/trycourier/courier-go/v3/option"
-	"github.com/trycourier/courier-go/v3/shared"
 )
 
 func TestBrandNewWithOptionalParams(t *testing.T) {
@@ -30,30 +29,30 @@ func TestBrandNewWithOptionalParams(t *testing.T) {
 	_, err := client.Brands.New(context.TODO(), courier.BrandNewParams{
 		Name: "name",
 		ID:   courier.String("id"),
-		Settings: shared.BrandSettingsParam{
-			Colors: shared.BrandColorsParam{
+		Settings: courier.BrandSettingsParam{
+			Colors: courier.BrandColorsParam{
 				Primary:   courier.String("primary"),
 				Secondary: courier.String("secondary"),
 			},
-			Email: shared.BrandSettingsEmailParam{
-				Footer: shared.EmailFooterParam{
+			Email: courier.BrandSettingsEmailParam{
+				Footer: courier.EmailFooterParam{
 					Content:        courier.String("content"),
 					InheritDefault: courier.Bool(true),
 				},
-				Head: shared.EmailHeadParam{
+				Head: courier.EmailHeadParam{
 					InheritDefault: true,
 					Content:        courier.String("content"),
 				},
-				Header: shared.EmailHeaderParam{
-					Logo: shared.LogoParam{
+				Header: courier.EmailHeaderParam{
+					Logo: courier.LogoParam{
 						Href:  courier.String("href"),
 						Image: courier.String("image"),
 					},
 					BarColor:       courier.String("barColor"),
 					InheritDefault: courier.Bool(true),
 				},
-				TemplateOverride: shared.BrandSettingsEmailTemplateOverrideParam{
-					BrandTemplateParam: shared.BrandTemplateParam{
+				TemplateOverride: courier.BrandSettingsEmailTemplateOverrideParam{
+					BrandTemplateParam: courier.BrandTemplateParam{
 						Enabled:               true,
 						BackgroundColor:       courier.String("backgroundColor"),
 						BlocksBackgroundColor: courier.String("blocksBackgroundColor"),
@@ -62,7 +61,7 @@ func TestBrandNewWithOptionalParams(t *testing.T) {
 						Header:                courier.String("header"),
 						Width:                 courier.String("width"),
 					},
-					Mjml: shared.BrandTemplateParam{
+					Mjml: courier.BrandTemplateParam{
 						Enabled:               true,
 						BackgroundColor:       courier.String("backgroundColor"),
 						BlocksBackgroundColor: courier.String("blocksBackgroundColor"),
@@ -75,27 +74,27 @@ func TestBrandNewWithOptionalParams(t *testing.T) {
 					FooterFullWidth:       courier.Bool(true),
 				},
 			},
-			Inapp: shared.BrandSettingsInAppParam{
-				Colors: shared.BrandColorsParam{
+			Inapp: courier.BrandSettingsInAppParam{
+				Colors: courier.BrandColorsParam{
 					Primary:   courier.String("primary"),
 					Secondary: courier.String("secondary"),
 				},
-				Icons: shared.IconsParam{
+				Icons: courier.IconsParam{
 					Bell:    courier.String("bell"),
 					Message: courier.String("message"),
 				},
-				WidgetBackground: shared.WidgetBackgroundParam{
+				WidgetBackground: courier.WidgetBackgroundParam{
 					BottomColor: courier.String("bottomColor"),
 					TopColor:    courier.String("topColor"),
 				},
 				BorderRadius:       courier.String("borderRadius"),
 				DisableMessageIcon: courier.Bool(true),
 				FontFamily:         courier.String("fontFamily"),
-				Placement:          shared.BrandSettingsInAppPlacementTop,
+				Placement:          courier.BrandSettingsInAppPlacementTop,
 			},
 		},
-		Snippets: shared.BrandSnippetsParam{
-			Items: []shared.BrandSnippetParam{{
+		Snippets: courier.BrandSnippetsParam{
+			Items: []courier.BrandSnippetParam{{
 				Name:  "name",
 				Value: "value",
 			}},
@@ -151,30 +150,30 @@ func TestBrandUpdateWithOptionalParams(t *testing.T) {
 		"brand_id",
 		courier.BrandUpdateParams{
 			Name: "name",
-			Settings: shared.BrandSettingsParam{
-				Colors: shared.BrandColorsParam{
+			Settings: courier.BrandSettingsParam{
+				Colors: courier.BrandColorsParam{
 					Primary:   courier.String("primary"),
 					Secondary: courier.String("secondary"),
 				},
-				Email: shared.BrandSettingsEmailParam{
-					Footer: shared.EmailFooterParam{
+				Email: courier.BrandSettingsEmailParam{
+					Footer: courier.EmailFooterParam{
 						Content:        courier.String("content"),
 						InheritDefault: courier.Bool(true),
 					},
-					Head: shared.EmailHeadParam{
+					Head: courier.EmailHeadParam{
 						InheritDefault: true,
 						Content:        courier.String("content"),
 					},
-					Header: shared.EmailHeaderParam{
-						Logo: shared.LogoParam{
+					Header: courier.EmailHeaderParam{
+						Logo: courier.LogoParam{
 							Href:  courier.String("href"),
 							Image: courier.String("image"),
 						},
 						BarColor:       courier.String("barColor"),
 						InheritDefault: courier.Bool(true),
 					},
-					TemplateOverride: shared.BrandSettingsEmailTemplateOverrideParam{
-						BrandTemplateParam: shared.BrandTemplateParam{
+					TemplateOverride: courier.BrandSettingsEmailTemplateOverrideParam{
+						BrandTemplateParam: courier.BrandTemplateParam{
 							Enabled:               true,
 							BackgroundColor:       courier.String("backgroundColor"),
 							BlocksBackgroundColor: courier.String("blocksBackgroundColor"),
@@ -183,7 +182,7 @@ func TestBrandUpdateWithOptionalParams(t *testing.T) {
 							Header:                courier.String("header"),
 							Width:                 courier.String("width"),
 						},
-						Mjml: shared.BrandTemplateParam{
+						Mjml: courier.BrandTemplateParam{
 							Enabled:               true,
 							BackgroundColor:       courier.String("backgroundColor"),
 							BlocksBackgroundColor: courier.String("blocksBackgroundColor"),
@@ -196,27 +195,27 @@ func TestBrandUpdateWithOptionalParams(t *testing.T) {
 						FooterFullWidth:       courier.Bool(true),
 					},
 				},
-				Inapp: shared.BrandSettingsInAppParam{
-					Colors: shared.BrandColorsParam{
+				Inapp: courier.BrandSettingsInAppParam{
+					Colors: courier.BrandColorsParam{
 						Primary:   courier.String("primary"),
 						Secondary: courier.String("secondary"),
 					},
-					Icons: shared.IconsParam{
+					Icons: courier.IconsParam{
 						Bell:    courier.String("bell"),
 						Message: courier.String("message"),
 					},
-					WidgetBackground: shared.WidgetBackgroundParam{
+					WidgetBackground: courier.WidgetBackgroundParam{
 						BottomColor: courier.String("bottomColor"),
 						TopColor:    courier.String("topColor"),
 					},
 					BorderRadius:       courier.String("borderRadius"),
 					DisableMessageIcon: courier.Bool(true),
 					FontFamily:         courier.String("fontFamily"),
-					Placement:          shared.BrandSettingsInAppPlacementTop,
+					Placement:          courier.BrandSettingsInAppPlacementTop,
 				},
 			},
-			Snippets: shared.BrandSnippetsParam{
-				Items: []shared.BrandSnippetParam{{
+			Snippets: courier.BrandSnippetsParam{
+				Items: []courier.BrandSnippetParam{{
 					Name:  "name",
 					Value: "value",
 				}},

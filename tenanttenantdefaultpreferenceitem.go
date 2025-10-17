@@ -13,7 +13,6 @@ import (
 	shimjson "github.com/trycourier/courier-go/v3/internal/encoding/json"
 	"github.com/trycourier/courier-go/v3/internal/requestconfig"
 	"github.com/trycourier/courier-go/v3/option"
-	"github.com/trycourier/courier-go/v3/shared"
 )
 
 // TenantTenantDefaultPreferenceItemService contains methods and other services
@@ -71,7 +70,7 @@ func (r *TenantTenantDefaultPreferenceItemService) Delete(ctx context.Context, t
 
 type TenantTenantDefaultPreferenceItemUpdateParams struct {
 	TenantID             string `path:"tenant_id,required" json:"-"`
-	SubscriptionTopicNew shared.SubscriptionTopicNewParam
+	SubscriptionTopicNew SubscriptionTopicNewParam
 	paramObj
 }
 

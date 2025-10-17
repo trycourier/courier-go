@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.3.0-alpha4 (2025-10-17)
+
+Full Changelog: [v3.3.0-alpha3...v3.3.0-alpha4](https://github.com/trycourier/courier-go/compare/v3.3.0-alpha3...v3.3.0-alpha4)
+
+### Bug Fixes
+
+* Updated paths for each model and go example updates ([6a2f8ce](https://github.com/trycourier/courier-go/commit/6a2f8ce17540ac71d737d1e2fa44761c3f35d0e3))
+
 ## 3.3.0-alpha3 (2025-10-17)
 
 Full Changelog: [v3.3.0-alpha2...v3.3.0-alpha3](https://github.com/trycourier/courier-go/compare/v3.3.0-alpha2...v3.3.0-alpha3)
