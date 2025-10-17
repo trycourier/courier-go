@@ -39,7 +39,7 @@ func NewTenantTemplateService(opts ...option.RequestOption) (r TenantTemplateSer
 }
 
 // Get a Template in Tenant
-func (r *TenantTemplateService) Get(ctx context.Context, templateID string, query TenantTemplateGetParams, opts ...option.RequestOption) (res *shared.BaseTemplateTenantAssociation, err error) {
+func (r *TenantTemplateService) Get(ctx context.Context, templateID string, query TenantTemplateGetParams, opts ...option.RequestOption) (res *BaseTemplateTenantAssociation, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if query.TenantID == "" {
 		err = errors.New("missing required tenant_id parameter")
@@ -117,7 +117,7 @@ type TenantTemplateListResponseItem struct {
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	shared.BaseTemplateTenantAssociation
+	BaseTemplateTenantAssociation
 }
 
 // Returns the unmodified JSON received from the API

@@ -56,10 +56,10 @@ func TestTenantUpdateWithOptionalParams(t *testing.T) {
 		courier.TenantUpdateParams{
 			Name:    "name",
 			BrandID: courier.String("brand_id"),
-			DefaultPreferences: shared.DefaultPreferencesParam{
-				Items: []shared.DefaultPreferencesItemParam{{
-					SubscriptionTopicNewParam: shared.SubscriptionTopicNewParam{
-						Status:           shared.SubscriptionTopicNewStatusOptedOut,
+			DefaultPreferences: courier.DefaultPreferencesParam{
+				Items: []courier.DefaultPreferencesItemParam{{
+					SubscriptionTopicNewParam: courier.SubscriptionTopicNewParam{
+						Status:           courier.SubscriptionTopicNewStatusOptedOut,
 						CustomRouting:    []shared.ChannelClassification{shared.ChannelClassificationDirectMessage},
 						HasCustomRouting: courier.Bool(true),
 					},

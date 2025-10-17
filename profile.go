@@ -105,6 +105,21 @@ func (r *ProfileService) Replace(ctx context.Context, userID string, body Profil
 	return
 }
 
+// The property ListID is required.
+type SubscribeToListsRequestItemParam struct {
+	ListID      string                           `json:"listId,required"`
+	Preferences shared.RecipientPreferencesParam `json:"preferences,omitzero"`
+	paramObj
+}
+
+func (r SubscribeToListsRequestItemParam) MarshalJSON() (data []byte, err error) {
+	type shadow SubscribeToListsRequestItemParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *SubscribeToListsRequestItemParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type ProfileNewResponse struct {
 	// Any of "SUCCESS".
 	Status ProfileNewResponseStatus `json:"status,required"`

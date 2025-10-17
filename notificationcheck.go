@@ -14,7 +14,6 @@ import (
 	"github.com/trycourier/courier-go/v3/option"
 	"github.com/trycourier/courier-go/v3/packages/param"
 	"github.com/trycourier/courier-go/v3/packages/respjson"
-	"github.com/trycourier/courier-go/v3/shared"
 )
 
 // NotificationCheckService contains methods and other services that help with
@@ -83,7 +82,7 @@ func (r *NotificationCheckService) Delete(ctx context.Context, submissionID stri
 }
 
 type NotificationCheckUpdateResponse struct {
-	Checks []shared.Check `json:"checks,required"`
+	Checks []Check `json:"checks,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Checks      respjson.Field
@@ -99,7 +98,7 @@ func (r *NotificationCheckUpdateResponse) UnmarshalJSON(data []byte) error {
 }
 
 type NotificationCheckListResponse struct {
-	Checks []shared.Check `json:"checks,required"`
+	Checks []Check `json:"checks,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Checks      respjson.Field
@@ -115,8 +114,8 @@ func (r *NotificationCheckListResponse) UnmarshalJSON(data []byte) error {
 }
 
 type NotificationCheckUpdateParams struct {
-	ID     string                  `path:"id,required" json:"-"`
-	Checks []shared.BaseCheckParam `json:"checks,omitzero,required"`
+	ID     string           `path:"id,required" json:"-"`
+	Checks []BaseCheckParam `json:"checks,omitzero,required"`
 	paramObj
 }
 

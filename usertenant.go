@@ -16,7 +16,6 @@ import (
 	"github.com/trycourier/courier-go/v3/option"
 	"github.com/trycourier/courier-go/v3/packages/param"
 	"github.com/trycourier/courier-go/v3/packages/respjson"
-	"github.com/trycourier/courier-go/v3/shared"
 )
 
 // UserTenantService contains methods and other services that help with interacting
@@ -126,8 +125,8 @@ type UserTenantListResponse struct {
 	URL string `json:"url,required"`
 	// A pointer to the next page of results. Defined only when `has_more` is set to
 	// true
-	Cursor string                     `json:"cursor,nullable"`
-	Items  []shared.TenantAssociation `json:"items,nullable"`
+	Cursor string              `json:"cursor,nullable"`
+	Items  []TenantAssociation `json:"items,nullable"`
 	// A url that may be used to generate fetch the next set of results. Defined only
 	// when `has_more` is set to true
 	NextURL string `json:"next_url,nullable"`
@@ -174,7 +173,7 @@ func (r UserTenantListParams) URLQuery() (v url.Values, err error) {
 }
 
 type UserTenantAddMultipleParams struct {
-	Tenants []shared.TenantAssociationParam `json:"tenants,omitzero,required"`
+	Tenants []TenantAssociationParam `json:"tenants,omitzero,required"`
 	paramObj
 }
 
