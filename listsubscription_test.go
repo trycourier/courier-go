@@ -63,7 +63,7 @@ func TestListSubscriptionAdd(t *testing.T) {
 			Recipients: []shared.PutSubscriptionsRecipientParam{{
 				RecipientID: "recipientId",
 				Preferences: shared.RecipientPreferencesParam{
-					Categories: map[string]shared.NotificationPreferenceDetailsParam{
+					Categories: map[string]shared.PreferenceParam{
 						"foo": {
 							Status: shared.PreferenceStatusOptedIn,
 							ChannelPreferences: []shared.ChannelPreferenceParam{{
@@ -75,7 +75,7 @@ func TestListSubscriptionAdd(t *testing.T) {
 							}},
 						},
 					},
-					Notifications: map[string]shared.NotificationPreferenceDetailsParam{
+					Notifications: map[string]shared.PreferenceParam{
 						"foo": {
 							Status: shared.PreferenceStatusOptedIn,
 							ChannelPreferences: []shared.ChannelPreferenceParam{{
@@ -120,7 +120,7 @@ func TestListSubscriptionSubscribe(t *testing.T) {
 			Recipients: []shared.PutSubscriptionsRecipientParam{{
 				RecipientID: "recipientId",
 				Preferences: shared.RecipientPreferencesParam{
-					Categories: map[string]shared.NotificationPreferenceDetailsParam{
+					Categories: map[string]shared.PreferenceParam{
 						"foo": {
 							Status: shared.PreferenceStatusOptedIn,
 							ChannelPreferences: []shared.ChannelPreferenceParam{{
@@ -132,7 +132,7 @@ func TestListSubscriptionSubscribe(t *testing.T) {
 							}},
 						},
 					},
-					Notifications: map[string]shared.NotificationPreferenceDetailsParam{
+					Notifications: map[string]shared.PreferenceParam{
 						"foo": {
 							Status: shared.PreferenceStatusOptedIn,
 							ChannelPreferences: []shared.ChannelPreferenceParam{{
@@ -176,7 +176,7 @@ func TestListSubscriptionSubscribeUserWithOptionalParams(t *testing.T) {
 		courier.ListSubscriptionSubscribeUserParams{
 			ListID: "list_id",
 			Preferences: shared.RecipientPreferencesParam{
-				Categories: map[string]shared.NotificationPreferenceDetailsParam{
+				Categories: map[string]shared.PreferenceParam{
 					"foo": {
 						Status: shared.PreferenceStatusOptedIn,
 						ChannelPreferences: []shared.ChannelPreferenceParam{{
@@ -188,7 +188,7 @@ func TestListSubscriptionSubscribeUserWithOptionalParams(t *testing.T) {
 						}},
 					},
 				},
-				Notifications: map[string]shared.NotificationPreferenceDetailsParam{
+				Notifications: map[string]shared.PreferenceParam{
 					"foo": {
 						Status: shared.PreferenceStatusOptedIn,
 						ChannelPreferences: []shared.ChannelPreferenceParam{{

@@ -83,10 +83,10 @@ func TestProfileListSubscribe(t *testing.T) {
 		context.TODO(),
 		"user_id",
 		courier.ProfileListSubscribeParams{
-			Lists: []courier.ProfileListSubscribeParamsList{{
+			Lists: []shared.SubscribeToListsRequestItemParam{{
 				ListID: "listId",
 				Preferences: shared.RecipientPreferencesParam{
-					Categories: map[string]shared.NotificationPreferenceDetailsParam{
+					Categories: map[string]shared.PreferenceParam{
 						"foo": {
 							Status: shared.PreferenceStatusOptedIn,
 							ChannelPreferences: []shared.ChannelPreferenceParam{{
@@ -98,7 +98,7 @@ func TestProfileListSubscribe(t *testing.T) {
 							}},
 						},
 					},
-					Notifications: map[string]shared.NotificationPreferenceDetailsParam{
+					Notifications: map[string]shared.PreferenceParam{
 						"foo": {
 							Status: shared.PreferenceStatusOptedIn,
 							ChannelPreferences: []shared.ChannelPreferenceParam{{

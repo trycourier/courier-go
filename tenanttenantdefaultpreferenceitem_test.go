@@ -14,7 +14,7 @@ import (
 	"github.com/trycourier/courier-go/v3/shared"
 )
 
-func TestTenantDefaultPreferenceItemUpdateWithOptionalParams(t *testing.T) {
+func TestTenantTenantDefaultPreferenceItemUpdateWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,10 +27,10 @@ func TestTenantDefaultPreferenceItemUpdateWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	err := client.Tenants.DefaultPreferences.Items.Update(
+	err := client.Tenants.TenantDefaultPreferences.Items.Update(
 		context.TODO(),
 		"topic_id",
-		courier.TenantDefaultPreferenceItemUpdateParams{
+		courier.TenantTenantDefaultPreferenceItemUpdateParams{
 			TenantID: "tenant_id",
 			SubscriptionTopicNew: shared.SubscriptionTopicNewParam{
 				Status:           shared.SubscriptionTopicNewStatusOptedIn,
@@ -48,7 +48,7 @@ func TestTenantDefaultPreferenceItemUpdateWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestTenantDefaultPreferenceItemDelete(t *testing.T) {
+func TestTenantTenantDefaultPreferenceItemDelete(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -61,10 +61,10 @@ func TestTenantDefaultPreferenceItemDelete(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	err := client.Tenants.DefaultPreferences.Items.Delete(
+	err := client.Tenants.TenantDefaultPreferences.Items.Delete(
 		context.TODO(),
 		"topic_id",
-		courier.TenantDefaultPreferenceItemDeleteParams{
+		courier.TenantTenantDefaultPreferenceItemDeleteParams{
 			TenantID: "tenant_id",
 		},
 	)
