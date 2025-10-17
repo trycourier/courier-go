@@ -1135,7 +1135,7 @@ const (
 )
 
 type RecipientParam struct {
-	// Use `tenant_id` instead.
+	// Deprecated - Use `tenant_id` instead.
 	AccountID param.Opt[string] `json:"account_id,omitzero"`
 	// The user's email address.
 	Email param.Opt[string] `json:"email,omitzero"`
@@ -1249,7 +1249,7 @@ func (r *RuleParam) UnmarshalJSON(data []byte) error {
 }
 
 type UserRecipient struct {
-	// Use `tenant_id` instead.
+	// Deprecated - Use `tenant_id` instead.
 	AccountID string `json:"account_id,nullable"`
 	// Context such as tenant_id to send the notification with.
 	Context MessageContext `json:"context,nullable"`
@@ -1318,7 +1318,7 @@ func (r *UserRecipientPreferences) UnmarshalJSON(data []byte) error {
 }
 
 type UserRecipientParam struct {
-	// Use `tenant_id` instead.
+	// Deprecated - Use `tenant_id` instead.
 	AccountID param.Opt[string] `json:"account_id,omitzero"`
 	// The user's email address.
 	Email param.Opt[string] `json:"email,omitzero"`
