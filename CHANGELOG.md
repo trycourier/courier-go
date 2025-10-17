@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.3.0-alpha5 (2025-10-17)
+
+Full Changelog: [v3.3.0-alpha4...v3.3.0-alpha5](https://github.com/trycourier/courier-go/compare/v3.3.0-alpha4...v3.3.0-alpha5)
+
+### Bug Fixes
+
+* Dep Warning ([237e89a](https://github.com/trycourier/courier-go/commit/237e89a01569652d2948585bfafa78b3a934a326))
+
 ## 3.3.0-alpha4 (2025-10-17)
 
 Full Changelog: [v3.3.0-alpha3...v3.3.0-alpha4](https://github.com/trycourier/courier-go/compare/v3.3.0-alpha3...v3.3.0-alpha4)
