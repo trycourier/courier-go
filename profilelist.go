@@ -184,7 +184,7 @@ func (r ProfileListGetParams) URLQuery() (v url.Values, err error) {
 }
 
 type ProfileListSubscribeParams struct {
-	Lists []shared.SubscribeToListsRequestItemParam `json:"lists,omitzero,required"`
+	Lists []SubscribeToListsRequestItemParam `json:"lists,omitzero,required"`
 	paramObj
 }
 

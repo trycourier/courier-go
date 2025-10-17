@@ -167,7 +167,7 @@ func (r ListSubscriptionListParams) URLQuery() (v url.Values, err error) {
 }
 
 type ListSubscriptionAddParams struct {
-	Recipients []shared.PutSubscriptionsRecipientParam `json:"recipients,omitzero,required"`
+	Recipients []PutSubscriptionsRecipientParam `json:"recipients,omitzero,required"`
 	paramObj
 }
 
@@ -180,7 +180,7 @@ func (r *ListSubscriptionAddParams) UnmarshalJSON(data []byte) error {
 }
 
 type ListSubscriptionSubscribeParams struct {
-	Recipients []shared.PutSubscriptionsRecipientParam `json:"recipients,omitzero,required"`
+	Recipients []PutSubscriptionsRecipientParam `json:"recipients,omitzero,required"`
 	paramObj
 }
 

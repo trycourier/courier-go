@@ -60,7 +60,7 @@ func TestListSubscriptionAdd(t *testing.T) {
 		context.TODO(),
 		"list_id",
 		courier.ListSubscriptionAddParams{
-			Recipients: []shared.PutSubscriptionsRecipientParam{{
+			Recipients: []courier.PutSubscriptionsRecipientParam{{
 				RecipientID: "recipientId",
 				Preferences: shared.RecipientPreferencesParam{
 					Categories: map[string]shared.NotificationPreferenceDetailsParam{
@@ -117,7 +117,7 @@ func TestListSubscriptionSubscribe(t *testing.T) {
 		context.TODO(),
 		"list_id",
 		courier.ListSubscriptionSubscribeParams{
-			Recipients: []shared.PutSubscriptionsRecipientParam{{
+			Recipients: []courier.PutSubscriptionsRecipientParam{{
 				RecipientID: "recipientId",
 				Preferences: shared.RecipientPreferencesParam{
 					Categories: map[string]shared.NotificationPreferenceDetailsParam{

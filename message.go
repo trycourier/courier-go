@@ -63,7 +63,7 @@ func (r *MessageService) List(ctx context.Context, query MessageListParams, opts
 // status code for a successful cancellation or `409` status code for an
 // unsuccessful cancellation. Both cases will include the actual message record in
 // the response body (see details below).
-func (r *MessageService) Cancel(ctx context.Context, messageID string, opts ...option.RequestOption) (res *shared.MessageDetails, err error) {
+func (r *MessageService) Cancel(ctx context.Context, messageID string, opts ...option.RequestOption) (res *MessageDetails, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if messageID == "" {
 		err = errors.New("missing required message_id parameter")
@@ -98,6 +98,105 @@ func (r *MessageService) History(ctx context.Context, messageID string, query Me
 	return
 }
 
+type MessageDetails struct {
+	// A unique identifier associated with the message you wish to retrieve (results
+	// from a send).
+	ID string `json:"id,required"`
+	// A UTC timestamp at which the recipient clicked on a tracked link for the first
+	// time. Stored as a millisecond representation of the Unix epoch.
+	Clicked int64 `json:"clicked,required"`
+	// A UTC timestamp at which the Integration provider delivered the message. Stored
+	// as a millisecond representation of the Unix epoch.
+	Delivered int64 `json:"delivered,required"`
+	// A UTC timestamp at which Courier received the message request. Stored as a
+	// millisecond representation of the Unix epoch.
+	Enqueued int64 `json:"enqueued,required"`
+	// A unique identifier associated with the event of the delivered message.
+	Event string `json:"event,required"`
+	// A unique identifier associated with the notification of the delivered message.
+	Notification string `json:"notification,required"`
+	// A UTC timestamp at which the recipient opened a message for the first time.
+	// Stored as a millisecond representation of the Unix epoch.
+	Opened int64 `json:"opened,required"`
+	// A unique identifier associated with the recipient of the delivered message.
+	Recipient string `json:"recipient,required"`
+	// A UTC timestamp at which Courier passed the message to the Integration provider.
+	// Stored as a millisecond representation of the Unix epoch.
+	Sent int64 `json:"sent,required"`
+	// The current status of the message.
+	//
+	// Any of "CANCELED", "CLICKED", "DELAYED", "DELIVERED", "DIGESTED", "ENQUEUED",
+	// "FILTERED", "OPENED", "ROUTED", "SENT", "SIMULATED", "THROTTLED",
+	// "UNDELIVERABLE", "UNMAPPED", "UNROUTABLE".
+	Status MessageDetailsStatus `json:"status,required"`
+	// A message describing the error that occurred.
+	Error string `json:"error,nullable"`
+	// The reason for the current status of the message.
+	//
+	// Any of "BOUNCED", "FAILED", "FILTERED", "NO_CHANNELS", "NO_PROVIDERS",
+	// "OPT_IN_REQUIRED", "PROVIDER_ERROR", "UNPUBLISHED", "UNSUBSCRIBED".
+	Reason MessageDetailsReason `json:"reason,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID           respjson.Field
+		Clicked      respjson.Field
+		Delivered    respjson.Field
+		Enqueued     respjson.Field
+		Event        respjson.Field
+		Notification respjson.Field
+		Opened       respjson.Field
+		Recipient    respjson.Field
+		Sent         respjson.Field
+		Status       respjson.Field
+		Error        respjson.Field
+		Reason       respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MessageDetails) RawJSON() string { return r.JSON.raw }
+func (r *MessageDetails) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The current status of the message.
+type MessageDetailsStatus string
+
+const (
+	MessageDetailsStatusCanceled      MessageDetailsStatus = "CANCELED"
+	MessageDetailsStatusClicked       MessageDetailsStatus = "CLICKED"
+	MessageDetailsStatusDelayed       MessageDetailsStatus = "DELAYED"
+	MessageDetailsStatusDelivered     MessageDetailsStatus = "DELIVERED"
+	MessageDetailsStatusDigested      MessageDetailsStatus = "DIGESTED"
+	MessageDetailsStatusEnqueued      MessageDetailsStatus = "ENQUEUED"
+	MessageDetailsStatusFiltered      MessageDetailsStatus = "FILTERED"
+	MessageDetailsStatusOpened        MessageDetailsStatus = "OPENED"
+	MessageDetailsStatusRouted        MessageDetailsStatus = "ROUTED"
+	MessageDetailsStatusSent          MessageDetailsStatus = "SENT"
+	MessageDetailsStatusSimulated     MessageDetailsStatus = "SIMULATED"
+	MessageDetailsStatusThrottled     MessageDetailsStatus = "THROTTLED"
+	MessageDetailsStatusUndeliverable MessageDetailsStatus = "UNDELIVERABLE"
+	MessageDetailsStatusUnmapped      MessageDetailsStatus = "UNMAPPED"
+	MessageDetailsStatusUnroutable    MessageDetailsStatus = "UNROUTABLE"
+)
+
+// The reason for the current status of the message.
+type MessageDetailsReason string
+
+const (
+	MessageDetailsReasonBounced       MessageDetailsReason = "BOUNCED"
+	MessageDetailsReasonFailed        MessageDetailsReason = "FAILED"
+	MessageDetailsReasonFiltered      MessageDetailsReason = "FILTERED"
+	MessageDetailsReasonNoChannels    MessageDetailsReason = "NO_CHANNELS"
+	MessageDetailsReasonNoProviders   MessageDetailsReason = "NO_PROVIDERS"
+	MessageDetailsReasonOptInRequired MessageDetailsReason = "OPT_IN_REQUIRED"
+	MessageDetailsReasonProviderError MessageDetailsReason = "PROVIDER_ERROR"
+	MessageDetailsReasonUnpublished   MessageDetailsReason = "UNPUBLISHED"
+	MessageDetailsReasonUnsubscribed  MessageDetailsReason = "UNSUBSCRIBED"
+)
+
 type MessageGetResponse struct {
 	Providers []map[string]any `json:"providers,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -106,7 +205,7 @@ type MessageGetResponse struct {
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	shared.MessageDetails
+	MessageDetails
 }
 
 // Returns the unmodified JSON received from the API
@@ -119,7 +218,7 @@ type MessageListResponse struct {
 	// Paging information for the result set.
 	Paging shared.Paging `json:"paging,required"`
 	// An array of messages with their details.
-	Results []shared.MessageDetails `json:"results,required"`
+	Results []MessageDetails `json:"results,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Paging      respjson.Field

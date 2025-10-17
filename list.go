@@ -41,7 +41,7 @@ func NewListService(opts ...option.RequestOption) (r ListService) {
 }
 
 // Returns a list based on the list ID provided.
-func (r *ListService) Get(ctx context.Context, listID string, opts ...option.RequestOption) (res *shared.SubscriptionList, err error) {
+func (r *ListService) Get(ctx context.Context, listID string, opts ...option.RequestOption) (res *SubscriptionList, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if listID == "" {
 		err = errors.New("missing required list_id parameter")
@@ -99,9 +99,46 @@ func (r *ListService) Restore(ctx context.Context, listID string, body ListResto
 	return
 }
 
+// The property RecipientID is required.
+type PutSubscriptionsRecipientParam struct {
+	RecipientID string                           `json:"recipientId,required"`
+	Preferences shared.RecipientPreferencesParam `json:"preferences,omitzero"`
+	paramObj
+}
+
+func (r PutSubscriptionsRecipientParam) MarshalJSON() (data []byte, err error) {
+	type shadow PutSubscriptionsRecipientParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *PutSubscriptionsRecipientParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type SubscriptionList struct {
+	ID      string `json:"id,required"`
+	Name    string `json:"name,required"`
+	Created string `json:"created,nullable"`
+	Updated string `json:"updated,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Name        respjson.Field
+		Created     respjson.Field
+		Updated     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r SubscriptionList) RawJSON() string { return r.JSON.raw }
+func (r *SubscriptionList) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type ListListResponse struct {
-	Items  []shared.SubscriptionList `json:"items,required"`
-	Paging shared.Paging             `json:"paging,required"`
+	Items  []SubscriptionList `json:"items,required"`
+	Paging shared.Paging      `json:"paging,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Items       respjson.Field

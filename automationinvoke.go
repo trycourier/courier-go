@@ -13,7 +13,6 @@ import (
 	"github.com/trycourier/courier-go/v3/internal/requestconfig"
 	"github.com/trycourier/courier-go/v3/option"
 	"github.com/trycourier/courier-go/v3/packages/param"
-	"github.com/trycourier/courier-go/v3/shared"
 )
 
 // AutomationInvokeService contains methods and other services that help with
@@ -39,7 +38,7 @@ func NewAutomationInvokeService(opts ...option.RequestOption) (r AutomationInvok
 // series of automation steps. For information about what steps are available,
 // checkout the ad hoc automation guide
 // [here](https://www.courier.com/docs/automations/steps/).
-func (r *AutomationInvokeService) InvokeAdHoc(ctx context.Context, body AutomationInvokeInvokeAdHocParams, opts ...option.RequestOption) (res *shared.AutomationInvokeResponse, err error) {
+func (r *AutomationInvokeService) InvokeAdHoc(ctx context.Context, body AutomationInvokeInvokeAdHocParams, opts ...option.RequestOption) (res *AutomationInvokeResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "automations/invoke"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -47,7 +46,7 @@ func (r *AutomationInvokeService) InvokeAdHoc(ctx context.Context, body Automati
 }
 
 // Invoke an automation run from an automation template.
-func (r *AutomationInvokeService) InvokeByTemplate(ctx context.Context, templateID string, body AutomationInvokeInvokeByTemplateParams, opts ...option.RequestOption) (res *shared.AutomationInvokeResponse, err error) {
+func (r *AutomationInvokeService) InvokeByTemplate(ctx context.Context, templateID string, body AutomationInvokeInvokeByTemplateParams, opts ...option.RequestOption) (res *AutomationInvokeResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if templateID == "" {
 		err = errors.New("missing required templateId parameter")
