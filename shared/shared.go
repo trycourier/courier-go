@@ -168,7 +168,7 @@ type ElementalChannelNode struct {
 	// `push`, `direct_message`, `sms` or a provider such as slack
 	Channel string `json:"channel,required"`
 	// Raw data to apply to the channel. If `elements` has not been specified, `raw` is
-	// `required`.
+	// required.
 	Raw map[string]any `json:"raw,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -210,7 +210,7 @@ type ElementalChannelNodeParam struct {
 	// `push`, `direct_message`, `sms` or a provider such as slack
 	Channel string `json:"channel,required"`
 	// Raw data to apply to the channel. If `elements` has not been specified, `raw` is
-	// `required`.
+	// required.
 	Raw map[string]any `json:"raw,omitzero"`
 	ElementalBaseNodeParam
 }
