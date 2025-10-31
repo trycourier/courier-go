@@ -28,7 +28,7 @@ Or to pin the version:
 <!-- x-release-please-start-version -->
 
 ```sh
-go get -u 'github.com/trycourier/courier-go@v3.3.0-alpha5'
+go get -u 'github.com/trycourier/courier-go@v3.3.0-alpha6'
 ```
 
 <!-- x-release-please-end -->

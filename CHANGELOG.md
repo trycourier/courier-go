@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.3.0-alpha6 (2025-10-31)
+
+Full Changelog: [v3.3.0-alpha5...v3.3.0-alpha6](https://github.com/trycourier/courier-go/compare/v3.3.0-alpha5...v3.3.0-alpha6)
+
+### Features
+
+* Comment adjustment to kick of build ([726bb89](https://github.com/trycourier/courier-go/commit/726bb89467326b0272c3e0b2e7045b9b5d081ccd))
+
+
+### Bug Fixes
+
+* Comment to kick off build ([67986ea](https://github.com/trycourier/courier-go/commit/67986ea8a06a7ad022e7983c6e9976831d8b3731))
+
 ## 3.3.0-alpha5 (2025-10-17)
 
 Full Changelog: [v3.3.0-alpha4...v3.3.0-alpha5](https://github.com/trycourier/courier-go/compare/v3.3.0-alpha4...v3.3.0-alpha5)
