@@ -19,7 +19,7 @@ import (
 )
 
 // UserTokenService contains methods and other services that help with interacting
-// with the courier API.
+// with the Courier API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
