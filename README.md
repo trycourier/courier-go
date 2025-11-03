@@ -6,7 +6,7 @@
 
 <!-- x-release-please-end -->
 
-The Courier Go library provides convenient access to the Courier REST API
+The Courier Go library provides convenient access to the [Courier REST API](https://www.courier.com/docs)
 from applications written in Go.
 
 It is generated with [Stainless](https://www.stainless.com/).
