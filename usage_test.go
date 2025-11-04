@@ -32,7 +32,7 @@ func TestUsage(t *testing.T) {
 					UserID: courier.String("your_user_id"),
 				},
 			},
-			Template: courier.String("your_template"),
+			Template: courier.String("your_template_id"),
 			Data: map[string]any{
 				"foo": "bar",
 			},
