@@ -130,10 +130,10 @@ func (r *UserTokenService) AddSingle(ctx context.Context, token string, params U
 }
 
 type UserToken struct {
+	// Full body of the token. Must match token in URL path parameter.
+	Token string `json:"token,required"`
 	// Any of "firebase-fcm", "apn", "expo", "onesignal".
 	ProviderKey UserTokenProviderKey `json:"provider_key,required"`
-	// Full body of the token. Must match token in URL.
-	Token string `json:"token,nullable"`
 	// Information about the device the token is associated with.
 	Device UserTokenDevice `json:"device,nullable"`
 	// ISO 8601 formatted date the token expires. Defaults to 2 months. Set to false to
@@ -145,8 +145,8 @@ type UserToken struct {
 	Tracking UserTokenTracking `json:"tracking,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ProviderKey respjson.Field
 		Token       respjson.Field
+		ProviderKey respjson.Field
 		Device      respjson.Field
 		ExpiryDate  respjson.Field
 		Properties  respjson.Field
@@ -276,12 +276,12 @@ func (r *UserTokenTracking) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The property ProviderKey is required.
+// The properties Token, ProviderKey are required.
 type UserTokenParam struct {
+	// Full body of the token. Must match token in URL path parameter.
+	Token string `json:"token,required"`
 	// Any of "firebase-fcm", "apn", "expo", "onesignal".
 	ProviderKey UserTokenProviderKey `json:"provider_key,omitzero,required"`
-	// Full body of the token. Must match token in URL.
-	Token param.Opt[string] `json:"token,omitzero"`
 	// Information about the device the token is associated with.
 	Device UserTokenDeviceParam `json:"device,omitzero"`
 	// ISO 8601 formatted date the token expires. Defaults to 2 months. Set to false to

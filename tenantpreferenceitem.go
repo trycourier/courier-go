@@ -15,27 +15,27 @@ import (
 	"github.com/trycourier/courier-go/v3/option"
 )
 
-// TenantTenantDefaultPreferenceItemService contains methods and other services
-// that help with interacting with the Courier API.
+// TenantPreferenceItemService contains methods and other services that help with
+// interacting with the Courier API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewTenantTenantDefaultPreferenceItemService] method instead.
-type TenantTenantDefaultPreferenceItemService struct {
+// the [NewTenantPreferenceItemService] method instead.
+type TenantPreferenceItemService struct {
 	Options []option.RequestOption
 }
 
-// NewTenantTenantDefaultPreferenceItemService generates a new service that applies
-// the given options to each request. These options are applied after the parent
-// client's options (if there is one), and before any request-specific options.
-func NewTenantTenantDefaultPreferenceItemService(opts ...option.RequestOption) (r TenantTenantDefaultPreferenceItemService) {
-	r = TenantTenantDefaultPreferenceItemService{}
+// NewTenantPreferenceItemService generates a new service that applies the given
+// options to each request. These options are applied after the parent client's
+// options (if there is one), and before any request-specific options.
+func NewTenantPreferenceItemService(opts ...option.RequestOption) (r TenantPreferenceItemService) {
+	r = TenantPreferenceItemService{}
 	r.Options = opts
 	return
 }
 
 // Create or Replace Default Preferences For Topic
-func (r *TenantTenantDefaultPreferenceItemService) Update(ctx context.Context, topicID string, params TenantTenantDefaultPreferenceItemUpdateParams, opts ...option.RequestOption) (err error) {
+func (r *TenantPreferenceItemService) Update(ctx context.Context, topicID string, params TenantPreferenceItemUpdateParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	if params.TenantID == "" {
@@ -52,7 +52,7 @@ func (r *TenantTenantDefaultPreferenceItemService) Update(ctx context.Context, t
 }
 
 // Remove Default Preferences For Topic
-func (r *TenantTenantDefaultPreferenceItemService) Delete(ctx context.Context, topicID string, body TenantTenantDefaultPreferenceItemDeleteParams, opts ...option.RequestOption) (err error) {
+func (r *TenantPreferenceItemService) Delete(ctx context.Context, topicID string, body TenantPreferenceItemDeleteParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	if body.TenantID == "" {
@@ -68,20 +68,20 @@ func (r *TenantTenantDefaultPreferenceItemService) Delete(ctx context.Context, t
 	return
 }
 
-type TenantTenantDefaultPreferenceItemUpdateParams struct {
+type TenantPreferenceItemUpdateParams struct {
 	TenantID             string `path:"tenant_id,required" json:"-"`
 	SubscriptionTopicNew SubscriptionTopicNewParam
 	paramObj
 }
 
-func (r TenantTenantDefaultPreferenceItemUpdateParams) MarshalJSON() (data []byte, err error) {
+func (r TenantPreferenceItemUpdateParams) MarshalJSON() (data []byte, err error) {
 	return shimjson.Marshal(r.SubscriptionTopicNew)
 }
-func (r *TenantTenantDefaultPreferenceItemUpdateParams) UnmarshalJSON(data []byte) error {
+func (r *TenantPreferenceItemUpdateParams) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(data, &r.SubscriptionTopicNew)
 }
 
-type TenantTenantDefaultPreferenceItemDeleteParams struct {
+type TenantPreferenceItemDeleteParams struct {
 	TenantID string `path:"tenant_id,required" json:"-"`
 	paramObj
 }
