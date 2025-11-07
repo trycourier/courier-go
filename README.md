@@ -6,7 +6,7 @@
 
 <!-- x-release-please-end -->
 
-The Courier Go library provides convenient access to the Courier REST API
+The Courier Go library provides convenient access to the [Courier REST API](https://www.courier.com/docs)
 from applications written in Go.
 
 It is generated with [Stainless](https://www.stainless.com/).
@@ -28,7 +28,7 @@ Or to pin the version:
 <!-- x-release-please-start-version -->
 
 ```sh
-go get -u 'github.com/trycourier/courier-go@v3.3.0-alpha6'
+go get -u 'github.com/trycourier/courier-go@v3.3.0-alpha7'
 ```
 
 <!-- x-release-please-end -->
@@ -64,7 +64,7 @@ func main() {
 					UserID: courier.String("your_user_id"),
 				},
 			},
-			Template: courier.String("your_template"),
+			Template: courier.String("your_template_id"),
 			Data: map[string]any{
 				"foo": "bar",
 			},
@@ -138,7 +138,7 @@ custom := param.Override[courier.FooParams](12)
 
 ### Request unions
 
-Unions are represented as a struct with fields prefixed by "Of" for each of it's variants,
+Unions are represented as a struct with fields prefixed by "Of" for each of its variants,
 only one field can be non-zero. The non-zero field will be serialized.
 
 Sub-properties of the union can be accessed via methods on the union struct.
@@ -317,7 +317,7 @@ _, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
 				UserID: courier.String("your_user_id"),
 			},
 		},
-		Template: courier.String("your_template"),
+		Template: courier.String("your_template_id"),
 		Data: map[string]any{
 			"foo": "bar",
 		},
@@ -356,7 +356,7 @@ client.Send.Message(
 					UserID: courier.String("your_user_id"),
 				},
 			},
-			Template: courier.String("your_template"),
+			Template: courier.String("your_template_id"),
 			Data: map[string]any{
 				"foo": "bar",
 			},
@@ -404,7 +404,7 @@ client.Send.Message(
 					UserID: courier.String("your_user_id"),
 				},
 			},
-			Template: courier.String("your_template"),
+			Template: courier.String("your_template_id"),
 			Data: map[string]any{
 				"foo": "bar",
 			},
@@ -431,7 +431,7 @@ response, err := client.Send.Message(
 					UserID: courier.String("your_user_id"),
 				},
 			},
-			Template: courier.String("your_template"),
+			Template: courier.String("your_template_id"),
 			Data: map[string]any{
 				"foo": "bar",
 			},

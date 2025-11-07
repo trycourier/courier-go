@@ -21,15 +21,15 @@ import (
 )
 
 // TenantService contains methods and other services that help with interacting
-// with the courier API.
+// with the Courier API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewTenantService] method instead.
 type TenantService struct {
-	Options                  []option.RequestOption
-	TenantDefaultPreferences TenantTenantDefaultPreferenceService
-	Templates                TenantTemplateService
+	Options     []option.RequestOption
+	Preferences TenantPreferenceService
+	Templates   TenantTemplateService
 }
 
 // NewTenantService generates a new service that applies the given options to each
@@ -38,7 +38,7 @@ type TenantService struct {
 func NewTenantService(opts ...option.RequestOption) (r TenantService) {
 	r = TenantService{}
 	r.Options = opts
-	r.TenantDefaultPreferences = NewTenantTenantDefaultPreferenceService(opts...)
+	r.Preferences = NewTenantPreferenceService(opts...)
 	r.Templates = NewTenantTemplateService(opts...)
 	return
 }
