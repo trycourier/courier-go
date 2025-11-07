@@ -1,5 +1,24 @@
 # Changelog
 
+## 3.3.0-alpha7 (2025-11-07)
+
+Full Changelog: [v3.3.0-alpha6...v3.3.0-alpha7](https://github.com/trycourier/courier-go/compare/v3.3.0-alpha6...v3.3.0-alpha7)
+
+### Features
+
+* Attempt kick off again ([7cf87be](https://github.com/trycourier/courier-go/commit/7cf87be0a3dc83e62b8accac199862b3527ea5cd))
+* Organization update ([3231738](https://github.com/trycourier/courier-go/commit/3231738fa25b6404c56db14e76076db694025b59))
+
+
+### Bug Fixes
+
+* Better Python Samples + Updates to naming ([7da5eaa](https://github.com/trycourier/courier-go/commit/7da5eaa269a957d2bf6ff490f1ac732fde02e9f8))
+
+
+### Chores
+
+* **internal:** grammar fix (it's -&gt; its) ([1fb1631](https://github.com/trycourier/courier-go/commit/1fb16319bc54b410b5a7edabf2dbe148a8b11ceb))
+
 ## 3.3.0-alpha6 (2025-10-31)
 
 Full Changelog: [v3.3.0-alpha5...v3.3.0-alpha6](https://github.com/trycourier/courier-go/compare/v3.3.0-alpha5...v3.3.0-alpha6)
