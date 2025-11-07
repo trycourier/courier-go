@@ -170,8 +170,8 @@ func TestUserTokenAddSingleWithOptionalParams(t *testing.T) {
 		courier.UserTokenAddSingleParams{
 			UserID: "user_id",
 			UserToken: courier.UserTokenParam{
+				Token:       "token",
 				ProviderKey: courier.UserTokenProviderKeyFirebaseFcm,
-				Token:       courier.String("token"),
 				Device: courier.UserTokenDeviceParam{
 					AdID:         courier.String("ad_id"),
 					AppID:        courier.String("app_id"),
