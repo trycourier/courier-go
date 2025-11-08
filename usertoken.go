@@ -139,7 +139,7 @@ type UserToken struct {
 	// ISO 8601 formatted date the token expires. Defaults to 2 months. Set to false to
 	// disable expiration.
 	ExpiryDate UserTokenExpiryDateUnion `json:"expiry_date,nullable"`
-	// Properties sent to the provider along with the token
+	// Properties about the token.
 	Properties any `json:"properties"`
 	// Tracking information about the device the token came from.
 	Tracking UserTokenTracking `json:"tracking,nullable"`
@@ -289,7 +289,7 @@ type UserTokenParam struct {
 	ExpiryDate UserTokenExpiryDateUnionParam `json:"expiry_date,omitzero"`
 	// Tracking information about the device the token came from.
 	Tracking UserTokenTrackingParam `json:"tracking,omitzero"`
-	// Properties sent to the provider along with the token
+	// Properties about the token.
 	Properties any `json:"properties,omitzero"`
 	paramObj
 }
