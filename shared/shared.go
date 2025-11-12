@@ -1139,6 +1139,8 @@ type RecipientParam struct {
 	AccountID param.Opt[string] `json:"account_id,omitzero"`
 	// The user's email address.
 	Email param.Opt[string] `json:"email,omitzero"`
+	// The id of the list to send the message to.
+	ListID param.Opt[string] `json:"list_id,omitzero"`
 	// The user's preferred ISO 639-1 language code.
 	Locale param.Opt[string] `json:"locale,omitzero"`
 	// The user's phone number.
@@ -1256,6 +1258,8 @@ type UserRecipient struct {
 	Data    map[string]any `json:"data,nullable"`
 	// The user's email address.
 	Email string `json:"email,nullable"`
+	// The id of the list to send the message to.
+	ListID string `json:"list_id,nullable"`
 	// The user's preferred ISO 639-1 language code.
 	Locale string `json:"locale,nullable"`
 	// The user's phone number.
@@ -1272,6 +1276,7 @@ type UserRecipient struct {
 		Context     respjson.Field
 		Data        respjson.Field
 		Email       respjson.Field
+		ListID      respjson.Field
 		Locale      respjson.Field
 		PhoneNumber respjson.Field
 		Preferences respjson.Field
@@ -1322,6 +1327,8 @@ type UserRecipientParam struct {
 	AccountID param.Opt[string] `json:"account_id,omitzero"`
 	// The user's email address.
 	Email param.Opt[string] `json:"email,omitzero"`
+	// The id of the list to send the message to.
+	ListID param.Opt[string] `json:"list_id,omitzero"`
 	// The user's preferred ISO 639-1 language code.
 	Locale param.Opt[string] `json:"locale,omitzero"`
 	// The user's phone number.
