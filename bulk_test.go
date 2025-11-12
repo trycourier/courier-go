@@ -70,6 +70,7 @@ func TestBulkAddUsers(t *testing.T) {
 						"foo": "bar",
 					},
 					Email:       courier.String("email"),
+					ListID:      courier.String("list_id"),
 					Locale:      courier.String("locale"),
 					PhoneNumber: courier.String("phone_number"),
 					Preferences: shared.UserRecipientPreferencesParam{
