@@ -2,8 +2,8 @@ package apijson_test
 
 import (
 	"encoding/json"
-	"github.com/trycourier/courier-go/v3/internal/apijson"
-	"github.com/trycourier/courier-go/v3/packages/respjson"
+	"github.com/trycourier/courier-go/v4/internal/apijson"
+	"github.com/trycourier/courier-go/v4/packages/respjson"
 	"testing"
 )
 

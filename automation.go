@@ -3,9 +3,9 @@
 package courier
 
 import (
-	"github.com/trycourier/courier-go/v3/internal/apijson"
-	"github.com/trycourier/courier-go/v3/option"
-	"github.com/trycourier/courier-go/v3/packages/respjson"
+	"github.com/trycourier/courier-go/v4/internal/apijson"
+	"github.com/trycourier/courier-go/v4/option"
+	"github.com/trycourier/courier-go/v4/packages/respjson"
 )
 
 // AutomationService contains methods and other services that help with interacting

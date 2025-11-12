@@ -10,9 +10,9 @@ import (
 	"net/http"
 	"slices"
 
-	shimjson "github.com/trycourier/courier-go/v3/internal/encoding/json"
-	"github.com/trycourier/courier-go/v3/internal/requestconfig"
-	"github.com/trycourier/courier-go/v3/option"
+	shimjson "github.com/trycourier/courier-go/v4/internal/encoding/json"
+	"github.com/trycourier/courier-go/v4/internal/requestconfig"
+	"github.com/trycourier/courier-go/v4/option"
 )
 
 // TenantPreferenceItemService contains methods and other services that help with

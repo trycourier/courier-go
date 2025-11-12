@@ -10,12 +10,12 @@ import (
 	"net/url"
 	"slices"
 
-	"github.com/trycourier/courier-go/v3/internal/apijson"
-	"github.com/trycourier/courier-go/v3/internal/apiquery"
-	"github.com/trycourier/courier-go/v3/internal/requestconfig"
-	"github.com/trycourier/courier-go/v3/option"
-	"github.com/trycourier/courier-go/v3/packages/param"
-	"github.com/trycourier/courier-go/v3/packages/respjson"
+	"github.com/trycourier/courier-go/v4/internal/apijson"
+	"github.com/trycourier/courier-go/v4/internal/apiquery"
+	"github.com/trycourier/courier-go/v4/internal/requestconfig"
+	"github.com/trycourier/courier-go/v4/option"
+	"github.com/trycourier/courier-go/v4/packages/param"
+	"github.com/trycourier/courier-go/v4/packages/respjson"
 )
 
 // UserTenantService contains methods and other services that help with interacting

@@ -8,10 +8,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/trycourier/courier-go/v3"
-	"github.com/trycourier/courier-go/v3/internal/testutil"
-	"github.com/trycourier/courier-go/v3/option"
-	"github.com/trycourier/courier-go/v3/shared"
+	"github.com/trycourier/courier-go/v4"
+	"github.com/trycourier/courier-go/v4/internal/testutil"
+	"github.com/trycourier/courier-go/v4/option"
+	"github.com/trycourier/courier-go/v4/shared"
 )
 
 func TestTenantPreferenceItemUpdateWithOptionalParams(t *testing.T) {

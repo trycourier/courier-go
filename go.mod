@@ -1,4 +1,4 @@
-module github.com/trycourier/courier-go/v3
+module github.com/trycourier/courier-go/v4
 
 go 1.22
 

@@ -2,7 +2,7 @@ package param_test
 
 import (
 	"encoding/json"
-	"github.com/trycourier/courier-go/v3/packages/param"
+	"github.com/trycourier/courier-go/v4/packages/param"
 	"testing"
 )
 
