@@ -1,8 +1,8 @@
 package paramutil
 
 import (
-	"github.com/trycourier/courier-go/v3/packages/param"
-	"github.com/trycourier/courier-go/v3/packages/respjson"
+	"github.com/trycourier/courier-go/v4/packages/param"
+	"github.com/trycourier/courier-go/v4/packages/respjson"
 )
 
 func AddrIfPresent[T comparable](v param.Opt[T]) *T {

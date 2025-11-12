@@ -2,7 +2,7 @@
 
 <!-- x-release-please-start-version -->
 
-<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v3"><img src="https://pkg.go.dev/badge/github.com/trycourier/courier-go/v3.svg" alt="Go Reference"></a>
+<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4"><img src="https://pkg.go.dev/badge/github.com/trycourier/courier-go/v4.svg" alt="Go Reference"></a>
 
 <!-- x-release-please-end -->
 
@@ -17,7 +17,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 
 ```go
 import (
-	"github.com/trycourier/courier-go/v3" // imported as courier
+	"github.com/trycourier/courier-go/v4" // imported as courier
 )
 ```
 
@@ -28,7 +28,7 @@ Or to pin the version:
 <!-- x-release-please-start-version -->
 
 ```sh
-go get -u 'github.com/trycourier/courier-go/v3@v3.3.0-alpha7'
+go get -u 'github.com/trycourier/courier-go/v4@v4.0.0'
 ```
 
 <!-- x-release-please-end -->
@@ -48,9 +48,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/trycourier/courier-go/v3"
-	"github.com/trycourier/courier-go/v3/option"
-	"github.com/trycourier/courier-go/v3/shared"
+	"github.com/trycourier/courier-go/v4"
+	"github.com/trycourier/courier-go/v4/option"
+	"github.com/trycourier/courier-go/v4/shared"
 )
 
 func main() {
@@ -289,7 +289,7 @@ client.Send.Message(context.TODO(), ...,
 
 The request option `option.WithDebugLog(nil)` may be helpful while debugging.
 
-See the [full list of request options](https://pkg.go.dev/github.com/trycourier/courier-go/v3/option).
+See the [full list of request options](https://pkg.go.dev/github.com/trycourier/courier-go/v4/option).
 
 ### Pagination
 

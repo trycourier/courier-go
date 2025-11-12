@@ -1,7 +1,7 @@
 package apiform
 
 import (
-	"github.com/trycourier/courier-go/v3/packages/param"
+	"github.com/trycourier/courier-go/v4/packages/param"
 	"mime/multipart"
 	"reflect"
 )
