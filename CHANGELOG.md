@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.1.0 (2025-11-12)
+
+Full Changelog: [v4.0.0...v4.1.0](https://github.com/trycourier/courier-go/compare/v4.0.0...v4.1.0)
+
+### Features
+
+* NPM enabled ([f74d261](https://github.com/trycourier/courier-go/commit/f74d26190ca244212821dcc8dca481e32489cfd8))
+
 ## 4.0.0 (2025-11-12)
 
 Full Changelog: [v3.3.0-alpha7...v4.0.0](https://github.com/trycourier/courier-go/compare/v3.3.0-alpha7...v4.0.0)
