@@ -10,10 +10,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/trycourier/courier-go/v3"
-	"github.com/trycourier/courier-go/v3/internal"
-	"github.com/trycourier/courier-go/v3/option"
-	"github.com/trycourier/courier-go/v3/shared"
+	"github.com/trycourier/courier-go/v4"
+	"github.com/trycourier/courier-go/v4/internal"
+	"github.com/trycourier/courier-go/v4/option"
+	"github.com/trycourier/courier-go/v4/shared"
 )
 
 type closureTransport struct {

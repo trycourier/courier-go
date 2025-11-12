@@ -10,12 +10,12 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/trycourier/courier-go/v3/internal/apijson"
-	shimjson "github.com/trycourier/courier-go/v3/internal/encoding/json"
-	"github.com/trycourier/courier-go/v3/internal/requestconfig"
-	"github.com/trycourier/courier-go/v3/option"
-	"github.com/trycourier/courier-go/v3/packages/param"
-	"github.com/trycourier/courier-go/v3/packages/respjson"
+	"github.com/trycourier/courier-go/v4/internal/apijson"
+	shimjson "github.com/trycourier/courier-go/v4/internal/encoding/json"
+	"github.com/trycourier/courier-go/v4/internal/requestconfig"
+	"github.com/trycourier/courier-go/v4/option"
+	"github.com/trycourier/courier-go/v4/packages/param"
+	"github.com/trycourier/courier-go/v4/packages/respjson"
 )
 
 // UserTokenService contains methods and other services that help with interacting
@@ -134,14 +134,14 @@ type UserToken struct {
 	Token string `json:"token,required"`
 	// Any of "firebase-fcm", "apn", "expo", "onesignal".
 	ProviderKey UserTokenProviderKey `json:"provider_key,required"`
-	// Information about the device the token is associated with.
+	// Information about the device the token came from.
 	Device UserTokenDevice `json:"device,nullable"`
 	// ISO 8601 formatted date the token expires. Defaults to 2 months. Set to false to
 	// disable expiration.
 	ExpiryDate UserTokenExpiryDateUnion `json:"expiry_date,nullable"`
-	// Properties sent to the provider along with the token
+	// Properties about the token.
 	Properties any `json:"properties"`
-	// Information about the device the token is associated with.
+	// Tracking information about the device the token came from.
 	Tracking UserTokenTracking `json:"tracking,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -180,7 +180,7 @@ const (
 	UserTokenProviderKeyOnesignal   UserTokenProviderKey = "onesignal"
 )
 
-// Information about the device the token is associated with.
+// Information about the device the token came from.
 type UserTokenDevice struct {
 	// Id of the advertising identifier
 	AdID string `json:"ad_id,nullable"`
@@ -249,7 +249,7 @@ func (r *UserTokenExpiryDateUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Information about the device the token is associated with.
+// Tracking information about the device the token came from.
 type UserTokenTracking struct {
 	// The IP address of the device
 	IP string `json:"ip,nullable"`
@@ -282,14 +282,14 @@ type UserTokenParam struct {
 	Token string `json:"token,required"`
 	// Any of "firebase-fcm", "apn", "expo", "onesignal".
 	ProviderKey UserTokenProviderKey `json:"provider_key,omitzero,required"`
-	// Information about the device the token is associated with.
+	// Information about the device the token came from.
 	Device UserTokenDeviceParam `json:"device,omitzero"`
 	// ISO 8601 formatted date the token expires. Defaults to 2 months. Set to false to
 	// disable expiration.
 	ExpiryDate UserTokenExpiryDateUnionParam `json:"expiry_date,omitzero"`
-	// Information about the device the token is associated with.
+	// Tracking information about the device the token came from.
 	Tracking UserTokenTrackingParam `json:"tracking,omitzero"`
-	// Properties sent to the provider along with the token
+	// Properties about the token.
 	Properties any `json:"properties,omitzero"`
 	paramObj
 }
@@ -302,7 +302,7 @@ func (r *UserTokenParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Information about the device the token is associated with.
+// Information about the device the token came from.
 type UserTokenDeviceParam struct {
 	// Id of the advertising identifier
 	AdID param.Opt[string] `json:"ad_id,omitzero"`
@@ -352,7 +352,7 @@ func (u *UserTokenExpiryDateUnionParam) asAny() any {
 	return nil
 }
 
-// Information about the device the token is associated with.
+// Tracking information about the device the token came from.
 type UserTokenTrackingParam struct {
 	// The IP address of the device
 	IP param.Opt[string] `json:"ip,omitzero"`

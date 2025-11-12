@@ -1,5 +1,20 @@
 # Changelog
 
+## 4.0.0 (2025-11-12)
+
+Full Changelog: [v3.3.0-alpha7...v4.0.0](https://github.com/trycourier/courier-go/compare/v3.3.0-alpha7...v4.0.0)
+
+### Features
+
+* Spec Comment Change ([3cfc868](https://github.com/trycourier/courier-go/commit/3cfc868dc6627594a89ab480b68d17140d4bed60))
+* Token Prop Description Change ([674a316](https://github.com/trycourier/courier-go/commit/674a316fc5a2f8e3ab9b6bf4e110f5bc5dcbcf88))
+
+
+### Chores
+
+* bump gjson version ([13a17be](https://github.com/trycourier/courier-go/commit/13a17be31763e8e8338fd7d029dcfe69e2fbb181))
+* update SDK settings ([92b0a3f](https://github.com/trycourier/courier-go/commit/92b0a3fd4d44bd2b2bfb15b1fd4a16fd9724e9ac))
+
 ## 3.3.0-alpha7 (2025-11-07)
 
 Full Changelog: [v3.3.0-alpha6...v3.3.0-alpha7](https://github.com/trycourier/courier-go/compare/v3.3.0-alpha6...v3.3.0-alpha7)

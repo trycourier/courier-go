@@ -1,8 +1,8 @@
 package sentinel_test
 
 import (
-	"github.com/trycourier/courier-go/v3/internal/encoding/json/sentinel"
-	"github.com/trycourier/courier-go/v3/packages/param"
+	"github.com/trycourier/courier-go/v4/internal/encoding/json/sentinel"
+	"github.com/trycourier/courier-go/v4/packages/param"
 	"reflect"
 	"slices"
 	"testing"

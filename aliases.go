@@ -3,9 +3,9 @@
 package courier
 
 import (
-	"github.com/trycourier/courier-go/v3/internal/apierror"
-	"github.com/trycourier/courier-go/v3/packages/param"
-	"github.com/trycourier/courier-go/v3/shared"
+	"github.com/trycourier/courier-go/v4/internal/apierror"
+	"github.com/trycourier/courier-go/v4/packages/param"
+	"github.com/trycourier/courier-go/v4/shared"
 )
 
 // aliased to make [param.APIUnion] private when embedding

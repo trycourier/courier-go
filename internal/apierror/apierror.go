@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"net/http/httputil"
 
-	"github.com/trycourier/courier-go/v3/internal/apijson"
-	"github.com/trycourier/courier-go/v3/packages/respjson"
+	"github.com/trycourier/courier-go/v4/internal/apijson"
+	"github.com/trycourier/courier-go/v4/packages/respjson"
 )
 
 // Error represents an error that originates from the API, i.e. when a request is

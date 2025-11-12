@@ -8,10 +8,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/trycourier/courier-go/v3"
-	"github.com/trycourier/courier-go/v3/internal/testutil"
-	"github.com/trycourier/courier-go/v3/option"
-	"github.com/trycourier/courier-go/v3/shared"
+	"github.com/trycourier/courier-go/v4"
+	"github.com/trycourier/courier-go/v4/internal/testutil"
+	"github.com/trycourier/courier-go/v4/option"
+	"github.com/trycourier/courier-go/v4/shared"
 )
 
 func TestSendMessageWithOptionalParams(t *testing.T) {
@@ -137,6 +137,7 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 						"foo": "bar",
 					},
 					Email:       courier.String("email"),
+					ListID:      courier.String("list_id"),
 					Locale:      courier.String("locale"),
 					PhoneNumber: courier.String("phone_number"),
 					Preferences: shared.UserRecipientPreferencesParam{
