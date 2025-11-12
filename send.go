@@ -34,7 +34,7 @@ func NewSendService(opts ...option.RequestOption) (r SendService) {
 	return
 }
 
-// API to send a message to one or more recipients.
+// Send a message to one or more recipients.
 func (r *SendService) Message(ctx context.Context, body SendMessageParams, opts ...option.RequestOption) (res *SendMessageResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "send"
