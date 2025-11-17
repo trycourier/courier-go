@@ -27,8 +27,8 @@ func TestAuthIssueToken(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Auth.IssueToken(context.TODO(), courier.AuthIssueTokenParams{
-		ExpiresIn: "expires_in",
-		Scope:     "scope",
+		ExpiresIn: "$YOUR_NUMBER days",
+		Scope:     "user_id:$YOUR_USER_ID write:user-tokens inbox:read:messages inbox:write:events read:preferences write:preferences read:brands",
 	})
 	if err != nil {
 		var apierr *courier.Error
