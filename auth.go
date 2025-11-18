@@ -58,8 +58,34 @@ func (r *AuthIssueTokenResponse) UnmarshalJSON(data []byte) error {
 }
 
 type AuthIssueTokenParams struct {
+	// Duration for token expiration. Accepts various time formats:
+	//
+	// - "2 hours" - 2 hours from now
+	// - "1d" - 1 day
+	// - "3 days" - 3 days
+	// - "10h" - 10 hours
+	// - "2.5 hrs" - 2.5 hours
+	// - "1m" - 1 minute
+	// - "5s" - 5 seconds
+	// - "1y" - 1 year
 	ExpiresIn string `json:"expires_in,required"`
-	Scope     string `json:"scope,required"`
+	// Available scopes:
+	//
+	//   - `user_id:<user-id>` - Defines which user the token will be scoped to. Multiple
+	//     can be listed if needed. Ex `user_id:pigeon user_id:bluebird`.
+	//   - `read:messages` - Read messages.
+	//   - `read:user-tokens` - Read user push tokens.
+	//   - `write:user-tokens` - Write user push tokens.
+	//   - `read:brands[:<brand_id>]` - Read brands, optionally restricted to a specific
+	//     brand_id. Examples `read:brands`, `read:brands:my_brand`.
+	//   - `write:brands[:<brand_id>]` - Write brands, optionally restricted to a
+	//     specific brand_id. Examples `write:brands`, `write:brands:my_brand`.
+	//   - `inbox:read:messages` - Read inbox messages.
+	//   - `inbox:write:events` - Write inbox events, such as mark message as read.
+	//   - `read:preferences` - Read user preferences.
+	//   - `write:preferences` - Write user preferences. Example:
+	//     `user_id:user123 write:user-tokens inbox:read:messages inbox:write:events read:preferences write:preferences read:brands`
+	Scope string `json:"scope,required"`
 	paramObj
 }
 
