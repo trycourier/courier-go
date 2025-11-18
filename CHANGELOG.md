@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.1.0 (2025-11-18)
+
+Full Changelog: [v4.0.0...v4.1.0](https://github.com/trycourier/courier-go/compare/v4.0.0...v4.1.0)
+
+### Features
+
+* JWT scope updates ([ec65b4d](https://github.com/trycourier/courier-go/commit/ec65b4d201c05db7dd79386a673d7840113c9276))
+* NPM enabled ([f74d261](https://github.com/trycourier/courier-go/commit/f74d26190ca244212821dcc8dca481e32489cfd8))
+* Test ([74a9882](https://github.com/trycourier/courier-go/commit/74a9882eab3e90ad2957bd2fb4eb21813d66ac91))
+
 ## 4.0.0 (2025-11-12)
 
 Full Changelog: [v3.3.0-alpha7...v4.0.0](https://github.com/trycourier/courier-go/compare/v3.3.0-alpha7...v4.0.0)
