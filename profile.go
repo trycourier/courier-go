@@ -66,7 +66,7 @@ func (r *ProfileService) Get(ctx context.Context, userID string, opts ...option.
 // Update a profile
 func (r *ProfileService) Update(ctx context.Context, userID string, body ProfileUpdateParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
 		return
@@ -79,7 +79,7 @@ func (r *ProfileService) Update(ctx context.Context, userID string, body Profile
 // Deletes the specified user profile.
 func (r *ProfileService) Delete(ctx context.Context, userID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
 		return

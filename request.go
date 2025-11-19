@@ -35,7 +35,7 @@ func NewRequestService(opts ...option.RequestOption) (r RequestService) {
 // Archive message
 func (r *RequestService) Archive(ctx context.Context, requestID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if requestID == "" {
 		err = errors.New("missing required request_id parameter")
 		return

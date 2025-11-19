@@ -78,7 +78,7 @@ func (r *TenantService) List(ctx context.Context, query TenantListParams, opts .
 // Delete a Tenant
 func (r *TenantService) Delete(ctx context.Context, tenantID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if tenantID == "" {
 		err = errors.New("missing required tenant_id parameter")
 		return

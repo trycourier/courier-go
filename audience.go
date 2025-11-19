@@ -74,7 +74,7 @@ func (r *AudienceService) List(ctx context.Context, query AudienceListParams, op
 // Deletes the specified audience.
 func (r *AudienceService) Delete(ctx context.Context, audienceID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if audienceID == "" {
 		err = errors.New("missing required audience_id parameter")
 		return

@@ -55,7 +55,7 @@ func (r *ListService) Get(ctx context.Context, listID string, opts ...option.Req
 // Create or replace an existing list with the supplied values.
 func (r *ListService) Update(ctx context.Context, listID string, body ListUpdateParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if listID == "" {
 		err = errors.New("missing required list_id parameter")
 		return
@@ -76,7 +76,7 @@ func (r *ListService) List(ctx context.Context, query ListListParams, opts ...op
 // Delete a list by list ID.
 func (r *ListService) Delete(ctx context.Context, listID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if listID == "" {
 		err = errors.New("missing required list_id parameter")
 		return
@@ -89,7 +89,7 @@ func (r *ListService) Delete(ctx context.Context, listID string, opts ...option.
 // Restore a previously deleted list.
 func (r *ListService) Restore(ctx context.Context, listID string, body ListRestoreParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if listID == "" {
 		err = errors.New("missing required list_id parameter")
 		return

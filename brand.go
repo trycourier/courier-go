@@ -82,7 +82,7 @@ func (r *BrandService) List(ctx context.Context, query BrandListParams, opts ...
 // Delete a brand by brand ID.
 func (r *BrandService) Delete(ctx context.Context, brandID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if brandID == "" {
 		err = errors.New("missing required brand_id parameter")
 		return

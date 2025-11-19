@@ -53,7 +53,7 @@ func (r *TranslationService) Get(ctx context.Context, locale string, query Trans
 // Update a translation
 func (r *TranslationService) Update(ctx context.Context, locale string, params TranslationUpdateParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if params.Domain == "" {
 		err = errors.New("missing required domain parameter")
 		return

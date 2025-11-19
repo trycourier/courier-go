@@ -56,7 +56,7 @@ func (r *UserTokenService) Get(ctx context.Context, token string, query UserToke
 // Apply a JSON Patch (RFC 6902) to the specified token.
 func (r *UserTokenService) Update(ctx context.Context, token string, params UserTokenUpdateParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if params.UserID == "" {
 		err = errors.New("missing required user_id parameter")
 		return
@@ -85,7 +85,7 @@ func (r *UserTokenService) List(ctx context.Context, userID string, opts ...opti
 // Delete User Token
 func (r *UserTokenService) Delete(ctx context.Context, token string, body UserTokenDeleteParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if body.UserID == "" {
 		err = errors.New("missing required user_id parameter")
 		return
@@ -102,7 +102,7 @@ func (r *UserTokenService) Delete(ctx context.Context, token string, body UserTo
 // Adds multiple tokens to a user and overwrites matching existing tokens.
 func (r *UserTokenService) AddMultiple(ctx context.Context, userID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
 		return
@@ -115,7 +115,7 @@ func (r *UserTokenService) AddMultiple(ctx context.Context, userID string, opts 
 // Adds a single token to a user and overwrites a matching existing token.
 func (r *UserTokenService) AddSingle(ctx context.Context, token string, params UserTokenAddSingleParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if params.UserID == "" {
 		err = errors.New("missing required user_id parameter")
 		return
