@@ -42,7 +42,7 @@ func NewBulkService(opts ...option.RequestOption) (r BulkService) {
 // Ingest user data into a Bulk Job
 func (r *BulkService) AddUsers(ctx context.Context, jobID string, body BulkAddUsersParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if jobID == "" {
 		err = errors.New("missing required job_id parameter")
 		return
@@ -87,7 +87,7 @@ func (r *BulkService) GetJob(ctx context.Context, jobID string, opts ...option.R
 // Run a bulk job
 func (r *BulkService) RunJob(ctx context.Context, jobID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if jobID == "" {
 		err = errors.New("missing required job_id parameter")
 		return

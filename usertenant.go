@@ -54,7 +54,7 @@ func (r *UserTenantService) List(ctx context.Context, userID string, query UserT
 // the user's main profile when sending to the user with that tenant.
 func (r *UserTenantService) AddMultiple(ctx context.Context, userID string, body UserTenantAddMultipleParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
 		return
@@ -70,7 +70,7 @@ func (r *UserTenantService) AddMultiple(ctx context.Context, userID string, body
 // merged with the user's main profile when sending to the user with that tenant.
 func (r *UserTenantService) AddSingle(ctx context.Context, tenantID string, params UserTenantAddSingleParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if params.UserID == "" {
 		err = errors.New("missing required user_id parameter")
 		return
@@ -87,7 +87,7 @@ func (r *UserTenantService) AddSingle(ctx context.Context, tenantID string, para
 // Removes a user from any tenants they may have been associated with.
 func (r *UserTenantService) RemoveAll(ctx context.Context, userID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
 		return
@@ -100,7 +100,7 @@ func (r *UserTenantService) RemoveAll(ctx context.Context, userID string, opts .
 // Removes a user from the supplied tenant.
 func (r *UserTenantService) RemoveSingle(ctx context.Context, tenantID string, body UserTenantRemoveSingleParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if body.UserID == "" {
 		err = errors.New("missing required user_id parameter")
 		return
