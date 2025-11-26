@@ -183,7 +183,7 @@ func TestUserTokenAddSingleWithOptionalParams(t *testing.T) {
 				ExpiryDate: courier.UserTokenExpiryDateUnionParam{
 					OfString: courier.String("string"),
 				},
-				Properties: map[string]interface{}{},
+				Properties: map[string]any{},
 				Tracking: courier.UserTokenTrackingParam{
 					IP:        courier.String("ip"),
 					Lat:       courier.String("lat"),

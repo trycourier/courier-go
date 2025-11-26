@@ -32,7 +32,7 @@ func TestBulkAddUsers(t *testing.T) {
 		"job_id",
 		courier.BulkAddUsersParams{
 			Users: []courier.InboundBulkMessageUserParam{{
-				Data: map[string]interface{}{},
+				Data: map[string]any{},
 				Preferences: shared.RecipientPreferencesParam{
 					Categories: map[string]shared.NotificationPreferenceDetailsParam{
 						"foo": {
@@ -59,7 +59,7 @@ func TestBulkAddUsers(t *testing.T) {
 						},
 					},
 				},
-				Profile:   map[string]interface{}{},
+				Profile:   map[string]any{},
 				Recipient: courier.String("recipient"),
 				To: shared.UserRecipientParam{
 					AccountID: courier.String("account_id"),
