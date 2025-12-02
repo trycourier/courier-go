@@ -54,7 +54,7 @@ func (r *ListSubscriptionService) List(ctx context.Context, listID string, query
 // subscriptions. If the list does not exist, it will be automatically created.
 func (r *ListSubscriptionService) Add(ctx context.Context, listID string, body ListSubscriptionAddParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if listID == "" {
 		err = errors.New("missing required list_id parameter")
 		return
@@ -68,7 +68,7 @@ func (r *ListSubscriptionService) Add(ctx context.Context, listID string, body L
 // list does not exist, it will be automatically created.
 func (r *ListSubscriptionService) Subscribe(ctx context.Context, listID string, body ListSubscriptionSubscribeParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if listID == "" {
 		err = errors.New("missing required list_id parameter")
 		return
@@ -82,7 +82,7 @@ func (r *ListSubscriptionService) Subscribe(ctx context.Context, listID string, 
 // be automatically created).
 func (r *ListSubscriptionService) SubscribeUser(ctx context.Context, userID string, params ListSubscriptionSubscribeUserParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if params.ListID == "" {
 		err = errors.New("missing required list_id parameter")
 		return
@@ -99,7 +99,7 @@ func (r *ListSubscriptionService) SubscribeUser(ctx context.Context, userID stri
 // Delete a subscription to a list by list ID and user ID.
 func (r *ListSubscriptionService) UnsubscribeUser(ctx context.Context, userID string, body ListSubscriptionUnsubscribeUserParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if body.ListID == "" {
 		err = errors.New("missing required list_id parameter")
 		return

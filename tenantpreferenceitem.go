@@ -37,7 +37,7 @@ func NewTenantPreferenceItemService(opts ...option.RequestOption) (r TenantPrefe
 // Create or Replace Default Preferences For Topic
 func (r *TenantPreferenceItemService) Update(ctx context.Context, topicID string, params TenantPreferenceItemUpdateParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if params.TenantID == "" {
 		err = errors.New("missing required tenant_id parameter")
 		return
@@ -54,7 +54,7 @@ func (r *TenantPreferenceItemService) Update(ctx context.Context, topicID string
 // Remove Default Preferences For Topic
 func (r *TenantPreferenceItemService) Delete(ctx context.Context, topicID string, body TenantPreferenceItemDeleteParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if body.TenantID == "" {
 		err = errors.New("missing required tenant_id parameter")
 		return
