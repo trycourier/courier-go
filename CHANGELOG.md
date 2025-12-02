@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.1.1 (2025-12-02)
+
+Full Changelog: [v4.1.0...v4.1.1](https://github.com/trycourier/courier-go/compare/v4.1.0...v4.1.1)
+
+### Bug Fixes
+
+* **client:** correctly specify Accept header with */* instead of empty ([e648abc](https://github.com/trycourier/courier-go/commit/e648abc00d93fc310cb287ea2d0188f2609bec49))
+
+
+### Chores
+
+* fix empty interfaces ([47b7ec0](https://github.com/trycourier/courier-go/commit/47b7ec0afa5f7e63938c045074aedb04ce442e02))
+
 ## 4.1.0 (2025-11-18)
 
 Full Changelog: [v4.0.0...v4.1.0](https://github.com/trycourier/courier-go/compare/v4.0.0...v4.1.0)
