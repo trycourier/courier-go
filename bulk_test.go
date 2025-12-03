@@ -73,7 +73,7 @@ func TestBulkAddUsers(t *testing.T) {
 					ListID:      courier.String("list_id"),
 					Locale:      courier.String("locale"),
 					PhoneNumber: courier.String("phone_number"),
-					Preferences: shared.UserRecipientPreferencesParam{
+					Preferences: shared.ProfilePreferencesParam{
 						Notifications: map[string]shared.PreferenceParam{
 							"foo": {
 								Status: shared.PreferenceStatusOptedIn,
