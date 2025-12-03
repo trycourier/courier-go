@@ -86,7 +86,7 @@ func TestProfileListSubscribe(t *testing.T) {
 			Lists: []courier.SubscribeToListsRequestItemParam{{
 				ListID: "listId",
 				Preferences: shared.RecipientPreferencesParam{
-					Categories: map[string]shared.PreferenceParam{
+					Categories: map[string]shared.NotificationPreferenceDetailsParam{
 						"foo": {
 							Status: shared.PreferenceStatusOptedIn,
 							ChannelPreferences: []shared.ChannelPreferenceParam{{
@@ -98,7 +98,7 @@ func TestProfileListSubscribe(t *testing.T) {
 							}},
 						},
 					},
-					Notifications: map[string]shared.PreferenceParam{
+					Notifications: map[string]shared.NotificationPreferenceDetailsParam{
 						"foo": {
 							Status: shared.PreferenceStatusOptedIn,
 							ChannelPreferences: []shared.ChannelPreferenceParam{{

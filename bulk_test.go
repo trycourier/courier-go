@@ -34,7 +34,7 @@ func TestBulkAddUsers(t *testing.T) {
 			Users: []courier.InboundBulkMessageUserParam{{
 				Data: map[string]any{},
 				Preferences: shared.RecipientPreferencesParam{
-					Categories: map[string]shared.PreferenceParam{
+					Categories: map[string]shared.NotificationPreferenceDetailsParam{
 						"foo": {
 							Status: shared.PreferenceStatusOptedIn,
 							ChannelPreferences: []shared.ChannelPreferenceParam{{
@@ -46,7 +46,7 @@ func TestBulkAddUsers(t *testing.T) {
 							}},
 						},
 					},
-					Notifications: map[string]shared.PreferenceParam{
+					Notifications: map[string]shared.NotificationPreferenceDetailsParam{
 						"foo": {
 							Status: shared.PreferenceStatusOptedIn,
 							ChannelPreferences: []shared.ChannelPreferenceParam{{
@@ -73,7 +73,7 @@ func TestBulkAddUsers(t *testing.T) {
 					ListID:      courier.String("list_id"),
 					Locale:      courier.String("locale"),
 					PhoneNumber: courier.String("phone_number"),
-					Preferences: shared.UserRecipientPreferencesParam{
+					Preferences: shared.ProfilePreferencesParam{
 						Notifications: map[string]shared.PreferenceParam{
 							"foo": {
 								Status: shared.PreferenceStatusOptedIn,

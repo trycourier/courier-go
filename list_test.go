@@ -56,7 +56,7 @@ func TestListUpdateWithOptionalParams(t *testing.T) {
 		courier.ListUpdateParams{
 			Name: "name",
 			Preferences: shared.RecipientPreferencesParam{
-				Categories: map[string]shared.PreferenceParam{
+				Categories: map[string]shared.NotificationPreferenceDetailsParam{
 					"foo": {
 						Status: shared.PreferenceStatusOptedIn,
 						ChannelPreferences: []shared.ChannelPreferenceParam{{
@@ -68,7 +68,7 @@ func TestListUpdateWithOptionalParams(t *testing.T) {
 						}},
 					},
 				},
-				Notifications: map[string]shared.PreferenceParam{
+				Notifications: map[string]shared.NotificationPreferenceDetailsParam{
 					"foo": {
 						Status: shared.PreferenceStatusOptedIn,
 						ChannelPreferences: []shared.ChannelPreferenceParam{{
