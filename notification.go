@@ -394,8 +394,10 @@ func (r *NotificationListResponse) UnmarshalJSON(data []byte) error {
 }
 
 type NotificationListResponseResult struct {
-	ID        string                             `json:"id,required"`
-	CreatedAt int64                              `json:"created_at,required"`
+	ID        string `json:"id,required"`
+	CreatedAt int64  `json:"created_at,required"`
+	// Array of event IDs associated with this notification
+	EventIDs  []string                           `json:"event_ids,required"`
 	Note      string                             `json:"note,required"`
 	Routing   shared.MessageRouting              `json:"routing,required"`
 	TopicID   string                             `json:"topic_id,required"`
@@ -406,6 +408,7 @@ type NotificationListResponseResult struct {
 	JSON struct {
 		ID          respjson.Field
 		CreatedAt   respjson.Field
+		EventIDs    respjson.Field
 		Note        respjson.Field
 		Routing     respjson.Field
 		TopicID     respjson.Field
