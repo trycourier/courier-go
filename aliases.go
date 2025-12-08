@@ -252,13 +252,19 @@ const PreferenceStatusOptedOut = shared.PreferenceStatusOptedOut
 const PreferenceStatusRequired = shared.PreferenceStatusRequired
 
 // This is an alias to an internal type.
+type ProfilePreferences = shared.ProfilePreferences
+
+// This is an alias to an internal type.
+type ProfilePreferencesParam = shared.ProfilePreferencesParam
+
+// This is an alias to an internal type.
 type RecipientParam = shared.RecipientParam
 
 // This is an alias to an internal type.
-type RecipientPreferencesParam = shared.RecipientPreferencesParam
+type RecipientPreferences = shared.RecipientPreferences
 
 // This is an alias to an internal type.
-type RecipientPreferences = shared.RecipientPreferences
+type RecipientPreferencesParam = shared.RecipientPreferencesParam
 
 // This is an alias to an internal type.
 type Rule = shared.Rule
@@ -270,13 +276,7 @@ type RuleParam = shared.RuleParam
 type UserRecipient = shared.UserRecipient
 
 // This is an alias to an internal type.
-type UserRecipientPreferences = shared.UserRecipientPreferences
-
-// This is an alias to an internal type.
 type UserRecipientParam = shared.UserRecipientParam
-
-// This is an alias to an internal type.
-type UserRecipientPreferencesParam = shared.UserRecipientPreferencesParam
 
 // This is an alias to an internal type.
 type UtmParam = shared.UtmParam

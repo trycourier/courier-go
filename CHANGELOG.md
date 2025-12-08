@@ -1,5 +1,26 @@
 # Changelog
 
+## 4.2.0 (2025-12-08)
+
+Full Changelog: [v4.1.1...v4.2.0](https://github.com/trycourier/courier-go/compare/v4.1.1...v4.2.0)
+
+### Features
+
+* Add event_ids field to Notification schema ([ea63268](https://github.com/trycourier/courier-go/commit/ea63268e6175851811f3da32b8ed6ab4c8f6b1eb))
+
+
+### Bug Fixes
+
+* **client:** fix duplicate Go struct resulting from name derivations schema ([dc40006](https://github.com/trycourier/courier-go/commit/dc40006ded7f953c89e1b23b5e917bc986be33f5))
+* **mcp:** correct code tool API endpoint ([e3f20a5](https://github.com/trycourier/courier-go/commit/e3f20a5e9922b18f49728849810d11e4cd57c57e))
+* rename param to avoid collision ([9ac4b56](https://github.com/trycourier/courier-go/commit/9ac4b5691091dc59381250bfff644b2c3c9f1dd0))
+
+
+### Chores
+
+* elide duplicate aliases ([5f4976c](https://github.com/trycourier/courier-go/commit/5f4976cedee15db7a4713944c20fc07de8c86bb2))
+* **internal:** codegen related update ([64c0731](https://github.com/trycourier/courier-go/commit/64c073156678a16f20821303815eab0e26568bdf))
+
 ## 4.1.1 (2025-12-02)
 
 Full Changelog: [v4.1.0...v4.1.1](https://github.com/trycourier/courier-go/compare/v4.1.0...v4.1.1)
