@@ -71,7 +71,7 @@ func (r *UserTokenService) Update(ctx context.Context, token string, params User
 }
 
 // Gets all tokens available for a :user_id
-func (r *UserTokenService) List(ctx context.Context, userID string, opts ...option.RequestOption) (res *[]UserToken, err error) {
+func (r *UserTokenService) List(ctx context.Context, userID string, opts ...option.RequestOption) (res *UserTokenListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
@@ -391,6 +391,23 @@ type UserTokenGetResponse struct {
 // Returns the unmodified JSON received from the API
 func (r UserTokenGetResponse) RawJSON() string { return r.JSON.raw }
 func (r *UserTokenGetResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A list of tokens registered with the user.
+type UserTokenListResponse struct {
+	Tokens []UserToken `json:"tokens,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Tokens      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r UserTokenListResponse) RawJSON() string { return r.JSON.raw }
+func (r *UserTokenListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
