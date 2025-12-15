@@ -198,6 +198,10 @@ func (u *SendMessageParamsMessageContentUnion) asAny() any {
 type SendMessageParamsMessageDelay struct {
 	// The duration of the delay in milliseconds.
 	Duration param.Opt[int64] `json:"duration,omitzero"`
+	// IANA timezone identifier (e.g., "America/Los_Angeles", "UTC"). Used when
+	// resolving opening hours expressions. Takes precedence over user profile timezone
+	// settings.
+	Timezone param.Opt[string] `json:"timezone,omitzero"`
 	// ISO 8601 timestamp or opening_hours-like format.
 	Until param.Opt[string] `json:"until,omitzero"`
 	paramObj
