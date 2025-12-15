@@ -68,6 +68,7 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 			},
 			Delay: courier.SendMessageParamsMessageDelay{
 				Duration: courier.Int(0),
+				Timezone: courier.String("timezone"),
 				Until:    courier.String("until"),
 			},
 			Expiry: courier.SendMessageParamsMessageExpiry{
