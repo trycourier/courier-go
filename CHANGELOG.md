@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.3.0 (2025-12-16)
+
+Full Changelog: [v4.2.1...v4.3.0](https://github.com/trycourier/courier-go/compare/v4.2.1...v4.3.0)
+
+### Features
+
+* Add timezone field to Delay schema ([82022e4](https://github.com/trycourier/courier-go/commit/82022e483e3944ca50e3f03e8bae3c71bb25259f))
+* **encoder:** support bracket encoding form-data object members ([9e47be4](https://github.com/trycourier/courier-go/commit/9e47be4d14f2a70505e878c8fd9d3dd176edeb28))
+* Fix UsersGetAllTokensResponse to return object with tokens property i… ([8f24b6d](https://github.com/trycourier/courier-go/commit/8f24b6d0f07c4621c8f0cb3df536f9424dd1d760))
+* Update bulk API spec: make event required, document profile.email req… ([7c385f3](https://github.com/trycourier/courier-go/commit/7c385f3179886c9eab19653f23946b7ac898cfe2))
+
 ## 4.2.1 (2025-12-08)
 
 Full Changelog: [v4.2.0...v4.2.1](https://github.com/trycourier/courier-go/compare/v4.2.0...v4.2.1)
