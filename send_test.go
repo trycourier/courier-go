@@ -68,6 +68,7 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 			},
 			Delay: courier.SendMessageParamsMessageDelay{
 				Duration: courier.Int(0),
+				Timezone: courier.String("timezone"),
 				Until:    courier.String("until"),
 			},
 			Expiry: courier.SendMessageParamsMessageExpiry{
@@ -140,7 +141,7 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 					ListID:      courier.String("list_id"),
 					Locale:      courier.String("locale"),
 					PhoneNumber: courier.String("phone_number"),
-					Preferences: shared.ProfilePreferencesParam{
+					Preferences: shared.UserRecipientPreferencesParam{
 						Notifications: map[string]shared.PreferenceParam{
 							"foo": {
 								Status: shared.PreferenceStatusOptedIn,

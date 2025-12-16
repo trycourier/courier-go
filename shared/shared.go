@@ -1134,51 +1134,6 @@ const (
 	PreferenceStatusRequired PreferenceStatus = "REQUIRED"
 )
 
-type ProfilePreferences struct {
-	Notifications map[string]Preference `json:"notifications,required"`
-	Categories    map[string]Preference `json:"categories,nullable"`
-	TemplateID    string                `json:"templateId,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Notifications respjson.Field
-		Categories    respjson.Field
-		TemplateID    respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ProfilePreferences) RawJSON() string { return r.JSON.raw }
-func (r *ProfilePreferences) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this ProfilePreferences to a ProfilePreferencesParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// ProfilePreferencesParam.Overrides()
-func (r ProfilePreferences) ToParam() ProfilePreferencesParam {
-	return param.Override[ProfilePreferencesParam](json.RawMessage(r.RawJSON()))
-}
-
-// The property Notifications is required.
-type ProfilePreferencesParam struct {
-	Notifications map[string]PreferenceParam `json:"notifications,omitzero,required"`
-	TemplateID    param.Opt[string]          `json:"templateId,omitzero"`
-	Categories    map[string]PreferenceParam `json:"categories,omitzero"`
-	paramObj
-}
-
-func (r ProfilePreferencesParam) MarshalJSON() (data []byte, err error) {
-	type shadow ProfilePreferencesParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ProfilePreferencesParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type RecipientParam struct {
 	// Deprecated - Use `tenant_id` instead.
 	AccountID param.Opt[string] `json:"account_id,omitzero"`
@@ -1194,11 +1149,11 @@ type RecipientParam struct {
 	TenantID param.Opt[string] `json:"tenant_id,omitzero"`
 	// The user's unique identifier. Typically, this will match the user id of a user
 	// in your system.
-	UserID param.Opt[string] `json:"user_id,omitzero"`
-	Data   map[string]any    `json:"data,omitzero"`
+	UserID      param.Opt[string]         `json:"user_id,omitzero"`
+	Data        map[string]any            `json:"data,omitzero"`
+	Preferences RecipientPreferencesParam `json:"preferences,omitzero"`
 	// Context such as tenant_id to send the notification with.
-	Context     MessageContextParam     `json:"context,omitzero"`
-	Preferences ProfilePreferencesParam `json:"preferences,omitzero"`
+	Context MessageContextParam `json:"context,omitzero"`
 	paramObj
 }
 
@@ -1207,6 +1162,22 @@ func (r RecipientParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *RecipientParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Notifications is required.
+type RecipientPreferencesParam struct {
+	Notifications map[string]PreferenceParam `json:"notifications,omitzero,required"`
+	TemplateID    param.Opt[string]          `json:"templateId,omitzero"`
+	Categories    map[string]PreferenceParam `json:"categories,omitzero"`
+	paramObj
+}
+
+func (r RecipientPreferencesParam) MarshalJSON() (data []byte, err error) {
+	type shadow RecipientPreferencesParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *RecipientPreferencesParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1235,20 +1206,6 @@ func (r *RecipientPreferences) UnmarshalJSON(data []byte) error {
 // RecipientPreferencesParam.Overrides()
 func (r RecipientPreferences) ToParam() RecipientPreferencesParam {
 	return param.Override[RecipientPreferencesParam](json.RawMessage(r.RawJSON()))
-}
-
-type RecipientPreferencesParam struct {
-	Categories    map[string]NotificationPreferenceDetailsParam `json:"categories,omitzero"`
-	Notifications map[string]NotificationPreferenceDetailsParam `json:"notifications,omitzero"`
-	paramObj
-}
-
-func (r RecipientPreferencesParam) MarshalJSON() (data []byte, err error) {
-	type shadow RecipientPreferencesParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *RecipientPreferencesParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }
 
 type Rule struct {
@@ -1306,8 +1263,8 @@ type UserRecipient struct {
 	// The user's preferred ISO 639-1 language code.
 	Locale string `json:"locale,nullable"`
 	// The user's phone number.
-	PhoneNumber string             `json:"phone_number,nullable"`
-	Preferences ProfilePreferences `json:"preferences,nullable"`
+	PhoneNumber string                   `json:"phone_number,nullable"`
+	Preferences UserRecipientPreferences `json:"preferences,nullable"`
 	// The id of the tenant the user is associated with.
 	TenantID string `json:"tenant_id,nullable"`
 	// The user's unique identifier. Typically, this will match the user id of a user
@@ -1345,6 +1302,26 @@ func (r UserRecipient) ToParam() UserRecipientParam {
 	return param.Override[UserRecipientParam](json.RawMessage(r.RawJSON()))
 }
 
+type UserRecipientPreferences struct {
+	Notifications map[string]Preference `json:"notifications,required"`
+	Categories    map[string]Preference `json:"categories,nullable"`
+	TemplateID    string                `json:"templateId,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Notifications respjson.Field
+		Categories    respjson.Field
+		TemplateID    respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r UserRecipientPreferences) RawJSON() string { return r.JSON.raw }
+func (r *UserRecipientPreferences) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type UserRecipientParam struct {
 	// Deprecated - Use `tenant_id` instead.
 	AccountID param.Opt[string] `json:"account_id,omitzero"`
@@ -1360,11 +1337,11 @@ type UserRecipientParam struct {
 	TenantID param.Opt[string] `json:"tenant_id,omitzero"`
 	// The user's unique identifier. Typically, this will match the user id of a user
 	// in your system.
-	UserID param.Opt[string] `json:"user_id,omitzero"`
-	Data   map[string]any    `json:"data,omitzero"`
+	UserID      param.Opt[string]             `json:"user_id,omitzero"`
+	Data        map[string]any                `json:"data,omitzero"`
+	Preferences UserRecipientPreferencesParam `json:"preferences,omitzero"`
 	// Context such as tenant_id to send the notification with.
-	Context     MessageContextParam     `json:"context,omitzero"`
-	Preferences ProfilePreferencesParam `json:"preferences,omitzero"`
+	Context MessageContextParam `json:"context,omitzero"`
 	paramObj
 }
 
@@ -1373,6 +1350,22 @@ func (r UserRecipientParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *UserRecipientParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Notifications is required.
+type UserRecipientPreferencesParam struct {
+	Notifications map[string]PreferenceParam `json:"notifications,omitzero,required"`
+	TemplateID    param.Opt[string]          `json:"templateId,omitzero"`
+	Categories    map[string]PreferenceParam `json:"categories,omitzero"`
+	paramObj
+}
+
+func (r UserRecipientPreferencesParam) MarshalJSON() (data []byte, err error) {
+	type shadow UserRecipientPreferencesParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *UserRecipientPreferencesParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
