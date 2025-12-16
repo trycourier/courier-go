@@ -39,7 +39,11 @@ func NewBulkService(opts ...option.RequestOption) (r BulkService) {
 	return
 }
 
-// Ingest user data into a Bulk Job
+// Ingest user data into a Bulk Job.
+//
+// **Important**: For email-based bulk jobs, each user must include `profile.email`
+// for provider routing to work correctly. The `to.email` field is not sufficient
+// for email provider routing.
 func (r *BulkService) AddUsers(ctx context.Context, jobID string, body BulkAddUsersParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -52,7 +56,13 @@ func (r *BulkService) AddUsers(ctx context.Context, jobID string, body BulkAddUs
 	return
 }
 
-// Create a bulk job
+// Creates a new bulk job for sending messages to multiple recipients.
+//
+// **Required**: `message.event` (event ID or notification ID)
+//
+// **Optional (V2 format)**: `message.template` (notification ID) or
+// `message.content` (Elemental content) can be provided to override the
+// notification associated with the event.
 func (r *BulkService) NewJob(ctx context.Context, body BulkNewJobParams, opts ...option.RequestOption) (res *BulkNewJobResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "bulk"
@@ -97,118 +107,60 @@ func (r *BulkService) RunJob(ctx context.Context, jobID string, opts ...option.R
 	return
 }
 
-// InboundBulkMessageUnion contains all possible properties and values from
-// [InboundBulkMessageInboundBulkTemplateMessage],
-// [InboundBulkMessageInboundBulkContentMessage].
+// Bulk message definition. Supports two formats:
 //
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-type InboundBulkMessageUnion struct {
-	// This field is from variant [InboundBulkMessageInboundBulkTemplateMessage].
-	Template string `json:"template"`
-	Brand    string `json:"brand"`
-	Data     any    `json:"data"`
-	Event    string `json:"event"`
-	Locale   any    `json:"locale"`
-	Override any    `json:"override"`
-	// This field is from variant [InboundBulkMessageInboundBulkContentMessage].
-	Content InboundBulkMessageInboundBulkContentMessageContentUnion `json:"content"`
-	JSON    struct {
-		Template respjson.Field
-		Brand    respjson.Field
-		Data     respjson.Field
-		Event    respjson.Field
-		Locale   respjson.Field
-		Override respjson.Field
-		Content  respjson.Field
-		raw      string
+//   - V1 format: Requires `event` field (event ID or notification ID)
+//   - V2 format: Optionally use `template` (notification ID) or `content` (Elemental
+//     content) in addition to `event`
+type InboundBulkMessage struct {
+	// Event ID or Notification ID (required). Can be either a Notification ID (e.g.,
+	// "FRH3QXM9E34W4RKP7MRC8NZ1T8V8") or a custom Event ID (e.g., "welcome-email")
+	// mapped to a notification.
+	Event string `json:"event,required"`
+	Brand string `json:"brand,nullable"`
+	// Elemental content (optional, for V2 format). When provided, this will be used
+	// instead of the notification associated with the `event` field.
+	Content  InboundBulkMessageContentUnion `json:"content,nullable"`
+	Data     map[string]any                 `json:"data,nullable"`
+	Locale   map[string]map[string]any      `json:"locale,nullable"`
+	Override map[string]any                 `json:"override,nullable"`
+	// Notification ID or template ID (optional, for V2 format). When provided, this
+	// will be used instead of the notification associated with the `event` field.
+	Template string `json:"template,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Event       respjson.Field
+		Brand       respjson.Field
+		Content     respjson.Field
+		Data        respjson.Field
+		Locale      respjson.Field
+		Override    respjson.Field
+		Template    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
 	} `json:"-"`
 }
 
-func (u InboundBulkMessageUnion) AsInboundBulkTemplateMessage() (v InboundBulkMessageInboundBulkTemplateMessage) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u InboundBulkMessageUnion) AsInboundBulkContentMessage() (v InboundBulkMessageInboundBulkContentMessage) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
 // Returns the unmodified JSON received from the API
-func (u InboundBulkMessageUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *InboundBulkMessageUnion) UnmarshalJSON(data []byte) error {
+func (r InboundBulkMessage) RawJSON() string { return r.JSON.raw }
+func (r *InboundBulkMessage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ToParam converts this InboundBulkMessageUnion to a InboundBulkMessageUnionParam.
+// ToParam converts this InboundBulkMessage to a InboundBulkMessageParam.
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// InboundBulkMessageUnionParam.Overrides()
-func (r InboundBulkMessageUnion) ToParam() InboundBulkMessageUnionParam {
-	return param.Override[InboundBulkMessageUnionParam](json.RawMessage(r.RawJSON()))
+// InboundBulkMessageParam.Overrides()
+func (r InboundBulkMessage) ToParam() InboundBulkMessageParam {
+	return param.Override[InboundBulkMessageParam](json.RawMessage(r.RawJSON()))
 }
 
-type InboundBulkMessageInboundBulkTemplateMessage struct {
-	Template string                    `json:"template,required"`
-	Brand    string                    `json:"brand,nullable"`
-	Data     map[string]any            `json:"data,nullable"`
-	Event    string                    `json:"event,nullable"`
-	Locale   map[string]map[string]any `json:"locale,nullable"`
-	Override map[string]any            `json:"override,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Template    respjson.Field
-		Brand       respjson.Field
-		Data        respjson.Field
-		Event       respjson.Field
-		Locale      respjson.Field
-		Override    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r InboundBulkMessageInboundBulkTemplateMessage) RawJSON() string { return r.JSON.raw }
-func (r *InboundBulkMessageInboundBulkTemplateMessage) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type InboundBulkMessageInboundBulkContentMessage struct {
-	// Syntactic sugar to provide a fast shorthand for Courier Elemental Blocks.
-	Content  InboundBulkMessageInboundBulkContentMessageContentUnion `json:"content,required"`
-	Brand    string                                                  `json:"brand,nullable"`
-	Data     map[string]any                                          `json:"data,nullable"`
-	Event    string                                                  `json:"event,nullable"`
-	Locale   map[string]map[string]any                               `json:"locale,nullable"`
-	Override map[string]any                                          `json:"override,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Content     respjson.Field
-		Brand       respjson.Field
-		Data        respjson.Field
-		Event       respjson.Field
-		Locale      respjson.Field
-		Override    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r InboundBulkMessageInboundBulkContentMessage) RawJSON() string { return r.JSON.raw }
-func (r *InboundBulkMessageInboundBulkContentMessage) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// InboundBulkMessageInboundBulkContentMessageContentUnion contains all possible
-// properties and values from [shared.ElementalContentSugar],
-// [shared.ElementalContent].
+// InboundBulkMessageContentUnion contains all possible properties and values from
+// [shared.ElementalContentSugar], [shared.ElementalContent].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
-type InboundBulkMessageInboundBulkContentMessageContentUnion struct {
+type InboundBulkMessageContentUnion struct {
 	// This field is from variant [shared.ElementalContentSugar].
 	Body string `json:"body"`
 	// This field is from variant [shared.ElementalContentSugar].
@@ -229,189 +181,73 @@ type InboundBulkMessageInboundBulkContentMessageContentUnion struct {
 	} `json:"-"`
 }
 
-func (u InboundBulkMessageInboundBulkContentMessageContentUnion) AsElementalContentSugar() (v shared.ElementalContentSugar) {
+func (u InboundBulkMessageContentUnion) AsElementalContentSugar() (v shared.ElementalContentSugar) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u InboundBulkMessageInboundBulkContentMessageContentUnion) AsElementalContent() (v shared.ElementalContent) {
+func (u InboundBulkMessageContentUnion) AsElementalContent() (v shared.ElementalContent) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u InboundBulkMessageInboundBulkContentMessageContentUnion) RawJSON() string { return u.JSON.raw }
+func (u InboundBulkMessageContentUnion) RawJSON() string { return u.JSON.raw }
 
-func (r *InboundBulkMessageInboundBulkContentMessageContentUnion) UnmarshalJSON(data []byte) error {
+func (r *InboundBulkMessageContentUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func InboundBulkMessageParamOfInboundBulkTemplateMessage(template string) InboundBulkMessageUnionParam {
-	var variant InboundBulkMessageInboundBulkTemplateMessageParam
-	variant.Template = template
-	return InboundBulkMessageUnionParam{OfInboundBulkTemplateMessage: &variant}
-}
-
-func InboundBulkMessageParamOfInboundBulkContentMessage[
-	T shared.ElementalContentSugarParam | shared.ElementalContentParam,
-](content T) InboundBulkMessageUnionParam {
-	var variant InboundBulkMessageInboundBulkContentMessageParam
-	switch v := any(content).(type) {
-	case shared.ElementalContentSugarParam:
-		variant.Content.OfElementalContentSugar = &v
-	case shared.ElementalContentParam:
-		variant.Content.OfElementalContent = &v
-	}
-	return InboundBulkMessageUnionParam{OfInboundBulkContentMessage: &variant}
-}
-
-// Only one field can be non-zero.
+// Bulk message definition. Supports two formats:
 //
-// Use [param.IsOmitted] to confirm if a field is set.
-type InboundBulkMessageUnionParam struct {
-	OfInboundBulkTemplateMessage *InboundBulkMessageInboundBulkTemplateMessageParam `json:",omitzero,inline"`
-	OfInboundBulkContentMessage  *InboundBulkMessageInboundBulkContentMessageParam  `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u InboundBulkMessageUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfInboundBulkTemplateMessage, u.OfInboundBulkContentMessage)
-}
-func (u *InboundBulkMessageUnionParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *InboundBulkMessageUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfInboundBulkTemplateMessage) {
-		return u.OfInboundBulkTemplateMessage
-	} else if !param.IsOmitted(u.OfInboundBulkContentMessage) {
-		return u.OfInboundBulkContentMessage
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u InboundBulkMessageUnionParam) GetTemplate() *string {
-	if vt := u.OfInboundBulkTemplateMessage; vt != nil {
-		return &vt.Template
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u InboundBulkMessageUnionParam) GetContent() *InboundBulkMessageInboundBulkContentMessageContentUnionParam {
-	if vt := u.OfInboundBulkContentMessage; vt != nil {
-		return &vt.Content
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u InboundBulkMessageUnionParam) GetBrand() *string {
-	if vt := u.OfInboundBulkTemplateMessage; vt != nil && vt.Brand.Valid() {
-		return &vt.Brand.Value
-	} else if vt := u.OfInboundBulkContentMessage; vt != nil && vt.Brand.Valid() {
-		return &vt.Brand.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u InboundBulkMessageUnionParam) GetEvent() *string {
-	if vt := u.OfInboundBulkTemplateMessage; vt != nil && vt.Event.Valid() {
-		return &vt.Event.Value
-	} else if vt := u.OfInboundBulkContentMessage; vt != nil && vt.Event.Valid() {
-		return &vt.Event.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's Data property, if present.
-func (u InboundBulkMessageUnionParam) GetData() map[string]any {
-	if vt := u.OfInboundBulkTemplateMessage; vt != nil {
-		return vt.Data
-	} else if vt := u.OfInboundBulkContentMessage; vt != nil {
-		return vt.Data
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's Locale property, if present.
-func (u InboundBulkMessageUnionParam) GetLocale() map[string]map[string]any {
-	if vt := u.OfInboundBulkTemplateMessage; vt != nil {
-		return vt.Locale
-	} else if vt := u.OfInboundBulkContentMessage; vt != nil {
-		return vt.Locale
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's Override property, if present.
-func (u InboundBulkMessageUnionParam) GetOverride() map[string]any {
-	if vt := u.OfInboundBulkTemplateMessage; vt != nil {
-		return vt.Override
-	} else if vt := u.OfInboundBulkContentMessage; vt != nil {
-		return vt.Override
-	}
-	return nil
-}
-
-// The property Template is required.
-type InboundBulkMessageInboundBulkTemplateMessageParam struct {
-	Template string                    `json:"template,required"`
-	Brand    param.Opt[string]         `json:"brand,omitzero"`
-	Event    param.Opt[string]         `json:"event,omitzero"`
-	Data     map[string]any            `json:"data,omitzero"`
-	Locale   map[string]map[string]any `json:"locale,omitzero"`
-	Override map[string]any            `json:"override,omitzero"`
+//   - V1 format: Requires `event` field (event ID or notification ID)
+//   - V2 format: Optionally use `template` (notification ID) or `content` (Elemental
+//     content) in addition to `event`
+//
+// The property Event is required.
+type InboundBulkMessageParam struct {
+	// Event ID or Notification ID (required). Can be either a Notification ID (e.g.,
+	// "FRH3QXM9E34W4RKP7MRC8NZ1T8V8") or a custom Event ID (e.g., "welcome-email")
+	// mapped to a notification.
+	Event string            `json:"event,required"`
+	Brand param.Opt[string] `json:"brand,omitzero"`
+	// Notification ID or template ID (optional, for V2 format). When provided, this
+	// will be used instead of the notification associated with the `event` field.
+	Template param.Opt[string] `json:"template,omitzero"`
+	// Elemental content (optional, for V2 format). When provided, this will be used
+	// instead of the notification associated with the `event` field.
+	Content  InboundBulkMessageContentUnionParam `json:"content,omitzero"`
+	Data     map[string]any                      `json:"data,omitzero"`
+	Locale   map[string]map[string]any           `json:"locale,omitzero"`
+	Override map[string]any                      `json:"override,omitzero"`
 	paramObj
 }
 
-func (r InboundBulkMessageInboundBulkTemplateMessageParam) MarshalJSON() (data []byte, err error) {
-	type shadow InboundBulkMessageInboundBulkTemplateMessageParam
+func (r InboundBulkMessageParam) MarshalJSON() (data []byte, err error) {
+	type shadow InboundBulkMessageParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *InboundBulkMessageInboundBulkTemplateMessageParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The property Content is required.
-type InboundBulkMessageInboundBulkContentMessageParam struct {
-	// Syntactic sugar to provide a fast shorthand for Courier Elemental Blocks.
-	Content  InboundBulkMessageInboundBulkContentMessageContentUnionParam `json:"content,omitzero,required"`
-	Brand    param.Opt[string]                                            `json:"brand,omitzero"`
-	Event    param.Opt[string]                                            `json:"event,omitzero"`
-	Data     map[string]any                                               `json:"data,omitzero"`
-	Locale   map[string]map[string]any                                    `json:"locale,omitzero"`
-	Override map[string]any                                               `json:"override,omitzero"`
-	paramObj
-}
-
-func (r InboundBulkMessageInboundBulkContentMessageParam) MarshalJSON() (data []byte, err error) {
-	type shadow InboundBulkMessageInboundBulkContentMessageParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *InboundBulkMessageInboundBulkContentMessageParam) UnmarshalJSON(data []byte) error {
+func (r *InboundBulkMessageParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type InboundBulkMessageInboundBulkContentMessageContentUnionParam struct {
+type InboundBulkMessageContentUnionParam struct {
 	OfElementalContentSugar *shared.ElementalContentSugarParam `json:",omitzero,inline"`
 	OfElementalContent      *shared.ElementalContentParam      `json:",omitzero,inline"`
 	paramUnion
 }
 
-func (u InboundBulkMessageInboundBulkContentMessageContentUnionParam) MarshalJSON() ([]byte, error) {
+func (u InboundBulkMessageContentUnionParam) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfElementalContentSugar, u.OfElementalContent)
 }
-func (u *InboundBulkMessageInboundBulkContentMessageContentUnionParam) UnmarshalJSON(data []byte) error {
+func (u *InboundBulkMessageContentUnionParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *InboundBulkMessageInboundBulkContentMessageContentUnionParam) asAny() any {
+func (u *InboundBulkMessageContentUnionParam) asAny() any {
 	if !param.IsOmitted(u.OfElementalContentSugar) {
 		return u.OfElementalContentSugar
 	} else if !param.IsOmitted(u.OfElementalContent) {
@@ -421,11 +257,19 @@ func (u *InboundBulkMessageInboundBulkContentMessageContentUnionParam) asAny() a
 }
 
 type InboundBulkMessageUser struct {
+	// User-specific data that will be merged with message.data
 	Data        any                         `json:"data"`
 	Preferences shared.RecipientPreferences `json:"preferences,nullable"`
-	Profile     any                         `json:"profile"`
-	Recipient   string                      `json:"recipient,nullable"`
-	To          shared.UserRecipient        `json:"to,nullable"`
+	// User profile information. For email-based bulk jobs, `profile.email` is required
+	// for provider routing to determine if the message can be delivered. The email
+	// address should be provided here rather than in `to.email`.
+	Profile map[string]any `json:"profile,nullable"`
+	// User ID (legacy field, use profile or to.user_id instead)
+	Recipient string `json:"recipient,nullable"`
+	// Optional recipient information. Note: For email provider routing, use
+	// `profile.email` instead of `to.email`. The `to` field is primarily used for
+	// recipient identification and data merging.
+	To shared.UserRecipient `json:"to,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -454,11 +298,19 @@ func (r InboundBulkMessageUser) ToParam() InboundBulkMessageUserParam {
 }
 
 type InboundBulkMessageUserParam struct {
-	Recipient   param.Opt[string]                `json:"recipient,omitzero"`
+	// User ID (legacy field, use profile or to.user_id instead)
+	Recipient param.Opt[string] `json:"recipient,omitzero"`
+	// User profile information. For email-based bulk jobs, `profile.email` is required
+	// for provider routing to determine if the message can be delivered. The email
+	// address should be provided here rather than in `to.email`.
+	Profile map[string]any `json:"profile,omitzero"`
+	// User-specific data that will be merged with message.data
 	Data        any                              `json:"data,omitzero"`
 	Preferences shared.RecipientPreferencesParam `json:"preferences,omitzero"`
-	Profile     any                              `json:"profile,omitzero"`
-	To          shared.UserRecipientParam        `json:"to,omitzero"`
+	// Optional recipient information. Note: For email provider routing, use
+	// `profile.email` instead of `to.email`. The `to` field is primarily used for
+	// recipient identification and data merging.
+	To shared.UserRecipientParam `json:"to,omitzero"`
 	paramObj
 }
 
@@ -541,10 +393,15 @@ func (r *BulkGetJobResponse) UnmarshalJSON(data []byte) error {
 }
 
 type BulkGetJobResponseJob struct {
-	Definition InboundBulkMessageUnion `json:"definition,required"`
-	Enqueued   int64                   `json:"enqueued,required"`
-	Failures   int64                   `json:"failures,required"`
-	Received   int64                   `json:"received,required"`
+	// Bulk message definition. Supports two formats:
+	//
+	//   - V1 format: Requires `event` field (event ID or notification ID)
+	//   - V2 format: Optionally use `template` (notification ID) or `content` (Elemental
+	//     content) in addition to `event`
+	Definition InboundBulkMessage `json:"definition,required"`
+	Enqueued   int64              `json:"enqueued,required"`
+	Failures   int64              `json:"failures,required"`
+	Received   int64              `json:"received,required"`
 	// Any of "CREATED", "PROCESSING", "COMPLETED", "ERROR".
 	Status string `json:"status,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -579,7 +436,12 @@ func (r *BulkAddUsersParams) UnmarshalJSON(data []byte) error {
 }
 
 type BulkNewJobParams struct {
-	Message InboundBulkMessageUnionParam `json:"message,omitzero,required"`
+	// Bulk message definition. Supports two formats:
+	//
+	//   - V1 format: Requires `event` field (event ID or notification ID)
+	//   - V2 format: Optionally use `template` (notification ID) or `content` (Elemental
+	//     content) in addition to `event`
+	Message InboundBulkMessageParam `json:"message,omitzero,required"`
 	paramObj
 }
 
