@@ -168,12 +168,12 @@ Methods:
 
 Params Types:
 
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#InboundBulkMessageUnionParam">InboundBulkMessageUnionParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#InboundBulkMessageParam">InboundBulkMessageParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#InboundBulkMessageUserParam">InboundBulkMessageUserParam</a>
 
 Response Types:
 
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#InboundBulkMessageUnion">InboundBulkMessageUnion</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#InboundBulkMessage">InboundBulkMessage</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#InboundBulkMessageUser">InboundBulkMessageUser</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#BulkNewJobResponse">BulkNewJobResponse</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#BulkListUsersResponse">BulkListUsersResponse</a>

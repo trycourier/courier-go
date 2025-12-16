@@ -59,7 +59,9 @@ func TestBulkAddUsers(t *testing.T) {
 						},
 					},
 				},
-				Profile:   map[string]any{},
+				Profile: map[string]any{
+					"foo": "bar",
+				},
 				Recipient: courier.String("recipient"),
 				To: shared.UserRecipientParam{
 					AccountID: courier.String("account_id"),
@@ -131,23 +133,27 @@ func TestBulkNewJobWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Bulk.NewJob(context.TODO(), courier.BulkNewJobParams{
-		Message: courier.InboundBulkMessageUnionParam{
-			OfInboundBulkTemplateMessage: &courier.InboundBulkMessageInboundBulkTemplateMessageParam{
-				Template: "template",
-				Brand:    courier.String("brand"),
-				Data: map[string]any{
-					"foo": "bar",
+		Message: courier.InboundBulkMessageParam{
+			Event: "event",
+			Brand: courier.String("brand"),
+			Content: courier.InboundBulkMessageContentUnionParam{
+				OfElementalContentSugar: &shared.ElementalContentSugarParam{
+					Body:  "body",
+					Title: "title",
 				},
-				Event: courier.String("event"),
-				Locale: map[string]map[string]any{
-					"foo": {
-						"foo": "bar",
-					},
-				},
-				Override: map[string]any{
+			},
+			Data: map[string]any{
+				"foo": "bar",
+			},
+			Locale: map[string]map[string]any{
+				"foo": {
 					"foo": "bar",
 				},
 			},
+			Override: map[string]any{
+				"foo": "bar",
+			},
+			Template: courier.String("template"),
 		},
 	})
 	if err != nil {
