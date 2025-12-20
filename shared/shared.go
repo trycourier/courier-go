@@ -102,8 +102,11 @@ type ElementalActionNodeWithTypeParam struct {
 }
 
 func (r ElementalActionNodeWithTypeParam) MarshalJSON() (data []byte, err error) {
-	type shadow ElementalActionNodeWithTypeParam
-	return param.MarshalObject(r, (*shadow)(&r))
+	type shadow struct {
+		*ElementalActionNodeWithTypeParam
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
 }
 
 type ElementalBaseNode struct {
@@ -216,8 +219,11 @@ type ElementalChannelNodeParam struct {
 }
 
 func (r ElementalChannelNodeParam) MarshalJSON() (data []byte, err error) {
-	type shadow ElementalChannelNodeParam
-	return param.MarshalObject(r, (*shadow)(&r))
+	type shadow struct {
+		*ElementalChannelNodeParam
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
 }
 
 // The channel element allows a notification to be customized based on which
@@ -274,8 +280,11 @@ type ElementalChannelNodeWithTypeParam struct {
 }
 
 func (r ElementalChannelNodeWithTypeParam) MarshalJSON() (data []byte, err error) {
-	type shadow ElementalChannelNodeWithTypeParam
-	return param.MarshalObject(r, (*shadow)(&r))
+	type shadow struct {
+		*ElementalChannelNodeWithTypeParam
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
 }
 
 type ElementalContent struct {
@@ -408,8 +417,11 @@ type ElementalDividerNodeWithTypeParam struct {
 }
 
 func (r ElementalDividerNodeWithTypeParam) MarshalJSON() (data []byte, err error) {
-	type shadow ElementalDividerNodeWithTypeParam
-	return param.MarshalObject(r, (*shadow)(&r))
+	type shadow struct {
+		*ElementalDividerNodeWithTypeParam
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
 }
 
 type ElementalImageNodeWithType struct {
@@ -446,8 +458,11 @@ type ElementalImageNodeWithTypeParam struct {
 }
 
 func (r ElementalImageNodeWithTypeParam) MarshalJSON() (data []byte, err error) {
-	type shadow ElementalImageNodeWithTypeParam
-	return param.MarshalObject(r, (*shadow)(&r))
+	type shadow struct {
+		*ElementalImageNodeWithTypeParam
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
 }
 
 type ElementalMetaNodeWithType struct {
@@ -484,8 +499,11 @@ type ElementalMetaNodeWithTypeParam struct {
 }
 
 func (r ElementalMetaNodeWithTypeParam) MarshalJSON() (data []byte, err error) {
-	type shadow ElementalMetaNodeWithTypeParam
-	return param.MarshalObject(r, (*shadow)(&r))
+	type shadow struct {
+		*ElementalMetaNodeWithTypeParam
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
 }
 
 // ElementalNodeUnion contains all possible properties and values from
@@ -786,8 +804,11 @@ type ElementalQuoteNodeWithTypeParam struct {
 }
 
 func (r ElementalQuoteNodeWithTypeParam) MarshalJSON() (data []byte, err error) {
-	type shadow ElementalQuoteNodeWithTypeParam
-	return param.MarshalObject(r, (*shadow)(&r))
+	type shadow struct {
+		*ElementalQuoteNodeWithTypeParam
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
 }
 
 type ElementalTextNodeWithType struct {
@@ -824,8 +845,11 @@ type ElementalTextNodeWithTypeParam struct {
 }
 
 func (r ElementalTextNodeWithTypeParam) MarshalJSON() (data []byte, err error) {
-	type shadow ElementalTextNodeWithTypeParam
-	return param.MarshalObject(r, (*shadow)(&r))
+	type shadow struct {
+		*ElementalTextNodeWithTypeParam
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
 }
 
 type MessageContext struct {
