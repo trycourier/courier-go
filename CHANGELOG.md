@@ -1,5 +1,24 @@
 # Changelog
 
+## 4.4.0 (2025-12-22)
+
+Full Changelog: [v4.3.0...v4.4.0](https://github.com/trycourier/courier-go/compare/v4.3.0...v4.4.0)
+
+### Features
+
+* **api:** add audience/slack/msteams/pagerduty/webhook recipients, refactor to union types ([353c0ac](https://github.com/trycourier/courier-go/commit/353c0ac79473b3913e21d74e2a9eabdcbfe40cf3))
+
+
+### Bug Fixes
+
+* **client:** properly marshal embedded structs ([75c8698](https://github.com/trycourier/courier-go/commit/75c86984ec2c1bea7ab85ecda29b7b31ee920bde))
+* skip usage tests that don't work with Prism ([b8bce4c](https://github.com/trycourier/courier-go/commit/b8bce4c295a9af0852092557d68d40f9390c324c))
+
+
+### Chores
+
+* add float64 to valid types for RegisterFieldValidator ([82c9488](https://github.com/trycourier/courier-go/commit/82c94885b40fcf49be0970c91b33c5889a0333bd))
+
 ## 4.3.0 (2025-12-16)
 
 Full Changelog: [v4.2.1...v4.3.0](https://github.com/trycourier/courier-go/compare/v4.2.1...v4.3.0)
