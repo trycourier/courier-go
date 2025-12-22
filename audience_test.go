@@ -54,10 +54,12 @@ func TestAudienceUpdateWithOptionalParams(t *testing.T) {
 		"audience_id",
 		courier.AudienceUpdateParams{
 			Description: courier.String("description"),
-			Filter: courier.FilterParam{
-				Operator: courier.FilterOperatorEndsWith,
-				Path:     "path",
-				Value:    "value",
+			Filter: courier.FilterUnionParam{
+				OfSingleFilterConfig: &courier.SingleFilterConfigParam{
+					Operator: courier.SingleFilterConfigOperatorEndsWith,
+					Path:     "path",
+					Value:    "value",
+				},
 			},
 			Name: courier.String("name"),
 		},

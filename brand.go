@@ -285,8 +285,11 @@ type BrandSettingsEmailTemplateOverrideParam struct {
 }
 
 func (r BrandSettingsEmailTemplateOverrideParam) MarshalJSON() (data []byte, err error) {
-	type shadow BrandSettingsEmailTemplateOverrideParam
-	return param.MarshalObject(r, (*shadow)(&r))
+	type shadow struct {
+		*BrandSettingsEmailTemplateOverrideParam
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
 }
 
 type BrandSettingsInApp struct {

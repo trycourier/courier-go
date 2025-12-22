@@ -192,8 +192,11 @@ type DefaultPreferencesItemParam struct {
 }
 
 func (r DefaultPreferencesItemParam) MarshalJSON() (data []byte, err error) {
-	type shadow DefaultPreferencesItemParam
-	return param.MarshalObject(r, (*shadow)(&r))
+	type shadow struct {
+		*DefaultPreferencesItemParam
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
 }
 
 type SubscriptionTopicNew struct {

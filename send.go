@@ -372,13 +372,26 @@ func init() {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type SendMessageParamsMessageToUnion struct {
-	OfUserRecipient  *shared.UserRecipientParam `json:",omitzero,inline"`
-	OfRecipientArray []shared.RecipientParam    `json:",omitzero,inline"`
+	OfUserRecipient        *shared.UserRecipientParam        `json:",omitzero,inline"`
+	OfAudienceRecipient    *shared.AudienceRecipientParam    `json:",omitzero,inline"`
+	OfListRecipient        *shared.ListRecipientParam        `json:",omitzero,inline"`
+	OfListPatternRecipient *shared.ListPatternRecipientParam `json:",omitzero,inline"`
+	OfSlackRecipient       *shared.SlackRecipientParam       `json:",omitzero,inline"`
+	OfMsTeamsRecipient     *shared.MsTeamsRecipientParam     `json:",omitzero,inline"`
+	OfPagerdutyRecipient   *shared.PagerdutyRecipientParam   `json:",omitzero,inline"`
+	OfWebhookRecipient     *shared.WebhookRecipientParam     `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u SendMessageParamsMessageToUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfUserRecipient, u.OfRecipientArray)
+	return param.MarshalUnion(u, u.OfUserRecipient,
+		u.OfAudienceRecipient,
+		u.OfListRecipient,
+		u.OfListPatternRecipient,
+		u.OfSlackRecipient,
+		u.OfMsTeamsRecipient,
+		u.OfPagerdutyRecipient,
+		u.OfWebhookRecipient)
 }
 func (u *SendMessageParamsMessageToUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -387,8 +400,182 @@ func (u *SendMessageParamsMessageToUnion) UnmarshalJSON(data []byte) error {
 func (u *SendMessageParamsMessageToUnion) asAny() any {
 	if !param.IsOmitted(u.OfUserRecipient) {
 		return u.OfUserRecipient
-	} else if !param.IsOmitted(u.OfRecipientArray) {
-		return &u.OfRecipientArray
+	} else if !param.IsOmitted(u.OfAudienceRecipient) {
+		return u.OfAudienceRecipient
+	} else if !param.IsOmitted(u.OfListRecipient) {
+		return u.OfListRecipient
+	} else if !param.IsOmitted(u.OfListPatternRecipient) {
+		return u.OfListPatternRecipient
+	} else if !param.IsOmitted(u.OfSlackRecipient) {
+		return u.OfSlackRecipient
+	} else if !param.IsOmitted(u.OfMsTeamsRecipient) {
+		return u.OfMsTeamsRecipient
+	} else if !param.IsOmitted(u.OfPagerdutyRecipient) {
+		return u.OfPagerdutyRecipient
+	} else if !param.IsOmitted(u.OfWebhookRecipient) {
+		return u.OfWebhookRecipient
 	}
 	return nil
 }
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetAccountID() *string {
+	if vt := u.OfUserRecipient; vt != nil && vt.AccountID.Valid() {
+		return &vt.AccountID.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetContext() *shared.MessageContextParam {
+	if vt := u.OfUserRecipient; vt != nil {
+		return &vt.Context
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetEmail() *string {
+	if vt := u.OfUserRecipient; vt != nil && vt.Email.Valid() {
+		return &vt.Email.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetLocale() *string {
+	if vt := u.OfUserRecipient; vt != nil && vt.Locale.Valid() {
+		return &vt.Locale.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetPhoneNumber() *string {
+	if vt := u.OfUserRecipient; vt != nil && vt.PhoneNumber.Valid() {
+		return &vt.PhoneNumber.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetPreferences() *shared.UserRecipientPreferencesParam {
+	if vt := u.OfUserRecipient; vt != nil {
+		return &vt.Preferences
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetTenantID() *string {
+	if vt := u.OfUserRecipient; vt != nil && vt.TenantID.Valid() {
+		return &vt.TenantID.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetUserID() *string {
+	if vt := u.OfUserRecipient; vt != nil && vt.UserID.Valid() {
+		return &vt.UserID.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetAudienceID() *string {
+	if vt := u.OfAudienceRecipient; vt != nil {
+		return &vt.AudienceID
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetListPattern() *string {
+	if vt := u.OfListPatternRecipient; vt != nil && vt.ListPattern.Valid() {
+		return &vt.ListPattern.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetSlack() *shared.SlackUnionParam {
+	if vt := u.OfSlackRecipient; vt != nil {
+		return &vt.Slack
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetMsTeams() *shared.MsTeamsUnionParam {
+	if vt := u.OfMsTeamsRecipient; vt != nil {
+		return &vt.MsTeams
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetPagerduty() *shared.PagerdutyParam {
+	if vt := u.OfPagerdutyRecipient; vt != nil {
+		return &vt.Pagerduty
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetWebhook() *shared.WebhookProfileParam {
+	if vt := u.OfWebhookRecipient; vt != nil {
+		return &vt.Webhook
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SendMessageParamsMessageToUnion) GetListID() *string {
+	if vt := u.OfUserRecipient; vt != nil && vt.ListID.Valid() {
+		return &vt.ListID.Value
+	} else if vt := u.OfListRecipient; vt != nil && vt.ListID.Valid() {
+		return &vt.ListID.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's Data property, if present.
+func (u SendMessageParamsMessageToUnion) GetData() map[string]any {
+	if vt := u.OfUserRecipient; vt != nil {
+		return vt.Data
+	} else if vt := u.OfAudienceRecipient; vt != nil {
+		return vt.Data
+	} else if vt := u.OfListRecipient; vt != nil {
+		return vt.Data
+	} else if vt := u.OfListPatternRecipient; vt != nil {
+		return vt.Data
+	}
+	return nil
+}
+
+// Returns a subunion which exports methods to access subproperties
+//
+// Or use AsAny() to get the underlying value
+func (u SendMessageParamsMessageToUnion) GetFilters() (res sendMessageParamsMessageToUnionFilters) {
+	if vt := u.OfAudienceRecipient; vt != nil {
+		res.any = &vt.Filters
+	} else if vt := u.OfListRecipient; vt != nil {
+		res.any = &vt.Filters
+	}
+	return
+}
+
+// Can have the runtime types [_[]shared.AudienceFilterParam],
+// [_[]shared.ListFilterParam]
+type sendMessageParamsMessageToUnionFilters struct{ any }
+
+// Use the following switch statement to get the type of the union:
+//
+//	switch u.AsAny().(type) {
+//	case *[]shared.AudienceFilterParam:
+//	case *[]shared.ListFilterParam:
+//	default:
+//	    fmt.Errorf("not present")
+//	}
+func (u sendMessageParamsMessageToUnionFilters) AsAny() any { return u.any }

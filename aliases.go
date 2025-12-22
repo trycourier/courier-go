@@ -17,6 +17,28 @@ type paramObj = param.APIObject
 type Error = apierror.Error
 
 // This is an alias to an internal type.
+type AudienceFilterParam = shared.AudienceFilterParam
+
+// Send to users only if they are member of the account
+//
+// This is an alias to an internal type.
+type AudienceFilterOperator = shared.AudienceFilterOperator
+
+// Equals "MEMBER_OF"
+const AudienceFilterOperatorMemberOf = shared.AudienceFilterOperatorMemberOf
+
+// This is an alias to an internal type.
+type AudienceFilterPath = shared.AudienceFilterPath
+
+// Equals "account_id"
+const AudienceFilterPathAccountID = shared.AudienceFilterPathAccountID
+
+// Send to all users in an audience
+//
+// This is an alias to an internal type.
+type AudienceRecipientParam = shared.AudienceRecipientParam
+
+// This is an alias to an internal type.
 type ChannelClassification = shared.ChannelClassification
 
 // Equals "direct_message"
@@ -186,6 +208,33 @@ type ElementalTextNodeWithType = shared.ElementalTextNodeWithType
 type ElementalTextNodeWithTypeParam = shared.ElementalTextNodeWithTypeParam
 
 // This is an alias to an internal type.
+type ListFilterParam = shared.ListFilterParam
+
+// Send to users only if they are member of the account
+//
+// This is an alias to an internal type.
+type ListFilterOperator = shared.ListFilterOperator
+
+// Equals "MEMBER_OF"
+const ListFilterOperatorMemberOf = shared.ListFilterOperatorMemberOf
+
+// This is an alias to an internal type.
+type ListFilterPath = shared.ListFilterPath
+
+// Equals "account_id"
+const ListFilterPathAccountID = shared.ListFilterPathAccountID
+
+// Send to users in lists matching a pattern
+//
+// This is an alias to an internal type.
+type ListPatternRecipientParam = shared.ListPatternRecipientParam
+
+// Send to all users in a specific list
+//
+// This is an alias to an internal type.
+type ListRecipientParam = shared.ListRecipientParam
+
+// This is an alias to an internal type.
 type MessageContext = shared.MessageContext
 
 // This is an alias to an internal type.
@@ -213,10 +262,26 @@ type MessageRoutingChannelUnion = shared.MessageRoutingChannelUnion
 type MessageRoutingChannelUnionParam = shared.MessageRoutingChannelUnionParam
 
 // This is an alias to an internal type.
+type MsTeamsUnionParam = shared.MsTeamsUnionParam
+
+// Send via Microsoft Teams
+//
+// This is an alias to an internal type.
+type MsTeamsRecipientParam = shared.MsTeamsRecipientParam
+
+// This is an alias to an internal type.
 type NotificationPreferenceDetails = shared.NotificationPreferenceDetails
 
 // This is an alias to an internal type.
 type NotificationPreferenceDetailsParam = shared.NotificationPreferenceDetailsParam
+
+// This is an alias to an internal type.
+type PagerdutyParam = shared.PagerdutyParam
+
+// Send via PagerDuty
+//
+// This is an alias to an internal type.
+type PagerdutyRecipientParam = shared.PagerdutyRecipientParam
 
 // This is an alias to an internal type.
 type Paging = shared.Paging
@@ -252,19 +317,48 @@ const PreferenceStatusOptedOut = shared.PreferenceStatusOptedOut
 const PreferenceStatusRequired = shared.PreferenceStatusRequired
 
 // This is an alias to an internal type.
-type RecipientParam = shared.RecipientParam
+type RecipientPreferences = shared.RecipientPreferences
 
 // This is an alias to an internal type.
 type RecipientPreferencesParam = shared.RecipientPreferencesParam
-
-// This is an alias to an internal type.
-type RecipientPreferences = shared.RecipientPreferences
 
 // This is an alias to an internal type.
 type Rule = shared.Rule
 
 // This is an alias to an internal type.
 type RuleParam = shared.RuleParam
+
+// This is an alias to an internal type.
+type SendToMsTeamsChannelIDParam = shared.SendToMsTeamsChannelIDParam
+
+// This is an alias to an internal type.
+type SendToMsTeamsChannelNameParam = shared.SendToMsTeamsChannelNameParam
+
+// This is an alias to an internal type.
+type SendToMsTeamsConversationIDParam = shared.SendToMsTeamsConversationIDParam
+
+// This is an alias to an internal type.
+type SendToMsTeamsEmailParam = shared.SendToMsTeamsEmailParam
+
+// This is an alias to an internal type.
+type SendToMsTeamsUserIDParam = shared.SendToMsTeamsUserIDParam
+
+// This is an alias to an internal type.
+type SendToSlackChannelParam = shared.SendToSlackChannelParam
+
+// This is an alias to an internal type.
+type SendToSlackEmailParam = shared.SendToSlackEmailParam
+
+// This is an alias to an internal type.
+type SendToSlackUserIDParam = shared.SendToSlackUserIDParam
+
+// This is an alias to an internal type.
+type SlackUnionParam = shared.SlackUnionParam
+
+// Send via Slack (channel, email, or user_id)
+//
+// This is an alias to an internal type.
+type SlackRecipientParam = shared.SlackRecipientParam
 
 // This is an alias to an internal type.
 type UserRecipient = shared.UserRecipient
@@ -280,3 +374,44 @@ type UserRecipientPreferencesParam = shared.UserRecipientPreferencesParam
 
 // This is an alias to an internal type.
 type UtmParam = shared.UtmParam
+
+// This is an alias to an internal type.
+type WebhookAuthMode = shared.WebhookAuthMode
+
+// Equals "none"
+const WebhookAuthModeNone = shared.WebhookAuthModeNone
+
+// Equals "basic"
+const WebhookAuthModeBasic = shared.WebhookAuthModeBasic
+
+// Equals "bearer"
+const WebhookAuthModeBearer = shared.WebhookAuthModeBearer
+
+// This is an alias to an internal type.
+type WebhookAuthenticationParam = shared.WebhookAuthenticationParam
+
+// This is an alias to an internal type.
+type WebhookMethod = shared.WebhookMethod
+
+// Equals "POST"
+const WebhookMethodPost = shared.WebhookMethodPost
+
+// Equals "PUT"
+const WebhookMethodPut = shared.WebhookMethodPut
+
+// This is an alias to an internal type.
+type WebhookProfileParam = shared.WebhookProfileParam
+
+// This is an alias to an internal type.
+type WebhookProfileType = shared.WebhookProfileType
+
+// Equals "limited"
+const WebhookProfileTypeLimited = shared.WebhookProfileTypeLimited
+
+// Equals "expanded"
+const WebhookProfileTypeExpanded = shared.WebhookProfileTypeExpanded
+
+// Send via webhook
+//
+// This is an alias to an internal type.
+type WebhookRecipientParam = shared.WebhookRecipientParam
