@@ -171,7 +171,7 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 						TemplateID: courier.String("templateId"),
 					},
 					TenantID: courier.String("tenant_id"),
-					UserID:   courier.String("example_user"),
+					UserID:   courier.String("user_id"),
 				},
 			},
 		},

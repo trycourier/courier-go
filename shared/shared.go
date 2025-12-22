@@ -16,6 +16,59 @@ type paramUnion = param.APIUnion
 // aliased to make [param.APIObject] private when embedding
 type paramObj = param.APIObject
 
+// The properties Operator, Path, Value are required.
+type AudienceFilterParam struct {
+	// Send to users only if they are member of the account
+	//
+	// Any of "MEMBER_OF".
+	Operator AudienceFilterOperator `json:"operator,omitzero,required"`
+	// Any of "account_id".
+	Path  AudienceFilterPath `json:"path,omitzero,required"`
+	Value string             `json:"value,required"`
+	paramObj
+}
+
+func (r AudienceFilterParam) MarshalJSON() (data []byte, err error) {
+	type shadow AudienceFilterParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *AudienceFilterParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Send to users only if they are member of the account
+type AudienceFilterOperator string
+
+const (
+	AudienceFilterOperatorMemberOf AudienceFilterOperator = "MEMBER_OF"
+)
+
+type AudienceFilterPath string
+
+const (
+	AudienceFilterPathAccountID AudienceFilterPath = "account_id"
+)
+
+// Send to all users in an audience
+//
+// The property AudienceID is required.
+type AudienceRecipientParam struct {
+	// A unique identifier associated with an Audience. A message will be sent to each
+	// user in the audience.
+	AudienceID string                `json:"audience_id,required"`
+	Data       map[string]any        `json:"data,omitzero"`
+	Filters    []AudienceFilterParam `json:"filters,omitzero"`
+	paramObj
+}
+
+func (r AudienceRecipientParam) MarshalJSON() (data []byte, err error) {
+	type shadow AudienceRecipientParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *AudienceRecipientParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type ChannelClassification string
 
 const (
@@ -852,6 +905,70 @@ func (r ElementalTextNodeWithTypeParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, shadow{&r, false})
 }
 
+// The properties Operator, Path, Value are required.
+type ListFilterParam struct {
+	// Send to users only if they are member of the account
+	//
+	// Any of "MEMBER_OF".
+	Operator ListFilterOperator `json:"operator,omitzero,required"`
+	// Any of "account_id".
+	Path  ListFilterPath `json:"path,omitzero,required"`
+	Value string         `json:"value,required"`
+	paramObj
+}
+
+func (r ListFilterParam) MarshalJSON() (data []byte, err error) {
+	type shadow ListFilterParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ListFilterParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Send to users only if they are member of the account
+type ListFilterOperator string
+
+const (
+	ListFilterOperatorMemberOf ListFilterOperator = "MEMBER_OF"
+)
+
+type ListFilterPath string
+
+const (
+	ListFilterPathAccountID ListFilterPath = "account_id"
+)
+
+// Send to users in lists matching a pattern
+type ListPatternRecipientParam struct {
+	ListPattern param.Opt[string] `json:"list_pattern,omitzero"`
+	Data        map[string]any    `json:"data,omitzero"`
+	paramObj
+}
+
+func (r ListPatternRecipientParam) MarshalJSON() (data []byte, err error) {
+	type shadow ListPatternRecipientParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ListPatternRecipientParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Send to all users in a specific list
+type ListRecipientParam struct {
+	ListID  param.Opt[string] `json:"list_id,omitzero"`
+	Data    map[string]any    `json:"data,omitzero"`
+	Filters []ListFilterParam `json:"filters,omitzero"`
+	paramObj
+}
+
+func (r ListRecipientParam) MarshalJSON() (data []byte, err error) {
+	type shadow ListRecipientParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ListRecipientParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type MessageContext struct {
 	// Tenant id used to load brand/default preferences/context.
 	TenantID string `json:"tenant_id,nullable"`
@@ -1024,6 +1141,172 @@ func (u *MessageRoutingChannelUnionParam) asAny() any {
 	return nil
 }
 
+func MsTeamsParamOfSendToMsTeamsUserID(serviceURL string, tenantID string, userID string) MsTeamsUnionParam {
+	var variant SendToMsTeamsUserIDParam
+	variant.ServiceURL = serviceURL
+	variant.TenantID = tenantID
+	variant.UserID = userID
+	return MsTeamsUnionParam{OfSendToMsTeamsUserID: &variant}
+}
+
+func MsTeamsParamOfSendToMsTeamsEmail(email string, serviceURL string, tenantID string) MsTeamsUnionParam {
+	var variant SendToMsTeamsEmailParam
+	variant.Email = email
+	variant.ServiceURL = serviceURL
+	variant.TenantID = tenantID
+	return MsTeamsUnionParam{OfSendToMsTeamsEmail: &variant}
+}
+
+func MsTeamsParamOfSendToMsTeamsChannelID(channelID string, serviceURL string, tenantID string) MsTeamsUnionParam {
+	var variant SendToMsTeamsChannelIDParam
+	variant.ChannelID = channelID
+	variant.ServiceURL = serviceURL
+	variant.TenantID = tenantID
+	return MsTeamsUnionParam{OfSendToMsTeamsChannelID: &variant}
+}
+
+func MsTeamsParamOfSendToMsTeamsConversationID(conversationID string, serviceURL string, tenantID string) MsTeamsUnionParam {
+	var variant SendToMsTeamsConversationIDParam
+	variant.ConversationID = conversationID
+	variant.ServiceURL = serviceURL
+	variant.TenantID = tenantID
+	return MsTeamsUnionParam{OfSendToMsTeamsConversationID: &variant}
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type MsTeamsUnionParam struct {
+	OfSendToMsTeamsUserID         *SendToMsTeamsUserIDParam         `json:",omitzero,inline"`
+	OfSendToMsTeamsEmail          *SendToMsTeamsEmailParam          `json:",omitzero,inline"`
+	OfSendToMsTeamsChannelID      *SendToMsTeamsChannelIDParam      `json:",omitzero,inline"`
+	OfSendToMsTeamsConversationID *SendToMsTeamsConversationIDParam `json:",omitzero,inline"`
+	OfSendToMsTeamsChannelName    *SendToMsTeamsChannelNameParam    `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u MsTeamsUnionParam) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfSendToMsTeamsUserID,
+		u.OfSendToMsTeamsEmail,
+		u.OfSendToMsTeamsChannelID,
+		u.OfSendToMsTeamsConversationID,
+		u.OfSendToMsTeamsChannelName)
+}
+func (u *MsTeamsUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *MsTeamsUnionParam) asAny() any {
+	if !param.IsOmitted(u.OfSendToMsTeamsUserID) {
+		return u.OfSendToMsTeamsUserID
+	} else if !param.IsOmitted(u.OfSendToMsTeamsEmail) {
+		return u.OfSendToMsTeamsEmail
+	} else if !param.IsOmitted(u.OfSendToMsTeamsChannelID) {
+		return u.OfSendToMsTeamsChannelID
+	} else if !param.IsOmitted(u.OfSendToMsTeamsConversationID) {
+		return u.OfSendToMsTeamsConversationID
+	} else if !param.IsOmitted(u.OfSendToMsTeamsChannelName) {
+		return u.OfSendToMsTeamsChannelName
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u MsTeamsUnionParam) GetUserID() *string {
+	if vt := u.OfSendToMsTeamsUserID; vt != nil {
+		return &vt.UserID
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u MsTeamsUnionParam) GetEmail() *string {
+	if vt := u.OfSendToMsTeamsEmail; vt != nil {
+		return &vt.Email
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u MsTeamsUnionParam) GetChannelID() *string {
+	if vt := u.OfSendToMsTeamsChannelID; vt != nil {
+		return &vt.ChannelID
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u MsTeamsUnionParam) GetConversationID() *string {
+	if vt := u.OfSendToMsTeamsConversationID; vt != nil {
+		return &vt.ConversationID
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u MsTeamsUnionParam) GetChannelName() *string {
+	if vt := u.OfSendToMsTeamsChannelName; vt != nil {
+		return &vt.ChannelName
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u MsTeamsUnionParam) GetTeamID() *string {
+	if vt := u.OfSendToMsTeamsChannelName; vt != nil {
+		return &vt.TeamID
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u MsTeamsUnionParam) GetServiceURL() *string {
+	if vt := u.OfSendToMsTeamsUserID; vt != nil {
+		return (*string)(&vt.ServiceURL)
+	} else if vt := u.OfSendToMsTeamsEmail; vt != nil {
+		return (*string)(&vt.ServiceURL)
+	} else if vt := u.OfSendToMsTeamsChannelID; vt != nil {
+		return (*string)(&vt.ServiceURL)
+	} else if vt := u.OfSendToMsTeamsConversationID; vt != nil {
+		return (*string)(&vt.ServiceURL)
+	} else if vt := u.OfSendToMsTeamsChannelName; vt != nil {
+		return (*string)(&vt.ServiceURL)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u MsTeamsUnionParam) GetTenantID() *string {
+	if vt := u.OfSendToMsTeamsUserID; vt != nil {
+		return (*string)(&vt.TenantID)
+	} else if vt := u.OfSendToMsTeamsEmail; vt != nil {
+		return (*string)(&vt.TenantID)
+	} else if vt := u.OfSendToMsTeamsChannelID; vt != nil {
+		return (*string)(&vt.TenantID)
+	} else if vt := u.OfSendToMsTeamsConversationID; vt != nil {
+		return (*string)(&vt.TenantID)
+	} else if vt := u.OfSendToMsTeamsChannelName; vt != nil {
+		return (*string)(&vt.TenantID)
+	}
+	return nil
+}
+
+// Send via Microsoft Teams
+//
+// The property MsTeams is required.
+type MsTeamsRecipientParam struct {
+	MsTeams MsTeamsUnionParam `json:"ms_teams,omitzero,required"`
+	paramObj
+}
+
+func (r MsTeamsRecipientParam) MarshalJSON() (data []byte, err error) {
+	type shadow MsTeamsRecipientParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MsTeamsRecipientParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type NotificationPreferenceDetails struct {
 	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
 	Status             PreferenceStatus    `json:"status,required"`
@@ -1069,6 +1352,38 @@ func (r NotificationPreferenceDetailsParam) MarshalJSON() (data []byte, err erro
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *NotificationPreferenceDetailsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type PagerdutyParam struct {
+	EventAction param.Opt[string] `json:"event_action,omitzero"`
+	RoutingKey  param.Opt[string] `json:"routing_key,omitzero"`
+	Severity    param.Opt[string] `json:"severity,omitzero"`
+	Source      param.Opt[string] `json:"source,omitzero"`
+	paramObj
+}
+
+func (r PagerdutyParam) MarshalJSON() (data []byte, err error) {
+	type shadow PagerdutyParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *PagerdutyParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Send via PagerDuty
+//
+// The property Pagerduty is required.
+type PagerdutyRecipientParam struct {
+	Pagerduty PagerdutyParam `json:"pagerduty,omitzero,required"`
+	paramObj
+}
+
+func (r PagerdutyRecipientParam) MarshalJSON() (data []byte, err error) {
+	type shadow PagerdutyRecipientParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *PagerdutyRecipientParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1158,53 +1473,6 @@ const (
 	PreferenceStatusRequired PreferenceStatus = "REQUIRED"
 )
 
-type RecipientParam struct {
-	// Deprecated - Use `tenant_id` instead.
-	AccountID param.Opt[string] `json:"account_id,omitzero"`
-	// The user's email address.
-	Email param.Opt[string] `json:"email,omitzero"`
-	// The id of the list to send the message to.
-	ListID param.Opt[string] `json:"list_id,omitzero"`
-	// The user's preferred ISO 639-1 language code.
-	Locale param.Opt[string] `json:"locale,omitzero"`
-	// The user's phone number.
-	PhoneNumber param.Opt[string] `json:"phone_number,omitzero"`
-	// The id of the tenant the user is associated with.
-	TenantID param.Opt[string] `json:"tenant_id,omitzero"`
-	// The user's unique identifier. Typically, this will match the user id of a user
-	// in your system.
-	UserID      param.Opt[string]         `json:"user_id,omitzero"`
-	Data        map[string]any            `json:"data,omitzero"`
-	Preferences RecipientPreferencesParam `json:"preferences,omitzero"`
-	// Context such as tenant_id to send the notification with.
-	Context MessageContextParam `json:"context,omitzero"`
-	paramObj
-}
-
-func (r RecipientParam) MarshalJSON() (data []byte, err error) {
-	type shadow RecipientParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *RecipientParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The property Notifications is required.
-type RecipientPreferencesParam struct {
-	Notifications map[string]PreferenceParam `json:"notifications,omitzero,required"`
-	TemplateID    param.Opt[string]          `json:"templateId,omitzero"`
-	Categories    map[string]PreferenceParam `json:"categories,omitzero"`
-	paramObj
-}
-
-func (r RecipientPreferencesParam) MarshalJSON() (data []byte, err error) {
-	type shadow RecipientPreferencesParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *RecipientPreferencesParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type RecipientPreferences struct {
 	Categories    map[string]NotificationPreferenceDetails `json:"categories,nullable"`
 	Notifications map[string]NotificationPreferenceDetails `json:"notifications,nullable"`
@@ -1230,6 +1498,20 @@ func (r *RecipientPreferences) UnmarshalJSON(data []byte) error {
 // RecipientPreferencesParam.Overrides()
 func (r RecipientPreferences) ToParam() RecipientPreferencesParam {
 	return param.Override[RecipientPreferencesParam](json.RawMessage(r.RawJSON()))
+}
+
+type RecipientPreferencesParam struct {
+	Categories    map[string]NotificationPreferenceDetailsParam `json:"categories,omitzero"`
+	Notifications map[string]NotificationPreferenceDetailsParam `json:"notifications,omitzero"`
+	paramObj
+}
+
+func (r RecipientPreferencesParam) MarshalJSON() (data []byte, err error) {
+	type shadow RecipientPreferencesParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *RecipientPreferencesParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type Rule struct {
@@ -1271,6 +1553,233 @@ func (r RuleParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *RuleParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The properties ChannelID, ServiceURL, TenantID are required.
+type SendToMsTeamsChannelIDParam struct {
+	ChannelID  string `json:"channel_id,required"`
+	ServiceURL string `json:"service_url,required"`
+	TenantID   string `json:"tenant_id,required"`
+	paramObj
+}
+
+func (r SendToMsTeamsChannelIDParam) MarshalJSON() (data []byte, err error) {
+	type shadow SendToMsTeamsChannelIDParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *SendToMsTeamsChannelIDParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The properties ChannelName, ServiceURL, TeamID, TenantID are required.
+type SendToMsTeamsChannelNameParam struct {
+	ChannelName string `json:"channel_name,required"`
+	ServiceURL  string `json:"service_url,required"`
+	TeamID      string `json:"team_id,required"`
+	TenantID    string `json:"tenant_id,required"`
+	paramObj
+}
+
+func (r SendToMsTeamsChannelNameParam) MarshalJSON() (data []byte, err error) {
+	type shadow SendToMsTeamsChannelNameParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *SendToMsTeamsChannelNameParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The properties ConversationID, ServiceURL, TenantID are required.
+type SendToMsTeamsConversationIDParam struct {
+	ConversationID string `json:"conversation_id,required"`
+	ServiceURL     string `json:"service_url,required"`
+	TenantID       string `json:"tenant_id,required"`
+	paramObj
+}
+
+func (r SendToMsTeamsConversationIDParam) MarshalJSON() (data []byte, err error) {
+	type shadow SendToMsTeamsConversationIDParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *SendToMsTeamsConversationIDParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The properties Email, ServiceURL, TenantID are required.
+type SendToMsTeamsEmailParam struct {
+	Email      string `json:"email,required"`
+	ServiceURL string `json:"service_url,required"`
+	TenantID   string `json:"tenant_id,required"`
+	paramObj
+}
+
+func (r SendToMsTeamsEmailParam) MarshalJSON() (data []byte, err error) {
+	type shadow SendToMsTeamsEmailParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *SendToMsTeamsEmailParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The properties ServiceURL, TenantID, UserID are required.
+type SendToMsTeamsUserIDParam struct {
+	ServiceURL string `json:"service_url,required"`
+	TenantID   string `json:"tenant_id,required"`
+	UserID     string `json:"user_id,required"`
+	paramObj
+}
+
+func (r SendToMsTeamsUserIDParam) MarshalJSON() (data []byte, err error) {
+	type shadow SendToMsTeamsUserIDParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *SendToMsTeamsUserIDParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The properties AccessToken, Channel are required.
+type SendToSlackChannelParam struct {
+	AccessToken string `json:"access_token,required"`
+	Channel     string `json:"channel,required"`
+	paramObj
+}
+
+func (r SendToSlackChannelParam) MarshalJSON() (data []byte, err error) {
+	type shadow SendToSlackChannelParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *SendToSlackChannelParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The properties AccessToken, Email are required.
+type SendToSlackEmailParam struct {
+	AccessToken string `json:"access_token,required"`
+	Email       string `json:"email,required"`
+	paramObj
+}
+
+func (r SendToSlackEmailParam) MarshalJSON() (data []byte, err error) {
+	type shadow SendToSlackEmailParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *SendToSlackEmailParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The properties AccessToken, UserID are required.
+type SendToSlackUserIDParam struct {
+	AccessToken string `json:"access_token,required"`
+	UserID      string `json:"user_id,required"`
+	paramObj
+}
+
+func (r SendToSlackUserIDParam) MarshalJSON() (data []byte, err error) {
+	type shadow SendToSlackUserIDParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *SendToSlackUserIDParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func SlackParamOfSendToSlackChannel(accessToken string, channel string) SlackUnionParam {
+	var variant SendToSlackChannelParam
+	variant.AccessToken = accessToken
+	variant.Channel = channel
+	return SlackUnionParam{OfSendToSlackChannel: &variant}
+}
+
+func SlackParamOfSendToSlackEmail(accessToken string, email string) SlackUnionParam {
+	var variant SendToSlackEmailParam
+	variant.AccessToken = accessToken
+	variant.Email = email
+	return SlackUnionParam{OfSendToSlackEmail: &variant}
+}
+
+func SlackParamOfSendToSlackUserID(accessToken string, userID string) SlackUnionParam {
+	var variant SendToSlackUserIDParam
+	variant.AccessToken = accessToken
+	variant.UserID = userID
+	return SlackUnionParam{OfSendToSlackUserID: &variant}
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type SlackUnionParam struct {
+	OfSendToSlackChannel *SendToSlackChannelParam `json:",omitzero,inline"`
+	OfSendToSlackEmail   *SendToSlackEmailParam   `json:",omitzero,inline"`
+	OfSendToSlackUserID  *SendToSlackUserIDParam  `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u SlackUnionParam) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfSendToSlackChannel, u.OfSendToSlackEmail, u.OfSendToSlackUserID)
+}
+func (u *SlackUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *SlackUnionParam) asAny() any {
+	if !param.IsOmitted(u.OfSendToSlackChannel) {
+		return u.OfSendToSlackChannel
+	} else if !param.IsOmitted(u.OfSendToSlackEmail) {
+		return u.OfSendToSlackEmail
+	} else if !param.IsOmitted(u.OfSendToSlackUserID) {
+		return u.OfSendToSlackUserID
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SlackUnionParam) GetChannel() *string {
+	if vt := u.OfSendToSlackChannel; vt != nil {
+		return &vt.Channel
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SlackUnionParam) GetEmail() *string {
+	if vt := u.OfSendToSlackEmail; vt != nil {
+		return &vt.Email
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SlackUnionParam) GetUserID() *string {
+	if vt := u.OfSendToSlackUserID; vt != nil {
+		return &vt.UserID
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u SlackUnionParam) GetAccessToken() *string {
+	if vt := u.OfSendToSlackChannel; vt != nil {
+		return (*string)(&vt.AccessToken)
+	} else if vt := u.OfSendToSlackEmail; vt != nil {
+		return (*string)(&vt.AccessToken)
+	} else if vt := u.OfSendToSlackUserID; vt != nil {
+		return (*string)(&vt.AccessToken)
+	}
+	return nil
+}
+
+// Send via Slack (channel, email, or user_id)
+//
+// The property Slack is required.
+type SlackRecipientParam struct {
+	Slack SlackUnionParam `json:"slack,omitzero,required"`
+	paramObj
+}
+
+func (r SlackRecipientParam) MarshalJSON() (data []byte, err error) {
+	type shadow SlackRecipientParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *SlackRecipientParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1407,5 +1916,95 @@ func (r UtmParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *UtmParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type WebhookAuthMode string
+
+const (
+	WebhookAuthModeNone   WebhookAuthMode = "none"
+	WebhookAuthModeBasic  WebhookAuthMode = "basic"
+	WebhookAuthModeBearer WebhookAuthMode = "bearer"
+)
+
+// The property Mode is required.
+type WebhookAuthenticationParam struct {
+	// The authentication mode to use. Defaults to 'none' if not specified.
+	//
+	// Any of "none", "basic", "bearer".
+	Mode WebhookAuthMode `json:"mode,omitzero,required"`
+	// Token for bearer authentication.
+	Token param.Opt[string] `json:"token,omitzero"`
+	// Password for basic authentication.
+	Password param.Opt[string] `json:"password,omitzero"`
+	// Username for basic authentication.
+	Username param.Opt[string] `json:"username,omitzero"`
+	paramObj
+}
+
+func (r WebhookAuthenticationParam) MarshalJSON() (data []byte, err error) {
+	type shadow WebhookAuthenticationParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WebhookAuthenticationParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type WebhookMethod string
+
+const (
+	WebhookMethodPost WebhookMethod = "POST"
+	WebhookMethodPut  WebhookMethod = "PUT"
+)
+
+// The property URL is required.
+type WebhookProfileParam struct {
+	// The URL to send the webhook request to.
+	URL string `json:"url,required"`
+	// Custom headers to include in the webhook request.
+	Headers map[string]string `json:"headers,omitzero"`
+	// Authentication configuration for the webhook request.
+	Authentication WebhookAuthenticationParam `json:"authentication,omitzero"`
+	// The HTTP method to use for the webhook request. Defaults to POST if not
+	// specified.
+	//
+	// Any of "POST", "PUT".
+	Method WebhookMethod `json:"method,omitzero"`
+	// Specifies what profile information is included in the request payload. Defaults
+	// to 'limited' if not specified.
+	//
+	// Any of "limited", "expanded".
+	Profile WebhookProfileType `json:"profile,omitzero"`
+	paramObj
+}
+
+func (r WebhookProfileParam) MarshalJSON() (data []byte, err error) {
+	type shadow WebhookProfileParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WebhookProfileParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type WebhookProfileType string
+
+const (
+	WebhookProfileTypeLimited  WebhookProfileType = "limited"
+	WebhookProfileTypeExpanded WebhookProfileType = "expanded"
+)
+
+// Send via webhook
+//
+// The property Webhook is required.
+type WebhookRecipientParam struct {
+	Webhook WebhookProfileParam `json:"webhook,omitzero,required"`
+	paramObj
+}
+
+func (r WebhookRecipientParam) MarshalJSON() (data []byte, err error) {
+	type shadow WebhookRecipientParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WebhookRecipientParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
