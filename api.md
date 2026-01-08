@@ -142,6 +142,12 @@ Methods:
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#AutomationInvokeResponse">AutomationInvokeResponse</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#AutomationTemplate">AutomationTemplate</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#AutomationTemplateListResponse">AutomationTemplateListResponse</a>
+
+Methods:
+
+- <code title="get /automations">client.Automations.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#AutomationService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#AutomationListParams">AutomationListParams</a>) (<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#AutomationTemplateListResponse">AutomationTemplateListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ## Invoke
 
