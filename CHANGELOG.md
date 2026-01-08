@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.4.1 (2026-01-08)
+
+Full Changelog: [v4.4.0...v4.4.1](https://github.com/trycourier/courier-go/compare/v4.4.0...v4.4.1)
+
+### Bug Fixes
+
+* **api:** remove audit-events, automations, brands, bulk, inbound, translations endpoints ([3f87200](https://github.com/trycourier/courier-go/commit/3f8720082e80b4b06bdb4392d8f4509d2591d2e1))
+
+
+### Chores
+
+* **internal:** codegen related update ([af9d61c](https://github.com/trycourier/courier-go/commit/af9d61c692565e2b449f41dc26440e3bab848064))
+
 ## 4.4.0 (2025-12-22)
 
 Full Changelog: [v4.3.0...v4.4.0](https://github.com/trycourier/courier-go/compare/v4.3.0...v4.4.0)
