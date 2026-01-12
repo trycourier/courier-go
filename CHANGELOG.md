@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.4.2 (2026-01-12)
+
+Full Changelog: [v4.4.1...v4.4.2](https://github.com/trycourier/courier-go/compare/v4.4.1...v4.4.2)
+
+### Bug Fixes
+
+* **types:** remove FilterConfigUnion type, consolidate to FilterUnion in audience ([f7eb351](https://github.com/trycourier/courier-go/commit/f7eb35124e3bb1e323c07550951a3d49355ceb1c))
+
+
+### Chores
+
+* **internal:** regenerate SDK with no functional changes ([1a2515a](https://github.com/trycourier/courier-go/commit/1a2515ae6f8d35d883bc870d31dce248c41cce5f))
+
 ## 4.4.1 (2026-01-08)
 
 Full Changelog: [v4.4.0...v4.4.1](https://github.com/trycourier/courier-go/compare/v4.4.0...v4.4.1)
