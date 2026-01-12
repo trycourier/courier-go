@@ -345,7 +345,7 @@ type SingleFilterConfig struct {
 	// Any of "ENDS_WITH", "EQ", "EXISTS", "GT", "GTE", "INCLUDES", "IS_AFTER",
 	// "IS_BEFORE", "LT", "LTE", "NEQ", "OMIT", "STARTS_WITH", "AND", "OR".
 	Operator SingleFilterConfigOperator `json:"operator,required"`
-	// The attribe name from profile whose value will be operated against the filter
+	// The attribute name from profile whose value will be operated against the filter
 	// value
 	Path string `json:"path,required"`
 	// The value to use for filtering
@@ -403,7 +403,7 @@ type SingleFilterConfigParam struct {
 	// Any of "ENDS_WITH", "EQ", "EXISTS", "GT", "GTE", "INCLUDES", "IS_AFTER",
 	// "IS_BEFORE", "LT", "LTE", "NEQ", "OMIT", "STARTS_WITH", "AND", "OR".
 	Operator SingleFilterConfigOperator `json:"operator,omitzero,required"`
-	// The attribe name from profile whose value will be operated against the filter
+	// The attribute name from profile whose value will be operated against the filter
 	// value
 	Path string `json:"path,required"`
 	// The value to use for filtering
