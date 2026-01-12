@@ -137,7 +137,7 @@ type FilterUnion struct {
 	// This field is from variant [SingleFilterConfig].
 	Value string `json:"value"`
 	// This field is from variant [NestedFilterConfig].
-	Rules []FilterConfigUnion `json:"rules"`
+	Rules []FilterUnion `json:"rules"`
 	JSON  struct {
 		Operator respjson.Field
 		Path     respjson.Field
@@ -202,7 +202,7 @@ func FilterParamOfSingleFilterConfig(operator SingleFilterConfigOperator, path s
 	return FilterUnionParam{OfSingleFilterConfig: &variant}
 }
 
-func FilterParamOfNestedFilterConfig(operator NestedFilterConfigOperator, rules []FilterConfigUnionParam) FilterUnionParam {
+func FilterParamOfNestedFilterConfig(operator NestedFilterConfigOperator, rules []FilterUnionParam) FilterUnionParam {
 	var variant NestedFilterConfigParam
 	variant.Operator = operator
 	variant.Rules = rules
@@ -251,7 +251,7 @@ func (u FilterUnionParam) GetValue() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u FilterUnionParam) GetRules() []FilterConfigUnionParam {
+func (u FilterUnionParam) GetRules() []FilterUnionParam {
 	if vt := u.OfNestedFilterConfig; vt != nil {
 		return vt.Rules
 	}
@@ -268,155 +268,13 @@ func (u FilterUnionParam) GetOperator() *string {
 	return nil
 }
 
-// FilterConfigUnion contains all possible properties and values from
-// [SingleFilterConfig], [NestedFilterConfig].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-type FilterConfigUnion struct {
-	Operator string `json:"operator"`
-	// This field is from variant [SingleFilterConfig].
-	Path string `json:"path"`
-	// This field is from variant [SingleFilterConfig].
-	Value string `json:"value"`
-	// This field is from variant [NestedFilterConfig].
-	Rules []FilterConfigUnion `json:"rules"`
-	JSON  struct {
-		Operator respjson.Field
-		Path     respjson.Field
-		Value    respjson.Field
-		Rules    respjson.Field
-		raw      string
-	} `json:"-"`
-}
-
-func (u FilterConfigUnion) AsSingleFilterConfig() (v SingleFilterConfig) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u FilterConfigUnion) AsNestedFilterConfig() (v NestedFilterConfig) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u FilterConfigUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *FilterConfigUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this FilterConfigUnion to a FilterConfigUnionParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// FilterConfigUnionParam.Overrides()
-func (r FilterConfigUnion) ToParam() FilterConfigUnionParam {
-	return param.Override[FilterConfigUnionParam](json.RawMessage(r.RawJSON()))
-}
-
-// The operator to use for filtering
-type FilterConfigOperator string
-
-const (
-	FilterConfigOperatorEndsWith   FilterConfigOperator = "ENDS_WITH"
-	FilterConfigOperatorEq         FilterConfigOperator = "EQ"
-	FilterConfigOperatorExists     FilterConfigOperator = "EXISTS"
-	FilterConfigOperatorGt         FilterConfigOperator = "GT"
-	FilterConfigOperatorGte        FilterConfigOperator = "GTE"
-	FilterConfigOperatorIncludes   FilterConfigOperator = "INCLUDES"
-	FilterConfigOperatorIsAfter    FilterConfigOperator = "IS_AFTER"
-	FilterConfigOperatorIsBefore   FilterConfigOperator = "IS_BEFORE"
-	FilterConfigOperatorLt         FilterConfigOperator = "LT"
-	FilterConfigOperatorLte        FilterConfigOperator = "LTE"
-	FilterConfigOperatorNeq        FilterConfigOperator = "NEQ"
-	FilterConfigOperatorOmit       FilterConfigOperator = "OMIT"
-	FilterConfigOperatorStartsWith FilterConfigOperator = "STARTS_WITH"
-	FilterConfigOperatorAnd        FilterConfigOperator = "AND"
-	FilterConfigOperatorOr         FilterConfigOperator = "OR"
-)
-
-func FilterConfigParamOfSingleFilterConfig(operator SingleFilterConfigOperator, path string, value string) FilterConfigUnionParam {
-	var variant SingleFilterConfigParam
-	variant.Operator = operator
-	variant.Path = path
-	variant.Value = value
-	return FilterConfigUnionParam{OfSingleFilterConfig: &variant}
-}
-
-func FilterConfigParamOfNestedFilterConfig(operator NestedFilterConfigOperator, rules []FilterConfigUnionParam) FilterConfigUnionParam {
-	var variant NestedFilterConfigParam
-	variant.Operator = operator
-	variant.Rules = rules
-	return FilterConfigUnionParam{OfNestedFilterConfig: &variant}
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type FilterConfigUnionParam struct {
-	OfSingleFilterConfig *SingleFilterConfigParam `json:",omitzero,inline"`
-	OfNestedFilterConfig *NestedFilterConfigParam `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u FilterConfigUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfSingleFilterConfig, u.OfNestedFilterConfig)
-}
-func (u *FilterConfigUnionParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *FilterConfigUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfSingleFilterConfig) {
-		return u.OfSingleFilterConfig
-	} else if !param.IsOmitted(u.OfNestedFilterConfig) {
-		return u.OfNestedFilterConfig
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u FilterConfigUnionParam) GetPath() *string {
-	if vt := u.OfSingleFilterConfig; vt != nil {
-		return &vt.Path
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u FilterConfigUnionParam) GetValue() *string {
-	if vt := u.OfSingleFilterConfig; vt != nil {
-		return &vt.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u FilterConfigUnionParam) GetRules() []FilterConfigUnionParam {
-	if vt := u.OfNestedFilterConfig; vt != nil {
-		return vt.Rules
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u FilterConfigUnionParam) GetOperator() *string {
-	if vt := u.OfSingleFilterConfig; vt != nil {
-		return (*string)(&vt.Operator)
-	} else if vt := u.OfNestedFilterConfig; vt != nil {
-		return (*string)(&vt.Operator)
-	}
-	return nil
-}
-
 type NestedFilterConfig struct {
 	// The operator to use for filtering
 	//
 	// Any of "ENDS_WITH", "EQ", "EXISTS", "GT", "GTE", "INCLUDES", "IS_AFTER",
 	// "IS_BEFORE", "LT", "LTE", "NEQ", "OMIT", "STARTS_WITH", "AND", "OR".
 	Operator NestedFilterConfigOperator `json:"operator,required"`
-	Rules    []FilterConfigUnion        `json:"rules,required"`
+	Rules    []FilterUnion              `json:"rules,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Operator    respjson.Field
@@ -469,7 +327,7 @@ type NestedFilterConfigParam struct {
 	// Any of "ENDS_WITH", "EQ", "EXISTS", "GT", "GTE", "INCLUDES", "IS_AFTER",
 	// "IS_BEFORE", "LT", "LTE", "NEQ", "OMIT", "STARTS_WITH", "AND", "OR".
 	Operator NestedFilterConfigOperator `json:"operator,omitzero,required"`
-	Rules    []FilterConfigUnionParam   `json:"rules,omitzero,required"`
+	Rules    []FilterUnionParam         `json:"rules,omitzero,required"`
 	paramObj
 }
 

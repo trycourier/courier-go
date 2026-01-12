@@ -92,7 +92,6 @@ Methods:
 Params Types:
 
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#FilterUnionParam">FilterUnionParam</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#FilterConfigUnionParam">FilterConfigUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#NestedFilterConfigParam">NestedFilterConfigParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#SingleFilterConfigParam">SingleFilterConfigParam</a>
 
@@ -100,7 +99,6 @@ Response Types:
 
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#Audience">Audience</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#FilterUnion">FilterUnion</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#FilterConfigUnion">FilterConfigUnion</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#NestedFilterConfig">NestedFilterConfig</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#SingleFilterConfig">SingleFilterConfig</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#AudienceUpdateResponse">AudienceUpdateResponse</a>
