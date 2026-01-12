@@ -205,7 +205,7 @@ type SubscriptionTopicNew struct {
 	// The default channels to send to this tenant when has_custom_routing is enabled
 	CustomRouting []shared.ChannelClassification `json:"custom_routing,nullable"`
 	// Override channel routing with custom preferences. This will override any
-	// template prefernces that are set, but a user can still customize their
+	// template preferences that are set, but a user can still customize their
 	// preferences
 	HasCustomRouting bool `json:"has_custom_routing,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -246,7 +246,7 @@ type SubscriptionTopicNewParam struct {
 	// Any of "OPTED_OUT", "OPTED_IN", "REQUIRED".
 	Status SubscriptionTopicNewStatus `json:"status,omitzero,required"`
 	// Override channel routing with custom preferences. This will override any
-	// template prefernces that are set, but a user can still customize their
+	// template preferences that are set, but a user can still customize their
 	// preferences
 	HasCustomRouting param.Opt[bool] `json:"has_custom_routing,omitzero"`
 	// The default channels to send to this tenant when has_custom_routing is enabled
