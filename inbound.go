@@ -69,7 +69,7 @@ type InboundTrackEventParams struct {
 	Properties map[string]any `json:"properties,omitzero,required"`
 	// Any of "track".
 	Type InboundTrackEventParamsType `json:"type,omitzero,required"`
-	// The user id associatiated with the track
+	// The user id associated with the track
 	UserID param.Opt[string] `json:"userId,omitzero"`
 	paramObj
 }
