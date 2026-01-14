@@ -11,6 +11,7 @@ import (
 	"github.com/trycourier/courier-go/v4"
 	"github.com/trycourier/courier-go/v4/internal/testutil"
 	"github.com/trycourier/courier-go/v4/option"
+	"github.com/trycourier/courier-go/v4/shared"
 )
 
 func TestAudienceGet(t *testing.T) {
@@ -54,14 +55,16 @@ func TestAudienceUpdateWithOptionalParams(t *testing.T) {
 		"audience_id",
 		courier.AudienceUpdateParams{
 			Description: courier.String("description"),
-			Filter: courier.FilterUnionParam{
-				OfSingleFilterConfig: &courier.SingleFilterConfigParam{
-					Operator: courier.SingleFilterConfigOperatorEndsWith,
-					Path:     "path",
-					Value:    "value",
-				},
+			Filter: shared.AudienceFilterConfigParam{
+				Filters: []shared.FilterConfigParam{{
+					Operator: "operator",
+					Filters:  []shared.FilterConfigParam{},
+					Path:     courier.String("path"),
+					Value:    courier.String("value"),
+				}},
 			},
-			Name: courier.String("name"),
+			Name:     courier.String("name"),
+			Operator: courier.AudienceUpdateParamsOperatorAnd,
 		},
 	)
 	if err != nil {

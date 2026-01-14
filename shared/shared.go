@@ -49,6 +49,50 @@ const (
 	AudienceFilterPathAccountID AudienceFilterPath = "account_id"
 )
 
+// Filter configuration for audience membership containing an array of filter rules
+type AudienceFilterConfig struct {
+	// Array of filter rules (single conditions or nested groups)
+	Filters []FilterConfig `json:"filters,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Filters     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r AudienceFilterConfig) RawJSON() string { return r.JSON.raw }
+func (r *AudienceFilterConfig) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this AudienceFilterConfig to a AudienceFilterConfigParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// AudienceFilterConfigParam.Overrides()
+func (r AudienceFilterConfig) ToParam() AudienceFilterConfigParam {
+	return param.Override[AudienceFilterConfigParam](json.RawMessage(r.RawJSON()))
+}
+
+// Filter configuration for audience membership containing an array of filter rules
+//
+// The property Filters is required.
+type AudienceFilterConfigParam struct {
+	// Array of filter rules (single conditions or nested groups)
+	Filters []FilterConfigParam `json:"filters,omitzero,required"`
+	paramObj
+}
+
+func (r AudienceFilterConfigParam) MarshalJSON() (data []byte, err error) {
+	type shadow AudienceFilterConfigParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *AudienceFilterConfigParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Send to all users in an audience
 //
 // The property AudienceID is required.
@@ -222,7 +266,7 @@ func (r *ElementalBaseNodeParam) UnmarshalJSON(data []byte) error {
 type ElementalChannelNode struct {
 	// The channel the contents of this element should be applied to. Can be `email`,
 	// `push`, `direct_message`, `sms` or a provider such as slack
-	Channel string `json:"channel,required"`
+	Channel string `json:"channel"`
 	// Raw data to apply to the channel. If `elements` has not been specified, `raw` is
 	// required.
 	Raw map[string]any `json:"raw,nullable"`
@@ -264,7 +308,7 @@ func (r ElementalChannelNode) ToParam() ElementalChannelNodeParam {
 type ElementalChannelNodeParam struct {
 	// The channel the contents of this element should be applied to. Can be `email`,
 	// `push`, `direct_message`, `sms` or a provider such as slack
-	Channel string `json:"channel,required"`
+	Channel param.Opt[string] `json:"channel,omitzero"`
 	// Raw data to apply to the channel. If `elements` has not been specified, `raw` is
 	// required.
 	Raw map[string]any `json:"raw,omitzero"`
@@ -655,12 +699,6 @@ func (r ElementalNodeUnion) ToParam() ElementalNodeUnionParam {
 	return param.Override[ElementalNodeUnionParam](json.RawMessage(r.RawJSON()))
 }
 
-func ElementalNodeParamOfElementalChannelNodeWithType(channel string) ElementalNodeUnionParam {
-	var variant ElementalChannelNodeWithTypeParam
-	variant.Channel = channel
-	return ElementalNodeUnionParam{OfElementalChannelNodeWithType: &variant}
-}
-
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
@@ -709,8 +747,8 @@ func (u *ElementalNodeUnionParam) asAny() any {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u ElementalNodeUnionParam) GetChannel() *string {
-	if vt := u.OfElementalChannelNodeWithType; vt != nil {
-		return &vt.Channel
+	if vt := u.OfElementalChannelNodeWithType; vt != nil && vt.Channel.Valid() {
+		return &vt.Channel.Value
 	}
 	return nil
 }
@@ -903,6 +941,79 @@ func (r ElementalTextNodeWithTypeParam) MarshalJSON() (data []byte, err error) {
 		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
 	}
 	return param.MarshalObject(r, shadow{&r, false})
+}
+
+// A filter rule that can be either a single condition (with path/value) or a
+// nested group (with filters array). Use comparison operators (EQ, GT, etc.) for
+// single conditions, and logical operators (AND, OR) for nested groups.
+type FilterConfig struct {
+	// The operator for this filter. Use comparison operators (EQ, GT, LT, GTE, LTE,
+	// NEQ, EXISTS, INCLUDES, STARTS_WITH, ENDS_WITH, IS_BEFORE, IS_AFTER, OMIT) for
+	// single conditions, or logical operators (AND, OR) for nested filter groups.
+	Operator string `json:"operator,required"`
+	// Nested filter rules to combine with AND/OR. Required for nested filter groups,
+	// not used for single filter conditions.
+	Filters []FilterConfig `json:"filters"`
+	// The attribute path from the user profile to filter on. Required for single
+	// filter conditions, not used for nested filter groups.
+	Path string `json:"path"`
+	// The value to compare against. Required for single filter conditions, not used
+	// for nested filter groups.
+	Value string `json:"value"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Operator    respjson.Field
+		Filters     respjson.Field
+		Path        respjson.Field
+		Value       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r FilterConfig) RawJSON() string { return r.JSON.raw }
+func (r *FilterConfig) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this FilterConfig to a FilterConfigParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// FilterConfigParam.Overrides()
+func (r FilterConfig) ToParam() FilterConfigParam {
+	return param.Override[FilterConfigParam](json.RawMessage(r.RawJSON()))
+}
+
+// A filter rule that can be either a single condition (with path/value) or a
+// nested group (with filters array). Use comparison operators (EQ, GT, etc.) for
+// single conditions, and logical operators (AND, OR) for nested groups.
+//
+// The property Operator is required.
+type FilterConfigParam struct {
+	// The operator for this filter. Use comparison operators (EQ, GT, LT, GTE, LTE,
+	// NEQ, EXISTS, INCLUDES, STARTS_WITH, ENDS_WITH, IS_BEFORE, IS_AFTER, OMIT) for
+	// single conditions, or logical operators (AND, OR) for nested filter groups.
+	Operator string `json:"operator,required"`
+	// The attribute path from the user profile to filter on. Required for single
+	// filter conditions, not used for nested filter groups.
+	Path param.Opt[string] `json:"path,omitzero"`
+	// The value to compare against. Required for single filter conditions, not used
+	// for nested filter groups.
+	Value param.Opt[string] `json:"value,omitzero"`
+	// Nested filter rules to combine with AND/OR. Required for nested filter groups,
+	// not used for single filter conditions.
+	Filters []FilterConfigParam `json:"filters,omitzero"`
+	paramObj
+}
+
+func (r FilterConfigParam) MarshalJSON() (data []byte, err error) {
+	type shadow FilterConfigParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *FilterConfigParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // The properties Operator, Path, Value are required.
