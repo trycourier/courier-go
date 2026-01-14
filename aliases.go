@@ -33,6 +33,16 @@ type AudienceFilterPath = shared.AudienceFilterPath
 // Equals "account_id"
 const AudienceFilterPathAccountID = shared.AudienceFilterPathAccountID
 
+// Filter configuration for audience membership containing an array of filter rules
+//
+// This is an alias to an internal type.
+type AudienceFilterConfig = shared.AudienceFilterConfig
+
+// Filter configuration for audience membership containing an array of filter rules
+//
+// This is an alias to an internal type.
+type AudienceFilterConfigParam = shared.AudienceFilterConfigParam
+
 // Send to all users in an audience
 //
 // This is an alias to an internal type.
@@ -206,6 +216,20 @@ type ElementalTextNodeWithType = shared.ElementalTextNodeWithType
 
 // This is an alias to an internal type.
 type ElementalTextNodeWithTypeParam = shared.ElementalTextNodeWithTypeParam
+
+// A filter rule that can be either a single condition (with path/value) or a
+// nested group (with filters array). Use comparison operators (EQ, GT, etc.) for
+// single conditions, and logical operators (AND, OR) for nested groups.
+//
+// This is an alias to an internal type.
+type FilterConfig = shared.FilterConfig
+
+// A filter rule that can be either a single condition (with path/value) or a
+// nested group (with filters array). Use comparison operators (EQ, GT, etc.) for
+// single conditions, and logical operators (AND, OR) for nested groups.
+//
+// This is an alias to an internal type.
+type FilterConfigParam = shared.FilterConfigParam
 
 // This is an alias to an internal type.
 type ListFilterParam = shared.ListFilterParam

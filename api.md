@@ -1,6 +1,7 @@
 # Shared Params Types
 
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#AudienceFilterParam">AudienceFilterParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#AudienceFilterConfigParam">AudienceFilterConfigParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#AudienceRecipientParam">AudienceRecipientParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ChannelClassification">ChannelClassification</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ChannelPreferenceParam">ChannelPreferenceParam</a>
@@ -16,6 +17,7 @@
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ElementalNodeUnionParam">ElementalNodeUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ElementalQuoteNodeWithTypeParam">ElementalQuoteNodeWithTypeParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ElementalTextNodeWithTypeParam">ElementalTextNodeWithTypeParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#FilterConfigParam">FilterConfigParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ListFilterParam">ListFilterParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ListPatternRecipientParam">ListPatternRecipientParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ListRecipientParam">ListRecipientParam</a>
@@ -52,6 +54,7 @@
 
 # Shared Response Types
 
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#AudienceFilterConfig">AudienceFilterConfig</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ChannelClassification">ChannelClassification</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ChannelPreference">ChannelPreference</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ElementalActionNodeWithType">ElementalActionNodeWithType</a>
@@ -66,6 +69,7 @@
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ElementalNodeUnion">ElementalNodeUnion</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ElementalQuoteNodeWithType">ElementalQuoteNodeWithType</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ElementalTextNodeWithType">ElementalTextNodeWithType</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#FilterConfig">FilterConfig</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#MessageContext">MessageContext</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#MessageRouting">MessageRouting</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#MessageRoutingChannelUnion">MessageRoutingChannelUnion</a>
@@ -89,20 +93,9 @@ Methods:
 
 # Audiences
 
-Params Types:
-
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#FilterParam">FilterParam</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#FilterConfigUnionParam">FilterConfigUnionParam</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#NestedFilterConfigParam">NestedFilterConfigParam</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#SingleFilterConfigParam">SingleFilterConfigParam</a>
-
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#Audience">Audience</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#Filter">Filter</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#FilterConfigUnion">FilterConfigUnion</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#NestedFilterConfig">NestedFilterConfig</a>
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#SingleFilterConfig">SingleFilterConfig</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#AudienceUpdateResponse">AudienceUpdateResponse</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#AudienceListResponse">AudienceListResponse</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#AudienceListMembersResponse">AudienceListMembersResponse</a>
