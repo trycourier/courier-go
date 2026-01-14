@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.4.3 (2026-01-14)
+
+Full Changelog: [v4.4.2...v4.4.3](https://github.com/trycourier/courier-go/compare/v4.4.2...v4.4.3)
+
+### Chores
+
+* **internal:** regenerate SDK with no functional changes ([5ec8bb4](https://github.com/trycourier/courier-go/commit/5ec8bb41516427f5538c4b2f1c83d4129fc366ac))
+* **internal:** regenerate SDK with no functional changes ([8cd6cd1](https://github.com/trycourier/courier-go/commit/8cd6cd1f34fbc356fc6e0369e47870df4167573d))
+* remove custom code ([931289a](https://github.com/trycourier/courier-go/commit/931289a85bbb08f9a6d852364536cd71bebba8e5))
+
 ## 4.4.2 (2026-01-12)
 
 Full Changelog: [v4.4.1...v4.4.2](https://github.com/trycourier/courier-go/compare/v4.4.1...v4.4.2)
