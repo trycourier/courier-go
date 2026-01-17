@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.4.4 (2026-01-17)
+
+Full Changelog: [v4.4.3...v4.4.4](https://github.com/trycourier/courier-go/compare/v4.4.3...v4.4.4)
+
+### Bug Fixes
+
+* **docs:** add missing pointer prefix to api.md return types ([f279e07](https://github.com/trycourier/courier-go/commit/f279e070072a6304c14a007e6ca680a0946f68c3))
+
+
+### Chores
+
+* **internal:** update `actions/checkout` version ([95dba85](https://github.com/trycourier/courier-go/commit/95dba85c35d0a539a67e063acd776b20e767d4d7))
+
 ## 4.4.3 (2026-01-14)
 
 Full Changelog: [v4.4.2...v4.4.3](https://github.com/trycourier/courier-go/compare/v4.4.2...v4.4.3)
