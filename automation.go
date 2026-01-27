@@ -67,7 +67,7 @@ type AutomationTemplate struct {
 	ID string `json:"id,required"`
 	// The name of the automation template.
 	Name string `json:"name,required"`
-	// The version of the template published, draft.
+	// The version of the template published or drafted.
 	//
 	// Any of "published", "draft".
 	Version AutomationTemplateVersion `json:"version,required"`
@@ -93,7 +93,7 @@ func (r *AutomationTemplate) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The version of the template published, draft.
+// The version of the template published or drafted.
 type AutomationTemplateVersion string
 
 const (

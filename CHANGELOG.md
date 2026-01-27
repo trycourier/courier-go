@@ -1,5 +1,28 @@
 # Changelog
 
+## 4.5.0 (2026-01-27)
+
+Full Changelog: [v4.4.3...v4.5.0](https://github.com/trycourier/courier-go/compare/v4.4.3...v4.5.0)
+
+### Features
+
+* **client:** add a convenient param.SetJSON helper ([4666d08](https://github.com/trycourier/courier-go/commit/4666d08f19c1a07c74dddf2ed2aa18db01686ef7))
+
+
+### Bug Fixes
+
+* **docs:** add missing pointer prefix to api.md return types ([f279e07](https://github.com/trycourier/courier-go/commit/f279e070072a6304c14a007e6ca680a0946f68c3))
+
+
+### Chores
+
+* **internal:** update `actions/checkout` version ([95dba85](https://github.com/trycourier/courier-go/commit/95dba85c35d0a539a67e063acd776b20e767d4d7))
+
+
+### Documentation
+
+* **types:** clarify version field description in AutomationTemplate ([1711973](https://github.com/trycourier/courier-go/commit/17119733aa5efb4325b224c9e99b5ec4bbaa8f89))
+
 ## 4.4.3 (2026-01-14)
 
 Full Changelog: [v4.4.2...v4.4.3](https://github.com/trycourier/courier-go/compare/v4.4.2...v4.4.3)
