@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.6.0 (2026-02-06)
+
+Full Changelog: [v4.5.0...v4.6.0](https://github.com/trycourier/courier-go/compare/v4.5.0...v4.6.0)
+
+### Features
+
+* **api:** add array recipient support to send message params ([b2f8e8d](https://github.com/trycourier/courier-go/commit/b2f8e8d8ee6fefeba178269e0f96a5a95bf2495c))
+* **api:** add publish/replace methods and versions to tenant templates ([aee000e](https://github.com/trycourier/courier-go/commit/aee000e13b0e481ff9789e13426c616235fb59a4))
+
 ## 4.5.0 (2026-01-27)
 
 Full Changelog: [v4.4.3...v4.5.0](https://github.com/trycourier/courier-go/compare/v4.4.3...v4.5.0)
