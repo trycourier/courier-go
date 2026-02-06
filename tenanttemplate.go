@@ -4,6 +4,7 @@ package courier
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/trycourier/courier-go/v4/internal/apijson"
 	"github.com/trycourier/courier-go/v4/internal/apiquery"
+	shimjson "github.com/trycourier/courier-go/v4/internal/encoding/json"
 	"github.com/trycourier/courier-go/v4/internal/requestconfig"
 	"github.com/trycourier/courier-go/v4/option"
 	"github.com/trycourier/courier-go/v4/packages/param"
@@ -26,7 +28,8 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewTenantTemplateService] method instead.
 type TenantTemplateService struct {
-	Options []option.RequestOption
+	Options  []option.RequestOption
+	Versions TenantTemplateVersionService
 }
 
 // NewTenantTemplateService generates a new service that applies the given options
@@ -35,6 +38,7 @@ type TenantTemplateService struct {
 func NewTenantTemplateService(opts ...option.RequestOption) (r TenantTemplateService) {
 	r = TenantTemplateService{}
 	r.Options = opts
+	r.Versions = NewTenantTemplateVersionService(opts...)
 	return
 }
 
@@ -63,6 +67,47 @@ func (r *TenantTemplateService) List(ctx context.Context, tenantID string, query
 	}
 	path := fmt.Sprintf("tenants/%s/templates", tenantID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return
+}
+
+// Publishes a specific version of a notification template for a tenant.
+//
+// The template must already exist in the tenant's notification map. If no version
+// is specified, defaults to publishing the "latest" version.
+func (r *TenantTemplateService) Publish(ctx context.Context, templateID string, params TenantTemplatePublishParams, opts ...option.RequestOption) (res *PostTenantTemplatePublishResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if params.TenantID == "" {
+		err = errors.New("missing required tenant_id parameter")
+		return
+	}
+	if templateID == "" {
+		err = errors.New("missing required template_id parameter")
+		return
+	}
+	path := fmt.Sprintf("tenants/%s/templates/%s/publish", params.TenantID, templateID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	return
+}
+
+// Creates or updates a notification template for a tenant.
+//
+// If the template already exists for the tenant, it will be updated (200).
+// Otherwise, a new template is created (201).
+//
+// Optionally publishes the template immediately if the `published` flag is set to
+// true.
+func (r *TenantTemplateService) Replace(ctx context.Context, templateID string, params TenantTemplateReplaceParams, opts ...option.RequestOption) (res *PutTenantTemplateResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if params.TenantID == "" {
+		err = errors.New("missing required tenant_id parameter")
+		return
+	}
+	if templateID == "" {
+		err = errors.New("missing required template_id parameter")
+		return
+	}
+	path := fmt.Sprintf("tenants/%s/templates/%s", params.TenantID, templateID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
 	return
 }
 
@@ -163,4 +208,32 @@ func (r TenantTemplateListParams) URLQuery() (v url.Values, err error) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+type TenantTemplatePublishParams struct {
+	TenantID string `path:"tenant_id,required" json:"-"`
+	// Request body for publishing a tenant template version
+	PostTenantTemplatePublishRequest PostTenantTemplatePublishRequestParam
+	paramObj
+}
+
+func (r TenantTemplatePublishParams) MarshalJSON() (data []byte, err error) {
+	return shimjson.Marshal(r.PostTenantTemplatePublishRequest)
+}
+func (r *TenantTemplatePublishParams) UnmarshalJSON(data []byte) error {
+	return json.Unmarshal(data, &r.PostTenantTemplatePublishRequest)
+}
+
+type TenantTemplateReplaceParams struct {
+	TenantID string `path:"tenant_id,required" json:"-"`
+	// Request body for creating or updating a tenant notification template
+	PutTenantTemplateRequest PutTenantTemplateRequestParam
+	paramObj
+}
+
+func (r TenantTemplateReplaceParams) MarshalJSON() (data []byte, err error) {
+	return shimjson.Marshal(r.PutTenantTemplateRequest)
+}
+func (r *TenantTemplateReplaceParams) UnmarshalJSON(data []byte) error {
+	return json.Unmarshal(data, &r.PutTenantTemplateRequest)
 }
