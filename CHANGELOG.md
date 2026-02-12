@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.6.1 (2026-02-12)
+
+Full Changelog: [v4.6.0...v4.6.1](https://github.com/trycourier/courier-go/compare/v4.6.0...v4.6.1)
+
+### Bug Fixes
+
+* **encoder:** correctly serialize NullStruct ([893048a](https://github.com/trycourier/courier-go/commit/893048a42526a7381a3bad9d2ee2cf452947689a))
+* **types:** remove brand field from elemental content types ([0ffff74](https://github.com/trycourier/courier-go/commit/0ffff74c22dc08d24b491dd60b720fa6747b26e9))
+
 ## 4.6.0 (2026-02-06)
 
 Full Changelog: [v4.5.0...v4.6.0](https://github.com/trycourier/courier-go/compare/v4.5.0...v4.6.0)
