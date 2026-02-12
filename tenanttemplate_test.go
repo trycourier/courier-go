@@ -138,7 +138,6 @@ func TestTenantTemplateReplaceWithOptionalParams(t *testing.T) {
 							},
 						}},
 						Version: "version",
-						Brand:   courier.String("brand"),
 					},
 					Channels: map[string]courier.TenantTemplateInputChannelParam{
 						"foo": {
