@@ -388,12 +388,10 @@ type ElementalContent struct {
 	Elements []ElementalNodeUnion `json:"elements,required"`
 	// For example, "2022-01-01"
 	Version string `json:"version,required"`
-	Brand   string `json:"brand,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Elements    respjson.Field
 		Version     respjson.Field
-		Brand       respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -418,8 +416,7 @@ func (r ElementalContent) ToParam() ElementalContentParam {
 type ElementalContentParam struct {
 	Elements []ElementalNodeUnionParam `json:"elements,omitzero,required"`
 	// For example, "2022-01-01"
-	Version string            `json:"version,required"`
-	Brand   param.Opt[string] `json:"brand,omitzero"`
+	Version string `json:"version,required"`
 	paramObj
 }
 
