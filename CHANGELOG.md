@@ -1,5 +1,28 @@
 # Changelog
 
+## 4.6.1 (2026-02-20)
+
+Full Changelog: [v4.6.0...v4.6.1](https://github.com/trycourier/courier-go/compare/v4.6.0...v4.6.1)
+
+### Bug Fixes
+
+* allow canceling a request while it is waiting to retry ([e0f0298](https://github.com/trycourier/courier-go/commit/e0f029888b77c6d7cb9d76e821f0ed3c63dc1264))
+* **encoder:** correctly serialize NullStruct ([e95d4d3](https://github.com/trycourier/courier-go/commit/e95d4d378d8b7b3dbf9a88523bc41e3391eed6e6))
+* **types:** remove brand field from elemental content types ([acee88a](https://github.com/trycourier/courier-go/commit/acee88a7ee6b473fa50b550e34688e741ff7e7e7))
+
+
+### Chores
+
+* **internal:** remove mock server code ([4a2dda0](https://github.com/trycourier/courier-go/commit/4a2dda0870c2c9714209d3ceba1e4d228eb94a98))
+* update mock server docs ([4f70490](https://github.com/trycourier/courier-go/commit/4f70490f1a85ab031815bce6a26819b5c5db3520))
+
+
+### Documentation
+
+* add AUTO-GENERATED-OVERVIEW markers for README sync ([#105](https://github.com/trycourier/courier-go/issues/105)) ([c25c36c](https://github.com/trycourier/courier-go/commit/c25c36cf92b37a28b5a51e6c3057db7129f7760d))
+* sync README from mintlify-docs (2026-02-20 18:11 UTC) ([#106](https://github.com/trycourier/courier-go/issues/106)) ([988d3c3](https://github.com/trycourier/courier-go/commit/988d3c3c2ae7b365344c20f7d8c3879e9d81e57a))
+* sync README from mintlify-docs (2026-02-20 18:36 UTC) ([#107](https://github.com/trycourier/courier-go/issues/107)) ([97c16c6](https://github.com/trycourier/courier-go/commit/97c16c65243ef89433eced0556f28064ce68cd9a))
+
 ## 4.6.0 (2026-02-06)
 
 Full Changelog: [v4.5.0...v4.6.0](https://github.com/trycourier/courier-go/compare/v4.5.0...v4.6.0)
