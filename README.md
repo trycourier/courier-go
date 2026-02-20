@@ -45,8 +45,7 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("%+v
-", response.RequestID)
+	fmt.Printf("%+v\n", response.RequestID)
 }
 ```
 
