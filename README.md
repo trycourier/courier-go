@@ -1,3 +1,4 @@
+<!-- AUTO-GENERATED-OVERVIEW:START — Do not edit this section. It is synced from mintlify-docs. -->
 # Courier Go API Library
 
 <!-- x-release-please-start-version -->
@@ -73,7 +74,8 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("%+v\n", response.RequestID)
+	fmt.Printf("%+v
+", response.RequestID)
 }
 
 ```
@@ -442,10 +444,13 @@ response, err := client.Send.Message(
 if err != nil {
 	// handle error
 }
-fmt.Printf("%+v\n", response)
+fmt.Printf("%+v
+", response)
 
-fmt.Printf("Status Code: %d\n", response.StatusCode)
-fmt.Printf("Headers: %+#v\n", response.Header)
+fmt.Printf("Status Code: %d
+", response.StatusCode)
+fmt.Printf("Headers: %+#v
+", response.Header)
 ```
 
 ### Making custom/undocumented requests
@@ -548,3 +553,4 @@ We are keen for your feedback; please open an [issue](https://www.github.com/try
 ## Contributing
 
 See [the contributing documentation](./CONTRIBUTING.md).
+<!-- AUTO-GENERATED-OVERVIEW:END -->
