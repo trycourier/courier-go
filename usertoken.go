@@ -131,18 +131,18 @@ func (r *UserTokenService) AddSingle(ctx context.Context, token string, params U
 
 type UserToken struct {
 	// Full body of the token. Must match token in URL path parameter.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// Any of "firebase-fcm", "apn", "expo", "onesignal".
-	ProviderKey UserTokenProviderKey `json:"provider_key,required"`
+	ProviderKey UserTokenProviderKey `json:"provider_key" api:"required"`
 	// Information about the device the token came from.
-	Device UserTokenDevice `json:"device,nullable"`
+	Device UserTokenDevice `json:"device" api:"nullable"`
 	// ISO 8601 formatted date the token expires. Defaults to 2 months. Set to false to
 	// disable expiration.
-	ExpiryDate UserTokenExpiryDateUnion `json:"expiry_date,nullable"`
+	ExpiryDate UserTokenExpiryDateUnion `json:"expiry_date" api:"nullable"`
 	// Properties about the token.
 	Properties any `json:"properties"`
 	// Tracking information about the device the token came from.
-	Tracking UserTokenTracking `json:"tracking,nullable"`
+	Tracking UserTokenTracking `json:"tracking" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -183,17 +183,17 @@ const (
 // Information about the device the token came from.
 type UserTokenDevice struct {
 	// Id of the advertising identifier
-	AdID string `json:"ad_id,nullable"`
+	AdID string `json:"ad_id" api:"nullable"`
 	// Id of the application the token is used for
-	AppID string `json:"app_id,nullable"`
+	AppID string `json:"app_id" api:"nullable"`
 	// Id of the device the token is associated with
-	DeviceID string `json:"device_id,nullable"`
+	DeviceID string `json:"device_id" api:"nullable"`
 	// The device manufacturer
-	Manufacturer string `json:"manufacturer,nullable"`
+	Manufacturer string `json:"manufacturer" api:"nullable"`
 	// The device model
-	Model string `json:"model,nullable"`
+	Model string `json:"model" api:"nullable"`
 	// The device platform i.e. android, ios, web
-	Platform string `json:"platform,nullable"`
+	Platform string `json:"platform" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AdID         respjson.Field
@@ -252,13 +252,13 @@ func (r *UserTokenExpiryDateUnion) UnmarshalJSON(data []byte) error {
 // Tracking information about the device the token came from.
 type UserTokenTracking struct {
 	// The IP address of the device
-	IP string `json:"ip,nullable"`
+	IP string `json:"ip" api:"nullable"`
 	// The latitude of the device
-	Lat string `json:"lat,nullable"`
+	Lat string `json:"lat" api:"nullable"`
 	// The longitude of the device
-	Long string `json:"long,nullable"`
+	Long string `json:"long" api:"nullable"`
 	// The operating system version
-	OsVersion string `json:"os_version,nullable"`
+	OsVersion string `json:"os_version" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		IP          respjson.Field
@@ -279,9 +279,9 @@ func (r *UserTokenTracking) UnmarshalJSON(data []byte) error {
 // The properties Token, ProviderKey are required.
 type UserTokenParam struct {
 	// Full body of the token. Must match token in URL path parameter.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// Any of "firebase-fcm", "apn", "expo", "onesignal".
-	ProviderKey UserTokenProviderKey `json:"provider_key,omitzero,required"`
+	ProviderKey UserTokenProviderKey `json:"provider_key,omitzero" api:"required"`
 	// Information about the device the token came from.
 	Device UserTokenDeviceParam `json:"device,omitzero"`
 	// ISO 8601 formatted date the token expires. Defaults to 2 months. Set to false to
@@ -375,9 +375,9 @@ func (r *UserTokenTrackingParam) UnmarshalJSON(data []byte) error {
 
 type UserTokenGetResponse struct {
 	// Any of "active", "unknown", "failed", "revoked".
-	Status string `json:"status,nullable"`
+	Status string `json:"status" api:"nullable"`
 	// The reason for the token status.
-	StatusReason string `json:"status_reason,nullable"`
+	StatusReason string `json:"status_reason" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Status       respjson.Field
@@ -396,7 +396,7 @@ func (r *UserTokenGetResponse) UnmarshalJSON(data []byte) error {
 
 // A list of tokens registered with the user.
 type UserTokenListResponse struct {
-	Tokens []UserToken `json:"tokens,required"`
+	Tokens []UserToken `json:"tokens" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Tokens      respjson.Field
@@ -412,13 +412,13 @@ func (r *UserTokenListResponse) UnmarshalJSON(data []byte) error {
 }
 
 type UserTokenGetParams struct {
-	UserID string `path:"user_id,required" json:"-"`
+	UserID string `path:"user_id" api:"required" json:"-"`
 	paramObj
 }
 
 type UserTokenUpdateParams struct {
-	UserID string                       `path:"user_id,required" json:"-"`
-	Patch  []UserTokenUpdateParamsPatch `json:"patch,omitzero,required"`
+	UserID string                       `path:"user_id" api:"required" json:"-"`
+	Patch  []UserTokenUpdateParamsPatch `json:"patch,omitzero" api:"required"`
 	paramObj
 }
 
@@ -433,9 +433,9 @@ func (r *UserTokenUpdateParams) UnmarshalJSON(data []byte) error {
 // The properties Op, Path are required.
 type UserTokenUpdateParamsPatch struct {
 	// The operation to perform.
-	Op string `json:"op,required"`
+	Op string `json:"op" api:"required"`
 	// The JSON path specifying the part of the profile to operate on.
-	Path string `json:"path,required"`
+	Path string `json:"path" api:"required"`
 	// The value for the operation.
 	Value param.Opt[string] `json:"value,omitzero"`
 	paramObj
@@ -450,12 +450,12 @@ func (r *UserTokenUpdateParamsPatch) UnmarshalJSON(data []byte) error {
 }
 
 type UserTokenDeleteParams struct {
-	UserID string `path:"user_id,required" json:"-"`
+	UserID string `path:"user_id" api:"required" json:"-"`
 	paramObj
 }
 
 type UserTokenAddSingleParams struct {
-	UserID    string `path:"user_id,required" json:"-"`
+	UserID    string `path:"user_id" api:"required" json:"-"`
 	UserToken UserTokenParam
 	paramObj
 }

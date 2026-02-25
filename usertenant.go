@@ -116,20 +116,20 @@ func (r *UserTenantService) RemoveSingle(ctx context.Context, tenantID string, b
 
 type UserTenantListResponse struct {
 	// Set to true when there are more pages that can be retrieved.
-	HasMore bool `json:"has_more,required"`
+	HasMore bool `json:"has_more" api:"required"`
 	// Always set to `list`. Represents the type of this object.
 	//
 	// Any of "list".
-	Type UserTenantListResponseType `json:"type,required"`
+	Type UserTenantListResponseType `json:"type" api:"required"`
 	// A url that may be used to generate these results.
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	// A pointer to the next page of results. Defined only when `has_more` is set to
 	// true
-	Cursor string              `json:"cursor,nullable"`
-	Items  []TenantAssociation `json:"items,nullable"`
+	Cursor string              `json:"cursor" api:"nullable"`
+	Items  []TenantAssociation `json:"items" api:"nullable"`
 	// A url that may be used to generate fetch the next set of results. Defined only
 	// when `has_more` is set to true
-	NextURL string `json:"next_url,nullable"`
+	NextURL string `json:"next_url" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		HasMore     respjson.Field
@@ -173,7 +173,7 @@ func (r UserTenantListParams) URLQuery() (v url.Values, err error) {
 }
 
 type UserTenantAddMultipleParams struct {
-	Tenants []TenantAssociationParam `json:"tenants,omitzero,required"`
+	Tenants []TenantAssociationParam `json:"tenants,omitzero" api:"required"`
 	paramObj
 }
 
@@ -186,7 +186,7 @@ func (r *UserTenantAddMultipleParams) UnmarshalJSON(data []byte) error {
 }
 
 type UserTenantAddSingleParams struct {
-	UserID  string         `path:"user_id,required" json:"-"`
+	UserID  string         `path:"user_id" api:"required" json:"-"`
 	Profile map[string]any `json:"profile,omitzero"`
 	paramObj
 }
@@ -200,6 +200,6 @@ func (r *UserTenantAddSingleParams) UnmarshalJSON(data []byte) error {
 }
 
 type UserTenantRemoveSingleParams struct {
-	UserID string `path:"user_id,required" json:"-"`
+	UserID string `path:"user_id" api:"required" json:"-"`
 	paramObj
 }

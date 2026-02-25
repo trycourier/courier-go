@@ -58,7 +58,7 @@ func (r *AutomationInvokeService) InvokeByTemplate(ctx context.Context, template
 }
 
 type AutomationInvokeInvokeAdHocParams struct {
-	Automation AutomationInvokeInvokeAdHocParamsAutomation `json:"automation,omitzero,required"`
+	Automation AutomationInvokeInvokeAdHocParamsAutomation `json:"automation,omitzero" api:"required"`
 	Brand      param.Opt[string]                           `json:"brand,omitzero"`
 	Recipient  param.Opt[string]                           `json:"recipient,omitzero"`
 	Template   param.Opt[string]                           `json:"template,omitzero"`
@@ -77,7 +77,7 @@ func (r *AutomationInvokeInvokeAdHocParams) UnmarshalJSON(data []byte) error {
 
 // The property Steps is required.
 type AutomationInvokeInvokeAdHocParamsAutomation struct {
-	Steps            []AutomationInvokeInvokeAdHocParamsAutomationStepUnion `json:"steps,omitzero,required"`
+	Steps            []AutomationInvokeInvokeAdHocParamsAutomationStepUnion `json:"steps,omitzero" api:"required"`
 	CancelationToken param.Opt[string]                                      `json:"cancelation_token,omitzero"`
 	paramObj
 }
@@ -271,7 +271,7 @@ func (u AutomationInvokeInvokeAdHocParamsAutomationStepUnion) GetProfile() map[s
 // The property Action is required.
 type AutomationInvokeInvokeAdHocParamsAutomationStepAutomationDelayStep struct {
 	// Any of "delay".
-	Action   string            `json:"action,omitzero,required"`
+	Action   string            `json:"action,omitzero" api:"required"`
 	Duration param.Opt[string] `json:"duration,omitzero"`
 	Until    param.Opt[string] `json:"until,omitzero"`
 	paramObj
@@ -294,7 +294,7 @@ func init() {
 // The property Action is required.
 type AutomationInvokeInvokeAdHocParamsAutomationStepAutomationSendStep struct {
 	// Any of "send".
-	Action    string            `json:"action,omitzero,required"`
+	Action    string            `json:"action,omitzero" api:"required"`
 	Brand     param.Opt[string] `json:"brand,omitzero"`
 	Recipient param.Opt[string] `json:"recipient,omitzero"`
 	Template  param.Opt[string] `json:"template,omitzero"`
@@ -320,8 +320,8 @@ func init() {
 // The properties Action, List are required.
 type AutomationInvokeInvokeAdHocParamsAutomationStepAutomationSendListStep struct {
 	// Any of "send-list".
-	Action string            `json:"action,omitzero,required"`
-	List   string            `json:"list,required"`
+	Action string            `json:"action,omitzero" api:"required"`
+	List   string            `json:"list" api:"required"`
 	Brand  param.Opt[string] `json:"brand,omitzero"`
 	Data   map[string]any    `json:"data,omitzero"`
 	paramObj
@@ -344,8 +344,8 @@ func init() {
 // The properties Action, Profile are required.
 type AutomationInvokeInvokeAdHocParamsAutomationStepAutomationUpdateProfileStep struct {
 	// Any of "update-profile".
-	Action      string            `json:"action,omitzero,required"`
-	Profile     map[string]any    `json:"profile,omitzero,required"`
+	Action      string            `json:"action,omitzero" api:"required"`
+	Profile     map[string]any    `json:"profile,omitzero" api:"required"`
 	RecipientID param.Opt[string] `json:"recipient_id,omitzero"`
 	// Any of "none", "overwrite", "soft-merge", "replace".
 	Merge string `json:"merge,omitzero"`
@@ -372,8 +372,8 @@ func init() {
 // The properties Action, CancelationToken are required.
 type AutomationInvokeInvokeAdHocParamsAutomationStepAutomationCancelStep struct {
 	// Any of "cancel".
-	Action           string `json:"action,omitzero,required"`
-	CancelationToken string `json:"cancelation_token,required"`
+	Action           string `json:"action,omitzero" api:"required"`
+	CancelationToken string `json:"cancelation_token" api:"required"`
 	paramObj
 }
 
@@ -394,8 +394,8 @@ func init() {
 // The properties Action, Webhook are required.
 type AutomationInvokeInvokeAdHocParamsAutomationStepAutomationFetchDataStep struct {
 	// Any of "fetch-data".
-	Action  string                                                                        `json:"action,omitzero,required"`
-	Webhook AutomationInvokeInvokeAdHocParamsAutomationStepAutomationFetchDataStepWebhook `json:"webhook,omitzero,required"`
+	Action  string                                                                        `json:"action,omitzero" api:"required"`
+	Webhook AutomationInvokeInvokeAdHocParamsAutomationStepAutomationFetchDataStepWebhook `json:"webhook,omitzero" api:"required"`
 	// Any of "replace", "overwrite", "soft-merge".
 	MergeStrategy string `json:"merge_strategy,omitzero"`
 	paramObj
@@ -421,8 +421,8 @@ func init() {
 // The properties Method, URL are required.
 type AutomationInvokeInvokeAdHocParamsAutomationStepAutomationFetchDataStepWebhook struct {
 	// Any of "GET", "POST", "PUT", "PATCH", "DELETE".
-	Method  string            `json:"method,omitzero,required"`
-	URL     string            `json:"url,required"`
+	Method  string            `json:"method,omitzero" api:"required"`
+	URL     string            `json:"url" api:"required"`
 	Body    param.Opt[string] `json:"body,omitzero"`
 	Headers map[string]string `json:"headers,omitzero"`
 	paramObj
@@ -445,8 +445,8 @@ func init() {
 // The properties Action, Template are required.
 type AutomationInvokeInvokeAdHocParamsAutomationStepAutomationInvokeStep struct {
 	// Any of "invoke".
-	Action   string `json:"action,omitzero,required"`
-	Template string `json:"template,required"`
+	Action   string `json:"action,omitzero" api:"required"`
+	Template string `json:"template" api:"required"`
 	paramObj
 }
 
@@ -465,7 +465,7 @@ func init() {
 }
 
 type AutomationInvokeInvokeByTemplateParams struct {
-	Recipient param.Opt[string] `json:"recipient,omitzero,required"`
+	Recipient param.Opt[string] `json:"recipient,omitzero" api:"required"`
 	Brand     param.Opt[string] `json:"brand,omitzero"`
 	Template  param.Opt[string] `json:"template,omitzero"`
 	Data      map[string]any    `json:"data,omitzero"`

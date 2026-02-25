@@ -107,7 +107,7 @@ func (r *ProfileService) Replace(ctx context.Context, userID string, body Profil
 
 // The property ListID is required.
 type SubscribeToListsRequestItemParam struct {
-	ListID      string                           `json:"listId,required"`
+	ListID      string                           `json:"listId" api:"required"`
 	Preferences shared.RecipientPreferencesParam `json:"preferences,omitzero"`
 	paramObj
 }
@@ -122,7 +122,7 @@ func (r *SubscribeToListsRequestItemParam) UnmarshalJSON(data []byte) error {
 
 type ProfileNewResponse struct {
 	// Any of "SUCCESS".
-	Status ProfileNewResponseStatus `json:"status,required"`
+	Status ProfileNewResponseStatus `json:"status" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Status      respjson.Field
@@ -144,8 +144,8 @@ const (
 )
 
 type ProfileGetResponse struct {
-	Profile     map[string]any              `json:"profile,required"`
-	Preferences shared.RecipientPreferences `json:"preferences,nullable"`
+	Profile     map[string]any              `json:"profile" api:"required"`
+	Preferences shared.RecipientPreferences `json:"preferences" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Profile     respjson.Field
@@ -163,7 +163,7 @@ func (r *ProfileGetResponse) UnmarshalJSON(data []byte) error {
 
 type ProfileReplaceResponse struct {
 	// Any of "SUCCESS".
-	Status ProfileReplaceResponseStatus `json:"status,required"`
+	Status ProfileReplaceResponseStatus `json:"status" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Status      respjson.Field
@@ -185,7 +185,7 @@ const (
 )
 
 type ProfileNewParams struct {
-	Profile map[string]any `json:"profile,omitzero,required"`
+	Profile map[string]any `json:"profile,omitzero" api:"required"`
 	paramObj
 }
 
@@ -199,7 +199,7 @@ func (r *ProfileNewParams) UnmarshalJSON(data []byte) error {
 
 type ProfileUpdateParams struct {
 	// List of patch operations to apply to the profile.
-	Patch []ProfileUpdateParamsPatch `json:"patch,omitzero,required"`
+	Patch []ProfileUpdateParamsPatch `json:"patch,omitzero" api:"required"`
 	paramObj
 }
 
@@ -214,11 +214,11 @@ func (r *ProfileUpdateParams) UnmarshalJSON(data []byte) error {
 // The properties Op, Path, Value are required.
 type ProfileUpdateParamsPatch struct {
 	// The operation to perform.
-	Op string `json:"op,required"`
+	Op string `json:"op" api:"required"`
 	// The JSON path specifying the part of the profile to operate on.
-	Path string `json:"path,required"`
+	Path string `json:"path" api:"required"`
 	// The value for the operation.
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	paramObj
 }
 
@@ -231,7 +231,7 @@ func (r *ProfileUpdateParamsPatch) UnmarshalJSON(data []byte) error {
 }
 
 type ProfileReplaceParams struct {
-	Profile map[string]any `json:"profile,omitzero,required"`
+	Profile map[string]any `json:"profile,omitzero" api:"required"`
 	paramObj
 }
 

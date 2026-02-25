@@ -69,7 +69,7 @@ func (r *TenantPreferenceItemService) Delete(ctx context.Context, topicID string
 }
 
 type TenantPreferenceItemUpdateParams struct {
-	TenantID             string `path:"tenant_id,required" json:"-"`
+	TenantID             string `path:"tenant_id" api:"required" json:"-"`
 	SubscriptionTopicNew SubscriptionTopicNewParam
 	paramObj
 }
@@ -82,6 +82,6 @@ func (r *TenantPreferenceItemUpdateParams) UnmarshalJSON(data []byte) error {
 }
 
 type TenantPreferenceItemDeleteParams struct {
-	TenantID string `path:"tenant_id,required" json:"-"`
+	TenantID string `path:"tenant_id" api:"required" json:"-"`
 	paramObj
 }

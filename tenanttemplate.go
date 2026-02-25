@@ -113,20 +113,20 @@ func (r *TenantTemplateService) Replace(ctx context.Context, templateID string, 
 
 type TenantTemplateListResponse struct {
 	// Set to true when there are more pages that can be retrieved.
-	HasMore bool `json:"has_more,required"`
+	HasMore bool `json:"has_more" api:"required"`
 	// Always set to `list`. Represents the type of this object.
 	//
 	// Any of "list".
-	Type TenantTemplateListResponseType `json:"type,required"`
+	Type TenantTemplateListResponseType `json:"type" api:"required"`
 	// A url that may be used to generate these results.
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	// A pointer to the next page of results. Defined only when `has_more` is set to
 	// true
-	Cursor string                           `json:"cursor,nullable"`
-	Items  []TenantTemplateListResponseItem `json:"items,nullable"`
+	Cursor string                           `json:"cursor" api:"nullable"`
+	Items  []TenantTemplateListResponseItem `json:"items" api:"nullable"`
 	// A url that may be used to generate fetch the next set of results. Defined only
 	// when `has_more` is set to true
-	NextURL string `json:"next_url,nullable"`
+	NextURL string `json:"next_url" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		HasMore     respjson.Field
@@ -155,7 +155,7 @@ const (
 
 type TenantTemplateListResponseItem struct {
 	// The template's data containing it's routing configs
-	Data TenantTemplateListResponseItemData `json:"data,required"`
+	Data TenantTemplateListResponseItemData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -173,7 +173,7 @@ func (r *TenantTemplateListResponseItem) UnmarshalJSON(data []byte) error {
 
 // The template's data containing it's routing configs
 type TenantTemplateListResponseItemData struct {
-	Routing shared.MessageRouting `json:"routing,required"`
+	Routing shared.MessageRouting `json:"routing" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Routing     respjson.Field
@@ -189,7 +189,7 @@ func (r *TenantTemplateListResponseItemData) UnmarshalJSON(data []byte) error {
 }
 
 type TenantTemplateGetParams struct {
-	TenantID string `path:"tenant_id,required" json:"-"`
+	TenantID string `path:"tenant_id" api:"required" json:"-"`
 	paramObj
 }
 
@@ -211,7 +211,7 @@ func (r TenantTemplateListParams) URLQuery() (v url.Values, err error) {
 }
 
 type TenantTemplatePublishParams struct {
-	TenantID string `path:"tenant_id,required" json:"-"`
+	TenantID string `path:"tenant_id" api:"required" json:"-"`
 	// Request body for publishing a tenant template version
 	PostTenantTemplatePublishRequest PostTenantTemplatePublishRequestParam
 	paramObj
@@ -225,7 +225,7 @@ func (r *TenantTemplatePublishParams) UnmarshalJSON(data []byte) error {
 }
 
 type TenantTemplateReplaceParams struct {
-	TenantID string `path:"tenant_id,required" json:"-"`
+	TenantID string `path:"tenant_id" api:"required" json:"-"`
 	// Request body for creating or updating a tenant notification template
 	PutTenantTemplateRequest PutTenantTemplateRequestParam
 	paramObj

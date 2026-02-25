@@ -59,12 +59,12 @@ func (r *AuditEventService) List(ctx context.Context, query AuditEventListParams
 }
 
 type AuditEvent struct {
-	Actor        AuditEventActor `json:"actor,required"`
-	AuditEventID string          `json:"auditEventId,required"`
-	Source       string          `json:"source,required"`
-	Target       string          `json:"target,required"`
-	Timestamp    string          `json:"timestamp,required"`
-	Type         string          `json:"type,required"`
+	Actor        AuditEventActor `json:"actor" api:"required"`
+	AuditEventID string          `json:"auditEventId" api:"required"`
+	Source       string          `json:"source" api:"required"`
+	Target       string          `json:"target" api:"required"`
+	Timestamp    string          `json:"timestamp" api:"required"`
+	Type         string          `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Actor        respjson.Field
@@ -85,8 +85,8 @@ func (r *AuditEvent) UnmarshalJSON(data []byte) error {
 }
 
 type AuditEventActor struct {
-	ID    string `json:"id,required"`
-	Email string `json:"email,nullable"`
+	ID    string `json:"id" api:"required"`
+	Email string `json:"email" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -103,8 +103,8 @@ func (r *AuditEventActor) UnmarshalJSON(data []byte) error {
 }
 
 type AuditEventListResponse struct {
-	Paging  shared.Paging `json:"paging,required"`
-	Results []AuditEvent  `json:"results,required"`
+	Paging  shared.Paging `json:"paging" api:"required"`
+	Results []AuditEvent  `json:"results" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Paging      respjson.Field

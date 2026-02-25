@@ -93,14 +93,14 @@ func (r *BrandService) Delete(ctx context.Context, brandID string, opts ...optio
 }
 
 type Brand struct {
-	ID        string        `json:"id,required"`
-	Created   int64         `json:"created,required"`
-	Name      string        `json:"name,required"`
-	Updated   int64         `json:"updated,required"`
-	Published int64         `json:"published,nullable"`
-	Settings  BrandSettings `json:"settings,nullable"`
-	Snippets  BrandSnippets `json:"snippets,nullable"`
-	Version   string        `json:"version,nullable"`
+	ID        string        `json:"id" api:"required"`
+	Created   int64         `json:"created" api:"required"`
+	Name      string        `json:"name" api:"required"`
+	Updated   int64         `json:"updated" api:"required"`
+	Published int64         `json:"published" api:"nullable"`
+	Settings  BrandSettings `json:"settings" api:"nullable"`
+	Snippets  BrandSnippets `json:"snippets" api:"nullable"`
+	Version   string        `json:"version" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -125,7 +125,7 @@ func (r *Brand) UnmarshalJSON(data []byte) error {
 type BrandColors struct {
 	Primary     string            `json:"primary"`
 	Secondary   string            `json:"secondary"`
-	ExtraFields map[string]string `json:",extras"`
+	ExtraFields map[string]string `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Primary     respjson.Field
@@ -166,9 +166,9 @@ func (r *BrandColorsParam) UnmarshalJSON(data []byte) error {
 }
 
 type BrandSettings struct {
-	Colors BrandColors        `json:"colors,nullable"`
-	Email  BrandSettingsEmail `json:"email,nullable"`
-	Inapp  BrandSettingsInApp `json:"inapp,nullable"`
+	Colors BrandColors        `json:"colors" api:"nullable"`
+	Email  BrandSettingsEmail `json:"email" api:"nullable"`
+	Inapp  BrandSettingsInApp `json:"inapp" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Colors      respjson.Field
@@ -210,10 +210,10 @@ func (r *BrandSettingsParam) UnmarshalJSON(data []byte) error {
 }
 
 type BrandSettingsEmail struct {
-	Footer           EmailFooter                        `json:"footer,nullable"`
-	Head             EmailHead                          `json:"head,nullable"`
-	Header           EmailHeader                        `json:"header,nullable"`
-	TemplateOverride BrandSettingsEmailTemplateOverride `json:"templateOverride,nullable"`
+	Footer           EmailFooter                        `json:"footer" api:"nullable"`
+	Head             EmailHead                          `json:"head" api:"nullable"`
+	Header           EmailHeader                        `json:"header" api:"nullable"`
+	TemplateOverride BrandSettingsEmailTemplateOverride `json:"templateOverride" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Footer           respjson.Field
@@ -241,9 +241,9 @@ func (r BrandSettingsEmail) ToParam() BrandSettingsEmailParam {
 }
 
 type BrandSettingsEmailTemplateOverride struct {
-	Mjml                  BrandTemplate `json:"mjml,required"`
-	FooterBackgroundColor string        `json:"footerBackgroundColor,nullable"`
-	FooterFullWidth       bool          `json:"footerFullWidth,nullable"`
+	Mjml                  BrandTemplate `json:"mjml" api:"required"`
+	FooterBackgroundColor string        `json:"footerBackgroundColor" api:"nullable"`
+	FooterFullWidth       bool          `json:"footerFullWidth" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Mjml                  respjson.Field
@@ -278,7 +278,7 @@ func (r *BrandSettingsEmailParam) UnmarshalJSON(data []byte) error {
 }
 
 type BrandSettingsEmailTemplateOverrideParam struct {
-	Mjml                  BrandTemplateParam `json:"mjml,omitzero,required"`
+	Mjml                  BrandTemplateParam `json:"mjml,omitzero" api:"required"`
 	FooterBackgroundColor param.Opt[string]  `json:"footerBackgroundColor,omitzero"`
 	FooterFullWidth       param.Opt[bool]    `json:"footerFullWidth,omitzero"`
 	BrandTemplateParam
@@ -293,14 +293,14 @@ func (r BrandSettingsEmailTemplateOverrideParam) MarshalJSON() (data []byte, err
 }
 
 type BrandSettingsInApp struct {
-	Colors             BrandColors      `json:"colors,required"`
-	Icons              Icons            `json:"icons,required"`
-	WidgetBackground   WidgetBackground `json:"widgetBackground,required"`
-	BorderRadius       string           `json:"borderRadius,nullable"`
-	DisableMessageIcon bool             `json:"disableMessageIcon,nullable"`
-	FontFamily         string           `json:"fontFamily,nullable"`
+	Colors             BrandColors      `json:"colors" api:"required"`
+	Icons              Icons            `json:"icons" api:"required"`
+	WidgetBackground   WidgetBackground `json:"widgetBackground" api:"required"`
+	BorderRadius       string           `json:"borderRadius" api:"nullable"`
+	DisableMessageIcon bool             `json:"disableMessageIcon" api:"nullable"`
+	FontFamily         string           `json:"fontFamily" api:"nullable"`
 	// Any of "top", "bottom", "left", "right".
-	Placement BrandSettingsInAppPlacement `json:"placement,nullable"`
+	Placement BrandSettingsInAppPlacement `json:"placement" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Colors             respjson.Field
@@ -341,9 +341,9 @@ const (
 
 // The properties Colors, Icons, WidgetBackground are required.
 type BrandSettingsInAppParam struct {
-	Colors             BrandColorsParam      `json:"colors,omitzero,required"`
-	Icons              IconsParam            `json:"icons,omitzero,required"`
-	WidgetBackground   WidgetBackgroundParam `json:"widgetBackground,omitzero,required"`
+	Colors             BrandColorsParam      `json:"colors,omitzero" api:"required"`
+	Icons              IconsParam            `json:"icons,omitzero" api:"required"`
+	WidgetBackground   WidgetBackgroundParam `json:"widgetBackground,omitzero" api:"required"`
 	BorderRadius       param.Opt[string]     `json:"borderRadius,omitzero"`
 	DisableMessageIcon param.Opt[bool]       `json:"disableMessageIcon,omitzero"`
 	FontFamily         param.Opt[string]     `json:"fontFamily,omitzero"`
@@ -361,8 +361,8 @@ func (r *BrandSettingsInAppParam) UnmarshalJSON(data []byte) error {
 }
 
 type BrandSnippet struct {
-	Name  string `json:"name,required"`
-	Value string `json:"value,required"`
+	Name  string `json:"name" api:"required"`
+	Value string `json:"value" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Name        respjson.Field
@@ -389,8 +389,8 @@ func (r BrandSnippet) ToParam() BrandSnippetParam {
 
 // The properties Name, Value are required.
 type BrandSnippetParam struct {
-	Name  string `json:"name,required"`
-	Value string `json:"value,required"`
+	Name  string `json:"name" api:"required"`
+	Value string `json:"value" api:"required"`
 	paramObj
 }
 
@@ -403,7 +403,7 @@ func (r *BrandSnippetParam) UnmarshalJSON(data []byte) error {
 }
 
 type BrandSnippets struct {
-	Items []BrandSnippet `json:"items,nullable"`
+	Items []BrandSnippet `json:"items" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Items       respjson.Field
@@ -441,13 +441,13 @@ func (r *BrandSnippetsParam) UnmarshalJSON(data []byte) error {
 }
 
 type BrandTemplate struct {
-	Enabled               bool   `json:"enabled,required"`
-	BackgroundColor       string `json:"backgroundColor,nullable"`
-	BlocksBackgroundColor string `json:"blocksBackgroundColor,nullable"`
-	Footer                string `json:"footer,nullable"`
-	Head                  string `json:"head,nullable"`
-	Header                string `json:"header,nullable"`
-	Width                 string `json:"width,nullable"`
+	Enabled               bool   `json:"enabled" api:"required"`
+	BackgroundColor       string `json:"backgroundColor" api:"nullable"`
+	BlocksBackgroundColor string `json:"blocksBackgroundColor" api:"nullable"`
+	Footer                string `json:"footer" api:"nullable"`
+	Head                  string `json:"head" api:"nullable"`
+	Header                string `json:"header" api:"nullable"`
+	Width                 string `json:"width" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Enabled               respjson.Field
@@ -479,7 +479,7 @@ func (r BrandTemplate) ToParam() BrandTemplateParam {
 
 // The property Enabled is required.
 type BrandTemplateParam struct {
-	Enabled               bool              `json:"enabled,required"`
+	Enabled               bool              `json:"enabled" api:"required"`
 	BackgroundColor       param.Opt[string] `json:"backgroundColor,omitzero"`
 	BlocksBackgroundColor param.Opt[string] `json:"blocksBackgroundColor,omitzero"`
 	Footer                param.Opt[string] `json:"footer,omitzero"`
@@ -498,8 +498,8 @@ func (r *BrandTemplateParam) UnmarshalJSON(data []byte) error {
 }
 
 type EmailFooter struct {
-	Content        string `json:"content,nullable"`
-	InheritDefault bool   `json:"inheritDefault,nullable"`
+	Content        string `json:"content" api:"nullable"`
+	InheritDefault bool   `json:"inheritDefault" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content        respjson.Field
@@ -539,8 +539,8 @@ func (r *EmailFooterParam) UnmarshalJSON(data []byte) error {
 }
 
 type EmailHead struct {
-	InheritDefault bool   `json:"inheritDefault,required"`
-	Content        string `json:"content,nullable"`
+	InheritDefault bool   `json:"inheritDefault" api:"required"`
+	Content        string `json:"content" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InheritDefault respjson.Field
@@ -567,7 +567,7 @@ func (r EmailHead) ToParam() EmailHeadParam {
 
 // The property InheritDefault is required.
 type EmailHeadParam struct {
-	InheritDefault bool              `json:"inheritDefault,required"`
+	InheritDefault bool              `json:"inheritDefault" api:"required"`
 	Content        param.Opt[string] `json:"content,omitzero"`
 	paramObj
 }
@@ -581,9 +581,9 @@ func (r *EmailHeadParam) UnmarshalJSON(data []byte) error {
 }
 
 type EmailHeader struct {
-	Logo           Logo   `json:"logo,required"`
-	BarColor       string `json:"barColor,nullable"`
-	InheritDefault bool   `json:"inheritDefault,nullable"`
+	Logo           Logo   `json:"logo" api:"required"`
+	BarColor       string `json:"barColor" api:"nullable"`
+	InheritDefault bool   `json:"inheritDefault" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Logo           respjson.Field
@@ -611,7 +611,7 @@ func (r EmailHeader) ToParam() EmailHeaderParam {
 
 // The property Logo is required.
 type EmailHeaderParam struct {
-	Logo           LogoParam         `json:"logo,omitzero,required"`
+	Logo           LogoParam         `json:"logo,omitzero" api:"required"`
 	BarColor       param.Opt[string] `json:"barColor,omitzero"`
 	InheritDefault param.Opt[bool]   `json:"inheritDefault,omitzero"`
 	paramObj
@@ -626,8 +626,8 @@ func (r *EmailHeaderParam) UnmarshalJSON(data []byte) error {
 }
 
 type Icons struct {
-	Bell    string `json:"bell,nullable"`
-	Message string `json:"message,nullable"`
+	Bell    string `json:"bell" api:"nullable"`
+	Message string `json:"message" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Bell        respjson.Field
@@ -667,8 +667,8 @@ func (r *IconsParam) UnmarshalJSON(data []byte) error {
 }
 
 type Logo struct {
-	Href  string `json:"href,nullable"`
-	Image string `json:"image,nullable"`
+	Href  string `json:"href" api:"nullable"`
+	Image string `json:"image" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Href        respjson.Field
@@ -708,8 +708,8 @@ func (r *LogoParam) UnmarshalJSON(data []byte) error {
 }
 
 type WidgetBackground struct {
-	BottomColor string `json:"bottomColor,nullable"`
-	TopColor    string `json:"topColor,nullable"`
+	BottomColor string `json:"bottomColor" api:"nullable"`
+	TopColor    string `json:"topColor" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		BottomColor respjson.Field
@@ -749,8 +749,8 @@ func (r *WidgetBackgroundParam) UnmarshalJSON(data []byte) error {
 }
 
 type BrandListResponse struct {
-	Paging  shared.Paging `json:"paging,required"`
-	Results []Brand       `json:"results,required"`
+	Paging  shared.Paging `json:"paging" api:"required"`
+	Results []Brand       `json:"results" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Paging      respjson.Field
@@ -767,7 +767,7 @@ func (r *BrandListResponse) UnmarshalJSON(data []byte) error {
 }
 
 type BrandNewParams struct {
-	Name     string             `json:"name,required"`
+	Name     string             `json:"name" api:"required"`
 	ID       param.Opt[string]  `json:"id,omitzero"`
 	Settings BrandSettingsParam `json:"settings,omitzero"`
 	Snippets BrandSnippetsParam `json:"snippets,omitzero"`
@@ -784,7 +784,7 @@ func (r *BrandNewParams) UnmarshalJSON(data []byte) error {
 
 type BrandUpdateParams struct {
 	// The name of the brand.
-	Name     string             `json:"name,required"`
+	Name     string             `json:"name" api:"required"`
 	Settings BrandSettingsParam `json:"settings,omitzero"`
 	Snippets BrandSnippetsParam `json:"snippets,omitzero"`
 	paramObj

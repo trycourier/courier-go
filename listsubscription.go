@@ -114,8 +114,8 @@ func (r *ListSubscriptionService) UnsubscribeUser(ctx context.Context, userID st
 }
 
 type ListSubscriptionListResponse struct {
-	Items  []ListSubscriptionListResponseItem `json:"items,required"`
-	Paging shared.Paging                      `json:"paging,required"`
+	Items  []ListSubscriptionListResponseItem `json:"items" api:"required"`
+	Paging shared.Paging                      `json:"paging" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Items       respjson.Field
@@ -132,9 +132,9 @@ func (r *ListSubscriptionListResponse) UnmarshalJSON(data []byte) error {
 }
 
 type ListSubscriptionListResponseItem struct {
-	RecipientID string                      `json:"recipientId,required"`
-	Created     string                      `json:"created,nullable"`
-	Preferences shared.RecipientPreferences `json:"preferences,nullable"`
+	RecipientID string                      `json:"recipientId" api:"required"`
+	Created     string                      `json:"created" api:"nullable"`
+	Preferences shared.RecipientPreferences `json:"preferences" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		RecipientID respjson.Field
@@ -167,7 +167,7 @@ func (r ListSubscriptionListParams) URLQuery() (v url.Values, err error) {
 }
 
 type ListSubscriptionAddParams struct {
-	Recipients []PutSubscriptionsRecipientParam `json:"recipients,omitzero,required"`
+	Recipients []PutSubscriptionsRecipientParam `json:"recipients,omitzero" api:"required"`
 	paramObj
 }
 
@@ -180,7 +180,7 @@ func (r *ListSubscriptionAddParams) UnmarshalJSON(data []byte) error {
 }
 
 type ListSubscriptionSubscribeParams struct {
-	Recipients []PutSubscriptionsRecipientParam `json:"recipients,omitzero,required"`
+	Recipients []PutSubscriptionsRecipientParam `json:"recipients,omitzero" api:"required"`
 	paramObj
 }
 
@@ -193,7 +193,7 @@ func (r *ListSubscriptionSubscribeParams) UnmarshalJSON(data []byte) error {
 }
 
 type ListSubscriptionSubscribeUserParams struct {
-	ListID      string                           `path:"list_id,required" json:"-"`
+	ListID      string                           `path:"list_id" api:"required" json:"-"`
 	Preferences shared.RecipientPreferencesParam `json:"preferences,omitzero"`
 	paramObj
 }
@@ -207,6 +207,6 @@ func (r *ListSubscriptionSubscribeUserParams) UnmarshalJSON(data []byte) error {
 }
 
 type ListSubscriptionUnsubscribeUserParams struct {
-	ListID string `path:"list_id,required" json:"-"`
+	ListID string `path:"list_id" api:"required" json:"-"`
 	paramObj
 }
