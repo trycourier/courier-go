@@ -116,17 +116,17 @@ type InboundBulkMessage struct {
 	// Event ID or Notification ID (required). Can be either a Notification ID (e.g.,
 	// "FRH3QXM9E34W4RKP7MRC8NZ1T8V8") or a custom Event ID (e.g., "welcome-email")
 	// mapped to a notification.
-	Event string `json:"event,required"`
-	Brand string `json:"brand,nullable"`
+	Event string `json:"event" api:"required"`
+	Brand string `json:"brand" api:"nullable"`
 	// Elemental content (optional, for V2 format). When provided, this will be used
 	// instead of the notification associated with the `event` field.
-	Content  InboundBulkMessageContentUnion `json:"content,nullable"`
-	Data     map[string]any                 `json:"data,nullable"`
-	Locale   map[string]map[string]any      `json:"locale,nullable"`
-	Override map[string]any                 `json:"override,nullable"`
+	Content  InboundBulkMessageContentUnion `json:"content" api:"nullable"`
+	Data     map[string]any                 `json:"data" api:"nullable"`
+	Locale   map[string]map[string]any      `json:"locale" api:"nullable"`
+	Override map[string]any                 `json:"override" api:"nullable"`
 	// Notification ID or template ID (optional, for V2 format). When provided, this
 	// will be used instead of the notification associated with the `event` field.
-	Template string `json:"template,nullable"`
+	Template string `json:"template" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Event       respjson.Field
@@ -206,7 +206,7 @@ type InboundBulkMessageParam struct {
 	// Event ID or Notification ID (required). Can be either a Notification ID (e.g.,
 	// "FRH3QXM9E34W4RKP7MRC8NZ1T8V8") or a custom Event ID (e.g., "welcome-email")
 	// mapped to a notification.
-	Event string            `json:"event,required"`
+	Event string            `json:"event" api:"required"`
 	Brand param.Opt[string] `json:"brand,omitzero"`
 	// Notification ID or template ID (optional, for V2 format). When provided, this
 	// will be used instead of the notification associated with the `event` field.
@@ -256,17 +256,17 @@ func (u *InboundBulkMessageContentUnionParam) asAny() any {
 type InboundBulkMessageUser struct {
 	// User-specific data that will be merged with message.data
 	Data        any                         `json:"data"`
-	Preferences shared.RecipientPreferences `json:"preferences,nullable"`
+	Preferences shared.RecipientPreferences `json:"preferences" api:"nullable"`
 	// User profile information. For email-based bulk jobs, `profile.email` is required
 	// for provider routing to determine if the message can be delivered. The email
 	// address should be provided here rather than in `to.email`.
-	Profile map[string]any `json:"profile,nullable"`
+	Profile map[string]any `json:"profile" api:"nullable"`
 	// User ID (legacy field, use profile or to.user_id instead)
-	Recipient string `json:"recipient,nullable"`
+	Recipient string `json:"recipient" api:"nullable"`
 	// Optional recipient information. Note: For email provider routing, use
 	// `profile.email` instead of `to.email`. The `to` field is primarily used for
 	// recipient identification and data merging.
-	To shared.UserRecipient `json:"to,nullable"`
+	To shared.UserRecipient `json:"to" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -320,7 +320,7 @@ func (r *InboundBulkMessageUserParam) UnmarshalJSON(data []byte) error {
 }
 
 type BulkNewJobResponse struct {
-	JobID string `json:"jobId,required"`
+	JobID string `json:"jobId" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		JobID       respjson.Field
@@ -336,8 +336,8 @@ func (r *BulkNewJobResponse) UnmarshalJSON(data []byte) error {
 }
 
 type BulkListUsersResponse struct {
-	Items  []BulkListUsersResponseItem `json:"items,required"`
-	Paging shared.Paging               `json:"paging,required"`
+	Items  []BulkListUsersResponseItem `json:"items" api:"required"`
+	Paging shared.Paging               `json:"paging" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Items       respjson.Field
@@ -355,8 +355,8 @@ func (r *BulkListUsersResponse) UnmarshalJSON(data []byte) error {
 
 type BulkListUsersResponseItem struct {
 	// Any of "PENDING", "ENQUEUED", "ERROR".
-	Status    string `json:"status,required"`
-	MessageID string `json:"messageId,nullable"`
+	Status    string `json:"status" api:"required"`
+	MessageID string `json:"messageId" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Status      respjson.Field
@@ -374,7 +374,7 @@ func (r *BulkListUsersResponseItem) UnmarshalJSON(data []byte) error {
 }
 
 type BulkGetJobResponse struct {
-	Job BulkGetJobResponseJob `json:"job,required"`
+	Job BulkGetJobResponseJob `json:"job" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Job         respjson.Field
@@ -395,12 +395,12 @@ type BulkGetJobResponseJob struct {
 	//   - V1 format: Requires `event` field (event ID or notification ID)
 	//   - V2 format: Optionally use `template` (notification ID) or `content` (Elemental
 	//     content) in addition to `event`
-	Definition InboundBulkMessage `json:"definition,required"`
-	Enqueued   int64              `json:"enqueued,required"`
-	Failures   int64              `json:"failures,required"`
-	Received   int64              `json:"received,required"`
+	Definition InboundBulkMessage `json:"definition" api:"required"`
+	Enqueued   int64              `json:"enqueued" api:"required"`
+	Failures   int64              `json:"failures" api:"required"`
+	Received   int64              `json:"received" api:"required"`
 	// Any of "CREATED", "PROCESSING", "COMPLETED", "ERROR".
-	Status string `json:"status,required"`
+	Status string `json:"status" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Definition  respjson.Field
@@ -420,7 +420,7 @@ func (r *BulkGetJobResponseJob) UnmarshalJSON(data []byte) error {
 }
 
 type BulkAddUsersParams struct {
-	Users []InboundBulkMessageUserParam `json:"users,omitzero,required"`
+	Users []InboundBulkMessageUserParam `json:"users,omitzero" api:"required"`
 	paramObj
 }
 
@@ -438,7 +438,7 @@ type BulkNewJobParams struct {
 	//   - V1 format: Requires `event` field (event ID or notification ID)
 	//   - V2 format: Optionally use `template` (notification ID) or `content` (Elemental
 	//     content) in addition to `event`
-	Message InboundBulkMessageParam `json:"message,omitzero,required"`
+	Message InboundBulkMessageParam `json:"message,omitzero" api:"required"`
 	paramObj
 }
 

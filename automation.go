@@ -47,7 +47,7 @@ func (r *AutomationService) List(ctx context.Context, query AutomationListParams
 }
 
 type AutomationInvokeResponse struct {
-	RunID string `json:"runId,required"`
+	RunID string `json:"runId" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		RunID       respjson.Field
@@ -64,13 +64,13 @@ func (r *AutomationInvokeResponse) UnmarshalJSON(data []byte) error {
 
 type AutomationTemplate struct {
 	// The unique identifier of the automation template.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The name of the automation template.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// The version of the template published or drafted.
 	//
 	// Any of "published", "draft".
-	Version AutomationTemplateVersion `json:"version,required"`
+	Version AutomationTemplateVersion `json:"version" api:"required"`
 	// ISO 8601 timestamp when the template was created.
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
 	// ISO 8601 timestamp when the template was last updated.

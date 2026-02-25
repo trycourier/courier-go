@@ -47,7 +47,7 @@ type SendMessageResponse struct {
 	// `requestId` in the response body. For single-recipient requests, the `requestId`
 	// is the derived message_id. For multiple recipients, Courier assigns a unique
 	// message_id to each derived message.
-	RequestID string `json:"requestId,required"`
+	RequestID string `json:"requestId" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		RequestID   respjson.Field
@@ -65,7 +65,7 @@ func (r *SendMessageResponse) UnmarshalJSON(data []byte) error {
 type SendMessageParams struct {
 	// The message property has the following primary top-level properties. They define
 	// the destination and content of the message.
-	Message SendMessageParamsMessage `json:"message,omitzero,required"`
+	Message SendMessageParamsMessage `json:"message,omitzero" api:"required"`
 	paramObj
 }
 
@@ -218,7 +218,7 @@ func (r *SendMessageParamsMessageDelay) UnmarshalJSON(data []byte) error {
 // The property ExpiresIn is required.
 type SendMessageParamsMessageExpiry struct {
 	// Duration in ms or ISO8601 duration (e.g. P1DT4H).
-	ExpiresIn SendMessageParamsMessageExpiryExpiresInUnion `json:"expires_in,omitzero,required"`
+	ExpiresIn SendMessageParamsMessageExpiryExpiresInUnion `json:"expires_in,omitzero" api:"required"`
 	// Epoch or ISO8601 timestamp with timezone.
 	ExpiresAt param.Opt[string] `json:"expires_at,omitzero"`
 	paramObj
@@ -276,7 +276,7 @@ func (r *SendMessageParamsMessageMetadata) UnmarshalJSON(data []byte) error {
 // The property SubscriptionTopicID is required.
 type SendMessageParamsMessagePreferences struct {
 	// The subscription topic to apply to the message.
-	SubscriptionTopicID string `json:"subscription_topic_id,required"`
+	SubscriptionTopicID string `json:"subscription_topic_id" api:"required"`
 	paramObj
 }
 
@@ -324,9 +324,9 @@ func (r *SendMessageParamsMessageProviderMetadata) UnmarshalJSON(data []byte) er
 // The properties Channels, Method are required.
 type SendMessageParamsMessageRouting struct {
 	// A list of channels or providers (or nested routing rules).
-	Channels []shared.MessageRoutingChannelUnionParam `json:"channels,omitzero,required"`
+	Channels []shared.MessageRoutingChannelUnionParam `json:"channels,omitzero" api:"required"`
 	// Any of "all", "single".
-	Method string `json:"method,omitzero,required"`
+	Method string `json:"method,omitzero" api:"required"`
 	paramObj
 }
 

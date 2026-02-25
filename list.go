@@ -101,7 +101,7 @@ func (r *ListService) Restore(ctx context.Context, listID string, body ListResto
 
 // The property RecipientID is required.
 type PutSubscriptionsRecipientParam struct {
-	RecipientID string                           `json:"recipientId,required"`
+	RecipientID string                           `json:"recipientId" api:"required"`
 	Preferences shared.RecipientPreferencesParam `json:"preferences,omitzero"`
 	paramObj
 }
@@ -115,10 +115,10 @@ func (r *PutSubscriptionsRecipientParam) UnmarshalJSON(data []byte) error {
 }
 
 type SubscriptionList struct {
-	ID      string `json:"id,required"`
-	Name    string `json:"name,required"`
-	Created string `json:"created,nullable"`
-	Updated string `json:"updated,nullable"`
+	ID      string `json:"id" api:"required"`
+	Name    string `json:"name" api:"required"`
+	Created string `json:"created" api:"nullable"`
+	Updated string `json:"updated" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -137,8 +137,8 @@ func (r *SubscriptionList) UnmarshalJSON(data []byte) error {
 }
 
 type ListListResponse struct {
-	Items  []SubscriptionList `json:"items,required"`
-	Paging shared.Paging      `json:"paging,required"`
+	Items  []SubscriptionList `json:"items" api:"required"`
+	Paging shared.Paging      `json:"paging" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Items       respjson.Field
@@ -155,7 +155,7 @@ func (r *ListListResponse) UnmarshalJSON(data []byte) error {
 }
 
 type ListUpdateParams struct {
-	Name        string                           `json:"name,required"`
+	Name        string                           `json:"name" api:"required"`
 	Preferences shared.RecipientPreferencesParam `json:"preferences,omitzero"`
 	paramObj
 }

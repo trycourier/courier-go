@@ -82,7 +82,7 @@ func (r *NotificationCheckService) Delete(ctx context.Context, submissionID stri
 }
 
 type NotificationCheckUpdateResponse struct {
-	Checks []Check `json:"checks,required"`
+	Checks []Check `json:"checks" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Checks      respjson.Field
@@ -98,7 +98,7 @@ func (r *NotificationCheckUpdateResponse) UnmarshalJSON(data []byte) error {
 }
 
 type NotificationCheckListResponse struct {
-	Checks []Check `json:"checks,required"`
+	Checks []Check `json:"checks" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Checks      respjson.Field
@@ -114,8 +114,8 @@ func (r *NotificationCheckListResponse) UnmarshalJSON(data []byte) error {
 }
 
 type NotificationCheckUpdateParams struct {
-	ID     string           `path:"id,required" json:"-"`
-	Checks []BaseCheckParam `json:"checks,omitzero,required"`
+	ID     string           `path:"id" api:"required" json:"-"`
+	Checks []BaseCheckParam `json:"checks,omitzero" api:"required"`
 	paramObj
 }
 
@@ -128,11 +128,11 @@ func (r *NotificationCheckUpdateParams) UnmarshalJSON(data []byte) error {
 }
 
 type NotificationCheckListParams struct {
-	ID string `path:"id,required" json:"-"`
+	ID string `path:"id" api:"required" json:"-"`
 	paramObj
 }
 
 type NotificationCheckDeleteParams struct {
-	ID string `path:"id,required" json:"-"`
+	ID string `path:"id" api:"required" json:"-"`
 	paramObj
 }

@@ -102,15 +102,15 @@ func (r *TenantService) ListUsers(ctx context.Context, tenantID string, query Te
 
 type BaseTemplateTenantAssociation struct {
 	// The template's id
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The timestamp at which the template was created
-	CreatedAt string `json:"created_at,required"`
+	CreatedAt string `json:"created_at" api:"required"`
 	// The timestamp at which the template was published
-	PublishedAt string `json:"published_at,required"`
+	PublishedAt string `json:"published_at" api:"required"`
 	// The timestamp at which the template was last updated
-	UpdatedAt string `json:"updated_at,required"`
+	UpdatedAt string `json:"updated_at" api:"required"`
 	// The version of the template
-	Version string `json:"version,required"`
+	Version string `json:"version" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -130,7 +130,7 @@ func (r *BaseTemplateTenantAssociation) UnmarshalJSON(data []byte) error {
 }
 
 type DefaultPreferences struct {
-	Items []DefaultPreferencesItem `json:"items,nullable"`
+	Items []DefaultPreferencesItem `json:"items" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Items       respjson.Field
@@ -156,7 +156,7 @@ func (r DefaultPreferences) ToParam() DefaultPreferencesParam {
 
 type DefaultPreferencesItem struct {
 	// Topic ID
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -187,7 +187,7 @@ func (r *DefaultPreferencesParam) UnmarshalJSON(data []byte) error {
 
 type DefaultPreferencesItemParam struct {
 	// Topic ID
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	SubscriptionTopicNewParam
 }
 
@@ -218,11 +218,11 @@ func (r *PostTenantTemplatePublishRequestParam) UnmarshalJSON(data []byte) error
 // Response from publishing a tenant template
 type PostTenantTemplatePublishResponse struct {
 	// The template ID
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The timestamp when the template was published
-	PublishedAt string `json:"published_at,required"`
+	PublishedAt string `json:"published_at" api:"required"`
 	// The published version of the template
-	Version string `json:"version,required"`
+	Version string `json:"version" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -244,7 +244,7 @@ func (r *PostTenantTemplatePublishResponse) UnmarshalJSON(data []byte) error {
 // The property Template is required.
 type PutTenantTemplateRequestParam struct {
 	// Template configuration for creating or updating a tenant notification template
-	Template TenantTemplateInputParam `json:"template,omitzero,required"`
+	Template TenantTemplateInputParam `json:"template,omitzero" api:"required"`
 	// Whether to publish the template immediately after saving. When true, the
 	// template becomes the active/published version. When false (default), the
 	// template is saved as a draft.
@@ -263,12 +263,12 @@ func (r *PutTenantTemplateRequestParam) UnmarshalJSON(data []byte) error {
 // Response from creating or updating a tenant notification template
 type PutTenantTemplateResponse struct {
 	// The template ID
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The version of the saved template
-	Version string `json:"version,required"`
+	Version string `json:"version" api:"required"`
 	// The timestamp when the template was published. Only present if the template was
 	// published as part of this request.
-	PublishedAt string `json:"published_at,nullable"`
+	PublishedAt string `json:"published_at" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -287,13 +287,13 @@ func (r *PutTenantTemplateResponse) UnmarshalJSON(data []byte) error {
 
 type SubscriptionTopicNew struct {
 	// Any of "OPTED_OUT", "OPTED_IN", "REQUIRED".
-	Status SubscriptionTopicNewStatus `json:"status,required"`
+	Status SubscriptionTopicNewStatus `json:"status" api:"required"`
 	// The default channels to send to this tenant when has_custom_routing is enabled
-	CustomRouting []shared.ChannelClassification `json:"custom_routing,nullable"`
+	CustomRouting []shared.ChannelClassification `json:"custom_routing" api:"nullable"`
 	// Override channel routing with custom preferences. This will override any
 	// template preferences that are set, but a user can still customize their
 	// preferences
-	HasCustomRouting bool `json:"has_custom_routing,nullable"`
+	HasCustomRouting bool `json:"has_custom_routing" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Status           respjson.Field
@@ -330,7 +330,7 @@ const (
 // The property Status is required.
 type SubscriptionTopicNewParam struct {
 	// Any of "OPTED_OUT", "OPTED_IN", "REQUIRED".
-	Status SubscriptionTopicNewStatus `json:"status,omitzero,required"`
+	Status SubscriptionTopicNewStatus `json:"status,omitzero" api:"required"`
 	// Override channel routing with custom preferences. This will override any
 	// template preferences that are set, but a user can still customize their
 	// preferences
@@ -350,20 +350,20 @@ func (r *SubscriptionTopicNewParam) UnmarshalJSON(data []byte) error {
 
 type Tenant struct {
 	// Id of the tenant.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Name of the tenant.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// Brand to be used for the account when one is not specified by the send call.
-	BrandID string `json:"brand_id,nullable"`
+	BrandID string `json:"brand_id" api:"nullable"`
 	// Defines the preferences used for the account when the user hasn't specified
 	// their own.
-	DefaultPreferences DefaultPreferences `json:"default_preferences,nullable"`
+	DefaultPreferences DefaultPreferences `json:"default_preferences" api:"nullable"`
 	// Tenant's parent id (if any).
-	ParentTenantID string `json:"parent_tenant_id,nullable"`
+	ParentTenantID string `json:"parent_tenant_id" api:"nullable"`
 	// Arbitrary properties accessible to a template.
-	Properties map[string]any `json:"properties,nullable"`
+	Properties map[string]any `json:"properties" api:"nullable"`
 	// A user profile object merged with user profile on send.
-	UserProfile map[string]any `json:"user_profile,nullable"`
+	UserProfile map[string]any `json:"user_profile" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                 respjson.Field
@@ -386,14 +386,14 @@ func (r *Tenant) UnmarshalJSON(data []byte) error {
 
 type TenantAssociation struct {
 	// Tenant ID for the association between tenant and user
-	TenantID string `json:"tenant_id,required"`
+	TenantID string `json:"tenant_id" api:"required"`
 	// Additional metadata to be applied to a user profile when used in a tenant
 	// context
-	Profile map[string]any `json:"profile,nullable"`
+	Profile map[string]any `json:"profile" api:"nullable"`
 	// Any of "user".
-	Type TenantAssociationType `json:"type,nullable"`
+	Type TenantAssociationType `json:"type" api:"nullable"`
 	// User ID for the association between tenant and user
-	UserID string `json:"user_id,nullable"`
+	UserID string `json:"user_id" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		TenantID    respjson.Field
@@ -429,7 +429,7 @@ const (
 // The property TenantID is required.
 type TenantAssociationParam struct {
 	// Tenant ID for the association between tenant and user
-	TenantID string `json:"tenant_id,required"`
+	TenantID string `json:"tenant_id" api:"required"`
 	// User ID for the association between tenant and user
 	UserID param.Opt[string] `json:"user_id,omitzero"`
 	// Additional metadata to be applied to a user profile when used in a tenant
@@ -453,7 +453,7 @@ func (r *TenantAssociationParam) UnmarshalJSON(data []byte) error {
 // The property Content is required.
 type TenantTemplateInputParam struct {
 	// Template content configuration including blocks, elements, and message structure
-	Content shared.ElementalContentParam `json:"content,omitzero,required"`
+	Content shared.ElementalContentParam `json:"content,omitzero" api:"required"`
 	// Channel-specific delivery configuration (email, SMS, push, etc.)
 	Channels map[string]TenantTemplateInputChannelParam `json:"channels,omitzero"`
 	// Provider-specific delivery configuration for routing to specific email/SMS
@@ -564,21 +564,21 @@ func (r *TenantTemplateInputProviderMetadataParam) UnmarshalJSON(data []byte) er
 
 type TenantListResponse struct {
 	// Set to true when there are more pages that can be retrieved.
-	HasMore bool `json:"has_more,required"`
+	HasMore bool `json:"has_more" api:"required"`
 	// An array of Tenants
-	Items []Tenant `json:"items,required"`
+	Items []Tenant `json:"items" api:"required"`
 	// Always set to "list". Represents the type of this object.
 	//
 	// Any of "list".
-	Type TenantListResponseType `json:"type,required"`
+	Type TenantListResponseType `json:"type" api:"required"`
 	// A url that may be used to generate these results.
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	// A pointer to the next page of results. Defined only when has_more is set to
 	// true.
-	Cursor string `json:"cursor,nullable"`
+	Cursor string `json:"cursor" api:"nullable"`
 	// A url that may be used to generate fetch the next set of results. Defined only
 	// when has_more is set to true
-	NextURL string `json:"next_url,nullable"`
+	NextURL string `json:"next_url" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		HasMore     respjson.Field
@@ -607,20 +607,20 @@ const (
 
 type TenantListUsersResponse struct {
 	// Set to true when there are more pages that can be retrieved.
-	HasMore bool `json:"has_more,required"`
+	HasMore bool `json:"has_more" api:"required"`
 	// Always set to `list`. Represents the type of this object.
 	//
 	// Any of "list".
-	Type TenantListUsersResponseType `json:"type,required"`
+	Type TenantListUsersResponseType `json:"type" api:"required"`
 	// A url that may be used to generate these results.
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	// A pointer to the next page of results. Defined only when `has_more` is set to
 	// true
-	Cursor string              `json:"cursor,nullable"`
-	Items  []TenantAssociation `json:"items,nullable"`
+	Cursor string              `json:"cursor" api:"nullable"`
+	Items  []TenantAssociation `json:"items" api:"nullable"`
 	// A url that may be used to generate fetch the next set of results. Defined only
 	// when `has_more` is set to true
-	NextURL string `json:"next_url,nullable"`
+	NextURL string `json:"next_url" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		HasMore     respjson.Field
@@ -649,7 +649,7 @@ const (
 
 type TenantUpdateParams struct {
 	// Name of the tenant.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// Brand to be used for the account when one is not specified by the send call.
 	BrandID param.Opt[string] `json:"brand_id,omitzero"`
 	// Tenant's parent id (if any).

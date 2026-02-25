@@ -84,14 +84,14 @@ func (r *UserPreferenceService) UpdateOrNewTopic(ctx context.Context, topicID st
 
 type TopicPreference struct {
 	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
-	DefaultStatus shared.PreferenceStatus `json:"default_status,required"`
+	DefaultStatus shared.PreferenceStatus `json:"default_status" api:"required"`
 	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
-	Status    shared.PreferenceStatus `json:"status,required"`
-	TopicID   string                  `json:"topic_id,required"`
-	TopicName string                  `json:"topic_name,required"`
+	Status    shared.PreferenceStatus `json:"status" api:"required"`
+	TopicID   string                  `json:"topic_id" api:"required"`
+	TopicName string                  `json:"topic_name" api:"required"`
 	// The Channels a user has chosen to receive notifications through for this topic
-	CustomRouting    []shared.ChannelClassification `json:"custom_routing,nullable"`
-	HasCustomRouting bool                           `json:"has_custom_routing,nullable"`
+	CustomRouting    []shared.ChannelClassification `json:"custom_routing" api:"nullable"`
+	HasCustomRouting bool                           `json:"has_custom_routing" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		DefaultStatus    respjson.Field
@@ -113,9 +113,9 @@ func (r *TopicPreference) UnmarshalJSON(data []byte) error {
 
 type UserPreferenceGetResponse struct {
 	// The Preferences associated with the user_id.
-	Items []TopicPreference `json:"items,required"`
+	Items []TopicPreference `json:"items" api:"required"`
 	// Deprecated - Paging not implemented on this endpoint
-	Paging shared.Paging `json:"paging,required"`
+	Paging shared.Paging `json:"paging" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Items       respjson.Field
@@ -132,7 +132,7 @@ func (r *UserPreferenceGetResponse) UnmarshalJSON(data []byte) error {
 }
 
 type UserPreferenceGetTopicResponse struct {
-	Topic TopicPreference `json:"topic,required"`
+	Topic TopicPreference `json:"topic" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Topic       respjson.Field
@@ -148,7 +148,7 @@ func (r *UserPreferenceGetTopicResponse) UnmarshalJSON(data []byte) error {
 }
 
 type UserPreferenceUpdateOrNewTopicResponse struct {
-	Message string `json:"message,required"`
+	Message string `json:"message" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Message     respjson.Field
@@ -179,7 +179,7 @@ func (r UserPreferenceGetParams) URLQuery() (v url.Values, err error) {
 }
 
 type UserPreferenceGetTopicParams struct {
-	UserID string `path:"user_id,required" json:"-"`
+	UserID string `path:"user_id" api:"required" json:"-"`
 	// Query the preferences of a user for this specific tenant context.
 	TenantID param.Opt[string] `query:"tenant_id,omitzero" json:"-"`
 	paramObj
@@ -195,8 +195,8 @@ func (r UserPreferenceGetTopicParams) URLQuery() (v url.Values, err error) {
 }
 
 type UserPreferenceUpdateOrNewTopicParams struct {
-	UserID string                                    `path:"user_id,required" json:"-"`
-	Topic  UserPreferenceUpdateOrNewTopicParamsTopic `json:"topic,omitzero,required"`
+	UserID string                                    `path:"user_id" api:"required" json:"-"`
+	Topic  UserPreferenceUpdateOrNewTopicParamsTopic `json:"topic,omitzero" api:"required"`
 	// Update the preferences of a user for this specific tenant context.
 	TenantID param.Opt[string] `query:"tenant_id,omitzero" json:"-"`
 	paramObj
@@ -222,7 +222,7 @@ func (r UserPreferenceUpdateOrNewTopicParams) URLQuery() (v url.Values, err erro
 // The property Status is required.
 type UserPreferenceUpdateOrNewTopicParamsTopic struct {
 	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
-	Status           shared.PreferenceStatus `json:"status,omitzero,required"`
+	Status           shared.PreferenceStatus `json:"status,omitzero" api:"required"`
 	HasCustomRouting param.Opt[bool]         `json:"has_custom_routing,omitzero"`
 	// The Channels a user has chosen to receive notifications through for this topic
 	CustomRouting []shared.ChannelClassification `json:"custom_routing,omitzero"`

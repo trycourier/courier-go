@@ -68,12 +68,12 @@ func (r *TranslationService) Update(ctx context.Context, locale string, params T
 }
 
 type TranslationGetParams struct {
-	Domain string `path:"domain,required" json:"-"`
+	Domain string `path:"domain" api:"required" json:"-"`
 	paramObj
 }
 
 type TranslationUpdateParams struct {
-	Domain string `path:"domain,required" json:"-"`
+	Domain string `path:"domain" api:"required" json:"-"`
 	Body   string
 	paramObj
 }

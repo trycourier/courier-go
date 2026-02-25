@@ -59,7 +59,7 @@ func (r *TenantTemplateVersionService) Get(ctx context.Context, version string, 
 }
 
 type TenantTemplateVersionGetParams struct {
-	TenantID   string `path:"tenant_id,required" json:"-"`
-	TemplateID string `path:"template_id,required" json:"-"`
+	TenantID   string `path:"tenant_id" api:"required" json:"-"`
+	TemplateID string `path:"template_id" api:"required" json:"-"`
 	paramObj
 }

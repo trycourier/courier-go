@@ -101,41 +101,41 @@ func (r *MessageService) History(ctx context.Context, messageID string, query Me
 type MessageDetails struct {
 	// A unique identifier associated with the message you wish to retrieve (results
 	// from a send).
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// A UTC timestamp at which the recipient clicked on a tracked link for the first
 	// time. Stored as a millisecond representation of the Unix epoch.
-	Clicked int64 `json:"clicked,required"`
+	Clicked int64 `json:"clicked" api:"required"`
 	// A UTC timestamp at which the Integration provider delivered the message. Stored
 	// as a millisecond representation of the Unix epoch.
-	Delivered int64 `json:"delivered,required"`
+	Delivered int64 `json:"delivered" api:"required"`
 	// A UTC timestamp at which Courier received the message request. Stored as a
 	// millisecond representation of the Unix epoch.
-	Enqueued int64 `json:"enqueued,required"`
+	Enqueued int64 `json:"enqueued" api:"required"`
 	// A unique identifier associated with the event of the delivered message.
-	Event string `json:"event,required"`
+	Event string `json:"event" api:"required"`
 	// A unique identifier associated with the notification of the delivered message.
-	Notification string `json:"notification,required"`
+	Notification string `json:"notification" api:"required"`
 	// A UTC timestamp at which the recipient opened a message for the first time.
 	// Stored as a millisecond representation of the Unix epoch.
-	Opened int64 `json:"opened,required"`
+	Opened int64 `json:"opened" api:"required"`
 	// A unique identifier associated with the recipient of the delivered message.
-	Recipient string `json:"recipient,required"`
+	Recipient string `json:"recipient" api:"required"`
 	// A UTC timestamp at which Courier passed the message to the Integration provider.
 	// Stored as a millisecond representation of the Unix epoch.
-	Sent int64 `json:"sent,required"`
+	Sent int64 `json:"sent" api:"required"`
 	// The current status of the message.
 	//
 	// Any of "CANCELED", "CLICKED", "DELAYED", "DELIVERED", "DIGESTED", "ENQUEUED",
 	// "FILTERED", "OPENED", "ROUTED", "SENT", "SIMULATED", "THROTTLED",
 	// "UNDELIVERABLE", "UNMAPPED", "UNROUTABLE".
-	Status MessageDetailsStatus `json:"status,required"`
+	Status MessageDetailsStatus `json:"status" api:"required"`
 	// A message describing the error that occurred.
-	Error string `json:"error,nullable"`
+	Error string `json:"error" api:"nullable"`
 	// The reason for the current status of the message.
 	//
 	// Any of "BOUNCED", "FAILED", "FILTERED", "NO_CHANNELS", "NO_PROVIDERS",
 	// "OPT_IN_REQUIRED", "PROVIDER_ERROR", "UNPUBLISHED", "UNSUBSCRIBED".
-	Reason MessageDetailsReason `json:"reason,nullable"`
+	Reason MessageDetailsReason `json:"reason" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID           respjson.Field
@@ -198,7 +198,7 @@ const (
 )
 
 type MessageGetResponse struct {
-	Providers []map[string]any `json:"providers,nullable"`
+	Providers []map[string]any `json:"providers" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Providers   respjson.Field
@@ -216,9 +216,9 @@ func (r *MessageGetResponse) UnmarshalJSON(data []byte) error {
 
 type MessageListResponse struct {
 	// Paging information for the result set.
-	Paging shared.Paging `json:"paging,required"`
+	Paging shared.Paging `json:"paging" api:"required"`
 	// An array of messages with their details.
-	Results []MessageDetails `json:"results,required"`
+	Results []MessageDetails `json:"results" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Paging      respjson.Field
@@ -236,7 +236,7 @@ func (r *MessageListResponse) UnmarshalJSON(data []byte) error {
 
 type MessageContentResponse struct {
 	// An array of render output of a previously sent message.
-	Results []MessageContentResponseResult `json:"results,required"`
+	Results []MessageContentResponseResult `json:"results" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Results     respjson.Field
@@ -253,11 +253,11 @@ func (r *MessageContentResponse) UnmarshalJSON(data []byte) error {
 
 type MessageContentResponseResult struct {
 	// The channel used for rendering the message.
-	Channel string `json:"channel,required"`
+	Channel string `json:"channel" api:"required"`
 	// The ID of channel used for rendering the message.
-	ChannelID string `json:"channel_id,required"`
+	ChannelID string `json:"channel_id" api:"required"`
 	// Content details of the rendered message.
-	Content MessageContentResponseResultContent `json:"content,required"`
+	Content MessageContentResponseResultContent `json:"content" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Channel     respjson.Field
@@ -277,17 +277,17 @@ func (r *MessageContentResponseResult) UnmarshalJSON(data []byte) error {
 // Content details of the rendered message.
 type MessageContentResponseResultContent struct {
 	// The blocks of the rendered message.
-	Blocks []MessageContentResponseResultContentBlock `json:"blocks,required"`
+	Blocks []MessageContentResponseResultContentBlock `json:"blocks" api:"required"`
 	// The body of the rendered message.
-	Body string `json:"body,required"`
+	Body string `json:"body" api:"required"`
 	// The html content of the rendered message.
-	HTML string `json:"html,required"`
+	HTML string `json:"html" api:"required"`
 	// The subject of the rendered message.
-	Subject string `json:"subject,required"`
+	Subject string `json:"subject" api:"required"`
 	// The text of the rendered message.
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// The title of the rendered message.
-	Title string `json:"title,required"`
+	Title string `json:"title" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Blocks      respjson.Field
@@ -309,9 +309,9 @@ func (r *MessageContentResponseResultContent) UnmarshalJSON(data []byte) error {
 
 type MessageContentResponseResultContentBlock struct {
 	// The block text of the rendered message block.
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// The block type of the rendered message block.
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Text        respjson.Field
@@ -328,7 +328,7 @@ func (r *MessageContentResponseResultContentBlock) UnmarshalJSON(data []byte) er
 }
 
 type MessageHistoryResponse struct {
-	Results []map[string]any `json:"results,required"`
+	Results []map[string]any `json:"results" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Results     respjson.Field
