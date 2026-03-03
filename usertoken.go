@@ -11,7 +11,6 @@ import (
 	"slices"
 
 	"github.com/trycourier/courier-go/v4/internal/apijson"
-	shimjson "github.com/trycourier/courier-go/v4/internal/encoding/json"
 	"github.com/trycourier/courier-go/v4/internal/requestconfig"
 	"github.com/trycourier/courier-go/v4/option"
 	"github.com/trycourier/courier-go/v4/packages/param"
@@ -162,15 +161,6 @@ func (r *UserToken) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ToParam converts this UserToken to a UserTokenParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// UserTokenParam.Overrides()
-func (r UserToken) ToParam() UserTokenParam {
-	return param.Override[UserTokenParam](json.RawMessage(r.RawJSON()))
-}
-
 type UserTokenProviderKey string
 
 const (
@@ -276,103 +266,6 @@ func (r *UserTokenTracking) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The properties Token, ProviderKey are required.
-type UserTokenParam struct {
-	// Full body of the token. Must match token in URL path parameter.
-	Token string `json:"token" api:"required"`
-	// Any of "firebase-fcm", "apn", "expo", "onesignal".
-	ProviderKey UserTokenProviderKey `json:"provider_key,omitzero" api:"required"`
-	// Information about the device the token came from.
-	Device UserTokenDeviceParam `json:"device,omitzero"`
-	// ISO 8601 formatted date the token expires. Defaults to 2 months. Set to false to
-	// disable expiration.
-	ExpiryDate UserTokenExpiryDateUnionParam `json:"expiry_date,omitzero"`
-	// Tracking information about the device the token came from.
-	Tracking UserTokenTrackingParam `json:"tracking,omitzero"`
-	// Properties about the token.
-	Properties any `json:"properties,omitzero"`
-	paramObj
-}
-
-func (r UserTokenParam) MarshalJSON() (data []byte, err error) {
-	type shadow UserTokenParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *UserTokenParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Information about the device the token came from.
-type UserTokenDeviceParam struct {
-	// Id of the advertising identifier
-	AdID param.Opt[string] `json:"ad_id,omitzero"`
-	// Id of the application the token is used for
-	AppID param.Opt[string] `json:"app_id,omitzero"`
-	// Id of the device the token is associated with
-	DeviceID param.Opt[string] `json:"device_id,omitzero"`
-	// The device manufacturer
-	Manufacturer param.Opt[string] `json:"manufacturer,omitzero"`
-	// The device model
-	Model param.Opt[string] `json:"model,omitzero"`
-	// The device platform i.e. android, ios, web
-	Platform param.Opt[string] `json:"platform,omitzero"`
-	paramObj
-}
-
-func (r UserTokenDeviceParam) MarshalJSON() (data []byte, err error) {
-	type shadow UserTokenDeviceParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *UserTokenDeviceParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type UserTokenExpiryDateUnionParam struct {
-	OfString param.Opt[string] `json:",omitzero,inline"`
-	OfBool   param.Opt[bool]   `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u UserTokenExpiryDateUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfBool)
-}
-func (u *UserTokenExpiryDateUnionParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *UserTokenExpiryDateUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	}
-	return nil
-}
-
-// Tracking information about the device the token came from.
-type UserTokenTrackingParam struct {
-	// The IP address of the device
-	IP param.Opt[string] `json:"ip,omitzero"`
-	// The latitude of the device
-	Lat param.Opt[string] `json:"lat,omitzero"`
-	// The longitude of the device
-	Long param.Opt[string] `json:"long,omitzero"`
-	// The operating system version
-	OsVersion param.Opt[string] `json:"os_version,omitzero"`
-	paramObj
-}
-
-func (r UserTokenTrackingParam) MarshalJSON() (data []byte, err error) {
-	type shadow UserTokenTrackingParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *UserTokenTrackingParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type UserTokenGetResponse struct {
 	// Any of "active", "unknown", "failed", "revoked".
 	Status string `json:"status" api:"nullable"`
@@ -455,14 +348,105 @@ type UserTokenDeleteParams struct {
 }
 
 type UserTokenAddSingleParams struct {
-	UserID    string `path:"user_id" api:"required" json:"-"`
-	UserToken UserTokenParam
+	UserID string `path:"user_id" api:"required" json:"-"`
+	// Any of "firebase-fcm", "apn", "expo", "onesignal".
+	ProviderKey UserTokenAddSingleParamsProviderKey `json:"provider_key,omitzero" api:"required"`
+	// Information about the device the token came from.
+	Device UserTokenAddSingleParamsDevice `json:"device,omitzero"`
+	// ISO 8601 formatted date the token expires. Defaults to 2 months. Set to false to
+	// disable expiration.
+	ExpiryDate UserTokenAddSingleParamsExpiryDateUnion `json:"expiry_date,omitzero"`
+	// Tracking information about the device the token came from.
+	Tracking UserTokenAddSingleParamsTracking `json:"tracking,omitzero"`
+	// Properties about the token.
+	Properties any `json:"properties,omitzero"`
 	paramObj
 }
 
 func (r UserTokenAddSingleParams) MarshalJSON() (data []byte, err error) {
-	return shimjson.Marshal(r.UserToken)
+	type shadow UserTokenAddSingleParams
+	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *UserTokenAddSingleParams) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &r.UserToken)
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type UserTokenAddSingleParamsProviderKey string
+
+const (
+	UserTokenAddSingleParamsProviderKeyFirebaseFcm UserTokenAddSingleParamsProviderKey = "firebase-fcm"
+	UserTokenAddSingleParamsProviderKeyApn         UserTokenAddSingleParamsProviderKey = "apn"
+	UserTokenAddSingleParamsProviderKeyExpo        UserTokenAddSingleParamsProviderKey = "expo"
+	UserTokenAddSingleParamsProviderKeyOnesignal   UserTokenAddSingleParamsProviderKey = "onesignal"
+)
+
+// Information about the device the token came from.
+type UserTokenAddSingleParamsDevice struct {
+	// Id of the advertising identifier
+	AdID param.Opt[string] `json:"ad_id,omitzero"`
+	// Id of the application the token is used for
+	AppID param.Opt[string] `json:"app_id,omitzero"`
+	// Id of the device the token is associated with
+	DeviceID param.Opt[string] `json:"device_id,omitzero"`
+	// The device manufacturer
+	Manufacturer param.Opt[string] `json:"manufacturer,omitzero"`
+	// The device model
+	Model param.Opt[string] `json:"model,omitzero"`
+	// The device platform i.e. android, ios, web
+	Platform param.Opt[string] `json:"platform,omitzero"`
+	paramObj
+}
+
+func (r UserTokenAddSingleParamsDevice) MarshalJSON() (data []byte, err error) {
+	type shadow UserTokenAddSingleParamsDevice
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *UserTokenAddSingleParamsDevice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type UserTokenAddSingleParamsExpiryDateUnion struct {
+	OfString param.Opt[string] `json:",omitzero,inline"`
+	OfBool   param.Opt[bool]   `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u UserTokenAddSingleParamsExpiryDateUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfString, u.OfBool)
+}
+func (u *UserTokenAddSingleParamsExpiryDateUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *UserTokenAddSingleParamsExpiryDateUnion) asAny() any {
+	if !param.IsOmitted(u.OfString) {
+		return &u.OfString.Value
+	} else if !param.IsOmitted(u.OfBool) {
+		return &u.OfBool.Value
+	}
+	return nil
+}
+
+// Tracking information about the device the token came from.
+type UserTokenAddSingleParamsTracking struct {
+	// The IP address of the device
+	IP param.Opt[string] `json:"ip,omitzero"`
+	// The latitude of the device
+	Lat param.Opt[string] `json:"lat,omitzero"`
+	// The longitude of the device
+	Long param.Opt[string] `json:"long,omitzero"`
+	// The operating system version
+	OsVersion param.Opt[string] `json:"os_version,omitzero"`
+	paramObj
+}
+
+func (r UserTokenAddSingleParamsTracking) MarshalJSON() (data []byte, err error) {
+	type shadow UserTokenAddSingleParamsTracking
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *UserTokenAddSingleParamsTracking) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
