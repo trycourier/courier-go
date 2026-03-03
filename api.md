@@ -453,10 +453,6 @@ Methods:
 
 ## Tokens
 
-Params Types:
-
-- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#UserTokenParam">UserTokenParam</a>
-
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#UserToken">UserToken</a>
