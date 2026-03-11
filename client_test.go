@@ -39,7 +39,7 @@ func TestUserAgentHeader(t *testing.T) {
 			},
 		}),
 	)
-	client.Send.Message(context.Background(), courier.SendMessageParams{
+	_, _ = client.Send.Message(context.Background(), courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
 			To: courier.SendMessageParamsMessageToUnion{
 				OfUserRecipient: &shared.UserRecipientParam{
