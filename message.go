@@ -43,11 +43,11 @@ func (r *MessageService) Get(ctx context.Context, messageID string, opts ...opti
 	opts = slices.Concat(r.Options, opts)
 	if messageID == "" {
 		err = errors.New("missing required message_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("messages/%s", messageID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Fetch the statuses of messages you've previously sent.
@@ -55,7 +55,7 @@ func (r *MessageService) List(ctx context.Context, query MessageListParams, opts
 	opts = slices.Concat(r.Options, opts)
 	path := "messages"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Cancel a message that is currently in the process of being delivered. A
@@ -67,11 +67,11 @@ func (r *MessageService) Cancel(ctx context.Context, messageID string, opts ...o
 	opts = slices.Concat(r.Options, opts)
 	if messageID == "" {
 		err = errors.New("missing required message_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("messages/%s/cancel", messageID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Get message content
@@ -79,11 +79,11 @@ func (r *MessageService) Content(ctx context.Context, messageID string, opts ...
 	opts = slices.Concat(r.Options, opts)
 	if messageID == "" {
 		err = errors.New("missing required message_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("messages/%s/output", messageID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Fetch the array of events of a message you've previously sent.
@@ -91,11 +91,11 @@ func (r *MessageService) History(ctx context.Context, messageID string, query Me
 	opts = slices.Concat(r.Options, opts)
 	if messageID == "" {
 		err = errors.New("missing required message_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("messages/%s/history", messageID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 type MessageDetails struct {

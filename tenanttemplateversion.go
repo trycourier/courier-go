@@ -43,19 +43,19 @@ func (r *TenantTemplateVersionService) Get(ctx context.Context, version string, 
 	opts = slices.Concat(r.Options, opts)
 	if query.TenantID == "" {
 		err = errors.New("missing required tenant_id parameter")
-		return
+		return nil, err
 	}
 	if query.TemplateID == "" {
 		err = errors.New("missing required template_id parameter")
-		return
+		return nil, err
 	}
 	if version == "" {
 		err = errors.New("missing required version parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("tenants/%s/templates/%s/versions/%s", query.TenantID, query.TemplateID, version)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 type TenantTemplateVersionGetParams struct {

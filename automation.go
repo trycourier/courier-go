@@ -43,7 +43,7 @@ func (r *AutomationService) List(ctx context.Context, query AutomationListParams
 	opts = slices.Concat(r.Options, opts)
 	path := "automations"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 type AutomationInvokeResponse struct {

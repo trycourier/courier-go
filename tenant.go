@@ -48,11 +48,11 @@ func (r *TenantService) Get(ctx context.Context, tenantID string, opts ...option
 	opts = slices.Concat(r.Options, opts)
 	if tenantID == "" {
 		err = errors.New("missing required tenant_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("tenants/%s", tenantID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Create or Replace a Tenant
@@ -60,11 +60,11 @@ func (r *TenantService) Update(ctx context.Context, tenantID string, body Tenant
 	opts = slices.Concat(r.Options, opts)
 	if tenantID == "" {
 		err = errors.New("missing required tenant_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("tenants/%s", tenantID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Get a List of Tenants
@@ -72,7 +72,7 @@ func (r *TenantService) List(ctx context.Context, query TenantListParams, opts .
 	opts = slices.Concat(r.Options, opts)
 	path := "tenants"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Delete a Tenant
@@ -81,11 +81,11 @@ func (r *TenantService) Delete(ctx context.Context, tenantID string, opts ...opt
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if tenantID == "" {
 		err = errors.New("missing required tenant_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("tenants/%s", tenantID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Get Users in Tenant
@@ -93,11 +93,11 @@ func (r *TenantService) ListUsers(ctx context.Context, tenantID string, query Te
 	opts = slices.Concat(r.Options, opts)
 	if tenantID == "" {
 		err = errors.New("missing required tenant_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("tenants/%s/users", tenantID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 type BaseTemplateTenantAssociation struct {

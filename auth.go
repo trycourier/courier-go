@@ -38,7 +38,7 @@ func (r *AuthService) IssueToken(ctx context.Context, body AuthIssueTokenParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "auth/issue-token"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type AuthIssueTokenResponse struct {

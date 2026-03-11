@@ -40,15 +40,15 @@ func (r *TenantPreferenceItemService) Update(ctx context.Context, topicID string
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if params.TenantID == "" {
 		err = errors.New("missing required tenant_id parameter")
-		return
+		return err
 	}
 	if topicID == "" {
 		err = errors.New("missing required topic_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("tenants/%s/default_preferences/items/%s", params.TenantID, topicID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, nil, opts...)
-	return
+	return err
 }
 
 // Remove Default Preferences For Topic
@@ -57,15 +57,15 @@ func (r *TenantPreferenceItemService) Delete(ctx context.Context, topicID string
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if body.TenantID == "" {
 		err = errors.New("missing required tenant_id parameter")
-		return
+		return err
 	}
 	if topicID == "" {
 		err = errors.New("missing required topic_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("tenants/%s/default_preferences/items/%s", body.TenantID, topicID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 type TenantPreferenceItemUpdateParams struct {

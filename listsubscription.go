@@ -43,11 +43,11 @@ func (r *ListSubscriptionService) List(ctx context.Context, listID string, query
 	opts = slices.Concat(r.Options, opts)
 	if listID == "" {
 		err = errors.New("missing required list_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("lists/%s/subscriptions", listID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Subscribes additional users to the list, without modifying existing
@@ -57,11 +57,11 @@ func (r *ListSubscriptionService) Add(ctx context.Context, listID string, body L
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if listID == "" {
 		err = errors.New("missing required list_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("lists/%s/subscriptions", listID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
-	return
+	return err
 }
 
 // Subscribes the users to the list, overwriting existing subscriptions. If the
@@ -71,11 +71,11 @@ func (r *ListSubscriptionService) Subscribe(ctx context.Context, listID string, 
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if listID == "" {
 		err = errors.New("missing required list_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("lists/%s/subscriptions", listID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, nil, opts...)
-	return
+	return err
 }
 
 // Subscribe a user to an existing list (note: if the List does not exist, it will
@@ -85,15 +85,15 @@ func (r *ListSubscriptionService) SubscribeUser(ctx context.Context, userID stri
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if params.ListID == "" {
 		err = errors.New("missing required list_id parameter")
-		return
+		return err
 	}
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("lists/%s/subscriptions/%s", params.ListID, userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, nil, opts...)
-	return
+	return err
 }
 
 // Delete a subscription to a list by list ID and user ID.
@@ -102,15 +102,15 @@ func (r *ListSubscriptionService) UnsubscribeUser(ctx context.Context, userID st
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if body.ListID == "" {
 		err = errors.New("missing required list_id parameter")
-		return
+		return err
 	}
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("lists/%s/subscriptions/%s", body.ListID, userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 type ListSubscriptionListResponse struct {

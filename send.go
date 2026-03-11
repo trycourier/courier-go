@@ -39,7 +39,7 @@ func (r *SendService) Message(ctx context.Context, body SendMessageParams, opts 
 	opts = slices.Concat(r.Options, opts)
 	path := "send"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type SendMessageResponse struct {

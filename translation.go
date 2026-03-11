@@ -39,15 +39,15 @@ func (r *TranslationService) Get(ctx context.Context, locale string, query Trans
 	opts = slices.Concat(r.Options, opts)
 	if query.Domain == "" {
 		err = errors.New("missing required domain parameter")
-		return
+		return nil, err
 	}
 	if locale == "" {
 		err = errors.New("missing required locale parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("translations/%s/%s", query.Domain, locale)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Update a translation
@@ -56,15 +56,15 @@ func (r *TranslationService) Update(ctx context.Context, locale string, params T
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if params.Domain == "" {
 		err = errors.New("missing required domain parameter")
-		return
+		return err
 	}
 	if locale == "" {
 		err = errors.New("missing required locale parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("translations/%s/%s", params.Domain, locale)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, nil, opts...)
-	return
+	return err
 }
 
 type TranslationGetParams struct {

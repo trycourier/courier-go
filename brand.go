@@ -44,7 +44,7 @@ func (r *BrandService) New(ctx context.Context, body BrandNewParams, opts ...opt
 	opts = slices.Concat(r.Options, opts)
 	path := "brands"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Fetch a specific brand by brand ID.
@@ -52,11 +52,11 @@ func (r *BrandService) Get(ctx context.Context, brandID string, opts ...option.R
 	opts = slices.Concat(r.Options, opts)
 	if brandID == "" {
 		err = errors.New("missing required brand_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("brands/%s", brandID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Replace an existing brand with the supplied values.
@@ -64,11 +64,11 @@ func (r *BrandService) Update(ctx context.Context, brandID string, body BrandUpd
 	opts = slices.Concat(r.Options, opts)
 	if brandID == "" {
 		err = errors.New("missing required brand_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("brands/%s", brandID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Get the list of brands.
@@ -76,7 +76,7 @@ func (r *BrandService) List(ctx context.Context, query BrandListParams, opts ...
 	opts = slices.Concat(r.Options, opts)
 	path := "brands"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Delete a brand by brand ID.
@@ -85,11 +85,11 @@ func (r *BrandService) Delete(ctx context.Context, brandID string, opts ...optio
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if brandID == "" {
 		err = errors.New("missing required brand_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("brands/%s", brandID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 type Brand struct {

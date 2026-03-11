@@ -38,7 +38,7 @@ func (r *InboundService) TrackEvent(ctx context.Context, body InboundTrackEventP
 	opts = slices.Concat(r.Options, opts)
 	path := "inbound/courier"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type InboundTrackEventResponse struct {
