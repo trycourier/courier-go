@@ -43,11 +43,11 @@ func (r *UserPreferenceService) Get(ctx context.Context, userID string, query Us
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("users/%s/preferences", userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Fetch user preferences for a specific subscription topic.
@@ -55,15 +55,15 @@ func (r *UserPreferenceService) GetTopic(ctx context.Context, topicID string, pa
 	opts = slices.Concat(r.Options, opts)
 	if params.UserID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return nil, err
 	}
 	if topicID == "" {
 		err = errors.New("missing required topic_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("users/%s/preferences/%s", params.UserID, topicID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // Update or Create user preferences for a specific subscription topic.
@@ -71,15 +71,15 @@ func (r *UserPreferenceService) UpdateOrNewTopic(ctx context.Context, topicID st
 	opts = slices.Concat(r.Options, opts)
 	if params.UserID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return nil, err
 	}
 	if topicID == "" {
 		err = errors.New("missing required topic_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("users/%s/preferences/%s", params.UserID, topicID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 type TopicPreference struct {

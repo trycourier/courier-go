@@ -42,7 +42,7 @@ func (r *AutomationInvokeService) InvokeAdHoc(ctx context.Context, body Automati
 	opts = slices.Concat(r.Options, opts)
 	path := "automations/invoke"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Invoke an automation run from an automation template.
@@ -50,11 +50,11 @@ func (r *AutomationInvokeService) InvokeByTemplate(ctx context.Context, template
 	opts = slices.Concat(r.Options, opts)
 	if templateID == "" {
 		err = errors.New("missing required templateId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("automations/%s/invoke", templateID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type AutomationInvokeInvokeAdHocParams struct {

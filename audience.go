@@ -43,11 +43,11 @@ func (r *AudienceService) Get(ctx context.Context, audienceID string, opts ...op
 	opts = slices.Concat(r.Options, opts)
 	if audienceID == "" {
 		err = errors.New("missing required audience_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("audiences/%s", audienceID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates or updates audience.
@@ -55,11 +55,11 @@ func (r *AudienceService) Update(ctx context.Context, audienceID string, body Au
 	opts = slices.Concat(r.Options, opts)
 	if audienceID == "" {
 		err = errors.New("missing required audience_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("audiences/%s", audienceID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Get the audiences associated with the authorization token.
@@ -67,7 +67,7 @@ func (r *AudienceService) List(ctx context.Context, query AudienceListParams, op
 	opts = slices.Concat(r.Options, opts)
 	path := "audiences"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Deletes the specified audience.
@@ -76,11 +76,11 @@ func (r *AudienceService) Delete(ctx context.Context, audienceID string, opts ..
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if audienceID == "" {
 		err = errors.New("missing required audience_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("audiences/%s", audienceID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Get list of members of an audience.
@@ -88,11 +88,11 @@ func (r *AudienceService) ListMembers(ctx context.Context, audienceID string, qu
 	opts = slices.Concat(r.Options, opts)
 	if audienceID == "" {
 		err = errors.New("missing required audience_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("audiences/%s/members", audienceID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 type Audience struct {

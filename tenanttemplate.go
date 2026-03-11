@@ -47,15 +47,15 @@ func (r *TenantTemplateService) Get(ctx context.Context, templateID string, quer
 	opts = slices.Concat(r.Options, opts)
 	if query.TenantID == "" {
 		err = errors.New("missing required tenant_id parameter")
-		return
+		return nil, err
 	}
 	if templateID == "" {
 		err = errors.New("missing required template_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("tenants/%s/templates/%s", query.TenantID, templateID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // List Templates in Tenant
@@ -63,11 +63,11 @@ func (r *TenantTemplateService) List(ctx context.Context, tenantID string, query
 	opts = slices.Concat(r.Options, opts)
 	if tenantID == "" {
 		err = errors.New("missing required tenant_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("tenants/%s/templates", tenantID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Publishes a specific version of a notification template for a tenant.
@@ -78,15 +78,15 @@ func (r *TenantTemplateService) Publish(ctx context.Context, templateID string, 
 	opts = slices.Concat(r.Options, opts)
 	if params.TenantID == "" {
 		err = errors.New("missing required tenant_id parameter")
-		return
+		return nil, err
 	}
 	if templateID == "" {
 		err = errors.New("missing required template_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("tenants/%s/templates/%s/publish", params.TenantID, templateID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates or updates a notification template for a tenant.
@@ -100,15 +100,15 @@ func (r *TenantTemplateService) Replace(ctx context.Context, templateID string, 
 	opts = slices.Concat(r.Options, opts)
 	if params.TenantID == "" {
 		err = errors.New("missing required tenant_id parameter")
-		return
+		return nil, err
 	}
 	if templateID == "" {
 		err = errors.New("missing required template_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("tenants/%s/templates/%s", params.TenantID, templateID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 type TenantTemplateListResponse struct {

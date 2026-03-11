@@ -42,11 +42,11 @@ func (r *UserTenantService) List(ctx context.Context, userID string, query UserT
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("users/%s/tenants", userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // This endpoint is used to add a user to multiple tenants in one call. A custom
@@ -57,11 +57,11 @@ func (r *UserTenantService) AddMultiple(ctx context.Context, userID string, body
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("users/%s/tenants", userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, nil, opts...)
-	return
+	return err
 }
 
 // This endpoint is used to add a single tenant.
@@ -73,15 +73,15 @@ func (r *UserTenantService) AddSingle(ctx context.Context, tenantID string, para
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if params.UserID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return err
 	}
 	if tenantID == "" {
 		err = errors.New("missing required tenant_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("users/%s/tenants/%s", params.UserID, tenantID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, nil, opts...)
-	return
+	return err
 }
 
 // Removes a user from any tenants they may have been associated with.
@@ -90,11 +90,11 @@ func (r *UserTenantService) RemoveAll(ctx context.Context, userID string, opts .
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("users/%s/tenants", userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Removes a user from the supplied tenant.
@@ -103,15 +103,15 @@ func (r *UserTenantService) RemoveSingle(ctx context.Context, tenantID string, b
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if body.UserID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return err
 	}
 	if tenantID == "" {
 		err = errors.New("missing required tenant_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("users/%s/tenants/%s", body.UserID, tenantID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 type UserTenantListResponse struct {

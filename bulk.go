@@ -49,11 +49,11 @@ func (r *BulkService) AddUsers(ctx context.Context, jobID string, body BulkAddUs
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if jobID == "" {
 		err = errors.New("missing required job_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("bulk/%s", jobID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
-	return
+	return err
 }
 
 // Creates a new bulk job for sending messages to multiple recipients.
@@ -67,7 +67,7 @@ func (r *BulkService) NewJob(ctx context.Context, body BulkNewJobParams, opts ..
 	opts = slices.Concat(r.Options, opts)
 	path := "bulk"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Get Bulk Job Users
@@ -75,11 +75,11 @@ func (r *BulkService) ListUsers(ctx context.Context, jobID string, query BulkLis
 	opts = slices.Concat(r.Options, opts)
 	if jobID == "" {
 		err = errors.New("missing required job_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("bulk/%s/users", jobID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Get a bulk job
@@ -87,11 +87,11 @@ func (r *BulkService) GetJob(ctx context.Context, jobID string, opts ...option.R
 	opts = slices.Concat(r.Options, opts)
 	if jobID == "" {
 		err = errors.New("missing required job_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("bulk/%s", jobID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Run a bulk job
@@ -100,11 +100,11 @@ func (r *BulkService) RunJob(ctx context.Context, jobID string, opts ...option.R
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if jobID == "" {
 		err = errors.New("missing required job_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("bulk/%s/run", jobID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Bulk message definition. Supports two formats:

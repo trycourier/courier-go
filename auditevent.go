@@ -43,11 +43,11 @@ func (r *AuditEventService) Get(ctx context.Context, auditEventID string, opts .
 	opts = slices.Concat(r.Options, opts)
 	if auditEventID == "" {
 		err = errors.New("missing required audit-event-id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("audit-events/%s", auditEventID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Fetch the list of audit events
@@ -55,7 +55,7 @@ func (r *AuditEventService) List(ctx context.Context, query AuditEventListParams
 	opts = slices.Concat(r.Options, opts)
 	path := "audit-events"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 type AuditEvent struct {

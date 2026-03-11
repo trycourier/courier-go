@@ -41,15 +41,15 @@ func (r *UserTokenService) Get(ctx context.Context, token string, query UserToke
 	opts = slices.Concat(r.Options, opts)
 	if query.UserID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return nil, err
 	}
 	if token == "" {
 		err = errors.New("missing required token parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("users/%s/tokens/%s", query.UserID, token)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Apply a JSON Patch (RFC 6902) to the specified token.
@@ -58,15 +58,15 @@ func (r *UserTokenService) Update(ctx context.Context, token string, params User
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if params.UserID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return err
 	}
 	if token == "" {
 		err = errors.New("missing required token parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("users/%s/tokens/%s", params.UserID, token)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, params, nil, opts...)
-	return
+	return err
 }
 
 // Gets all tokens available for a :user_id
@@ -74,11 +74,11 @@ func (r *UserTokenService) List(ctx context.Context, userID string, opts ...opti
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("users/%s/tokens", userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Delete User Token
@@ -87,15 +87,15 @@ func (r *UserTokenService) Delete(ctx context.Context, token string, body UserTo
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if body.UserID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return err
 	}
 	if token == "" {
 		err = errors.New("missing required token parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("users/%s/tokens/%s", body.UserID, token)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Adds multiple tokens to a user and overwrites matching existing tokens.
@@ -104,11 +104,11 @@ func (r *UserTokenService) AddMultiple(ctx context.Context, userID string, opts 
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("users/%s/tokens", userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Adds a single token to a user and overwrites a matching existing token.
@@ -117,15 +117,15 @@ func (r *UserTokenService) AddSingle(ctx context.Context, token string, params U
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if params.UserID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return err
 	}
 	if token == "" {
 		err = errors.New("missing required token parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("users/%s/tokens/%s", params.UserID, token)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, nil, opts...)
-	return
+	return err
 }
 
 type UserToken struct {

@@ -43,11 +43,11 @@ func (r *ProfileListService) Get(ctx context.Context, userID string, query Profi
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("profiles/%s/lists", userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Removes all list subscriptions for given user.
@@ -55,11 +55,11 @@ func (r *ProfileListService) Delete(ctx context.Context, userID string, opts ...
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("profiles/%s/lists", userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Subscribes the given user to one or more lists. If the list does not exist, it
@@ -68,11 +68,11 @@ func (r *ProfileListService) Subscribe(ctx context.Context, userID string, body 
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("profiles/%s/lists", userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type ProfileListGetResponse struct {
