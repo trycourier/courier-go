@@ -149,6 +149,23 @@ Methods:
 - <code title="post /automations/invoke">client.Automations.Invoke.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#AutomationInvokeService.InvokeAdHoc">InvokeAdHoc</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#AutomationInvokeInvokeAdHocParams">AutomationInvokeInvokeAdHocParams</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#AutomationInvokeResponse">AutomationInvokeResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="post /automations/{templateId}/invoke">client.Automations.Invoke.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#AutomationInvokeService.InvokeByTemplate">InvokeByTemplate</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, templateID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#AutomationInvokeInvokeByTemplateParams">AutomationInvokeInvokeByTemplateParams</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#AutomationInvokeResponse">AutomationInvokeResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
+# Journeys
+
+Params Types:
+
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneysInvokeRequestParam">JourneysInvokeRequestParam</a>
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#Journey">Journey</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneysInvokeResponse">JourneysInvokeResponse</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneysListResponse">JourneysListResponse</a>
+
+Methods:
+
+- <code title="get /journeys">client.Journeys.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneyService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneyListParams">JourneyListParams</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneysListResponse">JourneysListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /journeys/{templateId}/invoke">client.Journeys.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneyService.Invoke">Invoke</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, templateID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneyInvokeParams">JourneyInvokeParams</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneysInvokeResponse">JourneysInvokeResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
 # Brands
 
 Params Types:
