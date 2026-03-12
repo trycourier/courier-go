@@ -102,12 +102,6 @@ type MessageDetails struct {
 	// A unique identifier associated with the message you wish to retrieve (results
 	// from a send).
 	ID string `json:"id" api:"required"`
-	// A UTC timestamp at which the recipient clicked on a tracked link for the first
-	// time. Stored as a millisecond representation of the Unix epoch.
-	Clicked int64 `json:"clicked" api:"required"`
-	// A UTC timestamp at which the Integration provider delivered the message. Stored
-	// as a millisecond representation of the Unix epoch.
-	Delivered int64 `json:"delivered" api:"required"`
 	// A UTC timestamp at which Courier received the message request. Stored as a
 	// millisecond representation of the Unix epoch.
 	Enqueued int64 `json:"enqueued" api:"required"`
@@ -115,41 +109,47 @@ type MessageDetails struct {
 	Event string `json:"event" api:"required"`
 	// A unique identifier associated with the notification of the delivered message.
 	Notification string `json:"notification" api:"required"`
-	// A UTC timestamp at which the recipient opened a message for the first time.
-	// Stored as a millisecond representation of the Unix epoch.
-	Opened int64 `json:"opened" api:"required"`
 	// A unique identifier associated with the recipient of the delivered message.
 	Recipient string `json:"recipient" api:"required"`
-	// A UTC timestamp at which Courier passed the message to the Integration provider.
-	// Stored as a millisecond representation of the Unix epoch.
-	Sent int64 `json:"sent" api:"required"`
 	// The current status of the message.
 	//
 	// Any of "CANCELED", "CLICKED", "DELAYED", "DELIVERED", "DIGESTED", "ENQUEUED",
 	// "FILTERED", "OPENED", "ROUTED", "SENT", "SIMULATED", "THROTTLED",
 	// "UNDELIVERABLE", "UNMAPPED", "UNROUTABLE".
 	Status MessageDetailsStatus `json:"status" api:"required"`
+	// A UTC timestamp at which the recipient clicked on a tracked link for the first
+	// time. Stored as a millisecond representation of the Unix epoch.
+	Clicked int64 `json:"clicked"`
+	// A UTC timestamp at which the Integration provider delivered the message. Stored
+	// as a millisecond representation of the Unix epoch.
+	Delivered int64 `json:"delivered"`
 	// A message describing the error that occurred.
 	Error string `json:"error" api:"nullable"`
+	// A UTC timestamp at which the recipient opened a message for the first time.
+	// Stored as a millisecond representation of the Unix epoch.
+	Opened int64 `json:"opened"`
 	// The reason for the current status of the message.
 	//
 	// Any of "BOUNCED", "FAILED", "FILTERED", "NO_CHANNELS", "NO_PROVIDERS",
 	// "OPT_IN_REQUIRED", "PROVIDER_ERROR", "UNPUBLISHED", "UNSUBSCRIBED".
 	Reason MessageDetailsReason `json:"reason" api:"nullable"`
+	// A UTC timestamp at which Courier passed the message to the Integration provider.
+	// Stored as a millisecond representation of the Unix epoch.
+	Sent int64 `json:"sent"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID           respjson.Field
-		Clicked      respjson.Field
-		Delivered    respjson.Field
 		Enqueued     respjson.Field
 		Event        respjson.Field
 		Notification respjson.Field
-		Opened       respjson.Field
 		Recipient    respjson.Field
-		Sent         respjson.Field
 		Status       respjson.Field
+		Clicked      respjson.Field
+		Delivered    respjson.Field
 		Error        respjson.Field
+		Opened       respjson.Field
 		Reason       respjson.Field
+		Sent         respjson.Field
 		ExtraFields  map[string]respjson.Field
 		raw          string
 	} `json:"-"`
