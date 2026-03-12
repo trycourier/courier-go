@@ -15,7 +15,7 @@ import (
 )
 
 func TestListSubscriptionListWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -44,7 +44,7 @@ func TestListSubscriptionListWithOptionalParams(t *testing.T) {
 }
 
 func TestListSubscriptionAdd(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -101,7 +101,7 @@ func TestListSubscriptionAdd(t *testing.T) {
 }
 
 func TestListSubscriptionSubscribe(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -158,7 +158,7 @@ func TestListSubscriptionSubscribe(t *testing.T) {
 }
 
 func TestListSubscriptionSubscribeUserWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -213,7 +213,7 @@ func TestListSubscriptionSubscribeUserWithOptionalParams(t *testing.T) {
 }
 
 func TestListSubscriptionUnsubscribeUser(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL

@@ -38,9 +38,9 @@ func (r *RequestService) Archive(ctx context.Context, requestID string, opts ...
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if requestID == "" {
 		err = errors.New("missing required request_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("requests/%s/archive", requestID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, nil, nil, opts...)
-	return
+	return err
 }

@@ -44,11 +44,11 @@ func (r *ProfileService) New(ctx context.Context, userID string, body ProfileNew
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("profiles/%s", userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns the specified user profile.
@@ -56,11 +56,11 @@ func (r *ProfileService) Get(ctx context.Context, userID string, opts ...option.
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("profiles/%s", userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Update a profile
@@ -69,11 +69,11 @@ func (r *ProfileService) Update(ctx context.Context, userID string, body Profile
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("profiles/%s", userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, nil, opts...)
-	return
+	return err
 }
 
 // Deletes the specified user profile.
@@ -82,11 +82,11 @@ func (r *ProfileService) Delete(ctx context.Context, userID string, opts ...opti
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("profiles/%s", userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // When using `PUT`, be sure to include all the key-value pairs required by the
@@ -98,16 +98,16 @@ func (r *ProfileService) Replace(ctx context.Context, userID string, body Profil
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("profiles/%s", userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // The property ListID is required.
 type SubscribeToListsRequestItemParam struct {
-	ListID      string                           `json:"listId,required"`
+	ListID      string                           `json:"listId" api:"required"`
 	Preferences shared.RecipientPreferencesParam `json:"preferences,omitzero"`
 	paramObj
 }
@@ -122,7 +122,7 @@ func (r *SubscribeToListsRequestItemParam) UnmarshalJSON(data []byte) error {
 
 type ProfileNewResponse struct {
 	// Any of "SUCCESS".
-	Status ProfileNewResponseStatus `json:"status,required"`
+	Status ProfileNewResponseStatus `json:"status" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Status      respjson.Field
@@ -144,8 +144,8 @@ const (
 )
 
 type ProfileGetResponse struct {
-	Profile     map[string]any              `json:"profile,required"`
-	Preferences shared.RecipientPreferences `json:"preferences,nullable"`
+	Profile     map[string]any              `json:"profile" api:"required"`
+	Preferences shared.RecipientPreferences `json:"preferences" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Profile     respjson.Field
@@ -163,7 +163,7 @@ func (r *ProfileGetResponse) UnmarshalJSON(data []byte) error {
 
 type ProfileReplaceResponse struct {
 	// Any of "SUCCESS".
-	Status ProfileReplaceResponseStatus `json:"status,required"`
+	Status ProfileReplaceResponseStatus `json:"status" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Status      respjson.Field
@@ -185,7 +185,7 @@ const (
 )
 
 type ProfileNewParams struct {
-	Profile map[string]any `json:"profile,omitzero,required"`
+	Profile map[string]any `json:"profile,omitzero" api:"required"`
 	paramObj
 }
 
@@ -199,7 +199,7 @@ func (r *ProfileNewParams) UnmarshalJSON(data []byte) error {
 
 type ProfileUpdateParams struct {
 	// List of patch operations to apply to the profile.
-	Patch []ProfileUpdateParamsPatch `json:"patch,omitzero,required"`
+	Patch []ProfileUpdateParamsPatch `json:"patch,omitzero" api:"required"`
 	paramObj
 }
 
@@ -214,11 +214,11 @@ func (r *ProfileUpdateParams) UnmarshalJSON(data []byte) error {
 // The properties Op, Path, Value are required.
 type ProfileUpdateParamsPatch struct {
 	// The operation to perform.
-	Op string `json:"op,required"`
+	Op string `json:"op" api:"required"`
 	// The JSON path specifying the part of the profile to operate on.
-	Path string `json:"path,required"`
+	Path string `json:"path" api:"required"`
 	// The value for the operation.
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	paramObj
 }
 
@@ -231,7 +231,7 @@ func (r *ProfileUpdateParamsPatch) UnmarshalJSON(data []byte) error {
 }
 
 type ProfileReplaceParams struct {
-	Profile map[string]any `json:"profile,omitzero,required"`
+	Profile map[string]any `json:"profile,omitzero" api:"required"`
 	paramObj
 }
 

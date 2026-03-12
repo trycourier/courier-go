@@ -13,7 +13,7 @@ import (
 	"github.com/trycourier/courier-go/v4/option"
 )
 
-func TestNotificationListWithOptionalParams(t *testing.T) {
+func TestJourneyListWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,9 +26,9 @@ func TestNotificationListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Notifications.List(context.TODO(), courier.NotificationListParams{
-		Cursor: courier.String("cursor"),
-		Notes:  courier.Bool(true),
+	_, err := client.Journeys.List(context.TODO(), courier.JourneyListParams{
+		Cursor:  courier.String("cursor"),
+		Version: courier.JourneyListParamsVersionPublished,
 	})
 	if err != nil {
 		var apierr *courier.Error
@@ -39,7 +39,7 @@ func TestNotificationListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestNotificationGetContent(t *testing.T) {
+func TestJourneyInvokeWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -52,7 +52,22 @@ func TestNotificationGetContent(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Notifications.GetContent(context.TODO(), "id")
+	_, err := client.Journeys.Invoke(
+		context.TODO(),
+		"templateId",
+		courier.JourneyInvokeParams{
+			JourneysInvokeRequest: courier.JourneysInvokeRequestParam{
+				Data: map[string]any{
+					"order_id": "bar",
+					"amount":   "bar",
+				},
+				Profile: map[string]any{
+					"foo": "bar",
+				},
+				UserID: courier.String("user-123"),
+			},
+		},
+	)
 	if err != nil {
 		var apierr *courier.Error
 		if errors.As(err, &apierr) {

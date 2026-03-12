@@ -43,11 +43,11 @@ func (r *AudienceService) Get(ctx context.Context, audienceID string, opts ...op
 	opts = slices.Concat(r.Options, opts)
 	if audienceID == "" {
 		err = errors.New("missing required audience_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("audiences/%s", audienceID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates or updates audience.
@@ -55,11 +55,11 @@ func (r *AudienceService) Update(ctx context.Context, audienceID string, body Au
 	opts = slices.Concat(r.Options, opts)
 	if audienceID == "" {
 		err = errors.New("missing required audience_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("audiences/%s", audienceID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Get the audiences associated with the authorization token.
@@ -67,7 +67,7 @@ func (r *AudienceService) List(ctx context.Context, query AudienceListParams, op
 	opts = slices.Concat(r.Options, opts)
 	path := "audiences"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Deletes the specified audience.
@@ -76,11 +76,11 @@ func (r *AudienceService) Delete(ctx context.Context, audienceID string, opts ..
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if audienceID == "" {
 		err = errors.New("missing required audience_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("audiences/%s", audienceID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Get list of members of an audience.
@@ -88,24 +88,24 @@ func (r *AudienceService) ListMembers(ctx context.Context, audienceID string, qu
 	opts = slices.Concat(r.Options, opts)
 	if audienceID == "" {
 		err = errors.New("missing required audience_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("audiences/%s/members", audienceID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 type Audience struct {
 	// A unique identifier representing the audience_id
-	ID        string `json:"id,required"`
-	CreatedAt string `json:"created_at,required"`
+	ID        string `json:"id" api:"required"`
+	CreatedAt string `json:"created_at" api:"required"`
 	// A description of the audience
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// The name of the audience
-	Name      string `json:"name,required"`
-	UpdatedAt string `json:"updated_at,required"`
+	Name      string `json:"name" api:"required"`
+	UpdatedAt string `json:"updated_at" api:"required"`
 	// Filter configuration for audience membership containing an array of filter rules
-	Filter shared.AudienceFilterConfig `json:"filter,nullable"`
+	Filter shared.AudienceFilterConfig `json:"filter" api:"nullable"`
 	// The logical operator (AND/OR) for the top-level filter
 	//
 	// Any of "AND", "OR".
@@ -139,7 +139,7 @@ const (
 )
 
 type AudienceUpdateResponse struct {
-	Audience Audience `json:"audience,required"`
+	Audience Audience `json:"audience" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Audience    respjson.Field
@@ -155,8 +155,8 @@ func (r *AudienceUpdateResponse) UnmarshalJSON(data []byte) error {
 }
 
 type AudienceListResponse struct {
-	Items  []Audience    `json:"items,required"`
-	Paging shared.Paging `json:"paging,required"`
+	Items  []Audience    `json:"items" api:"required"`
+	Paging shared.Paging `json:"paging" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Items       respjson.Field
@@ -173,8 +173,8 @@ func (r *AudienceListResponse) UnmarshalJSON(data []byte) error {
 }
 
 type AudienceListMembersResponse struct {
-	Items  []AudienceListMembersResponseItem `json:"items,required"`
-	Paging shared.Paging                     `json:"paging,required"`
+	Items  []AudienceListMembersResponseItem `json:"items" api:"required"`
+	Paging shared.Paging                     `json:"paging" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Items       respjson.Field
@@ -191,11 +191,11 @@ func (r *AudienceListMembersResponse) UnmarshalJSON(data []byte) error {
 }
 
 type AudienceListMembersResponseItem struct {
-	AddedAt         string `json:"added_at,required"`
-	AudienceID      string `json:"audience_id,required"`
-	AudienceVersion int64  `json:"audience_version,required"`
-	MemberID        string `json:"member_id,required"`
-	Reason          string `json:"reason,required"`
+	AddedAt         string `json:"added_at" api:"required"`
+	AudienceID      string `json:"audience_id" api:"required"`
+	AudienceVersion int64  `json:"audience_version" api:"required"`
+	MemberID        string `json:"member_id" api:"required"`
+	Reason          string `json:"reason" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AddedAt         respjson.Field

@@ -14,7 +14,7 @@ import (
 )
 
 func TestUserTokenGet(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -43,7 +43,7 @@ func TestUserTokenGet(t *testing.T) {
 }
 
 func TestUserTokenUpdate(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -77,7 +77,7 @@ func TestUserTokenUpdate(t *testing.T) {
 }
 
 func TestUserTokenList(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -100,7 +100,7 @@ func TestUserTokenList(t *testing.T) {
 }
 
 func TestUserTokenDelete(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -129,7 +129,7 @@ func TestUserTokenDelete(t *testing.T) {
 }
 
 func TestUserTokenAddMultiple(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -152,7 +152,7 @@ func TestUserTokenAddMultiple(t *testing.T) {
 }
 
 func TestUserTokenAddSingleWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -168,28 +168,25 @@ func TestUserTokenAddSingleWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"token",
 		courier.UserTokenAddSingleParams{
-			UserID: "user_id",
-			UserToken: courier.UserTokenParam{
-				Token:       "token",
-				ProviderKey: courier.UserTokenProviderKeyFirebaseFcm,
-				Device: courier.UserTokenDeviceParam{
-					AdID:         courier.String("ad_id"),
-					AppID:        courier.String("app_id"),
-					DeviceID:     courier.String("device_id"),
-					Manufacturer: courier.String("manufacturer"),
-					Model:        courier.String("model"),
-					Platform:     courier.String("platform"),
-				},
-				ExpiryDate: courier.UserTokenExpiryDateUnionParam{
-					OfString: courier.String("string"),
-				},
-				Properties: map[string]any{},
-				Tracking: courier.UserTokenTrackingParam{
-					IP:        courier.String("ip"),
-					Lat:       courier.String("lat"),
-					Long:      courier.String("long"),
-					OsVersion: courier.String("os_version"),
-				},
+			UserID:      "user_id",
+			ProviderKey: courier.UserTokenAddSingleParamsProviderKeyFirebaseFcm,
+			Device: courier.UserTokenAddSingleParamsDevice{
+				AdID:         courier.String("ad_id"),
+				AppID:        courier.String("app_id"),
+				DeviceID:     courier.String("device_id"),
+				Manufacturer: courier.String("manufacturer"),
+				Model:        courier.String("model"),
+				Platform:     courier.String("platform"),
+			},
+			ExpiryDate: courier.UserTokenAddSingleParamsExpiryDateUnion{
+				OfString: courier.String("string"),
+			},
+			Properties: map[string]any{},
+			Tracking: courier.UserTokenAddSingleParamsTracking{
+				IP:        courier.String("ip"),
+				Lat:       courier.String("lat"),
+				Long:      courier.String("long"),
+				OsVersion: courier.String("os_version"),
 			},
 		},
 	)

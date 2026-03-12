@@ -43,11 +43,11 @@ func (r *ListSubscriptionService) List(ctx context.Context, listID string, query
 	opts = slices.Concat(r.Options, opts)
 	if listID == "" {
 		err = errors.New("missing required list_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("lists/%s/subscriptions", listID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Subscribes additional users to the list, without modifying existing
@@ -57,11 +57,11 @@ func (r *ListSubscriptionService) Add(ctx context.Context, listID string, body L
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if listID == "" {
 		err = errors.New("missing required list_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("lists/%s/subscriptions", listID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
-	return
+	return err
 }
 
 // Subscribes the users to the list, overwriting existing subscriptions. If the
@@ -71,11 +71,11 @@ func (r *ListSubscriptionService) Subscribe(ctx context.Context, listID string, 
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if listID == "" {
 		err = errors.New("missing required list_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("lists/%s/subscriptions", listID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, nil, opts...)
-	return
+	return err
 }
 
 // Subscribe a user to an existing list (note: if the List does not exist, it will
@@ -85,15 +85,15 @@ func (r *ListSubscriptionService) SubscribeUser(ctx context.Context, userID stri
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if params.ListID == "" {
 		err = errors.New("missing required list_id parameter")
-		return
+		return err
 	}
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("lists/%s/subscriptions/%s", params.ListID, userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, nil, opts...)
-	return
+	return err
 }
 
 // Delete a subscription to a list by list ID and user ID.
@@ -102,20 +102,20 @@ func (r *ListSubscriptionService) UnsubscribeUser(ctx context.Context, userID st
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if body.ListID == "" {
 		err = errors.New("missing required list_id parameter")
-		return
+		return err
 	}
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("lists/%s/subscriptions/%s", body.ListID, userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 type ListSubscriptionListResponse struct {
-	Items  []ListSubscriptionListResponseItem `json:"items,required"`
-	Paging shared.Paging                      `json:"paging,required"`
+	Items  []ListSubscriptionListResponseItem `json:"items" api:"required"`
+	Paging shared.Paging                      `json:"paging" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Items       respjson.Field
@@ -132,9 +132,9 @@ func (r *ListSubscriptionListResponse) UnmarshalJSON(data []byte) error {
 }
 
 type ListSubscriptionListResponseItem struct {
-	RecipientID string                      `json:"recipientId,required"`
-	Created     string                      `json:"created,nullable"`
-	Preferences shared.RecipientPreferences `json:"preferences,nullable"`
+	RecipientID string                      `json:"recipientId" api:"required"`
+	Created     string                      `json:"created" api:"nullable"`
+	Preferences shared.RecipientPreferences `json:"preferences" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		RecipientID respjson.Field
@@ -167,7 +167,7 @@ func (r ListSubscriptionListParams) URLQuery() (v url.Values, err error) {
 }
 
 type ListSubscriptionAddParams struct {
-	Recipients []PutSubscriptionsRecipientParam `json:"recipients,omitzero,required"`
+	Recipients []PutSubscriptionsRecipientParam `json:"recipients,omitzero" api:"required"`
 	paramObj
 }
 
@@ -180,7 +180,7 @@ func (r *ListSubscriptionAddParams) UnmarshalJSON(data []byte) error {
 }
 
 type ListSubscriptionSubscribeParams struct {
-	Recipients []PutSubscriptionsRecipientParam `json:"recipients,omitzero,required"`
+	Recipients []PutSubscriptionsRecipientParam `json:"recipients,omitzero" api:"required"`
 	paramObj
 }
 
@@ -193,7 +193,7 @@ func (r *ListSubscriptionSubscribeParams) UnmarshalJSON(data []byte) error {
 }
 
 type ListSubscriptionSubscribeUserParams struct {
-	ListID      string                           `path:"list_id,required" json:"-"`
+	ListID      string                           `path:"list_id" api:"required" json:"-"`
 	Preferences shared.RecipientPreferencesParam `json:"preferences,omitzero"`
 	paramObj
 }
@@ -207,6 +207,6 @@ func (r *ListSubscriptionSubscribeUserParams) UnmarshalJSON(data []byte) error {
 }
 
 type ListSubscriptionUnsubscribeUserParams struct {
-	ListID string `path:"list_id,required" json:"-"`
+	ListID string `path:"list_id" api:"required" json:"-"`
 	paramObj
 }

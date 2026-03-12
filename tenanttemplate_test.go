@@ -15,7 +15,7 @@ import (
 )
 
 func TestTenantTemplateGet(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -44,7 +44,7 @@ func TestTenantTemplateGet(t *testing.T) {
 }
 
 func TestTenantTemplateListWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -74,7 +74,7 @@ func TestTenantTemplateListWithOptionalParams(t *testing.T) {
 }
 
 func TestTenantTemplatePublishWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -106,7 +106,7 @@ func TestTenantTemplatePublishWithOptionalParams(t *testing.T) {
 }
 
 func TestTenantTemplateReplaceWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -138,7 +138,6 @@ func TestTenantTemplateReplaceWithOptionalParams(t *testing.T) {
 							},
 						}},
 						Version: "version",
-						Brand:   courier.String("brand"),
 					},
 					Channels: map[string]courier.TenantTemplateInputChannelParam{
 						"foo": {

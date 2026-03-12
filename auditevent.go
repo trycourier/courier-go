@@ -43,11 +43,11 @@ func (r *AuditEventService) Get(ctx context.Context, auditEventID string, opts .
 	opts = slices.Concat(r.Options, opts)
 	if auditEventID == "" {
 		err = errors.New("missing required audit-event-id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("audit-events/%s", auditEventID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Fetch the list of audit events
@@ -55,16 +55,16 @@ func (r *AuditEventService) List(ctx context.Context, query AuditEventListParams
 	opts = slices.Concat(r.Options, opts)
 	path := "audit-events"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 type AuditEvent struct {
-	Actor        AuditEventActor `json:"actor,required"`
-	AuditEventID string          `json:"auditEventId,required"`
-	Source       string          `json:"source,required"`
-	Target       string          `json:"target,required"`
-	Timestamp    string          `json:"timestamp,required"`
-	Type         string          `json:"type,required"`
+	Actor        AuditEventActor `json:"actor" api:"required"`
+	AuditEventID string          `json:"auditEventId" api:"required"`
+	Source       string          `json:"source" api:"required"`
+	Target       string          `json:"target" api:"required"`
+	Timestamp    string          `json:"timestamp" api:"required"`
+	Type         string          `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Actor        respjson.Field
@@ -85,8 +85,8 @@ func (r *AuditEvent) UnmarshalJSON(data []byte) error {
 }
 
 type AuditEventActor struct {
-	ID    string `json:"id,required"`
-	Email string `json:"email,nullable"`
+	ID    string `json:"id" api:"required"`
+	Email string `json:"email" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -103,8 +103,8 @@ func (r *AuditEventActor) UnmarshalJSON(data []byte) error {
 }
 
 type AuditEventListResponse struct {
-	Paging  shared.Paging `json:"paging,required"`
-	Results []AuditEvent  `json:"results,required"`
+	Paging  shared.Paging `json:"paging" api:"required"`
+	Results []AuditEvent  `json:"results" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Paging      respjson.Field

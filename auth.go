@@ -38,11 +38,11 @@ func (r *AuthService) IssueToken(ctx context.Context, body AuthIssueTokenParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "auth/issue-token"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type AuthIssueTokenResponse struct {
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -68,7 +68,7 @@ type AuthIssueTokenParams struct {
 	// - "1m" - 1 minute
 	// - "5s" - 5 seconds
 	// - "1y" - 1 year
-	ExpiresIn string `json:"expires_in,required"`
+	ExpiresIn string `json:"expires_in" api:"required"`
 	// Available scopes:
 	//
 	//   - `user_id:<user-id>` - Defines which user the token will be scoped to. Multiple
@@ -85,7 +85,7 @@ type AuthIssueTokenParams struct {
 	//   - `read:preferences` - Read user preferences.
 	//   - `write:preferences` - Write user preferences. Example:
 	//     `user_id:user123 write:user-tokens inbox:read:messages inbox:write:events read:preferences write:preferences read:brands`
-	Scope string `json:"scope,required"`
+	Scope string `json:"scope" api:"required"`
 	paramObj
 }
 

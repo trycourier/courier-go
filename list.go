@@ -45,11 +45,11 @@ func (r *ListService) Get(ctx context.Context, listID string, opts ...option.Req
 	opts = slices.Concat(r.Options, opts)
 	if listID == "" {
 		err = errors.New("missing required list_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("lists/%s", listID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Create or replace an existing list with the supplied values.
@@ -58,11 +58,11 @@ func (r *ListService) Update(ctx context.Context, listID string, body ListUpdate
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if listID == "" {
 		err = errors.New("missing required list_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("lists/%s", listID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, nil, opts...)
-	return
+	return err
 }
 
 // Returns all of the lists, with the ability to filter based on a pattern.
@@ -70,7 +70,7 @@ func (r *ListService) List(ctx context.Context, query ListListParams, opts ...op
 	opts = slices.Concat(r.Options, opts)
 	path := "lists"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Delete a list by list ID.
@@ -79,11 +79,11 @@ func (r *ListService) Delete(ctx context.Context, listID string, opts ...option.
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if listID == "" {
 		err = errors.New("missing required list_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("lists/%s", listID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Restore a previously deleted list.
@@ -92,16 +92,16 @@ func (r *ListService) Restore(ctx context.Context, listID string, body ListResto
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if listID == "" {
 		err = errors.New("missing required list_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("lists/%s/restore", listID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, nil, opts...)
-	return
+	return err
 }
 
 // The property RecipientID is required.
 type PutSubscriptionsRecipientParam struct {
-	RecipientID string                           `json:"recipientId,required"`
+	RecipientID string                           `json:"recipientId" api:"required"`
 	Preferences shared.RecipientPreferencesParam `json:"preferences,omitzero"`
 	paramObj
 }
@@ -115,10 +115,10 @@ func (r *PutSubscriptionsRecipientParam) UnmarshalJSON(data []byte) error {
 }
 
 type SubscriptionList struct {
-	ID      string `json:"id,required"`
-	Name    string `json:"name,required"`
-	Created string `json:"created,nullable"`
-	Updated string `json:"updated,nullable"`
+	ID      string `json:"id" api:"required"`
+	Name    string `json:"name" api:"required"`
+	Created string `json:"created" api:"nullable"`
+	Updated string `json:"updated" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -137,8 +137,8 @@ func (r *SubscriptionList) UnmarshalJSON(data []byte) error {
 }
 
 type ListListResponse struct {
-	Items  []SubscriptionList `json:"items,required"`
-	Paging shared.Paging      `json:"paging,required"`
+	Items  []SubscriptionList `json:"items" api:"required"`
+	Paging shared.Paging      `json:"paging" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Items       respjson.Field
@@ -155,7 +155,7 @@ func (r *ListListResponse) UnmarshalJSON(data []byte) error {
 }
 
 type ListUpdateParams struct {
-	Name        string                           `json:"name,required"`
+	Name        string                           `json:"name" api:"required"`
 	Preferences shared.RecipientPreferencesParam `json:"preferences,omitzero"`
 	paramObj
 }

@@ -43,11 +43,11 @@ func (r *ProfileListService) Get(ctx context.Context, userID string, query Profi
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("profiles/%s/lists", userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Removes all list subscriptions for given user.
@@ -55,11 +55,11 @@ func (r *ProfileListService) Delete(ctx context.Context, userID string, opts ...
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("profiles/%s/lists", userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Subscribes the given user to one or more lists. If the list does not exist, it
@@ -68,17 +68,17 @@ func (r *ProfileListService) Subscribe(ctx context.Context, userID string, body 
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("profiles/%s/lists", userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type ProfileListGetResponse struct {
-	Paging shared.Paging `json:"paging,required"`
+	Paging shared.Paging `json:"paging" api:"required"`
 	// An array of lists
-	Results []ProfileListGetResponseResult `json:"results,required"`
+	Results []ProfileListGetResponseResult `json:"results" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Paging      respjson.Field
@@ -95,16 +95,16 @@ func (r *ProfileListGetResponse) UnmarshalJSON(data []byte) error {
 }
 
 type ProfileListGetResponseResult struct {
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The date/time of when the list was created. Represented as a string in ISO
 	// format.
-	Created string `json:"created,required"`
+	Created string `json:"created" api:"required"`
 	// List name
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// The date/time of when the list was updated. Represented as a string in ISO
 	// format.
-	Updated     string                      `json:"updated,required"`
-	Preferences shared.RecipientPreferences `json:"preferences,nullable"`
+	Updated     string                      `json:"updated" api:"required"`
+	Preferences shared.RecipientPreferences `json:"preferences" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -125,7 +125,7 @@ func (r *ProfileListGetResponseResult) UnmarshalJSON(data []byte) error {
 
 type ProfileListDeleteResponse struct {
 	// Any of "SUCCESS".
-	Status ProfileListDeleteResponseStatus `json:"status,required"`
+	Status ProfileListDeleteResponseStatus `json:"status" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Status      respjson.Field
@@ -148,7 +148,7 @@ const (
 
 type ProfileListSubscribeResponse struct {
 	// Any of "SUCCESS".
-	Status ProfileListSubscribeResponseStatus `json:"status,required"`
+	Status ProfileListSubscribeResponseStatus `json:"status" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Status      respjson.Field
@@ -184,7 +184,7 @@ func (r ProfileListGetParams) URLQuery() (v url.Values, err error) {
 }
 
 type ProfileListSubscribeParams struct {
-	Lists []SubscribeToListsRequestItemParam `json:"lists,omitzero,required"`
+	Lists []SubscribeToListsRequestItemParam `json:"lists,omitzero" api:"required"`
 	paramObj
 }
 

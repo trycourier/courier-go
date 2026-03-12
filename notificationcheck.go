@@ -39,30 +39,30 @@ func (r *NotificationCheckService) Update(ctx context.Context, submissionID stri
 	opts = slices.Concat(r.Options, opts)
 	if params.ID == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	if submissionID == "" {
 		err = errors.New("missing required submissionId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("notifications/%s/%s/checks", params.ID, submissionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 func (r *NotificationCheckService) List(ctx context.Context, submissionID string, query NotificationCheckListParams, opts ...option.RequestOption) (res *NotificationCheckListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if query.ID == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	if submissionID == "" {
 		err = errors.New("missing required submissionId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("notifications/%s/%s/checks", query.ID, submissionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 func (r *NotificationCheckService) Delete(ctx context.Context, submissionID string, body NotificationCheckDeleteParams, opts ...option.RequestOption) (err error) {
@@ -70,19 +70,19 @@ func (r *NotificationCheckService) Delete(ctx context.Context, submissionID stri
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if body.ID == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return err
 	}
 	if submissionID == "" {
 		err = errors.New("missing required submissionId parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("notifications/%s/%s/checks", body.ID, submissionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 type NotificationCheckUpdateResponse struct {
-	Checks []Check `json:"checks,required"`
+	Checks []Check `json:"checks" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Checks      respjson.Field
@@ -98,7 +98,7 @@ func (r *NotificationCheckUpdateResponse) UnmarshalJSON(data []byte) error {
 }
 
 type NotificationCheckListResponse struct {
-	Checks []Check `json:"checks,required"`
+	Checks []Check `json:"checks" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Checks      respjson.Field
@@ -114,8 +114,8 @@ func (r *NotificationCheckListResponse) UnmarshalJSON(data []byte) error {
 }
 
 type NotificationCheckUpdateParams struct {
-	ID     string           `path:"id,required" json:"-"`
-	Checks []BaseCheckParam `json:"checks,omitzero,required"`
+	ID     string           `path:"id" api:"required" json:"-"`
+	Checks []BaseCheckParam `json:"checks,omitzero" api:"required"`
 	paramObj
 }
 
@@ -128,11 +128,11 @@ func (r *NotificationCheckUpdateParams) UnmarshalJSON(data []byte) error {
 }
 
 type NotificationCheckListParams struct {
-	ID string `path:"id,required" json:"-"`
+	ID string `path:"id" api:"required" json:"-"`
 	paramObj
 }
 
 type NotificationCheckDeleteParams struct {
-	ID string `path:"id,required" json:"-"`
+	ID string `path:"id" api:"required" json:"-"`
 	paramObj
 }

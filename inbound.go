@@ -38,13 +38,13 @@ func (r *InboundService) TrackEvent(ctx context.Context, body InboundTrackEventP
 	opts = slices.Concat(r.Options, opts)
 	path := "inbound/courier"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type InboundTrackEventResponse struct {
 	// A successful call returns a `202` status code along with a `requestId` in the
 	// response body.
-	MessageID string `json:"messageId,required"`
+	MessageID string `json:"messageId" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		MessageID   respjson.Field
@@ -62,13 +62,13 @@ func (r *InboundTrackEventResponse) UnmarshalJSON(data []byte) error {
 type InboundTrackEventParams struct {
 	// A descriptive name of the event. This name will appear as a trigger in the
 	// Courier Automation Trigger node.
-	Event string `json:"event,required"`
+	Event string `json:"event" api:"required"`
 	// A required unique identifier that will be used to de-duplicate requests. If not
 	// unique, will respond with 409 Conflict status
-	MessageID  string         `json:"messageId,required"`
-	Properties map[string]any `json:"properties,omitzero,required"`
+	MessageID  string         `json:"messageId" api:"required"`
+	Properties map[string]any `json:"properties,omitzero" api:"required"`
 	// Any of "track".
-	Type InboundTrackEventParamsType `json:"type,omitzero,required"`
+	Type InboundTrackEventParamsType `json:"type,omitzero" api:"required"`
 	// The user id associated with the track
 	UserID param.Opt[string] `json:"userId,omitzero"`
 	paramObj

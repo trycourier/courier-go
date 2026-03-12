@@ -21,10 +21,10 @@ type AudienceFilterParam struct {
 	// Send to users only if they are member of the account
 	//
 	// Any of "MEMBER_OF".
-	Operator AudienceFilterOperator `json:"operator,omitzero,required"`
+	Operator AudienceFilterOperator `json:"operator,omitzero" api:"required"`
 	// Any of "account_id".
-	Path  AudienceFilterPath `json:"path,omitzero,required"`
-	Value string             `json:"value,required"`
+	Path  AudienceFilterPath `json:"path,omitzero" api:"required"`
+	Value string             `json:"value" api:"required"`
 	paramObj
 }
 
@@ -52,7 +52,7 @@ const (
 // Filter configuration for audience membership containing an array of filter rules
 type AudienceFilterConfig struct {
 	// Array of filter rules (single conditions or nested groups)
-	Filters []FilterConfig `json:"filters,required"`
+	Filters []FilterConfig `json:"filters" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Filters     respjson.Field
@@ -81,7 +81,7 @@ func (r AudienceFilterConfig) ToParam() AudienceFilterConfigParam {
 // The property Filters is required.
 type AudienceFilterConfigParam struct {
 	// Array of filter rules (single conditions or nested groups)
-	Filters []FilterConfigParam `json:"filters,omitzero,required"`
+	Filters []FilterConfigParam `json:"filters,omitzero" api:"required"`
 	paramObj
 }
 
@@ -99,7 +99,7 @@ func (r *AudienceFilterConfigParam) UnmarshalJSON(data []byte) error {
 type AudienceRecipientParam struct {
 	// A unique identifier associated with an Audience. A message will be sent to each
 	// user in the audience.
-	AudienceID string                `json:"audience_id,required"`
+	AudienceID string                `json:"audience_id" api:"required"`
 	Data       map[string]any        `json:"data,omitzero"`
 	Filters    []AudienceFilterParam `json:"filters,omitzero"`
 	paramObj
@@ -126,7 +126,7 @@ const (
 
 type ChannelPreference struct {
 	// Any of "direct_message", "email", "push", "sms", "webhook", "inbox".
-	Channel ChannelClassification `json:"channel,required"`
+	Channel ChannelClassification `json:"channel" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Channel     respjson.Field
@@ -153,7 +153,7 @@ func (r ChannelPreference) ToParam() ChannelPreferenceParam {
 // The property Channel is required.
 type ChannelPreferenceParam struct {
 	// Any of "direct_message", "email", "push", "sms", "webhook", "inbox".
-	Channel ChannelClassification `json:"channel,omitzero,required"`
+	Channel ChannelClassification `json:"channel,omitzero" api:"required"`
 	paramObj
 }
 
@@ -207,10 +207,10 @@ func (r ElementalActionNodeWithTypeParam) MarshalJSON() (data []byte, err error)
 }
 
 type ElementalBaseNode struct {
-	Channels []string `json:"channels,nullable"`
-	If       string   `json:"if,nullable"`
-	Loop     string   `json:"loop,nullable"`
-	Ref      string   `json:"ref,nullable"`
+	Channels []string `json:"channels" api:"nullable"`
+	If       string   `json:"if" api:"nullable"`
+	Loop     string   `json:"loop" api:"nullable"`
+	Ref      string   `json:"ref" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Channels    respjson.Field
@@ -269,7 +269,7 @@ type ElementalChannelNode struct {
 	Channel string `json:"channel"`
 	// Raw data to apply to the channel. If `elements` has not been specified, `raw` is
 	// required.
-	Raw map[string]any `json:"raw,nullable"`
+	Raw map[string]any `json:"raw" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Channel     respjson.Field
@@ -385,15 +385,13 @@ func (r ElementalChannelNodeWithTypeParam) MarshalJSON() (data []byte, err error
 }
 
 type ElementalContent struct {
-	Elements []ElementalNodeUnion `json:"elements,required"`
+	Elements []ElementalNodeUnion `json:"elements" api:"required"`
 	// For example, "2022-01-01"
-	Version string `json:"version,required"`
-	Brand   string `json:"brand,nullable"`
+	Version string `json:"version" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Elements    respjson.Field
 		Version     respjson.Field
-		Brand       respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -416,10 +414,9 @@ func (r ElementalContent) ToParam() ElementalContentParam {
 
 // The properties Elements, Version are required.
 type ElementalContentParam struct {
-	Elements []ElementalNodeUnionParam `json:"elements,omitzero,required"`
+	Elements []ElementalNodeUnionParam `json:"elements,omitzero" api:"required"`
 	// For example, "2022-01-01"
-	Version string            `json:"version,required"`
-	Brand   param.Opt[string] `json:"brand,omitzero"`
+	Version string `json:"version" api:"required"`
 	paramObj
 }
 
@@ -434,9 +431,9 @@ func (r *ElementalContentParam) UnmarshalJSON(data []byte) error {
 // Syntactic sugar to provide a fast shorthand for Courier Elemental Blocks.
 type ElementalContentSugar struct {
 	// The text content displayed in the notification.
-	Body string `json:"body,required"`
+	Body string `json:"body" api:"required"`
 	// Title/subject displayed by supported channels.
-	Title string `json:"title,required"`
+	Title string `json:"title" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Body        respjson.Field
@@ -466,9 +463,9 @@ func (r ElementalContentSugar) ToParam() ElementalContentSugarParam {
 // The properties Body, Title are required.
 type ElementalContentSugarParam struct {
 	// The text content displayed in the notification.
-	Body string `json:"body,required"`
+	Body string `json:"body" api:"required"`
 	// Title/subject displayed by supported channels.
-	Title string `json:"title,required"`
+	Title string `json:"title" api:"required"`
 	paramObj
 }
 
@@ -950,7 +947,7 @@ type FilterConfig struct {
 	// The operator for this filter. Use comparison operators (EQ, GT, LT, GTE, LTE,
 	// NEQ, EXISTS, INCLUDES, STARTS_WITH, ENDS_WITH, IS_BEFORE, IS_AFTER, OMIT) for
 	// single conditions, or logical operators (AND, OR) for nested filter groups.
-	Operator string `json:"operator,required"`
+	Operator string `json:"operator" api:"required"`
 	// Nested filter rules to combine with AND/OR. Required for nested filter groups,
 	// not used for single filter conditions.
 	Filters []FilterConfig `json:"filters"`
@@ -995,7 +992,7 @@ type FilterConfigParam struct {
 	// The operator for this filter. Use comparison operators (EQ, GT, LT, GTE, LTE,
 	// NEQ, EXISTS, INCLUDES, STARTS_WITH, ENDS_WITH, IS_BEFORE, IS_AFTER, OMIT) for
 	// single conditions, or logical operators (AND, OR) for nested filter groups.
-	Operator string `json:"operator,required"`
+	Operator string `json:"operator" api:"required"`
 	// The attribute path from the user profile to filter on. Required for single
 	// filter conditions, not used for nested filter groups.
 	Path param.Opt[string] `json:"path,omitzero"`
@@ -1021,10 +1018,10 @@ type ListFilterParam struct {
 	// Send to users only if they are member of the account
 	//
 	// Any of "MEMBER_OF".
-	Operator ListFilterOperator `json:"operator,omitzero,required"`
+	Operator ListFilterOperator `json:"operator,omitzero" api:"required"`
 	// Any of "account_id".
-	Path  ListFilterPath `json:"path,omitzero,required"`
-	Value string         `json:"value,required"`
+	Path  ListFilterPath `json:"path,omitzero" api:"required"`
+	Value string         `json:"value" api:"required"`
 	paramObj
 }
 
@@ -1082,7 +1079,7 @@ func (r *ListRecipientParam) UnmarshalJSON(data []byte) error {
 
 type MessageContext struct {
 	// Tenant id used to load brand/default preferences/context.
-	TenantID string `json:"tenant_id,nullable"`
+	TenantID string `json:"tenant_id" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		TenantID    respjson.Field
@@ -1121,9 +1118,9 @@ func (r *MessageContextParam) UnmarshalJSON(data []byte) error {
 }
 
 type MessageRouting struct {
-	Channels []MessageRoutingChannelUnion `json:"channels,required"`
+	Channels []MessageRoutingChannelUnion `json:"channels" api:"required"`
 	// Any of "all", "single".
-	Method MessageRoutingMethod `json:"method,required"`
+	Method MessageRoutingMethod `json:"method" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Channels    respjson.Field
@@ -1157,9 +1154,9 @@ const (
 
 // The properties Channels, Method are required.
 type MessageRoutingParam struct {
-	Channels []MessageRoutingChannelUnionParam `json:"channels,omitzero,required"`
+	Channels []MessageRoutingChannelUnionParam `json:"channels,omitzero" api:"required"`
 	// Any of "all", "single".
-	Method MessageRoutingMethod `json:"method,omitzero,required"`
+	Method MessageRoutingMethod `json:"method,omitzero" api:"required"`
 	paramObj
 }
 
@@ -1406,7 +1403,7 @@ func (u MsTeamsUnionParam) GetTenantID() *string {
 //
 // The property MsTeams is required.
 type MsTeamsRecipientParam struct {
-	MsTeams MsTeamsUnionParam `json:"ms_teams,omitzero,required"`
+	MsTeams MsTeamsUnionParam `json:"ms_teams,omitzero" api:"required"`
 	paramObj
 }
 
@@ -1420,9 +1417,9 @@ func (r *MsTeamsRecipientParam) UnmarshalJSON(data []byte) error {
 
 type NotificationPreferenceDetails struct {
 	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
-	Status             PreferenceStatus    `json:"status,required"`
-	ChannelPreferences []ChannelPreference `json:"channel_preferences,nullable"`
-	Rules              []Rule              `json:"rules,nullable"`
+	Status             PreferenceStatus    `json:"status" api:"required"`
+	ChannelPreferences []ChannelPreference `json:"channel_preferences" api:"nullable"`
+	Rules              []Rule              `json:"rules" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Status             respjson.Field
@@ -1452,7 +1449,7 @@ func (r NotificationPreferenceDetails) ToParam() NotificationPreferenceDetailsPa
 // The property Status is required.
 type NotificationPreferenceDetailsParam struct {
 	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
-	Status             PreferenceStatus         `json:"status,omitzero,required"`
+	Status             PreferenceStatus         `json:"status,omitzero" api:"required"`
 	ChannelPreferences []ChannelPreferenceParam `json:"channel_preferences,omitzero"`
 	Rules              []RuleParam              `json:"rules,omitzero"`
 	paramObj
@@ -1486,7 +1483,7 @@ func (r *PagerdutyParam) UnmarshalJSON(data []byte) error {
 //
 // The property Pagerduty is required.
 type PagerdutyRecipientParam struct {
-	Pagerduty PagerdutyParam `json:"pagerduty,omitzero,required"`
+	Pagerduty PagerdutyParam `json:"pagerduty,omitzero" api:"required"`
 	paramObj
 }
 
@@ -1499,8 +1496,8 @@ func (r *PagerdutyRecipientParam) UnmarshalJSON(data []byte) error {
 }
 
 type Paging struct {
-	More   bool   `json:"more,required"`
-	Cursor string `json:"cursor,nullable"`
+	More   bool   `json:"more" api:"required"`
+	Cursor string `json:"cursor" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		More        respjson.Field
@@ -1518,11 +1515,11 @@ func (r *Paging) UnmarshalJSON(data []byte) error {
 
 type Preference struct {
 	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
-	Status             PreferenceStatus    `json:"status,required"`
-	ChannelPreferences []ChannelPreference `json:"channel_preferences,nullable"`
-	Rules              []Rule              `json:"rules,nullable"`
+	Status             PreferenceStatus    `json:"status" api:"required"`
+	ChannelPreferences []ChannelPreference `json:"channel_preferences" api:"nullable"`
+	Rules              []Rule              `json:"rules" api:"nullable"`
 	// Any of "subscription", "list", "recipient".
-	Source PreferenceSource `json:"source,nullable"`
+	Source PreferenceSource `json:"source" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Status             respjson.Field
@@ -1560,7 +1557,7 @@ const (
 // The property Status is required.
 type PreferenceParam struct {
 	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
-	Status             PreferenceStatus         `json:"status,omitzero,required"`
+	Status             PreferenceStatus         `json:"status,omitzero" api:"required"`
 	ChannelPreferences []ChannelPreferenceParam `json:"channel_preferences,omitzero"`
 	Rules              []RuleParam              `json:"rules,omitzero"`
 	// Any of "subscription", "list", "recipient".
@@ -1585,8 +1582,8 @@ const (
 )
 
 type RecipientPreferences struct {
-	Categories    map[string]NotificationPreferenceDetails `json:"categories,nullable"`
-	Notifications map[string]NotificationPreferenceDetails `json:"notifications,nullable"`
+	Categories    map[string]NotificationPreferenceDetails `json:"categories" api:"nullable"`
+	Notifications map[string]NotificationPreferenceDetails `json:"notifications" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Categories    respjson.Field
@@ -1626,8 +1623,8 @@ func (r *RecipientPreferencesParam) UnmarshalJSON(data []byte) error {
 }
 
 type Rule struct {
-	Until string `json:"until,required"`
-	Start string `json:"start,nullable"`
+	Until string `json:"until" api:"required"`
+	Start string `json:"start" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Until       respjson.Field
@@ -1654,7 +1651,7 @@ func (r Rule) ToParam() RuleParam {
 
 // The property Until is required.
 type RuleParam struct {
-	Until string            `json:"until,required"`
+	Until string            `json:"until" api:"required"`
 	Start param.Opt[string] `json:"start,omitzero"`
 	paramObj
 }
@@ -1669,9 +1666,9 @@ func (r *RuleParam) UnmarshalJSON(data []byte) error {
 
 // The properties ChannelID, ServiceURL, TenantID are required.
 type SendToMsTeamsChannelIDParam struct {
-	ChannelID  string `json:"channel_id,required"`
-	ServiceURL string `json:"service_url,required"`
-	TenantID   string `json:"tenant_id,required"`
+	ChannelID  string `json:"channel_id" api:"required"`
+	ServiceURL string `json:"service_url" api:"required"`
+	TenantID   string `json:"tenant_id" api:"required"`
 	paramObj
 }
 
@@ -1685,10 +1682,10 @@ func (r *SendToMsTeamsChannelIDParam) UnmarshalJSON(data []byte) error {
 
 // The properties ChannelName, ServiceURL, TeamID, TenantID are required.
 type SendToMsTeamsChannelNameParam struct {
-	ChannelName string `json:"channel_name,required"`
-	ServiceURL  string `json:"service_url,required"`
-	TeamID      string `json:"team_id,required"`
-	TenantID    string `json:"tenant_id,required"`
+	ChannelName string `json:"channel_name" api:"required"`
+	ServiceURL  string `json:"service_url" api:"required"`
+	TeamID      string `json:"team_id" api:"required"`
+	TenantID    string `json:"tenant_id" api:"required"`
 	paramObj
 }
 
@@ -1702,9 +1699,9 @@ func (r *SendToMsTeamsChannelNameParam) UnmarshalJSON(data []byte) error {
 
 // The properties ConversationID, ServiceURL, TenantID are required.
 type SendToMsTeamsConversationIDParam struct {
-	ConversationID string `json:"conversation_id,required"`
-	ServiceURL     string `json:"service_url,required"`
-	TenantID       string `json:"tenant_id,required"`
+	ConversationID string `json:"conversation_id" api:"required"`
+	ServiceURL     string `json:"service_url" api:"required"`
+	TenantID       string `json:"tenant_id" api:"required"`
 	paramObj
 }
 
@@ -1718,9 +1715,9 @@ func (r *SendToMsTeamsConversationIDParam) UnmarshalJSON(data []byte) error {
 
 // The properties Email, ServiceURL, TenantID are required.
 type SendToMsTeamsEmailParam struct {
-	Email      string `json:"email,required"`
-	ServiceURL string `json:"service_url,required"`
-	TenantID   string `json:"tenant_id,required"`
+	Email      string `json:"email" api:"required"`
+	ServiceURL string `json:"service_url" api:"required"`
+	TenantID   string `json:"tenant_id" api:"required"`
 	paramObj
 }
 
@@ -1734,9 +1731,9 @@ func (r *SendToMsTeamsEmailParam) UnmarshalJSON(data []byte) error {
 
 // The properties ServiceURL, TenantID, UserID are required.
 type SendToMsTeamsUserIDParam struct {
-	ServiceURL string `json:"service_url,required"`
-	TenantID   string `json:"tenant_id,required"`
-	UserID     string `json:"user_id,required"`
+	ServiceURL string `json:"service_url" api:"required"`
+	TenantID   string `json:"tenant_id" api:"required"`
+	UserID     string `json:"user_id" api:"required"`
 	paramObj
 }
 
@@ -1750,8 +1747,8 @@ func (r *SendToMsTeamsUserIDParam) UnmarshalJSON(data []byte) error {
 
 // The properties AccessToken, Channel are required.
 type SendToSlackChannelParam struct {
-	AccessToken string `json:"access_token,required"`
-	Channel     string `json:"channel,required"`
+	AccessToken string `json:"access_token" api:"required"`
+	Channel     string `json:"channel" api:"required"`
 	paramObj
 }
 
@@ -1765,8 +1762,8 @@ func (r *SendToSlackChannelParam) UnmarshalJSON(data []byte) error {
 
 // The properties AccessToken, Email are required.
 type SendToSlackEmailParam struct {
-	AccessToken string `json:"access_token,required"`
-	Email       string `json:"email,required"`
+	AccessToken string `json:"access_token" api:"required"`
+	Email       string `json:"email" api:"required"`
 	paramObj
 }
 
@@ -1780,8 +1777,8 @@ func (r *SendToSlackEmailParam) UnmarshalJSON(data []byte) error {
 
 // The properties AccessToken, UserID are required.
 type SendToSlackUserIDParam struct {
-	AccessToken string `json:"access_token,required"`
-	UserID      string `json:"user_id,required"`
+	AccessToken string `json:"access_token" api:"required"`
+	UserID      string `json:"user_id" api:"required"`
 	paramObj
 }
 
@@ -1882,7 +1879,7 @@ func (u SlackUnionParam) GetAccessToken() *string {
 //
 // The property Slack is required.
 type SlackRecipientParam struct {
-	Slack SlackUnionParam `json:"slack,omitzero,required"`
+	Slack SlackUnionParam `json:"slack,omitzero" api:"required"`
 	paramObj
 }
 
@@ -1896,24 +1893,24 @@ func (r *SlackRecipientParam) UnmarshalJSON(data []byte) error {
 
 type UserRecipient struct {
 	// Deprecated - Use `tenant_id` instead.
-	AccountID string `json:"account_id,nullable"`
+	AccountID string `json:"account_id" api:"nullable"`
 	// Context such as tenant_id to send the notification with.
-	Context MessageContext `json:"context,nullable"`
-	Data    map[string]any `json:"data,nullable"`
+	Context MessageContext `json:"context" api:"nullable"`
+	Data    map[string]any `json:"data" api:"nullable"`
 	// The user's email address.
-	Email string `json:"email,nullable"`
+	Email string `json:"email" api:"nullable"`
 	// The id of the list to send the message to.
-	ListID string `json:"list_id,nullable"`
+	ListID string `json:"list_id" api:"nullable"`
 	// The user's preferred ISO 639-1 language code.
-	Locale string `json:"locale,nullable"`
+	Locale string `json:"locale" api:"nullable"`
 	// The user's phone number.
-	PhoneNumber string                   `json:"phone_number,nullable"`
-	Preferences UserRecipientPreferences `json:"preferences,nullable"`
+	PhoneNumber string                   `json:"phone_number" api:"nullable"`
+	Preferences UserRecipientPreferences `json:"preferences" api:"nullable"`
 	// The id of the tenant the user is associated with.
-	TenantID string `json:"tenant_id,nullable"`
+	TenantID string `json:"tenant_id" api:"nullable"`
 	// The user's unique identifier. Typically, this will match the user id of a user
 	// in your system.
-	UserID string `json:"user_id,nullable"`
+	UserID string `json:"user_id" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AccountID   respjson.Field
@@ -1947,9 +1944,9 @@ func (r UserRecipient) ToParam() UserRecipientParam {
 }
 
 type UserRecipientPreferences struct {
-	Notifications map[string]Preference `json:"notifications,required"`
-	Categories    map[string]Preference `json:"categories,nullable"`
-	TemplateID    string                `json:"templateId,nullable"`
+	Notifications map[string]Preference `json:"notifications" api:"required"`
+	Categories    map[string]Preference `json:"categories" api:"nullable"`
+	TemplateID    string                `json:"templateId" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Notifications respjson.Field
@@ -1999,7 +1996,7 @@ func (r *UserRecipientParam) UnmarshalJSON(data []byte) error {
 
 // The property Notifications is required.
 type UserRecipientPreferencesParam struct {
-	Notifications map[string]PreferenceParam `json:"notifications,omitzero,required"`
+	Notifications map[string]PreferenceParam `json:"notifications,omitzero" api:"required"`
 	TemplateID    param.Opt[string]          `json:"templateId,omitzero"`
 	Categories    map[string]PreferenceParam `json:"categories,omitzero"`
 	paramObj
@@ -2043,7 +2040,7 @@ type WebhookAuthenticationParam struct {
 	// The authentication mode to use. Defaults to 'none' if not specified.
 	//
 	// Any of "none", "basic", "bearer".
-	Mode WebhookAuthMode `json:"mode,omitzero,required"`
+	Mode WebhookAuthMode `json:"mode,omitzero" api:"required"`
 	// Token for bearer authentication.
 	Token param.Opt[string] `json:"token,omitzero"`
 	// Password for basic authentication.
@@ -2071,7 +2068,7 @@ const (
 // The property URL is required.
 type WebhookProfileParam struct {
 	// The URL to send the webhook request to.
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	// Custom headers to include in the webhook request.
 	Headers map[string]string `json:"headers,omitzero"`
 	// Authentication configuration for the webhook request.
@@ -2108,7 +2105,7 @@ const (
 //
 // The property Webhook is required.
 type WebhookRecipientParam struct {
-	Webhook WebhookProfileParam `json:"webhook,omitzero,required"`
+	Webhook WebhookProfileParam `json:"webhook,omitzero" api:"required"`
 	paramObj
 }
 

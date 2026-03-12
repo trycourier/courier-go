@@ -47,26 +47,26 @@ func (r *NotificationService) List(ctx context.Context, query NotificationListPa
 	opts = slices.Concat(r.Options, opts)
 	path := "notifications"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 func (r *NotificationService) GetContent(ctx context.Context, id string, opts ...option.RequestOption) (res *NotificationGetContent, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("notifications/%s/content", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 type BaseCheck struct {
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Any of "RESOLVED", "FAILED", "PENDING".
-	Status BaseCheckStatus `json:"status,required"`
+	Status BaseCheckStatus `json:"status" api:"required"`
 	// Any of "custom".
-	Type BaseCheckType `json:"type,required"`
+	Type BaseCheckType `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -108,11 +108,11 @@ const (
 
 // The properties ID, Status, Type are required.
 type BaseCheckParam struct {
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Any of "RESOLVED", "FAILED", "PENDING".
-	Status BaseCheckStatus `json:"status,omitzero,required"`
+	Status BaseCheckStatus `json:"status,omitzero" api:"required"`
 	// Any of "custom".
-	Type BaseCheckType `json:"type,omitzero,required"`
+	Type BaseCheckType `json:"type,omitzero" api:"required"`
 	paramObj
 }
 
@@ -125,7 +125,7 @@ func (r *BaseCheckParam) UnmarshalJSON(data []byte) error {
 }
 
 type Check struct {
-	Updated int64 `json:"updated,required"`
+	Updated int64 `json:"updated" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Updated     respjson.Field
@@ -142,9 +142,9 @@ func (r *Check) UnmarshalJSON(data []byte) error {
 }
 
 type NotificationGetContent struct {
-	Blocks   []NotificationGetContentBlock   `json:"blocks,nullable"`
-	Channels []NotificationGetContentChannel `json:"channels,nullable"`
-	Checksum string                          `json:"checksum,nullable"`
+	Blocks   []NotificationGetContentBlock   `json:"blocks" api:"nullable"`
+	Channels []NotificationGetContentChannel `json:"channels" api:"nullable"`
+	Checksum string                          `json:"checksum" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Blocks      respjson.Field
@@ -162,15 +162,15 @@ func (r *NotificationGetContent) UnmarshalJSON(data []byte) error {
 }
 
 type NotificationGetContentBlock struct {
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Any of "action", "divider", "image", "jsonnet", "list", "markdown", "quote",
 	// "template", "text".
-	Type     string                                            `json:"type,required"`
-	Alias    string                                            `json:"alias,nullable"`
-	Checksum string                                            `json:"checksum,nullable"`
-	Content  NotificationGetContentBlockContentUnion           `json:"content,nullable"`
-	Context  string                                            `json:"context,nullable"`
-	Locales  map[string]NotificationGetContentBlockLocaleUnion `json:"locales,nullable"`
+	Type     string                                            `json:"type" api:"required"`
+	Alias    string                                            `json:"alias" api:"nullable"`
+	Checksum string                                            `json:"checksum" api:"nullable"`
+	Content  NotificationGetContentBlockContentUnion           `json:"content" api:"nullable"`
+	Context  string                                            `json:"context" api:"nullable"`
+	Locales  map[string]NotificationGetContentBlockLocaleUnion `json:"locales" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -234,8 +234,8 @@ func (r *NotificationGetContentBlockContentUnion) UnmarshalJSON(data []byte) err
 }
 
 type NotificationGetContentBlockContentNotificationContentHierarchy struct {
-	Children string `json:"children,nullable"`
-	Parent   string `json:"parent,nullable"`
+	Children string `json:"children" api:"nullable"`
+	Parent   string `json:"parent" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Children    respjson.Field
@@ -296,8 +296,8 @@ func (r *NotificationGetContentBlockLocaleUnion) UnmarshalJSON(data []byte) erro
 }
 
 type NotificationGetContentBlockLocaleNotificationContentHierarchy struct {
-	Children string `json:"children,nullable"`
-	Parent   string `json:"parent,nullable"`
+	Children string `json:"children" api:"nullable"`
+	Parent   string `json:"parent" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Children    respjson.Field
@@ -316,11 +316,11 @@ func (r *NotificationGetContentBlockLocaleNotificationContentHierarchy) Unmarsha
 }
 
 type NotificationGetContentChannel struct {
-	ID       string                                         `json:"id,required"`
-	Checksum string                                         `json:"checksum,nullable"`
-	Content  NotificationGetContentChannelContent           `json:"content,nullable"`
-	Locales  map[string]NotificationGetContentChannelLocale `json:"locales,nullable"`
-	Type     string                                         `json:"type,nullable"`
+	ID       string                                         `json:"id" api:"required"`
+	Checksum string                                         `json:"checksum" api:"nullable"`
+	Content  NotificationGetContentChannelContent           `json:"content" api:"nullable"`
+	Locales  map[string]NotificationGetContentChannelLocale `json:"locales" api:"nullable"`
+	Type     string                                         `json:"type" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -340,8 +340,8 @@ func (r *NotificationGetContentChannel) UnmarshalJSON(data []byte) error {
 }
 
 type NotificationGetContentChannelContent struct {
-	Subject string `json:"subject,nullable"`
-	Title   string `json:"title,nullable"`
+	Subject string `json:"subject" api:"nullable"`
+	Title   string `json:"title" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Subject     respjson.Field
@@ -358,8 +358,8 @@ func (r *NotificationGetContentChannelContent) UnmarshalJSON(data []byte) error 
 }
 
 type NotificationGetContentChannelLocale struct {
-	Subject string `json:"subject,nullable"`
-	Title   string `json:"title,nullable"`
+	Subject string `json:"subject" api:"nullable"`
+	Title   string `json:"title" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Subject     respjson.Field
@@ -376,8 +376,8 @@ func (r *NotificationGetContentChannelLocale) UnmarshalJSON(data []byte) error {
 }
 
 type NotificationListResponse struct {
-	Paging  shared.Paging                    `json:"paging,required"`
-	Results []NotificationListResponseResult `json:"results,required"`
+	Paging  shared.Paging                    `json:"paging" api:"required"`
+	Results []NotificationListResponseResult `json:"results" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Paging      respjson.Field
@@ -394,16 +394,16 @@ func (r *NotificationListResponse) UnmarshalJSON(data []byte) error {
 }
 
 type NotificationListResponseResult struct {
-	ID        string `json:"id,required"`
-	CreatedAt int64  `json:"created_at,required"`
+	ID        string `json:"id" api:"required"`
+	CreatedAt int64  `json:"created_at" api:"required"`
 	// Array of event IDs associated with this notification
-	EventIDs  []string                           `json:"event_ids,required"`
-	Note      string                             `json:"note,required"`
-	Routing   shared.MessageRouting              `json:"routing,required"`
-	TopicID   string                             `json:"topic_id,required"`
-	UpdatedAt int64                              `json:"updated_at,required"`
-	Tags      NotificationListResponseResultTags `json:"tags,nullable"`
-	Title     string                             `json:"title,nullable"`
+	EventIDs  []string                           `json:"event_ids" api:"required"`
+	Note      string                             `json:"note" api:"required"`
+	Routing   shared.MessageRouting              `json:"routing" api:"required"`
+	TopicID   string                             `json:"topic_id" api:"required"`
+	UpdatedAt int64                              `json:"updated_at" api:"required"`
+	Tags      NotificationListResponseResultTags `json:"tags" api:"nullable"`
+	Title     string                             `json:"title" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -427,7 +427,7 @@ func (r *NotificationListResponseResult) UnmarshalJSON(data []byte) error {
 }
 
 type NotificationListResponseResultTags struct {
-	Data []NotificationListResponseResultTagsData `json:"data,required"`
+	Data []NotificationListResponseResultTagsData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -443,8 +443,8 @@ func (r *NotificationListResponseResultTags) UnmarshalJSON(data []byte) error {
 }
 
 type NotificationListResponseResultTagsData struct {
-	ID   string `json:"id,required"`
-	Name string `json:"name,required"`
+	ID   string `json:"id" api:"required"`
+	Name string `json:"name" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field

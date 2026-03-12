@@ -1,5 +1,42 @@
 # Changelog
 
+## 4.7.0 (2026-03-12)
+
+Full Changelog: [v4.6.0...v4.7.0](https://github.com/trycourier/courier-go/compare/v4.6.0...v4.7.0)
+
+### Features
+
+* **api:** add list/invoke methods to journeys ([27e1dcc](https://github.com/trycourier/courier-go/commit/27e1dccf03274f02edad426f8690b599710f52dd))
+
+
+### Bug Fixes
+
+* allow canceling a request while it is waiting to retry ([e0f0298](https://github.com/trycourier/courier-go/commit/e0f029888b77c6d7cb9d76e821f0ed3c63dc1264))
+* **encoder:** correctly serialize NullStruct ([e95d4d3](https://github.com/trycourier/courier-go/commit/e95d4d378d8b7b3dbf9a88523bc41e3391eed6e6))
+* **types:** make clicked/delivered/opened/sent optional in MessageDetails ([30f9abb](https://github.com/trycourier/courier-go/commit/30f9abb4b5f9867930e573ca111328c6aa639274))
+* **types:** remove brand field from elemental content types ([acee88a](https://github.com/trycourier/courier-go/commit/acee88a7ee6b473fa50b550e34688e741ff7e7e7))
+* **types:** remove UserTokenParam, inline fields to add_single params in tokens ([ec13158](https://github.com/trycourier/courier-go/commit/ec1315823a666bf460b2b2f8dab879f0eb0571a3))
+
+
+### Chores
+
+* **ci:** skip uploading artifacts on stainless-internal branches ([e69a68a](https://github.com/trycourier/courier-go/commit/e69a68a751f9353fbe3e89eb22df678bb8040305))
+* **internal:** codegen related update ([664ab02](https://github.com/trycourier/courier-go/commit/664ab027d92780ee94fce45b9e26b06bccc6860a))
+* **internal:** codegen related update ([4cacfaf](https://github.com/trycourier/courier-go/commit/4cacfaf2b5db40ed1b4b58b14ff8805073ebdcd8))
+* **internal:** minor cleanup ([d23c040](https://github.com/trycourier/courier-go/commit/d23c04090a220530b5565c864755368dcebeac02))
+* **internal:** move custom custom `json` tags to `api` ([1988dac](https://github.com/trycourier/courier-go/commit/1988dac7e49bef9ca18174ee4790347c7542f6e4))
+* **internal:** remove mock server code ([4a2dda0](https://github.com/trycourier/courier-go/commit/4a2dda0870c2c9714209d3ceba1e4d228eb94a98))
+* **internal:** use explicit returns ([6c2484b](https://github.com/trycourier/courier-go/commit/6c2484bc752e0a7632e1eb594ad49f1b59a635c7))
+* **internal:** use explicit returns in more places ([85aeba9](https://github.com/trycourier/courier-go/commit/85aeba9702077aa52c310ec1186f02792b917286))
+* update mock server docs ([4f70490](https://github.com/trycourier/courier-go/commit/4f70490f1a85ab031815bce6a26819b5c5db3520))
+
+
+### Documentation
+
+* add AUTO-GENERATED-OVERVIEW markers for README sync ([#105](https://github.com/trycourier/courier-go/issues/105)) ([c25c36c](https://github.com/trycourier/courier-go/commit/c25c36cf92b37a28b5a51e6c3057db7129f7760d))
+* sync README from mintlify-docs (2026-02-20 18:11 UTC) ([#106](https://github.com/trycourier/courier-go/issues/106)) ([988d3c3](https://github.com/trycourier/courier-go/commit/988d3c3c2ae7b365344c20f7d8c3879e9d81e57a))
+* sync README from mintlify-docs (2026-02-20 18:36 UTC) ([#107](https://github.com/trycourier/courier-go/issues/107)) ([97c16c6](https://github.com/trycourier/courier-go/commit/97c16c65243ef89433eced0556f28064ce68cd9a))
+
 ## 4.6.0 (2026-02-06)
 
 Full Changelog: [v4.5.0...v4.6.0](https://github.com/trycourier/courier-go/compare/v4.5.0...v4.6.0)
