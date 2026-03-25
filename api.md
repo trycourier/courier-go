@@ -1,5 +1,6 @@
 # Shared Params Types
 
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#Alignment">Alignment</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#AudienceFilterParam">AudienceFilterParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#AudienceFilterConfigParam">AudienceFilterConfigParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#AudienceRecipientParam">AudienceRecipientParam</a>
@@ -43,6 +44,7 @@
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#SendToSlackUserIDParam">SendToSlackUserIDParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#SlackUnionParam">SlackUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#SlackRecipientParam">SlackRecipientParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#TextStyle">TextStyle</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#UserRecipientParam">UserRecipientParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#UtmParam">UtmParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#WebhookAuthMode">WebhookAuthMode</a>
@@ -54,6 +56,7 @@
 
 # Shared Response Types
 
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#Alignment">Alignment</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#AudienceFilterConfig">AudienceFilterConfig</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ChannelClassification">ChannelClassification</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ChannelPreference">ChannelPreference</a>
@@ -79,7 +82,11 @@
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#PreferenceStatus">PreferenceStatus</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#RecipientPreferences">RecipientPreferences</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#Rule">Rule</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#TextStyle">TextStyle</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#UserRecipient">UserRecipient</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#WebhookAuthMode">WebhookAuthMode</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#WebhookMethod">WebhookMethod</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#WebhookProfileType">WebhookProfileType</a>
 
 # Send
 

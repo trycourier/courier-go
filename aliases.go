@@ -17,6 +17,21 @@ type paramObj = param.APIObject
 type Error = apierror.Error
 
 // This is an alias to an internal type.
+type Alignment = shared.Alignment
+
+// Equals "center"
+const AlignmentCenter = shared.AlignmentCenter
+
+// Equals "left"
+const AlignmentLeft = shared.AlignmentLeft
+
+// Equals "right"
+const AlignmentRight = shared.AlignmentRight
+
+// Equals "full"
+const AlignmentFull = shared.AlignmentFull
+
+// This is an alias to an internal type.
 type AudienceFilterParam = shared.AudienceFilterParam
 
 // Send to users only if they are member of the account
@@ -383,6 +398,21 @@ type SlackUnionParam = shared.SlackUnionParam
 //
 // This is an alias to an internal type.
 type SlackRecipientParam = shared.SlackRecipientParam
+
+// This is an alias to an internal type.
+type TextStyle = shared.TextStyle
+
+// Equals "text"
+const TextStyleText = shared.TextStyleText
+
+// Equals "h1"
+const TextStyleH1 = shared.TextStyleH1
+
+// Equals "h2"
+const TextStyleH2 = shared.TextStyleH2
+
+// Equals "subtext"
+const TextStyleSubtext = shared.TextStyleSubtext
 
 // This is an alias to an internal type.
 type UserRecipient = shared.UserRecipient
