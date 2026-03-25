@@ -16,6 +16,15 @@ type paramUnion = param.APIUnion
 // aliased to make [param.APIObject] private when embedding
 type paramObj = param.APIObject
 
+type Alignment string
+
+const (
+	AlignmentCenter Alignment = "center"
+	AlignmentLeft   Alignment = "left"
+	AlignmentRight  Alignment = "right"
+	AlignmentFull   Alignment = "full"
+)
+
 // The properties Operator, Path, Value are required.
 type AudienceFilterParam struct {
 	// Send to users only if they are member of the account
@@ -1890,6 +1899,15 @@ func (r SlackRecipientParam) MarshalJSON() (data []byte, err error) {
 func (r *SlackRecipientParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type TextStyle string
+
+const (
+	TextStyleText    TextStyle = "text"
+	TextStyleH1      TextStyle = "h1"
+	TextStyleH2      TextStyle = "h2"
+	TextStyleSubtext TextStyle = "subtext"
+)
 
 type UserRecipient struct {
 	// Deprecated - Use `tenant_id` instead.
