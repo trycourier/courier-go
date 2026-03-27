@@ -206,6 +206,9 @@ type ElementalMetaNodeWithTypeParam = shared.ElementalMetaNodeWithTypeParam
 // This is an alias to an internal type.
 type ElementalNodeUnion = shared.ElementalNodeUnion
 
+// This is an alias to an internal type.
+type ElementalNodeObject = shared.ElementalNodeObject
+
 // The channel element allows a notification to be customized based on which
 // channel it is sent through. For example, you may want to display a detailed
 // message when the notification is sent through email, and a more concise message
@@ -219,6 +222,9 @@ type ElementalNodeUnion = shared.ElementalNodeUnion
 //
 // This is an alias to an internal type.
 type ElementalNodeUnionParam = shared.ElementalNodeUnionParam
+
+// This is an alias to an internal type.
+type ElementalNodeObjectParam = shared.ElementalNodeObjectParam
 
 // This is an alias to an internal type.
 type ElementalQuoteNodeWithType = shared.ElementalQuoteNodeWithType
