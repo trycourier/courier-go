@@ -144,7 +144,7 @@ func TestNotificationArchive(t *testing.T) {
 	}
 }
 
-func TestNotificationPublish(t *testing.T) {
+func TestNotificationListVersionsWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -157,7 +157,45 @@ func TestNotificationPublish(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	err := client.Notifications.Publish(context.TODO(), "id")
+	_, err := client.Notifications.ListVersions(
+		context.TODO(),
+		"id",
+		courier.NotificationListVersionsParams{
+			Cursor: courier.String("cursor"),
+			Limit:  courier.Int(10),
+		},
+	)
+	if err != nil {
+		var apierr *courier.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestNotificationPublishWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := courier.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	err := client.Notifications.Publish(
+		context.TODO(),
+		"id",
+		courier.NotificationPublishParams{
+			NotificationTemplatePublishRequest: courier.NotificationTemplatePublishRequestParam{
+				Version: courier.String("v321669910225"),
+			},
+		},
+	)
 	if err != nil {
 		var apierr *courier.Error
 		if errors.As(err, &apierr) {

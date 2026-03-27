@@ -87,8 +87,21 @@ func (r *NotificationService) Archive(ctx context.Context, id string, opts ...op
 	return err
 }
 
-// Publish the current draft of a notification template.
-func (r *NotificationService) Publish(ctx context.Context, id string, opts ...option.RequestOption) (err error) {
+// List versions of a notification template.
+func (r *NotificationService) ListVersions(ctx context.Context, id string, query NotificationListVersionsParams, opts ...option.RequestOption) (res *NotificationTemplateVersionListResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("notifications/%s/versions", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return res, err
+}
+
+// Publish a notification template. Publishes the current draft by default. Pass a
+// version in the request body to publish a specific historical version.
+func (r *NotificationService) Publish(ctx context.Context, id string, body NotificationPublishParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if id == "" {
@@ -96,7 +109,7 @@ func (r *NotificationService) Publish(ctx context.Context, id string, opts ...op
 		return err
 	}
 	path := fmt.Sprintf("notifications/%s/publish", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, nil, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
 	return err
 }
 
@@ -752,6 +765,22 @@ func (r *NotificationTemplatePayloadSubscriptionParam) UnmarshalJSON(data []byte
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Optional request body for publishing a notification template. Omit or send an
+// empty object to publish the current draft.
+type NotificationTemplatePublishRequestParam struct {
+	// Historical version to publish (e.g. "v001"). Omit to publish the current draft.
+	Version param.Opt[string] `json:"version,omitzero"`
+	paramObj
+}
+
+func (r NotificationTemplatePublishRequestParam) MarshalJSON() (data []byte, err error) {
+	type shadow NotificationTemplatePublishRequestParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *NotificationTemplatePublishRequestParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // V2 (CDS) template summary returned in list responses.
 type NotificationTemplateSummary struct {
 	ID string `json:"id" api:"required"`
@@ -827,6 +856,52 @@ const (
 	NotificationTemplateUpdateRequestStateDraft     NotificationTemplateUpdateRequestState = "DRAFT"
 	NotificationTemplateUpdateRequestStatePublished NotificationTemplateUpdateRequestState = "PUBLISHED"
 )
+
+type NotificationTemplateVersionListResponse struct {
+	Paging   shared.Paging `json:"paging" api:"required"`
+	Versions []VersionNode `json:"versions" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Paging      respjson.Field
+		Versions    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r NotificationTemplateVersionListResponse) RawJSON() string { return r.JSON.raw }
+func (r *NotificationTemplateVersionListResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A version entry for a notification template.
+type VersionNode struct {
+	// Epoch milliseconds when this version was created.
+	Created int64 `json:"created" api:"required"`
+	// User ID of the version creator.
+	Creator string `json:"creator" api:"required"`
+	// Version identifier. One of "draft", "published:vNNN" (current published
+	// version), or "vNNN" (historical version).
+	Version string `json:"version" api:"required"`
+	// Whether the draft has unpublished changes. Only present on the draft version.
+	HasChanges bool `json:"has_changes"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Created     respjson.Field
+		Creator     respjson.Field
+		Version     respjson.Field
+		HasChanges  respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r VersionNode) RawJSON() string { return r.JSON.raw }
+func (r *VersionNode) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 type NotificationListResponse struct {
 	Paging shared.Paging `json:"paging" api:"required"`
@@ -1056,6 +1131,37 @@ func (r NotificationListParams) URLQuery() (v url.Values, err error) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+type NotificationListVersionsParams struct {
+	// Opaque pagination cursor from a previous response. Omit for the first page.
+	Cursor param.Opt[string] `query:"cursor,omitzero" json:"-"`
+	// Maximum number of versions to return per page. Default 10, max 10.
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [NotificationListVersionsParams]'s query parameters as
+// `url.Values`.
+func (r NotificationListVersionsParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type NotificationPublishParams struct {
+	// Optional request body for publishing a notification template. Omit or send an
+	// empty object to publish the current draft.
+	NotificationTemplatePublishRequest NotificationTemplatePublishRequestParam
+	paramObj
+}
+
+func (r NotificationPublishParams) MarshalJSON() (data []byte, err error) {
+	return shimjson.Marshal(r.NotificationTemplatePublishRequest)
+}
+func (r *NotificationPublishParams) UnmarshalJSON(data []byte) error {
+	return json.Unmarshal(data, &r.NotificationTemplatePublishRequest)
 }
 
 type NotificationReplaceParams struct {
