@@ -4,7 +4,6 @@ package courier
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -289,7 +288,7 @@ func (r RoutingStrategyNewParams) MarshalJSON() (data []byte, err error) {
 	return shimjson.Marshal(r.RoutingStrategyCreateRequest)
 }
 func (r *RoutingStrategyNewParams) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &r.RoutingStrategyCreateRequest)
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type RoutingStrategyListParams struct {
@@ -320,5 +319,5 @@ func (r RoutingStrategyReplaceParams) MarshalJSON() (data []byte, err error) {
 	return shimjson.Marshal(r.RoutingStrategyReplaceRequest)
 }
 func (r *RoutingStrategyReplaceParams) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &r.RoutingStrategyReplaceRequest)
+	return apijson.UnmarshalRoot(data, r)
 }

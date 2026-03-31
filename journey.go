@@ -4,7 +4,6 @@ package courier
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -209,5 +208,5 @@ func (r JourneyInvokeParams) MarshalJSON() (data []byte, err error) {
 	return shimjson.Marshal(r.JourneysInvokeRequest)
 }
 func (r *JourneyInvokeParams) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &r.JourneysInvokeRequest)
+	return apijson.UnmarshalRoot(data, r)
 }

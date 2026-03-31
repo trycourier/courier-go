@@ -1097,7 +1097,7 @@ func (r NotificationNewParams) MarshalJSON() (data []byte, err error) {
 	return shimjson.Marshal(r.NotificationTemplateCreateRequest)
 }
 func (r *NotificationNewParams) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &r.NotificationTemplateCreateRequest)
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type NotificationGetParams struct {
@@ -1161,7 +1161,7 @@ func (r NotificationPublishParams) MarshalJSON() (data []byte, err error) {
 	return shimjson.Marshal(r.NotificationTemplatePublishRequest)
 }
 func (r *NotificationPublishParams) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &r.NotificationTemplatePublishRequest)
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type NotificationReplaceParams struct {
@@ -1175,5 +1175,5 @@ func (r NotificationReplaceParams) MarshalJSON() (data []byte, err error) {
 	return shimjson.Marshal(r.NotificationTemplateUpdateRequest)
 }
 func (r *NotificationReplaceParams) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &r.NotificationTemplateUpdateRequest)
+	return apijson.UnmarshalRoot(data, r)
 }
