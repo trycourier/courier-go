@@ -527,6 +527,47 @@ func (r ElementalDividerNodeWithTypeParam) MarshalJSON() (data []byte, err error
 	return param.MarshalObject(r, shadow{&r, false})
 }
 
+type ElementalHTMLNodeWithType struct {
+	// Any of "html".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+	ElementalBaseNode
+}
+
+// Returns the unmodified JSON received from the API
+func (r ElementalHTMLNodeWithType) RawJSON() string { return r.JSON.raw }
+func (r *ElementalHTMLNodeWithType) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this ElementalHTMLNodeWithType to a
+// ElementalHTMLNodeWithTypeParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// ElementalHTMLNodeWithTypeParam.Overrides()
+func (r ElementalHTMLNodeWithType) ToParam() ElementalHTMLNodeWithTypeParam {
+	return param.Override[ElementalHTMLNodeWithTypeParam](json.RawMessage(r.RawJSON()))
+}
+
+type ElementalHTMLNodeWithTypeParam struct {
+	Type string `json:"type,omitzero"`
+	ElementalBaseNodeParam
+}
+
+func (r ElementalHTMLNodeWithTypeParam) MarshalJSON() (data []byte, err error) {
+	type shadow struct {
+		*ElementalHTMLNodeWithTypeParam
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
+}
+
 type ElementalImageNodeWithType struct {
 	// Any of "image".
 	Type string `json:"type"`
@@ -613,7 +654,7 @@ func (r ElementalMetaNodeWithTypeParam) MarshalJSON() (data []byte, err error) {
 // [ElementalTextNodeWithType], [ElementalMetaNodeWithType],
 // [ElementalChannelNodeWithType], [ElementalImageNodeWithType],
 // [ElementalActionNodeWithType], [ElementalDividerNodeWithType],
-// [ElementalQuoteNodeWithType], [ElementalNodeObject].
+// [ElementalQuoteNodeWithType], [ElementalHTMLNodeWithType].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type ElementalNodeUnion struct {
@@ -621,25 +662,25 @@ type ElementalNodeUnion struct {
 	// [ElementalMetaNodeWithType], [ElementalChannelNodeWithType],
 	// [ElementalImageNodeWithType], [ElementalActionNodeWithType],
 	// [ElementalDividerNodeWithType], [ElementalQuoteNodeWithType],
-	// [ElementalNodeObject].
+	// [ElementalHTMLNodeWithType].
 	Channels []string `json:"channels"`
 	// This field is from variant [ElementalTextNodeWithType],
 	// [ElementalMetaNodeWithType], [ElementalChannelNodeWithType],
 	// [ElementalImageNodeWithType], [ElementalActionNodeWithType],
 	// [ElementalDividerNodeWithType], [ElementalQuoteNodeWithType],
-	// [ElementalNodeObject].
+	// [ElementalHTMLNodeWithType].
 	If string `json:"if"`
 	// This field is from variant [ElementalTextNodeWithType],
 	// [ElementalMetaNodeWithType], [ElementalChannelNodeWithType],
 	// [ElementalImageNodeWithType], [ElementalActionNodeWithType],
 	// [ElementalDividerNodeWithType], [ElementalQuoteNodeWithType],
-	// [ElementalNodeObject].
+	// [ElementalHTMLNodeWithType].
 	Loop string `json:"loop"`
 	// This field is from variant [ElementalTextNodeWithType],
 	// [ElementalMetaNodeWithType], [ElementalChannelNodeWithType],
 	// [ElementalImageNodeWithType], [ElementalActionNodeWithType],
 	// [ElementalDividerNodeWithType], [ElementalQuoteNodeWithType],
-	// [ElementalNodeObject].
+	// [ElementalHTMLNodeWithType].
 	Ref  string `json:"ref"`
 	Type string `json:"type"`
 	// This field is from variant [ElementalChannelNodeWithType].
@@ -693,7 +734,7 @@ func (u ElementalNodeUnion) AsElementalQuoteNodeWithType() (v ElementalQuoteNode
 	return
 }
 
-func (u ElementalNodeUnion) AsElementalNodeObject() (v ElementalNodeObject) {
+func (u ElementalNodeUnion) AsElementalHTMLNodeWithType() (v ElementalHTMLNodeWithType) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -714,24 +755,6 @@ func (r ElementalNodeUnion) ToParam() ElementalNodeUnionParam {
 	return param.Override[ElementalNodeUnionParam](json.RawMessage(r.RawJSON()))
 }
 
-type ElementalNodeObject struct {
-	// Any of "html".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-	ElementalBaseNode
-}
-
-// Returns the unmodified JSON received from the API
-func (r ElementalNodeObject) RawJSON() string { return r.JSON.raw }
-func (r *ElementalNodeObject) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
@@ -743,7 +766,7 @@ type ElementalNodeUnionParam struct {
 	OfElementalActionNodeWithType  *ElementalActionNodeWithTypeParam  `json:",omitzero,inline"`
 	OfElementalDividerNodeWithType *ElementalDividerNodeWithTypeParam `json:",omitzero,inline"`
 	OfElementalQuoteNodeWithType   *ElementalQuoteNodeWithTypeParam   `json:",omitzero,inline"`
-	OfElementalNodeObject          *ElementalNodeObjectParam          `json:",omitzero,inline"`
+	OfElementalHTMLNodeWithType    *ElementalHTMLNodeWithTypeParam    `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -755,7 +778,7 @@ func (u ElementalNodeUnionParam) MarshalJSON() ([]byte, error) {
 		u.OfElementalActionNodeWithType,
 		u.OfElementalDividerNodeWithType,
 		u.OfElementalQuoteNodeWithType,
-		u.OfElementalNodeObject)
+		u.OfElementalHTMLNodeWithType)
 }
 func (u *ElementalNodeUnionParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -776,8 +799,8 @@ func (u *ElementalNodeUnionParam) asAny() any {
 		return u.OfElementalDividerNodeWithType
 	} else if !param.IsOmitted(u.OfElementalQuoteNodeWithType) {
 		return u.OfElementalQuoteNodeWithType
-	} else if !param.IsOmitted(u.OfElementalNodeObject) {
-		return u.OfElementalNodeObject
+	} else if !param.IsOmitted(u.OfElementalHTMLNodeWithType) {
+		return u.OfElementalHTMLNodeWithType
 	}
 	return nil
 }
@@ -814,7 +837,7 @@ func (u ElementalNodeUnionParam) GetIf() *string {
 		return &vt.If.Value
 	} else if vt := u.OfElementalQuoteNodeWithType; vt != nil && vt.If.Valid() {
 		return &vt.If.Value
-	} else if vt := u.OfElementalNodeObject; vt != nil && vt.If.Valid() {
+	} else if vt := u.OfElementalHTMLNodeWithType; vt != nil && vt.If.Valid() {
 		return &vt.If.Value
 	}
 	return nil
@@ -836,7 +859,7 @@ func (u ElementalNodeUnionParam) GetLoop() *string {
 		return &vt.Loop.Value
 	} else if vt := u.OfElementalQuoteNodeWithType; vt != nil && vt.Loop.Valid() {
 		return &vt.Loop.Value
-	} else if vt := u.OfElementalNodeObject; vt != nil && vt.Loop.Valid() {
+	} else if vt := u.OfElementalHTMLNodeWithType; vt != nil && vt.Loop.Valid() {
 		return &vt.Loop.Value
 	}
 	return nil
@@ -858,7 +881,7 @@ func (u ElementalNodeUnionParam) GetRef() *string {
 		return &vt.Ref.Value
 	} else if vt := u.OfElementalQuoteNodeWithType; vt != nil && vt.Ref.Valid() {
 		return &vt.Ref.Value
-	} else if vt := u.OfElementalNodeObject; vt != nil && vt.Ref.Valid() {
+	} else if vt := u.OfElementalHTMLNodeWithType; vt != nil && vt.Ref.Valid() {
 		return &vt.Ref.Value
 	}
 	return nil
@@ -880,7 +903,7 @@ func (u ElementalNodeUnionParam) GetType() *string {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfElementalQuoteNodeWithType; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfElementalNodeObject; vt != nil {
+	} else if vt := u.OfElementalHTMLNodeWithType; vt != nil {
 		return (*string)(&vt.Type)
 	}
 	return nil
@@ -902,23 +925,10 @@ func (u ElementalNodeUnionParam) GetChannels() []string {
 		return vt.Channels
 	} else if vt := u.OfElementalQuoteNodeWithType; vt != nil {
 		return vt.Channels
-	} else if vt := u.OfElementalNodeObject; vt != nil {
+	} else if vt := u.OfElementalHTMLNodeWithType; vt != nil {
 		return vt.Channels
 	}
 	return nil
-}
-
-type ElementalNodeObjectParam struct {
-	Type string `json:"type,omitzero"`
-	ElementalBaseNodeParam
-}
-
-func (r ElementalNodeObjectParam) MarshalJSON() (data []byte, err error) {
-	type shadow struct {
-		*ElementalNodeObjectParam
-		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
-	}
-	return param.MarshalObject(r, shadow{&r, false})
 }
 
 type ElementalQuoteNodeWithType struct {
