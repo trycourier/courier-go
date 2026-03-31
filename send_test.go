@@ -30,11 +30,11 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 	_, err := client.Send.Message(context.TODO(), courier.SendMessageParams{
 		Message: courier.SendMessageParamsMessage{
 			BrandID: courier.String("brand_id"),
-			Channels: map[string]courier.SendMessageParamsMessageChannel{
-				"foo": {
+			Channels: shared.MessageChannelsParam{
+				"foo": shared.ChannelParam{
 					BrandID: courier.String("brand_id"),
 					If:      courier.String("if"),
-					Metadata: courier.SendMessageParamsMessageChannelMetadata{
+					Metadata: shared.ChannelMetadataParam{
 						Utm: shared.UtmParam{
 							Campaign: courier.String("campaign"),
 							Content:  courier.String("content"),
@@ -47,8 +47,8 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 						"foo": "bar",
 					},
 					Providers:     []string{"string"},
-					RoutingMethod: "all",
-					Timeouts: courier.SendMessageParamsMessageChannelTimeouts{
+					RoutingMethod: shared.ChannelRoutingMethodAll,
+					Timeouts: shared.TimeoutsParam{
 						Channel:  courier.Int(0),
 						Provider: courier.Int(0),
 					},
@@ -92,10 +92,10 @@ func TestSendMessageWithOptionalParams(t *testing.T) {
 			Preferences: courier.SendMessageParamsMessagePreferences{
 				SubscriptionTopicID: "subscription_topic_id",
 			},
-			Providers: map[string]courier.SendMessageParamsMessageProvider{
-				"foo": {
+			Providers: shared.MessageProvidersParam{
+				"foo": shared.MessageProvidersTypeParam{
 					If: courier.String("if"),
-					Metadata: courier.SendMessageParamsMessageProviderMetadata{
+					Metadata: shared.MetadataParam{
 						Utm: shared.UtmParam{
 							Campaign: courier.String("campaign"),
 							Content:  courier.String("content"),

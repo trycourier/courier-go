@@ -64,6 +64,23 @@ type AudienceFilterConfigParam = shared.AudienceFilterConfigParam
 type AudienceRecipientParam = shared.AudienceRecipientParam
 
 // This is an alias to an internal type.
+type Channel = shared.Channel
+
+// Defaults to `single`.
+//
+// This is an alias to an internal type.
+type ChannelRoutingMethod = shared.ChannelRoutingMethod
+
+// Equals "all"
+const ChannelRoutingMethodAll = shared.ChannelRoutingMethodAll
+
+// Equals "single"
+const ChannelRoutingMethodSingle = shared.ChannelRoutingMethodSingle
+
+// This is an alias to an internal type.
+type ChannelParam = shared.ChannelParam
+
+// This is an alias to an internal type.
 type ChannelClassification = shared.ChannelClassification
 
 // Equals "direct_message"
@@ -83,6 +100,12 @@ const ChannelClassificationWebhook = shared.ChannelClassificationWebhook
 
 // Equals "inbox"
 const ChannelClassificationInbox = shared.ChannelClassificationInbox
+
+// This is an alias to an internal type.
+type ChannelMetadata = shared.ChannelMetadata
+
+// This is an alias to an internal type.
+type ChannelMetadataParam = shared.ChannelMetadataParam
 
 // This is an alias to an internal type.
 type ChannelPreference = shared.ChannelPreference
@@ -280,10 +303,28 @@ type ListPatternRecipientParam = shared.ListPatternRecipientParam
 type ListRecipientParam = shared.ListRecipientParam
 
 // This is an alias to an internal type.
+type MessageChannels = shared.MessageChannels
+
+// This is an alias to an internal type.
+type MessageChannelsParam = shared.MessageChannelsParam
+
+// This is an alias to an internal type.
 type MessageContext = shared.MessageContext
 
 // This is an alias to an internal type.
 type MessageContextParam = shared.MessageContextParam
+
+// This is an alias to an internal type.
+type MessageProviders = shared.MessageProviders
+
+// This is an alias to an internal type.
+type MessageProvidersParam = shared.MessageProvidersParam
+
+// This is an alias to an internal type.
+type MessageProvidersType = shared.MessageProvidersType
+
+// This is an alias to an internal type.
+type MessageProvidersTypeParam = shared.MessageProvidersTypeParam
 
 // This is an alias to an internal type.
 type MessageRouting = shared.MessageRouting
@@ -305,6 +346,12 @@ type MessageRoutingChannelUnion = shared.MessageRoutingChannelUnion
 
 // This is an alias to an internal type.
 type MessageRoutingChannelUnionParam = shared.MessageRoutingChannelUnionParam
+
+// This is an alias to an internal type.
+type Metadata = shared.Metadata
+
+// This is an alias to an internal type.
+type MetadataParam = shared.MetadataParam
 
 // This is an alias to an internal type.
 type MsTeamsUnionParam = shared.MsTeamsUnionParam
@@ -421,6 +468,12 @@ const TextStyleH2 = shared.TextStyleH2
 const TextStyleSubtext = shared.TextStyleSubtext
 
 // This is an alias to an internal type.
+type Timeouts = shared.Timeouts
+
+// This is an alias to an internal type.
+type TimeoutsParam = shared.TimeoutsParam
+
+// This is an alias to an internal type.
 type UserRecipient = shared.UserRecipient
 
 // This is an alias to an internal type.
@@ -431,6 +484,9 @@ type UserRecipientParam = shared.UserRecipientParam
 
 // This is an alias to an internal type.
 type UserRecipientPreferencesParam = shared.UserRecipientPreferencesParam
+
+// This is an alias to an internal type.
+type Utm = shared.Utm
 
 // This is an alias to an internal type.
 type UtmParam = shared.UtmParam
