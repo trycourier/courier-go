@@ -4,12 +4,12 @@ package courier
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"slices"
 
+	"github.com/trycourier/courier-go/v4/internal/apijson"
 	shimjson "github.com/trycourier/courier-go/v4/internal/encoding/json"
 	"github.com/trycourier/courier-go/v4/internal/requestconfig"
 	"github.com/trycourier/courier-go/v4/option"
@@ -78,7 +78,7 @@ func (r TenantPreferenceItemUpdateParams) MarshalJSON() (data []byte, err error)
 	return shimjson.Marshal(r.SubscriptionTopicNew)
 }
 func (r *TenantPreferenceItemUpdateParams) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &r.SubscriptionTopicNew)
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type TenantPreferenceItemDeleteParams struct {
