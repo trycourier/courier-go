@@ -181,6 +181,12 @@ type ElementalDividerNodeWithType = shared.ElementalDividerNodeWithType
 type ElementalDividerNodeWithTypeParam = shared.ElementalDividerNodeWithTypeParam
 
 // This is an alias to an internal type.
+type ElementalHTMLNodeWithType = shared.ElementalHTMLNodeWithType
+
+// This is an alias to an internal type.
+type ElementalHTMLNodeWithTypeParam = shared.ElementalHTMLNodeWithTypeParam
+
+// This is an alias to an internal type.
 type ElementalImageNodeWithType = shared.ElementalImageNodeWithType
 
 // This is an alias to an internal type.
@@ -206,9 +212,6 @@ type ElementalMetaNodeWithTypeParam = shared.ElementalMetaNodeWithTypeParam
 // This is an alias to an internal type.
 type ElementalNodeUnion = shared.ElementalNodeUnion
 
-// This is an alias to an internal type.
-type ElementalNodeObject = shared.ElementalNodeObject
-
 // The channel element allows a notification to be customized based on which
 // channel it is sent through. For example, you may want to display a detailed
 // message when the notification is sent through email, and a more concise message
@@ -222,9 +225,6 @@ type ElementalNodeObject = shared.ElementalNodeObject
 //
 // This is an alias to an internal type.
 type ElementalNodeUnionParam = shared.ElementalNodeUnionParam
-
-// This is an alias to an internal type.
-type ElementalNodeObjectParam = shared.ElementalNodeObjectParam
 
 // This is an alias to an internal type.
 type ElementalQuoteNodeWithType = shared.ElementalQuoteNodeWithType
