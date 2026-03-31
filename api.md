@@ -4,7 +4,9 @@
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#AudienceFilterParam">AudienceFilterParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#AudienceFilterConfigParam">AudienceFilterConfigParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#AudienceRecipientParam">AudienceRecipientParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ChannelParam">ChannelParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ChannelClassification">ChannelClassification</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ChannelMetadataParam">ChannelMetadataParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ChannelPreferenceParam">ChannelPreferenceParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ElementalActionNodeWithTypeParam">ElementalActionNodeWithTypeParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ElementalBaseNodeParam">ElementalBaseNodeParam</a>
@@ -23,9 +25,13 @@
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ListFilterParam">ListFilterParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ListPatternRecipientParam">ListPatternRecipientParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ListRecipientParam">ListRecipientParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#MessageChannelsParam">MessageChannelsParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#MessageContextParam">MessageContextParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#MessageProvidersParam">MessageProvidersParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#MessageProvidersTypeParam">MessageProvidersTypeParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#MessageRoutingParam">MessageRoutingParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#MessageRoutingChannelUnionParam">MessageRoutingChannelUnionParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#MetadataParam">MetadataParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#MsTeamsUnionParam">MsTeamsUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#MsTeamsRecipientParam">MsTeamsRecipientParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#NotificationPreferenceDetailsParam">NotificationPreferenceDetailsParam</a>
@@ -46,6 +52,7 @@
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#SlackUnionParam">SlackUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#SlackRecipientParam">SlackRecipientParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#TextStyle">TextStyle</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#TimeoutsParam">TimeoutsParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#UserRecipientParam">UserRecipientParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#UtmParam">UtmParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#WebhookAuthMode">WebhookAuthMode</a>
@@ -59,7 +66,9 @@
 
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#Alignment">Alignment</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#AudienceFilterConfig">AudienceFilterConfig</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#Channel">Channel</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ChannelClassification">ChannelClassification</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ChannelMetadata">ChannelMetadata</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ChannelPreference">ChannelPreference</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ElementalActionNodeWithType">ElementalActionNodeWithType</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ElementalBaseNode">ElementalBaseNode</a>
@@ -75,9 +84,13 @@
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ElementalQuoteNodeWithType">ElementalQuoteNodeWithType</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#ElementalTextNodeWithType">ElementalTextNodeWithType</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#FilterConfig">FilterConfig</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#MessageChannels">MessageChannels</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#MessageContext">MessageContext</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#MessageProviders">MessageProviders</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#MessageProvidersType">MessageProvidersType</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#MessageRouting">MessageRouting</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#MessageRoutingChannelUnion">MessageRoutingChannelUnion</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#Metadata">Metadata</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#NotificationPreferenceDetails">NotificationPreferenceDetails</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#Paging">Paging</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#Preference">Preference</a>
@@ -85,7 +98,9 @@
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#RecipientPreferences">RecipientPreferences</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#Rule">Rule</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#TextStyle">TextStyle</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#Timeouts">Timeouts</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#UserRecipient">UserRecipient</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#Utm">Utm</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#WebhookAuthMode">WebhookAuthMode</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#WebhookMethod">WebhookMethod</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared">shared</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4/shared#WebhookProfileType">WebhookProfileType</a>
@@ -361,6 +376,28 @@ Methods:
 - <code title="put /notifications/{id}/{submissionId}/checks">client.Notifications.Checks.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#NotificationCheckService.Update">Update</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, submissionID <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#NotificationCheckUpdateParams">NotificationCheckUpdateParams</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#NotificationCheckUpdateResponse">NotificationCheckUpdateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /notifications/{id}/{submissionId}/checks">client.Notifications.Checks.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#NotificationCheckService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, submissionID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#NotificationCheckListParams">NotificationCheckListParams</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#NotificationCheckListResponse">NotificationCheckListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="delete /notifications/{id}/{submissionId}/checks">client.Notifications.Checks.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#NotificationCheckService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, submissionID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#NotificationCheckDeleteParams">NotificationCheckDeleteParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
+
+# RoutingStrategies
+
+Params Types:
+
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#RoutingStrategyCreateRequestParam">RoutingStrategyCreateRequestParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#RoutingStrategyReplaceRequestParam">RoutingStrategyReplaceRequestParam</a>
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#RoutingStrategyGetResponse">RoutingStrategyGetResponse</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#RoutingStrategyListResponse">RoutingStrategyListResponse</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#RoutingStrategyMutationResponse">RoutingStrategyMutationResponse</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#RoutingStrategySummary">RoutingStrategySummary</a>
+
+Methods:
+
+- <code title="post /routing-strategies">client.RoutingStrategies.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#RoutingStrategyService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#RoutingStrategyNewParams">RoutingStrategyNewParams</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#RoutingStrategyMutationResponse">RoutingStrategyMutationResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /routing-strategies/{id}">client.RoutingStrategies.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#RoutingStrategyService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#RoutingStrategyGetResponse">RoutingStrategyGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /routing-strategies">client.RoutingStrategies.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#RoutingStrategyService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#RoutingStrategyListParams">RoutingStrategyListParams</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#RoutingStrategyListResponse">RoutingStrategyListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="delete /routing-strategies/{id}">client.RoutingStrategies.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#RoutingStrategyService.Archive">Archive</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
+- <code title="put /routing-strategies/{id}">client.RoutingStrategies.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#RoutingStrategyService.Replace">Replace</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#RoutingStrategyReplaceParams">RoutingStrategyReplaceParams</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#RoutingStrategyMutationResponse">RoutingStrategyMutationResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Profiles
 

@@ -455,10 +455,10 @@ type TenantTemplateInputParam struct {
 	// Template content configuration including blocks, elements, and message structure
 	Content shared.ElementalContentParam `json:"content,omitzero" api:"required"`
 	// Channel-specific delivery configuration (email, SMS, push, etc.)
-	Channels map[string]TenantTemplateInputChannelParam `json:"channels,omitzero"`
+	Channels shared.MessageChannelsParam `json:"channels,omitzero"`
 	// Provider-specific delivery configuration for routing to specific email/SMS
 	// providers
-	Providers map[string]TenantTemplateInputProviderParam `json:"providers,omitzero"`
+	Providers shared.MessageProvidersParam `json:"providers,omitzero"`
 	// Message routing configuration for multi-channel delivery strategies
 	Routing shared.MessageRoutingParam `json:"routing,omitzero"`
 	paramObj
@@ -469,96 +469,6 @@ func (r TenantTemplateInputParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *TenantTemplateInputParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type TenantTemplateInputChannelParam struct {
-	// Brand id used for rendering.
-	BrandID param.Opt[string] `json:"brand_id,omitzero"`
-	// JS conditional with access to data/profile.
-	If       param.Opt[string]                       `json:"if,omitzero"`
-	Metadata TenantTemplateInputChannelMetadataParam `json:"metadata,omitzero"`
-	// Channel specific overrides.
-	Override map[string]any `json:"override,omitzero"`
-	// Providers enabled for this channel.
-	Providers []string `json:"providers,omitzero"`
-	// Defaults to `single`.
-	//
-	// Any of "all", "single".
-	RoutingMethod string                                  `json:"routing_method,omitzero"`
-	Timeouts      TenantTemplateInputChannelTimeoutsParam `json:"timeouts,omitzero"`
-	paramObj
-}
-
-func (r TenantTemplateInputChannelParam) MarshalJSON() (data []byte, err error) {
-	type shadow TenantTemplateInputChannelParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *TenantTemplateInputChannelParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[TenantTemplateInputChannelParam](
-		"routing_method", "all", "single",
-	)
-}
-
-type TenantTemplateInputChannelMetadataParam struct {
-	Utm shared.UtmParam `json:"utm,omitzero"`
-	paramObj
-}
-
-func (r TenantTemplateInputChannelMetadataParam) MarshalJSON() (data []byte, err error) {
-	type shadow TenantTemplateInputChannelMetadataParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *TenantTemplateInputChannelMetadataParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type TenantTemplateInputChannelTimeoutsParam struct {
-	Channel  param.Opt[int64] `json:"channel,omitzero"`
-	Provider param.Opt[int64] `json:"provider,omitzero"`
-	paramObj
-}
-
-func (r TenantTemplateInputChannelTimeoutsParam) MarshalJSON() (data []byte, err error) {
-	type shadow TenantTemplateInputChannelTimeoutsParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *TenantTemplateInputChannelTimeoutsParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type TenantTemplateInputProviderParam struct {
-	// JS conditional with access to data/profile.
-	If       param.Opt[string]                        `json:"if,omitzero"`
-	Timeouts param.Opt[int64]                         `json:"timeouts,omitzero"`
-	Metadata TenantTemplateInputProviderMetadataParam `json:"metadata,omitzero"`
-	// Provider-specific overrides.
-	Override map[string]any `json:"override,omitzero"`
-	paramObj
-}
-
-func (r TenantTemplateInputProviderParam) MarshalJSON() (data []byte, err error) {
-	type shadow TenantTemplateInputProviderParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *TenantTemplateInputProviderParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type TenantTemplateInputProviderMetadataParam struct {
-	Utm shared.UtmParam `json:"utm,omitzero"`
-	paramObj
-}
-
-func (r TenantTemplateInputProviderMetadataParam) MarshalJSON() (data []byte, err error) {
-	type shadow TenantTemplateInputProviderMetadataParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *TenantTemplateInputProviderMetadataParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

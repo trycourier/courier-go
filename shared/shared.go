@@ -122,6 +122,84 @@ func (r *AudienceRecipientParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type Channel struct {
+	// Brand id used for rendering.
+	BrandID string `json:"brand_id" api:"nullable"`
+	// JS conditional with access to data/profile.
+	If       string          `json:"if" api:"nullable"`
+	Metadata ChannelMetadata `json:"metadata" api:"nullable"`
+	// Channel specific overrides.
+	Override map[string]any `json:"override" api:"nullable"`
+	// Providers enabled for this channel.
+	Providers []string `json:"providers" api:"nullable"`
+	// Defaults to `single`.
+	//
+	// Any of "all", "single".
+	RoutingMethod ChannelRoutingMethod `json:"routing_method" api:"nullable"`
+	Timeouts      Timeouts             `json:"timeouts" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		BrandID       respjson.Field
+		If            respjson.Field
+		Metadata      respjson.Field
+		Override      respjson.Field
+		Providers     respjson.Field
+		RoutingMethod respjson.Field
+		Timeouts      respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r Channel) RawJSON() string { return r.JSON.raw }
+func (r *Channel) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this Channel to a ChannelParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// ChannelParam.Overrides()
+func (r Channel) ToParam() ChannelParam {
+	return param.Override[ChannelParam](json.RawMessage(r.RawJSON()))
+}
+
+// Defaults to `single`.
+type ChannelRoutingMethod string
+
+const (
+	ChannelRoutingMethodAll    ChannelRoutingMethod = "all"
+	ChannelRoutingMethodSingle ChannelRoutingMethod = "single"
+)
+
+type ChannelParam struct {
+	// Brand id used for rendering.
+	BrandID param.Opt[string] `json:"brand_id,omitzero"`
+	// JS conditional with access to data/profile.
+	If param.Opt[string] `json:"if,omitzero"`
+	// Channel specific overrides.
+	Override map[string]any `json:"override,omitzero"`
+	// Providers enabled for this channel.
+	Providers []string `json:"providers,omitzero"`
+	// Defaults to `single`.
+	//
+	// Any of "all", "single".
+	RoutingMethod ChannelRoutingMethod `json:"routing_method,omitzero"`
+	Metadata      ChannelMetadataParam `json:"metadata,omitzero"`
+	Timeouts      TimeoutsParam        `json:"timeouts,omitzero"`
+	paramObj
+}
+
+func (r ChannelParam) MarshalJSON() (data []byte, err error) {
+	type shadow ChannelParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ChannelParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type ChannelClassification string
 
 const (
@@ -132,6 +210,44 @@ const (
 	ChannelClassificationWebhook       ChannelClassification = "webhook"
 	ChannelClassificationInbox         ChannelClassification = "inbox"
 )
+
+type ChannelMetadata struct {
+	Utm Utm `json:"utm" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Utm         respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChannelMetadata) RawJSON() string { return r.JSON.raw }
+func (r *ChannelMetadata) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this ChannelMetadata to a ChannelMetadataParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// ChannelMetadataParam.Overrides()
+func (r ChannelMetadata) ToParam() ChannelMetadataParam {
+	return param.Override[ChannelMetadataParam](json.RawMessage(r.RawJSON()))
+}
+
+type ChannelMetadataParam struct {
+	Utm UtmParam `json:"utm,omitzero"`
+	paramObj
+}
+
+func (r ChannelMetadataParam) MarshalJSON() (data []byte, err error) {
+	type shadow ChannelMetadataParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ChannelMetadataParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 type ChannelPreference struct {
 	// Any of "direct_message", "email", "push", "sms", "webhook", "inbox".
@@ -1150,6 +1266,10 @@ func (r *ListRecipientParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type MessageChannels map[string]Channel
+
+type MessageChannelsParam map[string]ChannelParam
+
 type MessageContext struct {
 	// Tenant id used to load brand/default preferences/context.
 	TenantID string `json:"tenant_id" api:"nullable"`
@@ -1187,6 +1307,61 @@ func (r MessageContextParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *MessageContextParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type MessageProviders map[string]MessageProvidersType
+
+type MessageProvidersParam map[string]MessageProvidersTypeParam
+
+type MessageProvidersType struct {
+	// JS conditional with access to data/profile.
+	If       string   `json:"if" api:"nullable"`
+	Metadata Metadata `json:"metadata" api:"nullable"`
+	// Provider-specific overrides.
+	Override map[string]any `json:"override" api:"nullable"`
+	Timeouts int64          `json:"timeouts" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		If          respjson.Field
+		Metadata    respjson.Field
+		Override    respjson.Field
+		Timeouts    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MessageProvidersType) RawJSON() string { return r.JSON.raw }
+func (r *MessageProvidersType) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this MessageProvidersType to a MessageProvidersTypeParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// MessageProvidersTypeParam.Overrides()
+func (r MessageProvidersType) ToParam() MessageProvidersTypeParam {
+	return param.Override[MessageProvidersTypeParam](json.RawMessage(r.RawJSON()))
+}
+
+type MessageProvidersTypeParam struct {
+	// JS conditional with access to data/profile.
+	If       param.Opt[string] `json:"if,omitzero"`
+	Timeouts param.Opt[int64]  `json:"timeouts,omitzero"`
+	// Provider-specific overrides.
+	Override map[string]any `json:"override,omitzero"`
+	Metadata MetadataParam  `json:"metadata,omitzero"`
+	paramObj
+}
+
+func (r MessageProvidersTypeParam) MarshalJSON() (data []byte, err error) {
+	type shadow MessageProvidersTypeParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageProvidersTypeParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1320,6 +1495,44 @@ func (u *MessageRoutingChannelUnionParam) asAny() any {
 		return u.OfMessageRouting
 	}
 	return nil
+}
+
+type Metadata struct {
+	Utm Utm `json:"utm" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Utm         respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r Metadata) RawJSON() string { return r.JSON.raw }
+func (r *Metadata) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this Metadata to a MetadataParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// MetadataParam.Overrides()
+func (r Metadata) ToParam() MetadataParam {
+	return param.Override[MetadataParam](json.RawMessage(r.RawJSON()))
+}
+
+type MetadataParam struct {
+	Utm UtmParam `json:"utm,omitzero"`
+	paramObj
+}
+
+func (r MetadataParam) MarshalJSON() (data []byte, err error) {
+	type shadow MetadataParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MetadataParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 func MsTeamsParamOfSendToMsTeamsUserID(serviceURL string, tenantID string, userID string) MsTeamsUnionParam {
@@ -1973,6 +2186,47 @@ const (
 	TextStyleSubtext TextStyle = "subtext"
 )
 
+type Timeouts struct {
+	Channel  int64 `json:"channel" api:"nullable"`
+	Provider int64 `json:"provider" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Channel     respjson.Field
+		Provider    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r Timeouts) RawJSON() string { return r.JSON.raw }
+func (r *Timeouts) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this Timeouts to a TimeoutsParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// TimeoutsParam.Overrides()
+func (r Timeouts) ToParam() TimeoutsParam {
+	return param.Override[TimeoutsParam](json.RawMessage(r.RawJSON()))
+}
+
+type TimeoutsParam struct {
+	Channel  param.Opt[int64] `json:"channel,omitzero"`
+	Provider param.Opt[int64] `json:"provider,omitzero"`
+	paramObj
+}
+
+func (r TimeoutsParam) MarshalJSON() (data []byte, err error) {
+	type shadow TimeoutsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *TimeoutsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type UserRecipient struct {
 	// Deprecated - Use `tenant_id` instead.
 	AccountID string `json:"account_id" api:"nullable"`
@@ -2090,6 +2344,39 @@ func (r UserRecipientPreferencesParam) MarshalJSON() (data []byte, err error) {
 }
 func (r *UserRecipientPreferencesParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+type Utm struct {
+	Campaign string `json:"campaign" api:"nullable"`
+	Content  string `json:"content" api:"nullable"`
+	Medium   string `json:"medium" api:"nullable"`
+	Source   string `json:"source" api:"nullable"`
+	Term     string `json:"term" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Campaign    respjson.Field
+		Content     respjson.Field
+		Medium      respjson.Field
+		Source      respjson.Field
+		Term        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r Utm) RawJSON() string { return r.JSON.raw }
+func (r *Utm) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this Utm to a UtmParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// UtmParam.Overrides()
+func (r Utm) ToParam() UtmParam {
+	return param.Override[UtmParam](json.RawMessage(r.RawJSON()))
 }
 
 type UtmParam struct {
