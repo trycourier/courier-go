@@ -132,6 +132,32 @@ Methods:
 - <code title="delete /audiences/{audience_id}">client.Audiences.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#AudienceService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, audienceID <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 - <code title="get /audiences/{audience_id}/members">client.Audiences.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#AudienceService.ListMembers">ListMembers</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, audienceID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#AudienceListMembersParams">AudienceListMembersParams</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#AudienceListMembersResponse">AudienceListMembersResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
+# Providers
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#Provider">Provider</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#ProvidersCatalogEntry">ProvidersCatalogEntry</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#ProviderListResponse">ProviderListResponse</a>
+
+Methods:
+
+- <code title="post /providers">client.Providers.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#ProviderService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#ProviderNewParams">ProviderNewParams</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#Provider">Provider</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /providers/{id}">client.Providers.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#ProviderService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#Provider">Provider</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /providers/{id}">client.Providers.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#ProviderService.Update">Update</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#ProviderUpdateParams">ProviderUpdateParams</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#Provider">Provider</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /providers">client.Providers.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#ProviderService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#ProviderListParams">ProviderListParams</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#ProviderListResponse">ProviderListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="delete /providers/{id}">client.Providers.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#ProviderService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
+
+## Catalog
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#ProviderCatalogListResponse">ProviderCatalogListResponse</a>
+
+Methods:
+
+- <code title="get /providers/catalog">client.Providers.Catalog.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#ProviderCatalogService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#ProviderCatalogListParams">ProviderCatalogListParams</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#ProviderCatalogListResponse">ProviderCatalogListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
 # AuditEvents
 
 Response Types:

@@ -19,6 +19,7 @@ type Client struct {
 	Options           []option.RequestOption
 	Send              SendService
 	Audiences         AudienceService
+	Providers         ProviderService
 	AuditEvents       AuditEventService
 	Auth              AuthService
 	Automations       AutomationService
@@ -61,6 +62,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 
 	r.Send = NewSendService(opts...)
 	r.Audiences = NewAudienceService(opts...)
+	r.Providers = NewProviderService(opts...)
 	r.AuditEvents = NewAuditEventService(opts...)
 	r.Auth = NewAuthService(opts...)
 	r.Automations = NewAutomationService(opts...)
