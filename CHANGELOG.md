@@ -1,5 +1,42 @@
 # Changelog
 
+## 4.8.0 (2026-04-02)
+
+Full Changelog: [v4.7.0...v4.8.0](https://github.com/trycourier/courier-go/compare/v4.7.0...v4.8.0)
+
+### Features
+
+* add providers CRUD endpoints to API spec ([41b0735](https://github.com/trycourier/courier-go/commit/41b0735889fee3570785ed8185de74b374985b4d))
+* **api:** add create/get/archive/publish/replace to notifications, event_id param, update types ([38b1592](https://github.com/trycourier/courier-go/commit/38b1592b05a2cf0c60015427f0a9c9029a87aadf))
+* **api:** add ElementalNodeObject variant to ElementalNodeUnion ([4c5a411](https://github.com/trycourier/courier-go/commit/4c5a411ac0852fe420825059f6fbb5fc0053ba5f))
+* **api:** add routing_strategies resource and Utm type ([e21eda2](https://github.com/trycourier/courier-go/commit/e21eda2124c9dd432d9c16f3ede681f27e9fc392))
+* **internal:** support comma format in multipart form encoding ([e0cf0b4](https://github.com/trycourier/courier-go/commit/e0cf0b49c8cb82aeb98dd900e9ca094c4023a70d))
+
+
+### Bug Fixes
+
+* fix issue with unmarshaling in some cases ([e98ff26](https://github.com/trycourier/courier-go/commit/e98ff266c510c617f840d247aab09fa0b4c4e8d8))
+* prevent duplicate ? in query params ([7b1e0c0](https://github.com/trycourier/courier-go/commit/7b1e0c005ccee47c1f545f4f1be6b387a5462c9e))
+* **stainless:** add named alias for ElementalHtmlNode oneOf variant ([3bdd507](https://github.com/trycourier/courier-go/commit/3bdd507b8db9dcf91b2d4229178bc20d0fbdba78))
+* **types:** generate shared enum types that are not referenced by other schemas ([4fed6cf](https://github.com/trycourier/courier-go/commit/4fed6cfbda1db8685cb1719152315e8c6f1a3efd))
+
+
+### Chores
+
+* **ci:** skip lint on metadata-only changes ([30be473](https://github.com/trycourier/courier-go/commit/30be473bfcf480d56734858d507fce189c0dc85c))
+* **ci:** support opting out of skipping builds on metadata-only commits ([e2a8d3f](https://github.com/trycourier/courier-go/commit/e2a8d3ff1730340ff525453b8efc0fcd4a02e244))
+* **client:** fix multipart serialisation of Default() fields ([e9052d2](https://github.com/trycourier/courier-go/commit/e9052d237a8960c624915988ee97feeb7187de8f))
+* **internal:** support default value struct tag ([94ad4dd](https://github.com/trycourier/courier-go/commit/94ad4dddb2005797d74d9579613f0036fd1ea0ed))
+* **internal:** tweak CI branches ([f4afc65](https://github.com/trycourier/courier-go/commit/f4afc657f2f3f64dce71e187890c90ed1edbeaed))
+* **internal:** update gitignore ([1466e73](https://github.com/trycourier/courier-go/commit/1466e7335f1959eb51caec0c3ba8d9c0da164b4c))
+* remove unnecessary error check for url parsing ([e2114c9](https://github.com/trycourier/courier-go/commit/e2114c9b259fe927537ffd358063328e833331c2))
+* update docs for api:"required" ([6731287](https://github.com/trycourier/courier-go/commit/6731287341b3acfc2ebfd197d7ecda356f4030db))
+
+
+### Documentation
+
+* add AGENTS.md for AI coding assistants ([#109](https://github.com/trycourier/courier-go/issues/109)) ([50b6241](https://github.com/trycourier/courier-go/commit/50b62415ea6821d719a56f471898db94700382bd))
+
 ## 4.7.0 (2026-03-12)
 
 Full Changelog: [v4.6.0...v4.7.0](https://github.com/trycourier/courier-go/compare/v4.6.0...v4.7.0)
