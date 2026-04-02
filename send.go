@@ -80,26 +80,26 @@ func (r *SendMessageParams) UnmarshalJSON(data []byte) error {
 // The message property has the following primary top-level properties. They define
 // the destination and content of the message.
 type SendMessageParamsMessage struct {
-	BrandID  param.Opt[string] `json:"brand_id,omitzero"`
-	Template param.Opt[string] `json:"template,omitzero"`
-	// Define run-time configuration for channels. Valid ChannelId's: email, sms, push,
-	// inbox, direct_message, banner, webhook.
-	Channels    map[string]SendMessageParamsMessageChannel  `json:"channels,omitzero"`
-	Data        map[string]any                              `json:"data,omitzero"`
-	Delay       SendMessageParamsMessageDelay               `json:"delay,omitzero"`
-	Expiry      SendMessageParamsMessageExpiry              `json:"expiry,omitzero"`
-	Metadata    SendMessageParamsMessageMetadata            `json:"metadata,omitzero"`
-	Preferences SendMessageParamsMessagePreferences         `json:"preferences,omitzero"`
-	Providers   map[string]SendMessageParamsMessageProvider `json:"providers,omitzero"`
+	BrandID     param.Opt[string]                   `json:"brand_id,omitzero"`
+	Template    param.Opt[string]                   `json:"template,omitzero"`
+	Data        map[string]any                      `json:"data,omitzero"`
+	Delay       SendMessageParamsMessageDelay       `json:"delay,omitzero"`
+	Expiry      SendMessageParamsMessageExpiry      `json:"expiry,omitzero"`
+	Metadata    SendMessageParamsMessageMetadata    `json:"metadata,omitzero"`
+	Preferences SendMessageParamsMessagePreferences `json:"preferences,omitzero"`
 	// Customize which channels/providers Courier may deliver the message through.
 	Routing SendMessageParamsMessageRouting `json:"routing,omitzero"`
 	Timeout SendMessageParamsMessageTimeout `json:"timeout,omitzero"`
 	// The recipient or a list of recipients of the message
 	To SendMessageParamsMessageToUnion `json:"to,omitzero"`
+	// Define run-time configuration for channels. Valid ChannelId's: email, sms, push,
+	// inbox, direct_message, banner, webhook.
+	Channels shared.MessageChannelsParam `json:"channels,omitzero"`
 	// Describes content that will work for email, inbox, push, chat, or any channel
 	// id.
-	Content SendMessageParamsMessageContentUnion `json:"content,omitzero"`
-	Context shared.MessageContextParam           `json:"context,omitzero"`
+	Content   SendMessageParamsMessageContentUnion `json:"content,omitzero"`
+	Context   shared.MessageContextParam           `json:"context,omitzero"`
+	Providers shared.MessageProvidersParam         `json:"providers,omitzero"`
 	paramObj
 }
 
@@ -108,65 +108,6 @@ func (r SendMessageParamsMessage) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *SendMessageParamsMessage) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type SendMessageParamsMessageChannel struct {
-	// Brand id used for rendering.
-	BrandID param.Opt[string] `json:"brand_id,omitzero"`
-	// JS conditional with access to data/profile.
-	If       param.Opt[string]                       `json:"if,omitzero"`
-	Metadata SendMessageParamsMessageChannelMetadata `json:"metadata,omitzero"`
-	// Channel specific overrides.
-	Override map[string]any `json:"override,omitzero"`
-	// Providers enabled for this channel.
-	Providers []string `json:"providers,omitzero"`
-	// Defaults to `single`.
-	//
-	// Any of "all", "single".
-	RoutingMethod string                                  `json:"routing_method,omitzero"`
-	Timeouts      SendMessageParamsMessageChannelTimeouts `json:"timeouts,omitzero"`
-	paramObj
-}
-
-func (r SendMessageParamsMessageChannel) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageChannel
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SendMessageParamsMessageChannel) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[SendMessageParamsMessageChannel](
-		"routing_method", "all", "single",
-	)
-}
-
-type SendMessageParamsMessageChannelMetadata struct {
-	Utm shared.UtmParam `json:"utm,omitzero"`
-	paramObj
-}
-
-func (r SendMessageParamsMessageChannelMetadata) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageChannelMetadata
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SendMessageParamsMessageChannelMetadata) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type SendMessageParamsMessageChannelTimeouts struct {
-	Channel  param.Opt[int64] `json:"channel,omitzero"`
-	Provider param.Opt[int64] `json:"provider,omitzero"`
-	paramObj
-}
-
-func (r SendMessageParamsMessageChannelTimeouts) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageChannelTimeouts
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SendMessageParamsMessageChannelTimeouts) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -285,37 +226,6 @@ func (r SendMessageParamsMessagePreferences) MarshalJSON() (data []byte, err err
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *SendMessageParamsMessagePreferences) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type SendMessageParamsMessageProvider struct {
-	// JS conditional with access to data/profile.
-	If       param.Opt[string]                        `json:"if,omitzero"`
-	Timeouts param.Opt[int64]                         `json:"timeouts,omitzero"`
-	Metadata SendMessageParamsMessageProviderMetadata `json:"metadata,omitzero"`
-	// Provider-specific overrides.
-	Override map[string]any `json:"override,omitzero"`
-	paramObj
-}
-
-func (r SendMessageParamsMessageProvider) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageProvider
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SendMessageParamsMessageProvider) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type SendMessageParamsMessageProviderMetadata struct {
-	Utm shared.UtmParam `json:"utm,omitzero"`
-	paramObj
-}
-
-func (r SendMessageParamsMessageProviderMetadata) MarshalJSON() (data []byte, err error) {
-	type shadow SendMessageParamsMessageProviderMetadata
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SendMessageParamsMessageProviderMetadata) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

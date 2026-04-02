@@ -16,24 +16,26 @@ import (
 // interacting with the Courier API. You should not instantiate this client
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options       []option.RequestOption
-	Send          SendService
-	Audiences     AudienceService
-	AuditEvents   AuditEventService
-	Auth          AuthService
-	Automations   AutomationService
-	Journeys      JourneyService
-	Brands        BrandService
-	Bulk          BulkService
-	Inbound       InboundService
-	Lists         ListService
-	Messages      MessageService
-	Requests      RequestService
-	Notifications NotificationService
-	Profiles      ProfileService
-	Tenants       TenantService
-	Translations  TranslationService
-	Users         UserService
+	Options           []option.RequestOption
+	Send              SendService
+	Audiences         AudienceService
+	Providers         ProviderService
+	AuditEvents       AuditEventService
+	Auth              AuthService
+	Automations       AutomationService
+	Journeys          JourneyService
+	Brands            BrandService
+	Bulk              BulkService
+	Inbound           InboundService
+	Lists             ListService
+	Messages          MessageService
+	Requests          RequestService
+	Notifications     NotificationService
+	RoutingStrategies RoutingStrategyService
+	Profiles          ProfileService
+	Tenants           TenantService
+	Translations      TranslationService
+	Users             UserService
 }
 
 // DefaultClientOptions read from the environment (COURIER_API_KEY,
@@ -60,6 +62,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 
 	r.Send = NewSendService(opts...)
 	r.Audiences = NewAudienceService(opts...)
+	r.Providers = NewProviderService(opts...)
 	r.AuditEvents = NewAuditEventService(opts...)
 	r.Auth = NewAuthService(opts...)
 	r.Automations = NewAutomationService(opts...)
@@ -71,6 +74,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Messages = NewMessageService(opts...)
 	r.Requests = NewRequestService(opts...)
 	r.Notifications = NewNotificationService(opts...)
+	r.RoutingStrategies = NewRoutingStrategyService(opts...)
 	r.Profiles = NewProfileService(opts...)
 	r.Tenants = NewTenantService(opts...)
 	r.Translations = NewTranslationService(opts...)

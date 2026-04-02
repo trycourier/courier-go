@@ -4,7 +4,6 @@ package courier
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -221,7 +220,7 @@ func (r TenantTemplatePublishParams) MarshalJSON() (data []byte, err error) {
 	return shimjson.Marshal(r.PostTenantTemplatePublishRequest)
 }
 func (r *TenantTemplatePublishParams) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &r.PostTenantTemplatePublishRequest)
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type TenantTemplateReplaceParams struct {
@@ -235,5 +234,5 @@ func (r TenantTemplateReplaceParams) MarshalJSON() (data []byte, err error) {
 	return shimjson.Marshal(r.PutTenantTemplateRequest)
 }
 func (r *TenantTemplateReplaceParams) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &r.PutTenantTemplateRequest)
+	return apijson.UnmarshalRoot(data, r)
 }

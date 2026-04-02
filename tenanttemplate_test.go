@@ -139,11 +139,11 @@ func TestTenantTemplateReplaceWithOptionalParams(t *testing.T) {
 						}},
 						Version: "version",
 					},
-					Channels: map[string]courier.TenantTemplateInputChannelParam{
-						"foo": {
+					Channels: shared.MessageChannelsParam{
+						"foo": shared.ChannelParam{
 							BrandID: courier.String("brand_id"),
 							If:      courier.String("if"),
-							Metadata: courier.TenantTemplateInputChannelMetadataParam{
+							Metadata: shared.ChannelMetadataParam{
 								Utm: shared.UtmParam{
 									Campaign: courier.String("campaign"),
 									Content:  courier.String("content"),
@@ -156,17 +156,17 @@ func TestTenantTemplateReplaceWithOptionalParams(t *testing.T) {
 								"foo": "bar",
 							},
 							Providers:     []string{"string"},
-							RoutingMethod: "all",
-							Timeouts: courier.TenantTemplateInputChannelTimeoutsParam{
+							RoutingMethod: shared.ChannelRoutingMethodAll,
+							Timeouts: shared.TimeoutsParam{
 								Channel:  courier.Int(0),
 								Provider: courier.Int(0),
 							},
 						},
 					},
-					Providers: map[string]courier.TenantTemplateInputProviderParam{
-						"foo": {
+					Providers: shared.MessageProvidersParam{
+						"foo": shared.MessageProvidersTypeParam{
 							If: courier.String("if"),
-							Metadata: courier.TenantTemplateInputProviderMetadataParam{
+							Metadata: shared.MetadataParam{
 								Utm: shared.UtmParam{
 									Campaign: courier.String("campaign"),
 									Content:  courier.String("content"),
