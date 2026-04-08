@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.9.0 (2026-04-08)
+
+Full Changelog: [v4.8.0...v4.9.0](https://github.com/trycourier/courier-go/compare/v4.8.0...v4.9.0)
+
+### Features
+
+* **api:** add content/element/locale PUT methods, remove draft service, update types ([f1358c3](https://github.com/trycourier/courier-go/commit/f1358c335c8286330a269ecd20709e303c9c340d))
+* **api:** add list notifications method to routing strategies ([c4d5ef9](https://github.com/trycourier/courier-go/commit/c4d5ef9af292c9e9f0769e04143a63d9db5081f2))
+
 ## 4.8.0 (2026-04-02)
 
 Full Changelog: [v4.7.0...v4.8.0](https://github.com/trycourier/courier-go/compare/v4.7.0...v4.8.0)
