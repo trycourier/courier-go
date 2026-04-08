@@ -205,6 +205,125 @@ func TestNotificationPublishWithOptionalParams(t *testing.T) {
 	}
 }
 
+func TestNotificationPutContentWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := courier.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Notifications.PutContent(
+		context.TODO(),
+		"id",
+		courier.NotificationPutContentParams{
+			NotificationContentPutRequest: courier.NotificationContentPutRequestParam{
+				Content: courier.NotificationContentPutRequestContentParam{
+					Elements: []shared.ElementalNodeUnionParam{{
+						OfElementalChannelNodeWithType: &shared.ElementalChannelNodeWithTypeParam{
+							ElementalChannelNodeParam: shared.ElementalChannelNodeParam{
+								ElementalBaseNodeParam: shared.ElementalBaseNodeParam{},
+							},
+							Type: "channel",
+						},
+					}},
+					Version: courier.String("2022-01-01"),
+				},
+				State: courier.NotificationTemplateStateDraft,
+			},
+		},
+	)
+	if err != nil {
+		var apierr *courier.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestNotificationPutElementWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := courier.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Notifications.PutElement(
+		context.TODO(),
+		"elementId",
+		courier.NotificationPutElementParams{
+			ID: "id",
+			NotificationElementPutRequest: courier.NotificationElementPutRequestParam{
+				Type:     "text",
+				Channels: []string{"string"},
+				Data: map[string]any{
+					"content": "bar",
+				},
+				If:    courier.String("if"),
+				Loop:  courier.String("loop"),
+				Ref:   courier.String("ref"),
+				State: courier.NotificationTemplateStateDraft,
+			},
+		},
+	)
+	if err != nil {
+		var apierr *courier.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestNotificationPutLocaleWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := courier.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Notifications.PutLocale(
+		context.TODO(),
+		"localeId",
+		courier.NotificationPutLocaleParams{
+			ID: "id",
+			NotificationLocalePutRequest: courier.NotificationLocalePutRequestParam{
+				Elements: []courier.NotificationLocalePutRequestElementParam{{
+					ID: "elem_1",
+				}, {
+					ID: "elem_2",
+				}},
+				State: courier.NotificationTemplateStateDraft,
+			},
+		},
+	)
+	if err != nil {
+		var apierr *courier.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
 func TestNotificationReplaceWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
@@ -260,7 +379,7 @@ func TestNotificationReplaceWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestNotificationGetContent(t *testing.T) {
+func TestNotificationGetContentWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -273,7 +392,13 @@ func TestNotificationGetContent(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Notifications.GetContent(context.TODO(), "id")
+	_, err := client.Notifications.GetContent(
+		context.TODO(),
+		"id",
+		courier.NotificationGetContentParams{
+			Version: courier.String("version"),
+		},
+	)
 	if err != nil {
 		var apierr *courier.Error
 		if errors.As(err, &apierr) {
