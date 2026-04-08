@@ -29,7 +29,6 @@ import (
 // the [NewNotificationService] method instead.
 type NotificationService struct {
 	Options []option.RequestOption
-	Draft   NotificationDraftService
 	Checks  NotificationCheckService
 }
 
@@ -39,7 +38,6 @@ type NotificationService struct {
 func NewNotificationService(opts ...option.RequestOption) (r NotificationService) {
 	r = NotificationService{}
 	r.Options = opts
-	r.Draft = NewNotificationDraftService(opts...)
 	r.Checks = NewNotificationCheckService(opts...)
 	return
 }
@@ -113,6 +111,55 @@ func (r *NotificationService) Publish(ctx context.Context, id string, body Notif
 	return err
 }
 
+// Replace the elemental content of a notification template. Overwrites all
+// elements in the template with the provided content. Only supported for V2
+// (elemental) templates.
+func (r *NotificationService) PutContent(ctx context.Context, id string, body NotificationPutContentParams, opts ...option.RequestOption) (res *NotificationContentMutationResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("notifications/%s/content", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
+	return res, err
+}
+
+// Update a single element within a notification template. Only supported for V2
+// (elemental) templates.
+func (r *NotificationService) PutElement(ctx context.Context, elementID string, params NotificationPutElementParams, opts ...option.RequestOption) (res *NotificationContentMutationResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if params.ID == "" {
+		err = errors.New("missing required id parameter")
+		return nil, err
+	}
+	if elementID == "" {
+		err = errors.New("missing required elementId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("notifications/%s/elements/%s", params.ID, elementID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
+	return res, err
+}
+
+// Set locale-specific content overrides for a notification template. Each element
+// override must reference an existing element by ID. Only supported for V2
+// (elemental) templates.
+func (r *NotificationService) PutLocale(ctx context.Context, localeID string, params NotificationPutLocaleParams, opts ...option.RequestOption) (res *NotificationContentMutationResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if params.ID == "" {
+		err = errors.New("missing required id parameter")
+		return nil, err
+	}
+	if localeID == "" {
+		err = errors.New("missing required localeId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("notifications/%s/locales/%s", params.ID, localeID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
+	return res, err
+}
+
 // Replace a notification template. All fields are required.
 func (r *NotificationService) Replace(ctx context.Context, id string, body NotificationReplaceParams, opts ...option.RequestOption) (res *NotificationTemplateMutationResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -125,14 +172,18 @@ func (r *NotificationService) Replace(ctx context.Context, id string, body Notif
 	return res, err
 }
 
-func (r *NotificationService) GetContent(ctx context.Context, id string, opts ...option.RequestOption) (res *NotificationGetContent, err error) {
+// Retrieve the content of a notification template. The response shape depends on
+// whether the template uses V1 (blocks/channels) or V2 (elemental) content. Use
+// the `version` query parameter to select draft, published, or a specific
+// historical version.
+func (r *NotificationService) GetContent(ctx context.Context, id string, query NotificationGetContentParams, opts ...option.RequestOption) (res *NotificationGetContentResponseUnion, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("notifications/%s/content", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
 	return res, err
 }
 
@@ -213,6 +264,190 @@ type Check struct {
 // Returns the unmodified JSON received from the API
 func (r Check) RawJSON() string { return r.JSON.raw }
 func (r *Check) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// An element with its content checksum and optional nested elements and locale
+// checksums.
+type ElementWithChecksums struct {
+	// MD5 hash of translatable content.
+	Checksum string `json:"checksum" api:"required"`
+	// Element type (text, meta, action, etc.).
+	Type string `json:"type" api:"required"`
+	ID   string `json:"id"`
+	// Nested child elements (for group-type elements).
+	Elements []ElementWithChecksums `json:"elements"`
+	// Locale-specific content with checksums.
+	Locales     map[string]ElementWithChecksumsLocale `json:"locales"`
+	ExtraFields map[string]any                        `json:"" api:"extrafields"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Checksum    respjson.Field
+		Type        respjson.Field
+		ID          respjson.Field
+		Elements    respjson.Field
+		Locales     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ElementWithChecksums) RawJSON() string { return r.JSON.raw }
+func (r *ElementWithChecksums) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ElementWithChecksumsLocale struct {
+	Checksum string `json:"checksum" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Checksum    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ElementWithChecksumsLocale) RawJSON() string { return r.JSON.raw }
+func (r *ElementWithChecksumsLocale) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Elemental content response for V2 templates. Contains versioned elements with
+// content checksums.
+type NotificationContentGetResponse struct {
+	Elements []ElementWithChecksums `json:"elements" api:"required"`
+	// Content version identifier.
+	Version string `json:"version" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Elements    respjson.Field
+		Version     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r NotificationContentGetResponse) RawJSON() string { return r.JSON.raw }
+func (r *NotificationContentGetResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Shared mutation response for `PUT` content, `PUT` element, and `PUT` locale
+// operations. Contains the template ID, content version, per-element checksums,
+// and resulting state.
+type NotificationContentMutationResponse struct {
+	// Template ID.
+	ID       string                                       `json:"id" api:"required"`
+	Elements []NotificationContentMutationResponseElement `json:"elements" api:"required"`
+	// Template state. Defaults to `DRAFT`.
+	//
+	// Any of "DRAFT", "PUBLISHED".
+	State NotificationTemplateState `json:"state" api:"required"`
+	// Content version identifier.
+	Version string `json:"version" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Elements    respjson.Field
+		State       respjson.Field
+		Version     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r NotificationContentMutationResponse) RawJSON() string { return r.JSON.raw }
+func (r *NotificationContentMutationResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type NotificationContentMutationResponseElement struct {
+	ID       string `json:"id" api:"required"`
+	Checksum string `json:"checksum" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Checksum    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r NotificationContentMutationResponseElement) RawJSON() string { return r.JSON.raw }
+func (r *NotificationContentMutationResponseElement) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Request body for replacing the elemental content of a notification template.
+//
+// The property Content is required.
+type NotificationContentPutRequestParam struct {
+	// Elemental content payload. The server defaults `version` when omitted.
+	Content NotificationContentPutRequestContentParam `json:"content,omitzero" api:"required"`
+	// Template state. Defaults to `DRAFT`.
+	//
+	// Any of "DRAFT", "PUBLISHED".
+	State NotificationTemplateState `json:"state,omitzero"`
+	paramObj
+}
+
+func (r NotificationContentPutRequestParam) MarshalJSON() (data []byte, err error) {
+	type shadow NotificationContentPutRequestParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *NotificationContentPutRequestParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Elemental content payload. The server defaults `version` when omitted.
+//
+// The property Elements is required.
+type NotificationContentPutRequestContentParam struct {
+	Elements []shared.ElementalNodeUnionParam `json:"elements,omitzero" api:"required"`
+	// Content version identifier (e.g., `2022-01-01`). Optional; server defaults when
+	// omitted.
+	Version param.Opt[string] `json:"version,omitzero"`
+	paramObj
+}
+
+func (r NotificationContentPutRequestContentParam) MarshalJSON() (data []byte, err error) {
+	type shadow NotificationContentPutRequestContentParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *NotificationContentPutRequestContentParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Request body for updating a single element. Additional type-specific fields are
+// allowed.
+//
+// The property Type is required.
+type NotificationElementPutRequestParam struct {
+	// Element type (text, meta, action, image, etc.).
+	Type     string            `json:"type" api:"required"`
+	If       param.Opt[string] `json:"if,omitzero"`
+	Loop     param.Opt[string] `json:"loop,omitzero"`
+	Ref      param.Opt[string] `json:"ref,omitzero"`
+	Channels []string          `json:"channels,omitzero"`
+	Data     map[string]any    `json:"data,omitzero"`
+	// Template state. Defaults to `DRAFT`.
+	//
+	// Any of "DRAFT", "PUBLISHED".
+	State       NotificationTemplateState `json:"state,omitzero"`
+	ExtraFields map[string]any            `json:"-"`
+	paramObj
+}
+
+func (r NotificationElementPutRequestParam) MarshalJSON() (data []byte, err error) {
+	type shadow NotificationElementPutRequestParam
+	return param.MarshalWithExtras(r, (*shadow)(&r), r.ExtraFields)
+}
+func (r *NotificationElementPutRequestParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -447,6 +682,44 @@ type NotificationGetContentChannelLocale struct {
 // Returns the unmodified JSON received from the API
 func (r NotificationGetContentChannelLocale) RawJSON() string { return r.JSON.raw }
 func (r *NotificationGetContentChannelLocale) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Request body for setting locale-specific content overrides. Each element
+// override must include the target element ID.
+//
+// The property Elements is required.
+type NotificationLocalePutRequestParam struct {
+	// Elements with locale-specific content overrides.
+	Elements []NotificationLocalePutRequestElementParam `json:"elements,omitzero" api:"required"`
+	// Template state. Defaults to `DRAFT`.
+	//
+	// Any of "DRAFT", "PUBLISHED".
+	State NotificationTemplateState `json:"state,omitzero"`
+	paramObj
+}
+
+func (r NotificationLocalePutRequestParam) MarshalJSON() (data []byte, err error) {
+	type shadow NotificationLocalePutRequestParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *NotificationLocalePutRequestParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property ID is required.
+type NotificationLocalePutRequestElementParam struct {
+	// Target element ID.
+	ID          string         `json:"id" api:"required"`
+	ExtraFields map[string]any `json:"-"`
+	paramObj
+}
+
+func (r NotificationLocalePutRequestElementParam) MarshalJSON() (data []byte, err error) {
+	type shadow NotificationLocalePutRequestElementParam
+	return param.MarshalWithExtras(r, (*shadow)(&r), r.ExtraFields)
+}
+func (r *NotificationLocalePutRequestElementParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -781,6 +1054,14 @@ func (r *NotificationTemplatePublishRequestParam) UnmarshalJSON(data []byte) err
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Template state. Defaults to `DRAFT`.
+type NotificationTemplateState string
+
+const (
+	NotificationTemplateStateDraft     NotificationTemplateState = "DRAFT"
+	NotificationTemplateStatePublished NotificationTemplateState = "PUBLISHED"
+)
+
 // V2 (CDS) template summary returned in list responses.
 type NotificationTemplateSummary struct {
 	ID string `json:"id" api:"required"`
@@ -1087,6 +1368,48 @@ func (r *NotificationListResponseResultNotificationTagsData) UnmarshalJSON(data 
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// NotificationGetContentResponseUnion contains all possible properties and values
+// from [NotificationContentGetResponse], [NotificationGetContent].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type NotificationGetContentResponseUnion struct {
+	// This field is from variant [NotificationContentGetResponse].
+	Elements []ElementWithChecksums `json:"elements"`
+	// This field is from variant [NotificationContentGetResponse].
+	Version string `json:"version"`
+	// This field is from variant [NotificationGetContent].
+	Blocks []NotificationGetContentBlock `json:"blocks"`
+	// This field is from variant [NotificationGetContent].
+	Channels []NotificationGetContentChannel `json:"channels"`
+	// This field is from variant [NotificationGetContent].
+	Checksum string `json:"checksum"`
+	JSON     struct {
+		Elements respjson.Field
+		Version  respjson.Field
+		Blocks   respjson.Field
+		Channels respjson.Field
+		Checksum respjson.Field
+		raw      string
+	} `json:"-"`
+}
+
+func (u NotificationGetContentResponseUnion) AsNotificationContentGetResponse() (v NotificationContentGetResponse) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u NotificationGetContentResponseUnion) AsNotificationGetContentResponse() (v NotificationGetContent) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u NotificationGetContentResponseUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *NotificationGetContentResponseUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type NotificationNewParams struct {
 	// Request body for creating a notification template.
 	NotificationTemplateCreateRequest NotificationTemplateCreateRequestParam
@@ -1164,6 +1487,49 @@ func (r *NotificationPublishParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type NotificationPutContentParams struct {
+	// Request body for replacing the elemental content of a notification template.
+	NotificationContentPutRequest NotificationContentPutRequestParam
+	paramObj
+}
+
+func (r NotificationPutContentParams) MarshalJSON() (data []byte, err error) {
+	return shimjson.Marshal(r.NotificationContentPutRequest)
+}
+func (r *NotificationPutContentParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type NotificationPutElementParams struct {
+	ID string `path:"id" api:"required" json:"-"`
+	// Request body for updating a single element. Additional type-specific fields are
+	// allowed.
+	NotificationElementPutRequest NotificationElementPutRequestParam
+	paramObj
+}
+
+func (r NotificationPutElementParams) MarshalJSON() (data []byte, err error) {
+	return shimjson.Marshal(r.NotificationElementPutRequest)
+}
+func (r *NotificationPutElementParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type NotificationPutLocaleParams struct {
+	ID string `path:"id" api:"required" json:"-"`
+	// Request body for setting locale-specific content overrides. Each element
+	// override must include the target element ID.
+	NotificationLocalePutRequest NotificationLocalePutRequestParam
+	paramObj
+}
+
+func (r NotificationPutLocaleParams) MarshalJSON() (data []byte, err error) {
+	return shimjson.Marshal(r.NotificationLocalePutRequest)
+}
+func (r *NotificationPutLocaleParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type NotificationReplaceParams struct {
 	// Request body for replacing a notification template. Same shape as create. All
 	// fields required (PUT = full replacement).
@@ -1176,4 +1542,20 @@ func (r NotificationReplaceParams) MarshalJSON() (data []byte, err error) {
 }
 func (r *NotificationReplaceParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+type NotificationGetContentParams struct {
+	// Accepts `draft`, `published`, or a version string (e.g., `v001`). Defaults to
+	// `published`.
+	Version param.Opt[string] `query:"version,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [NotificationGetContentParams]'s query parameters as
+// `url.Values`.
+func (r NotificationGetContentParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }
