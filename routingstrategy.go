@@ -85,6 +85,19 @@ func (r *RoutingStrategyService) Archive(ctx context.Context, id string, opts ..
 	return err
 }
 
+// List notification templates associated with a routing strategy. Includes
+// template metadata only, not full content.
+func (r *RoutingStrategyService) ListNotifications(ctx context.Context, id string, query RoutingStrategyListNotificationsParams, opts ...option.RequestOption) (res *AssociatedNotificationListResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("routing-strategies/%s/notifications", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return res, err
+}
+
 // Replace a routing strategy. Full document replacement; the caller must send the
 // complete desired state. Missing optional fields are cleared.
 func (r *RoutingStrategyService) Replace(ctx context.Context, id string, body RoutingStrategyReplaceParams, opts ...option.RequestOption) (res *RoutingStrategyMutationResponse, err error) {
@@ -96,6 +109,25 @@ func (r *RoutingStrategyService) Replace(ctx context.Context, id string, body Ro
 	path := fmt.Sprintf("routing-strategies/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
 	return res, err
+}
+
+// Paginated list of notification templates associated with a routing strategy.
+type AssociatedNotificationListResponse struct {
+	Paging  shared.Paging                 `json:"paging" api:"required"`
+	Results []NotificationTemplateSummary `json:"results" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Paging      respjson.Field
+		Results     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r AssociatedNotificationListResponse) RawJSON() string { return r.JSON.raw }
+func (r *AssociatedNotificationListResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // Request body for creating a routing strategy.
@@ -302,6 +334,23 @@ type RoutingStrategyListParams struct {
 // URLQuery serializes [RoutingStrategyListParams]'s query parameters as
 // `url.Values`.
 func (r RoutingStrategyListParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type RoutingStrategyListNotificationsParams struct {
+	// Opaque pagination cursor from a previous response. Omit for the first page.
+	Cursor param.Opt[string] `query:"cursor,omitzero" json:"-"`
+	// Maximum number of results per page. Default 20, max 100.
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [RoutingStrategyListNotificationsParams]'s query parameters
+// as `url.Values`.
+func (r RoutingStrategyListNotificationsParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
