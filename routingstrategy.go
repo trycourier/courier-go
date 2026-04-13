@@ -41,7 +41,7 @@ func NewRoutingStrategyService(opts ...option.RequestOption) (r RoutingStrategyS
 
 // Create a routing strategy. Requires a name and routing configuration at minimum.
 // Channels and providers default to empty if omitted.
-func (r *RoutingStrategyService) New(ctx context.Context, body RoutingStrategyNewParams, opts ...option.RequestOption) (res *RoutingStrategyMutationResponse, err error) {
+func (r *RoutingStrategyService) New(ctx context.Context, body RoutingStrategyNewParams, opts ...option.RequestOption) (res *RoutingStrategyGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "routing-strategies"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -100,7 +100,7 @@ func (r *RoutingStrategyService) ListNotifications(ctx context.Context, id strin
 
 // Replace a routing strategy. Full document replacement; the caller must send the
 // complete desired state. Missing optional fields are cleared.
-func (r *RoutingStrategyService) Replace(ctx context.Context, id string, body RoutingStrategyReplaceParams, opts ...option.RequestOption) (res *RoutingStrategyMutationResponse, err error) {
+func (r *RoutingStrategyService) Replace(ctx context.Context, id string, body RoutingStrategyReplaceParams, opts ...option.RequestOption) (res *RoutingStrategyGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -221,24 +221,6 @@ type RoutingStrategyListResponse struct {
 // Returns the unmodified JSON received from the API
 func (r RoutingStrategyListResponse) RawJSON() string { return r.JSON.raw }
 func (r *RoutingStrategyListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Response returned by create and replace operations.
-type RoutingStrategyMutationResponse struct {
-	// The routing strategy ID (rs\_ prefix).
-	ID string `json:"id" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r RoutingStrategyMutationResponse) RawJSON() string { return r.JSON.raw }
-func (r *RoutingStrategyMutationResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

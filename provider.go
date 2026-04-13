@@ -61,9 +61,11 @@ func (r *ProviderService) Get(ctx context.Context, id string, opts ...option.Req
 	return res, err
 }
 
-// Update an existing provider configuration. The `provider` key is required. All
-// other fields are optional — omitted fields are cleared from the stored
-// configuration (this is a full replacement, not a partial merge).
+// Replace an existing provider configuration. The `provider` key is required and
+// determines which provider-specific settings schema is applied. All other fields
+// are optional — omitted fields are cleared from the stored configuration (this is
+// a full replacement, not a partial merge). Changing the provider type for an
+// existing configuration is not supported.
 func (r *ProviderService) Update(ctx context.Context, id string, body ProviderUpdateParams, opts ...option.RequestOption) (res *Provider, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -71,7 +73,7 @@ func (r *ProviderService) Update(ctx context.Context, id string, body ProviderUp
 		return nil, err
 	}
 	path := fmt.Sprintf("providers/%s", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
 	return res, err
 }
 
@@ -235,7 +237,8 @@ func (r *ProviderNewParams) UnmarshalJSON(data []byte) error {
 }
 
 type ProviderUpdateParams struct {
-	// The provider key identifying the type.
+	// The provider key identifying the type. Required on every request because it
+	// selects the provider-specific settings schema for validation.
 	Provider string `json:"provider" api:"required"`
 	// Updated alias. Omit to clear.
 	Alias param.Opt[string] `json:"alias,omitzero"`
