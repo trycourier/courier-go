@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.9.1 (2026-04-13)
+
+Full Changelog: [v4.9.0...v4.9.1](https://github.com/trycourier/courier-go/compare/v4.9.0...v4.9.1)
+
+### Bug Fixes
+
+* **api:** update provider HTTP method, notification/routing_strategy return types ([e8c794b](https://github.com/trycourier/courier-go/commit/e8c794b54d62f5b19062b098183fcbd68077e80c))
+
 ## 4.9.0 (2026-04-08)
 
 Full Changelog: [v4.8.0...v4.9.0](https://github.com/trycourier/courier-go/compare/v4.8.0...v4.9.0)
