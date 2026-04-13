@@ -44,7 +44,7 @@ func NewNotificationService(opts ...option.RequestOption) (r NotificationService
 
 // Create a notification template. Requires all fields in the notification object.
 // Templates are created in draft state by default.
-func (r *NotificationService) New(ctx context.Context, body NotificationNewParams, opts ...option.RequestOption) (res *NotificationTemplateMutationResponse, err error) {
+func (r *NotificationService) New(ctx context.Context, body NotificationNewParams, opts ...option.RequestOption) (res *NotificationTemplateGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "notifications"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -161,7 +161,7 @@ func (r *NotificationService) PutLocale(ctx context.Context, localeID string, pa
 }
 
 // Replace a notification template. All fields are required.
-func (r *NotificationService) Replace(ctx context.Context, id string, body NotificationReplaceParams, opts ...option.RequestOption) (res *NotificationTemplateMutationResponse, err error) {
+func (r *NotificationService) Replace(ctx context.Context, id string, body NotificationReplaceParams, opts ...option.RequestOption) (res *NotificationTemplateGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -818,53 +818,6 @@ type NotificationTemplateGetResponseState string
 const (
 	NotificationTemplateGetResponseStateDraft     NotificationTemplateGetResponseState = "DRAFT"
 	NotificationTemplateGetResponseStatePublished NotificationTemplateGetResponseState = "PUBLISHED"
-)
-
-// Response returned by POST and PUT operations.
-type NotificationTemplateMutationResponse struct {
-	Notification NotificationTemplateMutationResponseNotification `json:"notification" api:"required"`
-	// The template state after the operation. Always uppercase.
-	//
-	// Any of "DRAFT", "PUBLISHED".
-	State NotificationTemplateMutationResponseState `json:"state" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Notification respjson.Field
-		State        respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r NotificationTemplateMutationResponse) RawJSON() string { return r.JSON.raw }
-func (r *NotificationTemplateMutationResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type NotificationTemplateMutationResponseNotification struct {
-	// The ID of the created or updated template.
-	ID string `json:"id" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r NotificationTemplateMutationResponseNotification) RawJSON() string { return r.JSON.raw }
-func (r *NotificationTemplateMutationResponseNotification) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The template state after the operation. Always uppercase.
-type NotificationTemplateMutationResponseState string
-
-const (
-	NotificationTemplateMutationResponseStateDraft     NotificationTemplateMutationResponseState = "DRAFT"
-	NotificationTemplateMutationResponseStatePublished NotificationTemplateMutationResponseState = "PUBLISHED"
 )
 
 // Full document shape used in POST and PUT request bodies, and returned inside the
