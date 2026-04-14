@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.9.2 (2026-04-14)
+
+Full Changelog: [v4.9.1...v4.9.2](https://github.com/trycourier/courier-go/compare/v4.9.1...v4.9.2)
+
+### Bug Fixes
+
+* **types:** flatten notification template response, change state to string ([555abbe](https://github.com/trycourier/courier-go/commit/555abbe1a5950a3431f79d1a45249559e358e301))
+* **types:** flatten NotificationTemplateGetResponse, change State to string, make Note optional ([13cacd7](https://github.com/trycourier/courier-go/commit/13cacd7e8dc9fa1165f318ebabbc94a055957d87))
+
 ## 4.9.1 (2026-04-13)
 
 Full Changelog: [v4.9.0...v4.9.1](https://github.com/trycourier/courier-go/compare/v4.9.0...v4.9.1)
