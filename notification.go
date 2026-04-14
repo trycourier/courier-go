@@ -727,8 +727,8 @@ func (r *NotificationLocalePutRequestElementParam) UnmarshalJSON(data []byte) er
 //
 // The property Notification is required.
 type NotificationTemplateCreateRequestParam struct {
-	// Full document shape used in POST and PUT request bodies, and returned inside the
-	// GET response envelope.
+	// Core template fields used in POST and PUT request bodies (nested under a
+	// `notification` key) and returned at the top level in responses.
 	Notification NotificationTemplatePayloadParam `json:"notification,omitzero" api:"required"`
 	// Template state after creation. Case-insensitive input, normalized to uppercase
 	// in the response. Defaults to "DRAFT".
@@ -755,8 +755,8 @@ const (
 	NotificationTemplateCreateRequestStatePublished NotificationTemplateCreateRequestState = "PUBLISHED"
 )
 
-// Full document shape used in POST and PUT request bodies, and returned inside the
-// GET response envelope.
+// Core template fields used in POST and PUT request bodies (nested under a
+// `notification` key) and returned at the top level in responses.
 type NotificationTemplatePayload struct {
 	// Brand reference, or null for no brand.
 	Brand NotificationTemplatePayloadBrand `json:"brand" api:"required"`
@@ -850,8 +850,8 @@ func (r *NotificationTemplatePayloadSubscription) UnmarshalJSON(data []byte) err
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Full document shape used in POST and PUT request bodies, and returned inside the
-// GET response envelope.
+// Core template fields used in POST and PUT request bodies (nested under a
+// `notification` key) and returned at the top level in responses.
 //
 // The properties Brand, Content, Name, Routing, Subscription, Tags are required.
 type NotificationTemplatePayloadParam struct {
@@ -943,51 +943,30 @@ func (r *NotificationTemplatePublishRequestParam) UnmarshalJSON(data []byte) err
 }
 
 // Response for GET /notifications/{id}, POST /notifications, and PUT
-// /notifications/{id}. Wraps the template payload inside a `notification` key
-// alongside metadata.
+// /notifications/{id}. Returns all template fields at the top level.
 type NotificationTemplateResponse struct {
+	// The template ID.
+	ID string `json:"id" api:"required"`
 	// Epoch milliseconds when the template was created.
 	Created int64 `json:"created" api:"required"`
 	// User ID of the creator.
 	Creator string `json:"creator" api:"required"`
-	// Full document shape used in POST and PUT request bodies, and returned inside the
-	// GET response envelope.
-	Notification NotificationTemplateResponseNotification `json:"notification" api:"required"`
 	// The template state. Always uppercase.
 	//
 	// Any of "DRAFT", "PUBLISHED".
-	State NotificationTemplateResponseState `json:"state" api:"required"`
+	State string `json:"state" api:"required"`
 	// Epoch milliseconds of last update.
 	Updated int64 `json:"updated"`
 	// User ID of the last updater.
 	Updater string `json:"updater"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Created      respjson.Field
-		Creator      respjson.Field
-		Notification respjson.Field
-		State        respjson.Field
-		Updated      respjson.Field
-		Updater      respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r NotificationTemplateResponse) RawJSON() string { return r.JSON.raw }
-func (r *NotificationTemplateResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Full document shape used in POST and PUT request bodies, and returned inside the
-// GET response envelope.
-type NotificationTemplateResponseNotification struct {
-	// The template ID.
-	ID string `json:"id" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
 		ID          respjson.Field
+		Created     respjson.Field
+		Creator     respjson.Field
+		State       respjson.Field
+		Updated     respjson.Field
+		Updater     respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -995,18 +974,10 @@ type NotificationTemplateResponseNotification struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r NotificationTemplateResponseNotification) RawJSON() string { return r.JSON.raw }
-func (r *NotificationTemplateResponseNotification) UnmarshalJSON(data []byte) error {
+func (r NotificationTemplateResponse) RawJSON() string { return r.JSON.raw }
+func (r *NotificationTemplateResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
-
-// The template state. Always uppercase.
-type NotificationTemplateResponseState string
-
-const (
-	NotificationTemplateResponseStateDraft     NotificationTemplateResponseState = "DRAFT"
-	NotificationTemplateResponseStatePublished NotificationTemplateResponseState = "PUBLISHED"
-)
 
 // Template state. Defaults to `DRAFT`.
 type NotificationTemplateState string
@@ -1064,8 +1035,8 @@ const (
 //
 // The property Notification is required.
 type NotificationTemplateUpdateRequestParam struct {
-	// Full document shape used in POST and PUT request bodies, and returned inside the
-	// GET response envelope.
+	// Core template fields used in POST and PUT request bodies (nested under a
+	// `notification` key) and returned at the top level in responses.
 	Notification NotificationTemplatePayloadParam `json:"notification,omitzero" api:"required"`
 	// Template state after update. Case-insensitive input, normalized to uppercase in
 	// the response. Defaults to "DRAFT".
