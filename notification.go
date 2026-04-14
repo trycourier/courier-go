@@ -44,7 +44,7 @@ func NewNotificationService(opts ...option.RequestOption) (r NotificationService
 
 // Create a notification template. Requires all fields in the notification object.
 // Templates are created in draft state by default.
-func (r *NotificationService) New(ctx context.Context, body NotificationNewParams, opts ...option.RequestOption) (res *NotificationTemplateGetResponse, err error) {
+func (r *NotificationService) New(ctx context.Context, body NotificationNewParams, opts ...option.RequestOption) (res *NotificationTemplateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "notifications"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -53,7 +53,7 @@ func (r *NotificationService) New(ctx context.Context, body NotificationNewParam
 
 // Retrieve a notification template by ID. Returns the published version by
 // default. Pass version=draft to retrieve an unpublished template.
-func (r *NotificationService) Get(ctx context.Context, id string, query NotificationGetParams, opts ...option.RequestOption) (res *NotificationTemplateGetResponse, err error) {
+func (r *NotificationService) Get(ctx context.Context, id string, query NotificationGetParams, opts ...option.RequestOption) (res *NotificationTemplateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -161,7 +161,7 @@ func (r *NotificationService) PutLocale(ctx context.Context, localeID string, pa
 }
 
 // Replace a notification template. All fields are required.
-func (r *NotificationService) Replace(ctx context.Context, id string, body NotificationReplaceParams, opts ...option.RequestOption) (res *NotificationTemplateGetResponse, err error) {
+func (r *NotificationService) Replace(ctx context.Context, id string, body NotificationReplaceParams, opts ...option.RequestOption) (res *NotificationTemplateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -727,8 +727,8 @@ func (r *NotificationLocalePutRequestElementParam) UnmarshalJSON(data []byte) er
 //
 // The property Notification is required.
 type NotificationTemplateCreateRequestParam struct {
-	// Full document shape used in POST and PUT request bodies, and returned inside the
-	// GET response envelope.
+	// Core template fields used in POST and PUT request bodies (nested under a
+	// `notification` key) and returned at the top level in responses.
 	Notification NotificationTemplatePayloadParam `json:"notification,omitzero" api:"required"`
 	// Template state after creation. Case-insensitive input, normalized to uppercase
 	// in the response. Defaults to "DRAFT".
@@ -755,73 +755,8 @@ const (
 	NotificationTemplateCreateRequestStatePublished NotificationTemplateCreateRequestState = "PUBLISHED"
 )
 
-// Envelope response for GET /notifications/{id}. The notification object mirrors
-// the POST/PUT input shape. Nullable fields return null when unset.
-type NotificationTemplateGetResponse struct {
-	// Epoch milliseconds when the template was created.
-	Created int64 `json:"created" api:"required"`
-	// User ID of the creator.
-	Creator string `json:"creator" api:"required"`
-	// Full document shape used in POST and PUT request bodies, and returned inside the
-	// GET response envelope.
-	Notification NotificationTemplateGetResponseNotification `json:"notification" api:"required"`
-	// The template state. Always uppercase.
-	//
-	// Any of "DRAFT", "PUBLISHED".
-	State NotificationTemplateGetResponseState `json:"state" api:"required"`
-	// Epoch milliseconds of last update.
-	Updated int64 `json:"updated"`
-	// User ID of the last updater.
-	Updater string `json:"updater"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Created      respjson.Field
-		Creator      respjson.Field
-		Notification respjson.Field
-		State        respjson.Field
-		Updated      respjson.Field
-		Updater      respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r NotificationTemplateGetResponse) RawJSON() string { return r.JSON.raw }
-func (r *NotificationTemplateGetResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Full document shape used in POST and PUT request bodies, and returned inside the
-// GET response envelope.
-type NotificationTemplateGetResponseNotification struct {
-	// The template ID.
-	ID string `json:"id" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-	NotificationTemplatePayload
-}
-
-// Returns the unmodified JSON received from the API
-func (r NotificationTemplateGetResponseNotification) RawJSON() string { return r.JSON.raw }
-func (r *NotificationTemplateGetResponseNotification) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The template state. Always uppercase.
-type NotificationTemplateGetResponseState string
-
-const (
-	NotificationTemplateGetResponseStateDraft     NotificationTemplateGetResponseState = "DRAFT"
-	NotificationTemplateGetResponseStatePublished NotificationTemplateGetResponseState = "PUBLISHED"
-)
-
-// Full document shape used in POST and PUT request bodies, and returned inside the
-// GET response envelope.
+// Core template fields used in POST and PUT request bodies (nested under a
+// `notification` key) and returned at the top level in responses.
 type NotificationTemplatePayload struct {
 	// Brand reference, or null for no brand.
 	Brand NotificationTemplatePayloadBrand `json:"brand" api:"required"`
@@ -915,8 +850,8 @@ func (r *NotificationTemplatePayloadSubscription) UnmarshalJSON(data []byte) err
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Full document shape used in POST and PUT request bodies, and returned inside the
-// GET response envelope.
+// Core template fields used in POST and PUT request bodies (nested under a
+// `notification` key) and returned at the top level in responses.
 //
 // The properties Brand, Content, Name, Routing, Subscription, Tags are required.
 type NotificationTemplatePayloadParam struct {
@@ -1007,6 +942,43 @@ func (r *NotificationTemplatePublishRequestParam) UnmarshalJSON(data []byte) err
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Response for GET /notifications/{id}, POST /notifications, and PUT
+// /notifications/{id}. Returns all template fields at the top level.
+type NotificationTemplateResponse struct {
+	// The template ID.
+	ID string `json:"id" api:"required"`
+	// Epoch milliseconds when the template was created.
+	Created int64 `json:"created" api:"required"`
+	// User ID of the creator.
+	Creator string `json:"creator" api:"required"`
+	// The template state. Always uppercase.
+	//
+	// Any of "DRAFT", "PUBLISHED".
+	State string `json:"state" api:"required"`
+	// Epoch milliseconds of last update.
+	Updated int64 `json:"updated"`
+	// User ID of the last updater.
+	Updater string `json:"updater"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Created     respjson.Field
+		Creator     respjson.Field
+		State       respjson.Field
+		Updated     respjson.Field
+		Updater     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+	NotificationTemplatePayload
+}
+
+// Returns the unmodified JSON received from the API
+func (r NotificationTemplateResponse) RawJSON() string { return r.JSON.raw }
+func (r *NotificationTemplateResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Template state. Defaults to `DRAFT`.
 type NotificationTemplateState string
 
@@ -1063,8 +1035,8 @@ const (
 //
 // The property Notification is required.
 type NotificationTemplateUpdateRequestParam struct {
-	// Full document shape used in POST and PUT request bodies, and returned inside the
-	// GET response envelope.
+	// Core template fields used in POST and PUT request bodies (nested under a
+	// `notification` key) and returned at the top level in responses.
 	Notification NotificationTemplatePayloadParam `json:"notification,omitzero" api:"required"`
 	// Template state after update. Case-insensitive input, normalized to uppercase in
 	// the response. Defaults to "DRAFT".
@@ -1168,13 +1140,13 @@ type NotificationListResponseResultUnion struct {
 	// This field is from variant [NotificationListResponseResultNotification].
 	EventIDs []string `json:"event_ids"`
 	// This field is from variant [NotificationListResponseResultNotification].
-	Note string `json:"note"`
-	// This field is from variant [NotificationListResponseResultNotification].
 	Routing shared.MessageRouting `json:"routing"`
 	// This field is from variant [NotificationListResponseResultNotification].
 	TopicID string `json:"topic_id"`
 	// This field is from variant [NotificationListResponseResultNotification].
 	UpdatedAt int64 `json:"updated_at"`
+	// This field is from variant [NotificationListResponseResultNotification].
+	Note string `json:"note"`
 	// This field is a union of [NotificationListResponseResultNotificationTags],
 	// [[]string]
 	Tags NotificationListResponseResultUnionTags `json:"tags"`
@@ -1196,10 +1168,10 @@ type NotificationListResponseResultUnion struct {
 		ID        respjson.Field
 		CreatedAt respjson.Field
 		EventIDs  respjson.Field
-		Note      respjson.Field
 		Routing   respjson.Field
 		TopicID   respjson.Field
 		UpdatedAt respjson.Field
+		Note      respjson.Field
 		Tags      respjson.Field
 		Title     respjson.Field
 		Created   respjson.Field
@@ -1259,10 +1231,10 @@ type NotificationListResponseResultNotification struct {
 	CreatedAt int64  `json:"created_at" api:"required"`
 	// Array of event IDs associated with this notification
 	EventIDs  []string                                       `json:"event_ids" api:"required"`
-	Note      string                                         `json:"note" api:"required"`
 	Routing   shared.MessageRouting                          `json:"routing" api:"required"`
 	TopicID   string                                         `json:"topic_id" api:"required"`
 	UpdatedAt int64                                          `json:"updated_at" api:"required"`
+	Note      string                                         `json:"note"`
 	Tags      NotificationListResponseResultNotificationTags `json:"tags" api:"nullable"`
 	Title     string                                         `json:"title" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1270,10 +1242,10 @@ type NotificationListResponseResultNotification struct {
 		ID          respjson.Field
 		CreatedAt   respjson.Field
 		EventIDs    respjson.Field
-		Note        respjson.Field
 		Routing     respjson.Field
 		TopicID     respjson.Field
 		UpdatedAt   respjson.Field
+		Note        respjson.Field
 		Tags        respjson.Field
 		Title       respjson.Field
 		ExtraFields map[string]respjson.Field
