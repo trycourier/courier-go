@@ -69,6 +69,28 @@ func (r *TenantTemplateService) List(ctx context.Context, tenantID string, query
 	return res, err
 }
 
+// Deletes the tenant's notification template with the given `template_id`.
+//
+// Returns **204 No Content** with an empty body on success.
+//
+// Returns **404** if there is no template with this ID for the tenant, including a
+// second `DELETE` after a successful removal.
+func (r *TenantTemplateService) Delete(ctx context.Context, templateID string, body TenantTemplateDeleteParams, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if body.TenantID == "" {
+		err = errors.New("missing required tenant_id parameter")
+		return err
+	}
+	if templateID == "" {
+		err = errors.New("missing required template_id parameter")
+		return err
+	}
+	path := fmt.Sprintf("tenants/%s/templates/%s", body.TenantID, templateID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
+	return err
+}
+
 // Publishes a specific version of a notification template for a tenant.
 //
 // The template must already exist in the tenant's notification map. If no version
@@ -207,6 +229,11 @@ func (r TenantTemplateListParams) URLQuery() (v url.Values, err error) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+type TenantTemplateDeleteParams struct {
+	TenantID string `path:"tenant_id" api:"required" json:"-"`
+	paramObj
 }
 
 type TenantTemplatePublishParams struct {
