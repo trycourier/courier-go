@@ -73,6 +73,35 @@ func TestTenantTemplateListWithOptionalParams(t *testing.T) {
 	}
 }
 
+func TestTenantTemplateDelete(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := courier.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	err := client.Tenants.Templates.Delete(
+		context.TODO(),
+		"template_id",
+		courier.TenantTemplateDeleteParams{
+			TenantID: "tenant_id",
+		},
+	)
+	if err != nil {
+		var apierr *courier.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
 func TestTenantTemplatePublishWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"

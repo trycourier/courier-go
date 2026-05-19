@@ -11,9 +11,10 @@ import (
 	"github.com/trycourier/courier-go/v4"
 	"github.com/trycourier/courier-go/v4/internal/testutil"
 	"github.com/trycourier/courier-go/v4/option"
+	"github.com/trycourier/courier-go/v4/shared"
 )
 
-func TestJourneyNewWithOptionalParams(t *testing.T) {
+func TestJourneyTemplateNewWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,151 +27,39 @@ func TestJourneyNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Journeys.New(context.TODO(), courier.JourneyNewParams{
-		CreateJourneyRequest: courier.CreateJourneyRequestParam{
-			Name: "Welcome Journey",
-			Nodes: []courier.JourneyNodeUnionParam{{
-				OfAPIInvokeTrigger: &courier.JourneyAPIInvokeTriggerNodeParam{
-					TriggerType: courier.JourneyAPIInvokeTriggerNodeTriggerTypeAPIInvoke,
-					Type:        courier.JourneyAPIInvokeTriggerNodeTypeTrigger,
-					ID:          courier.String("trigger-1"),
-					Conditions: courier.JourneyConditionsFieldUnionParam{
-						OfSingleCondition: courier.JourneyConditionAtom{"string", "string"},
-					},
-					Schema: map[string]any{
-						"foo": "bar",
-					},
-				},
-			}, {
-				OfAPIInvokeTrigger: &courier.JourneyAPIInvokeTriggerNodeParam{
-					TriggerType: courier.JourneyAPIInvokeTriggerNodeTriggerTypeAPIInvoke,
-					Type:        courier.JourneyAPIInvokeTriggerNodeTypeTrigger,
-					ID:          courier.String("send-1"),
-					Conditions: courier.JourneyConditionsFieldUnionParam{
-						OfSingleCondition: courier.JourneyConditionAtom{"string", "string"},
-					},
-					Schema: map[string]any{
-						"foo": "bar",
-					},
-				},
-			}},
-			Enabled: courier.Bool(true),
-			State:   courier.JourneyStateDraft,
-		},
-	})
-	if err != nil {
-		var apierr *courier.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestJourneyGetWithOptionalParams(t *testing.T) {
-	t.Skip("Mock server tests are disabled")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := courier.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
-	)
-	_, err := client.Journeys.Get(
+	_, err := client.Journeys.Templates.New(
 		context.TODO(),
 		"x",
-		courier.JourneyGetParams{
-			Version: courier.String("published"),
-		},
-	)
-	if err != nil {
-		var apierr *courier.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestJourneyListWithOptionalParams(t *testing.T) {
-	t.Skip("Mock server tests are disabled")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := courier.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
-	)
-	_, err := client.Journeys.List(context.TODO(), courier.JourneyListParams{
-		Cursor:  courier.String("cursor"),
-		Version: courier.JourneyListParamsVersionPublished,
-	})
-	if err != nil {
-		var apierr *courier.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestJourneyArchive(t *testing.T) {
-	t.Skip("Mock server tests are disabled")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := courier.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
-	)
-	err := client.Journeys.Archive(context.TODO(), "x")
-	if err != nil {
-		var apierr *courier.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestJourneyInvokeWithOptionalParams(t *testing.T) {
-	t.Skip("Mock server tests are disabled")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := courier.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
-	)
-	_, err := client.Journeys.Invoke(
-		context.TODO(),
-		"templateId",
-		courier.JourneyInvokeParams{
-			JourneysInvokeRequest: courier.JourneysInvokeRequestParam{
-				Data: map[string]any{
-					"order_id": "bar",
-					"amount":   "bar",
+		courier.JourneyTemplateNewParams{
+			JourneyTemplateCreateRequest: courier.JourneyTemplateCreateRequestParam{
+				Channel: "email",
+				Notification: courier.JourneyTemplateCreateRequestNotificationParam{
+					Brand: courier.JourneyTemplateCreateRequestNotificationBrandParam{
+						ID: "id",
+					},
+					Content: courier.JourneyTemplateCreateRequestNotificationContentParam{
+						Elements: []shared.ElementalNodeUnionParam{{
+							OfElementalTextNodeWithType: &shared.ElementalTextNodeWithTypeParam{
+								ElementalBaseNodeParam: shared.ElementalBaseNodeParam{
+									Channels: []string{"string"},
+									If:       courier.String("if"),
+									Loop:     courier.String("loop"),
+									Ref:      courier.String("ref"),
+								},
+								Type: "text",
+							},
+						}},
+						Version: "2022-01-01",
+						Scope:   "default",
+					},
+					Name: "Welcome email",
+					Subscription: courier.JourneyTemplateCreateRequestNotificationSubscriptionParam{
+						TopicID: "topic_id",
+					},
+					Tags: []string{"string"},
 				},
-				Profile: map[string]any{
-					"foo": "bar",
-				},
-				UserID: courier.String("user-123"),
+				ProviderKey: courier.String("x"),
+				State:       courier.String("state"),
 			},
 		},
 	)
@@ -183,7 +72,7 @@ func TestJourneyInvokeWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestJourneyListVersions(t *testing.T) {
+func TestJourneyTemplateGet(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -196,7 +85,13 @@ func TestJourneyListVersions(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Journeys.ListVersions(context.TODO(), "x")
+	_, err := client.Journeys.Templates.Get(
+		context.TODO(),
+		"x",
+		courier.JourneyTemplateGetParams{
+			TemplateID: "x",
+		},
+	)
 	if err != nil {
 		var apierr *courier.Error
 		if errors.As(err, &apierr) {
@@ -206,7 +101,7 @@ func TestJourneyListVersions(t *testing.T) {
 	}
 }
 
-func TestJourneyPublishWithOptionalParams(t *testing.T) {
+func TestJourneyTemplateListWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -219,11 +114,100 @@ func TestJourneyPublishWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Journeys.Publish(
+	_, err := client.Journeys.Templates.List(
 		context.TODO(),
 		"x",
-		courier.JourneyPublishParams{
-			JourneyPublishRequest: courier.JourneyPublishRequestParam{
+		courier.JourneyTemplateListParams{
+			Cursor: courier.String("cursor"),
+			Limit:  courier.Int(1),
+		},
+	)
+	if err != nil {
+		var apierr *courier.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestJourneyTemplateArchive(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := courier.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	err := client.Journeys.Templates.Archive(
+		context.TODO(),
+		"x",
+		courier.JourneyTemplateArchiveParams{
+			TemplateID: "x",
+		},
+	)
+	if err != nil {
+		var apierr *courier.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestJourneyTemplateListVersions(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := courier.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Journeys.Templates.ListVersions(
+		context.TODO(),
+		"x",
+		courier.JourneyTemplateListVersionsParams{
+			TemplateID: "x",
+		},
+	)
+	if err != nil {
+		var apierr *courier.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestJourneyTemplatePublishWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := courier.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	err := client.Journeys.Templates.Publish(
+		context.TODO(),
+		"x",
+		courier.JourneyTemplatePublishParams{
+			TemplateID: "x",
+			JourneyTemplatePublishRequest: courier.JourneyTemplatePublishRequestParam{
 				Version: courier.String("v321669910225"),
 			},
 		},
@@ -237,7 +221,7 @@ func TestJourneyPublishWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestJourneyReplaceWithOptionalParams(t *testing.T) {
+func TestJourneyTemplateReplaceWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -250,27 +234,38 @@ func TestJourneyReplaceWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Journeys.Replace(
+	_, err := client.Journeys.Templates.Replace(
 		context.TODO(),
 		"x",
-		courier.JourneyReplaceParams{
-			CreateJourneyRequest: courier.CreateJourneyRequestParam{
-				Name: "Welcome Journey v2",
-				Nodes: []courier.JourneyNodeUnionParam{{
-					OfAPIInvokeTrigger: &courier.JourneyAPIInvokeTriggerNodeParam{
-						TriggerType: courier.JourneyAPIInvokeTriggerNodeTriggerTypeAPIInvoke,
-						Type:        courier.JourneyAPIInvokeTriggerNodeTypeTrigger,
-						ID:          courier.String("x"),
-						Conditions: courier.JourneyConditionsFieldUnionParam{
-							OfSingleCondition: courier.JourneyConditionAtom{"string", "string"},
-						},
-						Schema: map[string]any{
-							"foo": "bar",
-						},
+		courier.JourneyTemplateReplaceParams{
+			TemplateID: "x",
+			JourneyTemplateReplaceRequest: courier.JourneyTemplateReplaceRequestParam{
+				Notification: courier.JourneyTemplateReplaceRequestNotificationParam{
+					Brand: courier.JourneyTemplateReplaceRequestNotificationBrandParam{
+						ID: "id",
 					},
-				}},
-				Enabled: courier.Bool(true),
-				State:   courier.JourneyStateDraft,
+					Content: courier.JourneyTemplateReplaceRequestNotificationContentParam{
+						Elements: []shared.ElementalNodeUnionParam{{
+							OfElementalTextNodeWithType: &shared.ElementalTextNodeWithTypeParam{
+								ElementalBaseNodeParam: shared.ElementalBaseNodeParam{
+									Channels: []string{"string"},
+									If:       courier.String("if"),
+									Loop:     courier.String("loop"),
+									Ref:      courier.String("ref"),
+								},
+								Type: "text",
+							},
+						}},
+						Version: "2022-01-01",
+						Scope:   "default",
+					},
+					Name: "name",
+					Subscription: courier.JourneyTemplateReplaceRequestNotificationSubscriptionParam{
+						TopicID: "topic_id",
+					},
+					Tags: []string{"string"},
+				},
+				State: courier.String("state"),
 			},
 		},
 	)
