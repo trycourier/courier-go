@@ -1,5 +1,30 @@
 # Changelog
 
+## 4.10.0 (2026-05-19)
+
+Full Changelog: [v4.9.2...v4.10.0](https://github.com/trycourier/courier-go/compare/v4.9.2...v4.10.0)
+
+### Features
+
+* [C-18380] Journeys API reference: copy + naming cleanup ([51876b0](https://github.com/trycourier/courier-go/commit/51876b058fee064c7b555a545476b4f5bd575497))
+* **api:** add journey CRUD/templates endpoints, update types ([6deed4a](https://github.com/trycourier/courier-go/commit/6deed4aa5723367f0d79b1e31b553bfe2bda0c3c))
+* **client:** optimize json encoder for internal types ([542f134](https://github.com/trycourier/courier-go/commit/542f134f67049d5620320e1e6e441053c1357ea5))
+* **go:** add default http client with timeout ([ad87b68](https://github.com/trycourier/courier-go/commit/ad87b68fa032e56ddc815c97bb6e031f346f0185))
+* support setting headers via env ([b536101](https://github.com/trycourier/courier-go/commit/b536101de71b4c2fbdcd0f0c5463375ad3ba64d7))
+
+
+### Bug Fixes
+
+* **go:** avoid panic when http.DefaultTransport is wrapped ([db550fb](https://github.com/trycourier/courier-go/commit/db550fb14a595e1240cc00a09730576b7213b2f0))
+
+
+### Chores
+
+* avoid embedding reflect.Type for dead code elimination ([2007289](https://github.com/trycourier/courier-go/commit/2007289acc11c89259c6657da786d29deeab06f0))
+* **internal:** more robust bootstrap script ([adb9987](https://github.com/trycourier/courier-go/commit/adb9987df2f7b5ddd1bd13c6e13109a02986f437))
+* **internal:** regenerate SDK with no functional changes ([0227c9c](https://github.com/trycourier/courier-go/commit/0227c9cc9f4bcda4a4c6f1d7969149e32813118c))
+* redact api-key headers in debug logs ([16839ee](https://github.com/trycourier/courier-go/commit/16839ee4ba1d4a543a812e82decdca35562fad67))
+
 ## 4.9.2 (2026-04-14)
 
 Full Changelog: [v4.9.1...v4.9.2](https://github.com/trycourier/courier-go/compare/v4.9.1...v4.9.2)
