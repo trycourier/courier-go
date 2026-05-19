@@ -30,24 +30,24 @@ func TestJourneyNewWithOptionalParams(t *testing.T) {
 		CreateJourneyRequest: courier.CreateJourneyRequestParam{
 			Name: "Welcome Journey",
 			Nodes: []courier.JourneyNodeUnionParam{{
-				OfJourneyAPIInvokeTriggerNode: &courier.JourneyAPIInvokeTriggerNodeParam{
+				OfAPIInvokeTrigger: &courier.JourneyAPIInvokeTriggerNodeParam{
 					TriggerType: courier.JourneyAPIInvokeTriggerNodeTriggerTypeAPIInvoke,
 					Type:        courier.JourneyAPIInvokeTriggerNodeTypeTrigger,
 					ID:          courier.String("trigger-1"),
 					Conditions: courier.JourneyConditionsFieldUnionParam{
-						OfStringArray: courier.JourneyConditionAtom{"string", "string"},
+						OfSingleCondition: courier.JourneyConditionAtom{"string", "string"},
 					},
 					Schema: map[string]any{
 						"foo": "bar",
 					},
 				},
 			}, {
-				OfJourneyAPIInvokeTriggerNode: &courier.JourneyAPIInvokeTriggerNodeParam{
+				OfAPIInvokeTrigger: &courier.JourneyAPIInvokeTriggerNodeParam{
 					TriggerType: courier.JourneyAPIInvokeTriggerNodeTriggerTypeAPIInvoke,
 					Type:        courier.JourneyAPIInvokeTriggerNodeTypeTrigger,
 					ID:          courier.String("send-1"),
 					Conditions: courier.JourneyConditionsFieldUnionParam{
-						OfStringArray: courier.JourneyConditionAtom{"string", "string"},
+						OfSingleCondition: courier.JourneyConditionAtom{"string", "string"},
 					},
 					Schema: map[string]any{
 						"foo": "bar",
@@ -257,12 +257,12 @@ func TestJourneyReplaceWithOptionalParams(t *testing.T) {
 			CreateJourneyRequest: courier.CreateJourneyRequestParam{
 				Name: "Welcome Journey v2",
 				Nodes: []courier.JourneyNodeUnionParam{{
-					OfJourneyAPIInvokeTriggerNode: &courier.JourneyAPIInvokeTriggerNodeParam{
+					OfAPIInvokeTrigger: &courier.JourneyAPIInvokeTriggerNodeParam{
 						TriggerType: courier.JourneyAPIInvokeTriggerNodeTriggerTypeAPIInvoke,
 						Type:        courier.JourneyAPIInvokeTriggerNodeTypeTrigger,
 						ID:          courier.String("x"),
 						Conditions: courier.JourneyConditionsFieldUnionParam{
-							OfStringArray: courier.JourneyConditionAtom{"string", "string"},
+							OfSingleCondition: courier.JourneyConditionAtom{"string", "string"},
 						},
 						Schema: map[string]any{
 							"foo": "bar",

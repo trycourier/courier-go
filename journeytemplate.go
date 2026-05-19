@@ -37,8 +37,8 @@ func NewJourneyTemplateService(opts ...option.RequestOption) (r JourneyTemplateS
 	return
 }
 
-// Create a notification template scoped to this journey. The template is created
-// in DRAFT state.
+// Create a notification template scoped to this journey. Defaults to `DRAFT`
+// state; pass `state: "PUBLISHED"` to publish on create.
 func (r *JourneyTemplateService) New(ctx context.Context, templateID string, body JourneyTemplateNewParams, opts ...option.RequestOption) (res *JourneyTemplateGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if templateID == "" {
@@ -68,8 +68,8 @@ func (r *JourneyTemplateService) Get(ctx context.Context, notificationID string,
 	return res, err
 }
 
-// List notification templates scoped to this journey. Templates scoped to a
-// journey can only be referenced from `send` nodes of the same journey.
+// List notification templates scoped to this journey. Journey-scoped notification
+// templates can only be referenced from `send` nodes within the same journey.
 func (r *JourneyTemplateService) List(ctx context.Context, templateID string, query JourneyTemplateListParams, opts ...option.RequestOption) (res *JourneyTemplateListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if templateID == "" {
@@ -81,7 +81,7 @@ func (r *JourneyTemplateService) List(ctx context.Context, templateID string, qu
 	return res, err
 }
 
-// Archive a journey-scoped notification template. Archived templates cannot be
+// Archive the journey-scoped notification template. Archived templates cannot be
 // sent.
 func (r *JourneyTemplateService) Archive(ctx context.Context, notificationID string, body JourneyTemplateArchiveParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -99,8 +99,8 @@ func (r *JourneyTemplateService) Archive(ctx context.Context, notificationID str
 	return err
 }
 
-// List published versions of a journey-scoped notification template, ordered most
-// recent first.
+// List published versions of the journey-scoped notification template, ordered
+// most recent first.
 func (r *JourneyTemplateService) ListVersions(ctx context.Context, notificationID string, query JourneyTemplateListVersionsParams, opts ...option.RequestOption) (res *NotificationTemplateVersionListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if query.TemplateID == "" {
@@ -116,7 +116,9 @@ func (r *JourneyTemplateService) ListVersions(ctx context.Context, notificationI
 	return res, err
 }
 
-// Publish the current draft of a journey-scoped notification template.
+// Publish the current draft of the journey-scoped notification template as a new
+// version. Optionally roll back to a prior version by passing
+// `{ "version": "vN" }`.
 func (r *JourneyTemplateService) Publish(ctx context.Context, notificationID string, params JourneyTemplatePublishParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -133,7 +135,7 @@ func (r *JourneyTemplateService) Publish(ctx context.Context, notificationID str
 	return err
 }
 
-// Replace a journey-scoped notification template draft.
+// Replace the journey-scoped notification template draft.
 func (r *JourneyTemplateService) Replace(ctx context.Context, notificationID string, params JourneyTemplateReplaceParams, opts ...option.RequestOption) (res *JourneyTemplateGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if params.TemplateID == "" {
@@ -150,6 +152,7 @@ func (r *JourneyTemplateService) Replace(ctx context.Context, notificationID str
 }
 
 type JourneyTemplateNewParams struct {
+	// Request body for creating a notification template scoped to a journey.
 	JourneyTemplateCreateRequest JourneyTemplateCreateRequestParam
 	paramObj
 }
@@ -167,8 +170,10 @@ type JourneyTemplateGetParams struct {
 }
 
 type JourneyTemplateListParams struct {
+	// Pagination cursor from a prior response.
 	Cursor param.Opt[string] `query:"cursor,omitzero" json:"-"`
-	Limit  param.Opt[int64]  `query:"limit,omitzero" json:"-"`
+	// Page size. Minimum 1, maximum 100.
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	paramObj
 }
 
@@ -192,7 +197,9 @@ type JourneyTemplateListVersionsParams struct {
 }
 
 type JourneyTemplatePublishParams struct {
-	TemplateID                    string `path:"templateId" api:"required" json:"-"`
+	TemplateID string `path:"templateId" api:"required" json:"-"`
+	// Request body for publishing a journey-scoped notification template. Pass
+	// `version` to roll back to a prior version; omit to publish the current draft.
 	JourneyTemplatePublishRequest JourneyTemplatePublishRequestParam
 	paramObj
 }
@@ -205,7 +212,8 @@ func (r *JourneyTemplatePublishParams) UnmarshalJSON(data []byte) error {
 }
 
 type JourneyTemplateReplaceParams struct {
-	TemplateID                    string `path:"templateId" api:"required" json:"-"`
+	TemplateID string `path:"templateId" api:"required" json:"-"`
+	// Request body for replacing a journey-scoped notification template draft.
 	JourneyTemplateReplaceRequest JourneyTemplateReplaceRequestParam
 	paramObj
 }

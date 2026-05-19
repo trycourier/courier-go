@@ -43,8 +43,12 @@ func NewJourneyService(opts ...option.RequestOption) (r JourneyService) {
 	return
 }
 
-// Create a new journey. The journey is created in DRAFT state. Use POST
-// /journeys/{templateId}/publish to make it live.
+// Create a journey. Defaults to `DRAFT` state; pass `state: "PUBLISHED"` to
+// publish on create. Send nodes are not allowed on `POST`. The standard flow is:
+// create the journey shell here, add notification templates with
+// `POST /journeys/{templateId}/templates`, then wire them into the journey with
+// `PUT /journeys/{templateId}`. Call `POST /journeys/{templateId}/publish` to
+// publish a draft after the fact.
 func (r *JourneyService) New(ctx context.Context, body JourneyNewParams, opts ...option.RequestOption) (res *JourneyResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "journeys"
@@ -87,7 +91,8 @@ func (r *JourneyService) Archive(ctx context.Context, templateID string, opts ..
 	return err
 }
 
-// Invoke a journey run from a journey template.
+// Invoke a journey by id or alias to start a new run. The response includes a
+// `runId` identifying the run.
 func (r *JourneyService) Invoke(ctx context.Context, templateID string, body JourneyInvokeParams, opts ...option.RequestOption) (res *JourneysInvokeResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if templateID == "" {
@@ -111,8 +116,9 @@ func (r *JourneyService) ListVersions(ctx context.Context, templateID string, op
 	return res, err
 }
 
-// Publish the current draft as a new version. Optionally rollback to a prior
-// version by passing `{ version: 'vN' }`.
+// Publish the current draft as a new version. Body is optional; pass
+// `{ "version": "vN" }` to roll back to a prior version instead. Returns 404 if
+// the journey has no draft to publish.
 func (r *JourneyService) Publish(ctx context.Context, templateID string, body JourneyPublishParams, opts ...option.RequestOption) (res *JourneyResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if templateID == "" {
@@ -124,8 +130,11 @@ func (r *JourneyService) Publish(ctx context.Context, templateID string, body Jo
 	return res, err
 }
 
-// Replace the journey draft. Updates the working draft only; call POST
-// /journeys/{templateId}/publish to make it live.
+// Replace the journey draft. Updates the working draft only; call
+// `POST /journeys/{templateId}/publish` to make it live, or pass
+// `state: "PUBLISHED"` in this request to publish immediately. Send-node
+// `template` ids must already exist and be scoped to this journey, and node ids
+// must not be claimed by another journey.
 func (r *JourneyService) Replace(ctx context.Context, templateID string, body JourneyReplaceParams, opts ...option.RequestOption) (res *JourneyResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if templateID == "" {
@@ -137,11 +146,15 @@ func (r *JourneyService) Replace(ctx context.Context, templateID string, body Jo
 	return res, err
 }
 
+// Request body for creating a journey.
+//
 // The properties Name, Nodes are required.
 type CreateJourneyRequestParam struct {
 	Name    string                  `json:"name" api:"required"`
 	Nodes   []JourneyNodeUnionParam `json:"nodes,omitzero" api:"required"`
 	Enabled param.Opt[bool]         `json:"enabled,omitzero"`
+	// Lifecycle state of a journey.
+	//
 	// Any of "DRAFT", "PUBLISHED".
 	State JourneyState `json:"state,omitzero"`
 	paramObj
@@ -195,6 +208,8 @@ const (
 	JourneyVersionDraft     JourneyVersion = "draft"
 )
 
+// Invoke an AI step with `user_prompt` and optional `web_search`. Returns a
+// structured response conforming to `output_schema`.
 type JourneyAINode struct {
 	// A JSONSchema object (Draft-07-compatible). Validated at runtime by Ajv.
 	OutputSchema map[string]any `json:"output_schema" api:"required"`
@@ -243,6 +258,9 @@ const (
 	JourneyAINodeTypeAI JourneyAINodeType = "ai"
 )
 
+// Invoke an AI step with `user_prompt` and optional `web_search`. Returns a
+// structured response conforming to `output_schema`.
+//
 // The properties OutputSchema, Type are required.
 type JourneyAINodeParam struct {
 	// A JSONSchema object (Draft-07-compatible). Validated at runtime by Ajv.
@@ -268,6 +286,8 @@ func (r *JourneyAINodeParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Trigger fired when the journey is invoked via the API. The optional `schema`
+// field is a JSON Schema that validates the invocation payload.
 type JourneyAPIInvokeTriggerNode struct {
 	// Any of "api-invoke".
 	TriggerType JourneyAPIInvokeTriggerNodeTriggerType `json:"trigger_type" api:"required"`
@@ -320,6 +340,9 @@ const (
 	JourneyAPIInvokeTriggerNodeTypeTrigger JourneyAPIInvokeTriggerNodeType = "trigger"
 )
 
+// Trigger fired when the journey is invoked via the API. The optional `schema`
+// field is a JSON Schema that validates the invocation payload.
+//
 // The properties TriggerType, Type are required.
 type JourneyAPIInvokeTriggerNodeParam struct {
 	// Any of "api-invoke".
@@ -443,34 +466,34 @@ func (r *JourneyConditionNestedGroupParam) UnmarshalJSON(data []byte) error {
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 //
 // If the underlying value is not a json object, one of the following properties
-// will be valid: OfStringArray]
+// will be valid: OfSingleCondition]
 type JourneyConditionsFieldUnion struct {
 	// This field will be present if the value is a [JourneyConditionAtom] instead of
 	// an object.
-	OfStringArray JourneyConditionAtom `json:",inline"`
+	OfSingleCondition JourneyConditionAtom `json:",inline"`
 	// This field is a union of [[]JourneyConditionAtom], [[]JourneyConditionGroup]
 	And JourneyConditionsFieldUnionAnd `json:"AND"`
 	// This field is a union of [[]JourneyConditionAtom], [[]JourneyConditionGroup]
 	Or   JourneyConditionsFieldUnionOr `json:"OR"`
 	JSON struct {
-		OfStringArray respjson.Field
-		And           respjson.Field
-		Or            respjson.Field
-		raw           string
+		OfSingleCondition respjson.Field
+		And               respjson.Field
+		Or                respjson.Field
+		raw               string
 	} `json:"-"`
 }
 
-func (u JourneyConditionsFieldUnion) AsStringArray() (v JourneyConditionAtom) {
+func (u JourneyConditionsFieldUnion) AsSingleCondition() (v JourneyConditionAtom) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u JourneyConditionsFieldUnion) AsJourneyConditionGroup() (v JourneyConditionGroup) {
+func (u JourneyConditionsFieldUnion) AsConditionGroup() (v JourneyConditionGroup) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u JourneyConditionsFieldUnion) AsJourneyConditionNestedGroup() (v JourneyConditionNestedGroup) {
+func (u JourneyConditionsFieldUnion) AsNestedConditionGroup() (v JourneyConditionNestedGroup) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -550,26 +573,26 @@ func (r JourneyConditionsFieldUnion) ToParam() JourneyConditionsFieldUnionParam 
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type JourneyConditionsFieldUnionParam struct {
-	OfStringArray                 JourneyConditionAtom              `json:",omitzero,inline"`
-	OfJourneyConditionGroup       *JourneyConditionGroupParam       `json:",omitzero,inline"`
-	OfJourneyConditionNestedGroup *JourneyConditionNestedGroupParam `json:",omitzero,inline"`
+	OfSingleCondition      JourneyConditionAtom              `json:",omitzero,inline"`
+	OfConditionGroup       *JourneyConditionGroupParam       `json:",omitzero,inline"`
+	OfNestedConditionGroup *JourneyConditionNestedGroupParam `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u JourneyConditionsFieldUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfStringArray, u.OfJourneyConditionGroup, u.OfJourneyConditionNestedGroup)
+	return param.MarshalUnion(u, u.OfSingleCondition, u.OfConditionGroup, u.OfNestedConditionGroup)
 }
 func (u *JourneyConditionsFieldUnionParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
 func (u *JourneyConditionsFieldUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfStringArray) {
-		return &u.OfStringArray
-	} else if !param.IsOmitted(u.OfJourneyConditionGroup) {
-		return u.OfJourneyConditionGroup
-	} else if !param.IsOmitted(u.OfJourneyConditionNestedGroup) {
-		return u.OfJourneyConditionNestedGroup
+	if !param.IsOmitted(u.OfSingleCondition) {
+		return &u.OfSingleCondition
+	} else if !param.IsOmitted(u.OfConditionGroup) {
+		return u.OfConditionGroup
+	} else if !param.IsOmitted(u.OfNestedConditionGroup) {
+		return u.OfNestedConditionGroup
 	}
 	return nil
 }
@@ -578,9 +601,9 @@ func (u *JourneyConditionsFieldUnionParam) asAny() any {
 //
 // Or use AsAny() to get the underlying value
 func (u JourneyConditionsFieldUnionParam) GetAnd() (res journeyConditionsFieldUnionParamAnd) {
-	if vt := u.OfJourneyConditionGroup; vt != nil {
+	if vt := u.OfConditionGroup; vt != nil {
 		res.any = &vt.And
-	} else if vt := u.OfJourneyConditionNestedGroup; vt != nil {
+	} else if vt := u.OfNestedConditionGroup; vt != nil {
 		res.any = &vt.And
 	}
 	return
@@ -604,9 +627,9 @@ func (u journeyConditionsFieldUnionParamAnd) AsAny() any { return u.any }
 //
 // Or use AsAny() to get the underlying value
 func (u JourneyConditionsFieldUnionParam) GetOr() (res journeyConditionsFieldUnionParamOr) {
-	if vt := u.OfJourneyConditionGroup; vt != nil {
+	if vt := u.OfConditionGroup; vt != nil {
 		res.any = &vt.Or
-	} else if vt := u.OfJourneyConditionNestedGroup; vt != nil {
+	} else if vt := u.OfNestedConditionGroup; vt != nil {
 		res.any = &vt.Or
 	}
 	return
@@ -626,6 +649,7 @@ type journeyConditionsFieldUnionParamOr struct{ any }
 //	}
 func (u journeyConditionsFieldUnionParamOr) AsAny() any { return u.any }
 
+// Pause the journey run for a fixed `duration`.
 type JourneyDelayDurationNode struct {
 	Duration string `json:"duration" api:"required"`
 	// Any of "duration".
@@ -677,6 +701,8 @@ const (
 	JourneyDelayDurationNodeTypeDelay JourneyDelayDurationNodeType = "delay"
 )
 
+// Pause the journey run for a fixed `duration`.
+//
 // The properties Duration, Mode, Type are required.
 type JourneyDelayDurationNodeParam struct {
 	Duration string `json:"duration" api:"required"`
@@ -700,6 +726,7 @@ func (r *JourneyDelayDurationNodeParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Pause the journey run `until` a specific time.
 type JourneyDelayUntilNode struct {
 	// Any of "until".
 	Mode JourneyDelayUntilNodeMode `json:"mode" api:"required"`
@@ -750,6 +777,8 @@ const (
 	JourneyDelayUntilNodeTypeDelay JourneyDelayUntilNodeType = "delay"
 )
 
+// Pause the journey run `until` a specific time.
+//
 // The properties Mode, Type, Until are required.
 type JourneyDelayUntilNodeParam struct {
 	// Any of "until".
@@ -773,6 +802,7 @@ func (r *JourneyDelayUntilNodeParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Terminate the journey run.
 type JourneyExitNode struct {
 	// Any of "exit".
 	Type JourneyExitNodeType `json:"type" api:"required"`
@@ -807,6 +837,8 @@ const (
 	JourneyExitNodeTypeExit JourneyExitNodeType = "exit"
 )
 
+// Terminate the journey run.
+//
 // The property Type is required.
 type JourneyExitNodeParam struct {
 	// Any of "exit".
@@ -823,7 +855,11 @@ func (r *JourneyExitNodeParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Issue an HTTP GET or DELETE request and merge the response into the journey
+// state per `merge_strategy`.
 type JourneyFetchGetDeleteNode struct {
+	// Strategy for merging a fetch response into the journey run state.
+	//
 	// Any of "overwrite", "soft-merge", "replace", "none".
 	MergeStrategy JourneyMergeStrategy `json:"merge_strategy" api:"required"`
 	// Any of "get", "delete".
@@ -885,8 +921,13 @@ const (
 	JourneyFetchGetDeleteNodeTypeFetch JourneyFetchGetDeleteNodeType = "fetch"
 )
 
+// Issue an HTTP GET or DELETE request and merge the response into the journey
+// state per `merge_strategy`.
+//
 // The properties MergeStrategy, Method, Type, URL are required.
 type JourneyFetchGetDeleteNodeParam struct {
+	// Strategy for merging a fetch response into the journey run state.
+	//
 	// Any of "overwrite", "soft-merge", "replace", "none".
 	MergeStrategy JourneyMergeStrategy `json:"merge_strategy,omitzero" api:"required"`
 	// Any of "get", "delete".
@@ -914,7 +955,11 @@ func (r *JourneyFetchGetDeleteNodeParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Issue an HTTP POST or PUT request with a `body` and merge the response into the
+// journey state per `merge_strategy`.
 type JourneyFetchPostPutNode struct {
+	// Strategy for merging a fetch response into the journey run state.
+	//
 	// Any of "overwrite", "soft-merge", "replace", "none".
 	MergeStrategy JourneyMergeStrategy `json:"merge_strategy" api:"required"`
 	// Any of "post", "put".
@@ -977,8 +1022,13 @@ const (
 	JourneyFetchPostPutNodeTypeFetch JourneyFetchPostPutNodeType = "fetch"
 )
 
+// Issue an HTTP POST or PUT request with a `body` and merge the response into the
+// journey state per `merge_strategy`.
+//
 // The properties MergeStrategy, Method, Type, URL are required.
 type JourneyFetchPostPutNodeParam struct {
+	// Strategy for merging a fetch response into the journey run state.
+	//
 	// Any of "overwrite", "soft-merge", "replace", "none".
 	MergeStrategy JourneyMergeStrategy `json:"merge_strategy,omitzero" api:"required"`
 	// Any of "post", "put".
@@ -1007,6 +1057,7 @@ func (r *JourneyFetchPostPutNodeParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Strategy for merging a fetch response into the journey run state.
 type JourneyMergeStrategy string
 
 const (
@@ -1102,57 +1153,57 @@ type JourneyNodeUnion struct {
 	} `json:"-"`
 }
 
-func (u JourneyNodeUnion) AsJourneyAPIInvokeTriggerNode() (v JourneyAPIInvokeTriggerNode) {
+func (u JourneyNodeUnion) AsAPIInvokeTrigger() (v JourneyAPIInvokeTriggerNode) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u JourneyNodeUnion) AsJourneySegmentTriggerNode() (v JourneySegmentTriggerNode) {
+func (u JourneyNodeUnion) AsSegmentTrigger() (v JourneySegmentTriggerNode) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u JourneyNodeUnion) AsJourneySendNode() (v JourneySendNode) {
+func (u JourneyNodeUnion) AsSend() (v JourneySendNode) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u JourneyNodeUnion) AsJourneyDelayDurationNode() (v JourneyDelayDurationNode) {
+func (u JourneyNodeUnion) AsDelayForDuration() (v JourneyDelayDurationNode) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u JourneyNodeUnion) AsJourneyDelayUntilNode() (v JourneyDelayUntilNode) {
+func (u JourneyNodeUnion) AsDelayUntil() (v JourneyDelayUntilNode) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u JourneyNodeUnion) AsJourneyFetchGetDeleteNode() (v JourneyFetchGetDeleteNode) {
+func (u JourneyNodeUnion) AsFetchGetDelete() (v JourneyFetchGetDeleteNode) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u JourneyNodeUnion) AsJourneyFetchPostPutNode() (v JourneyFetchPostPutNode) {
+func (u JourneyNodeUnion) AsFetchPostPut() (v JourneyFetchPostPutNode) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u JourneyNodeUnion) AsJourneyAINode() (v JourneyAINode) {
+func (u JourneyNodeUnion) AsAI() (v JourneyAINode) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u JourneyNodeUnion) AsJourneyThrottleStaticNode() (v JourneyThrottleStaticNode) {
+func (u JourneyNodeUnion) AsThrottleStatic() (v JourneyThrottleStaticNode) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u JourneyNodeUnion) AsJourneyThrottleDynamicNode() (v JourneyThrottleDynamicNode) {
+func (u JourneyNodeUnion) AsThrottleDynamic() (v JourneyThrottleDynamicNode) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u JourneyNodeUnion) AsJourneyExitNode() (v JourneyExitNode) {
+func (u JourneyNodeUnion) AsExit() (v JourneyExitNode) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -1178,11 +1229,8 @@ func (r JourneyNodeUnion) ToParam() JourneyNodeUnionParam {
 	return param.Override[JourneyNodeUnionParam](json.RawMessage(r.RawJSON()))
 }
 
-// Branch node. Routes to one of `paths[]` whose `conditions` match, else falls
-// through to `default.nodes`. Inlined rather than referenced so the recursive
-// `nodes: JourneyNode[]` cycle stays within a single generated module (Stainless
-// Python forward-ref resolution does not span modules well for this recursion
-// shape).
+// Branch node. Routes to the first entry in `paths[]` whose `conditions` match,
+// else falls through to `default.nodes`.
 type JourneyNodeJourneyBranchNode struct {
 	Default JourneyNodeJourneyBranchNodeDefault `json:"default" api:"required"`
 	Paths   []JourneyNodeJourneyBranchNodePath  `json:"paths" api:"required"`
@@ -1247,55 +1295,55 @@ func (r *JourneyNodeJourneyBranchNodePath) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func JourneyNodeParamOfJourneyAPIInvokeTriggerNode(triggerType JourneyAPIInvokeTriggerNodeTriggerType, type_ JourneyAPIInvokeTriggerNodeType) JourneyNodeUnionParam {
+func JourneyNodeParamOfAPIInvokeTrigger(triggerType JourneyAPIInvokeTriggerNodeTriggerType, type_ JourneyAPIInvokeTriggerNodeType) JourneyNodeUnionParam {
 	var variant JourneyAPIInvokeTriggerNodeParam
 	variant.TriggerType = triggerType
 	variant.Type = type_
-	return JourneyNodeUnionParam{OfJourneyAPIInvokeTriggerNode: &variant}
+	return JourneyNodeUnionParam{OfAPIInvokeTrigger: &variant}
 }
 
-func JourneyNodeParamOfJourneySegmentTriggerNode(requestType JourneySegmentTriggerNodeRequestType, triggerType JourneySegmentTriggerNodeTriggerType, type_ JourneySegmentTriggerNodeType) JourneyNodeUnionParam {
+func JourneyNodeParamOfSegmentTrigger(requestType JourneySegmentTriggerNodeRequestType, triggerType JourneySegmentTriggerNodeTriggerType, type_ JourneySegmentTriggerNodeType) JourneyNodeUnionParam {
 	var variant JourneySegmentTriggerNodeParam
 	variant.RequestType = requestType
 	variant.TriggerType = triggerType
 	variant.Type = type_
-	return JourneyNodeUnionParam{OfJourneySegmentTriggerNode: &variant}
+	return JourneyNodeUnionParam{OfSegmentTrigger: &variant}
 }
 
-func JourneyNodeParamOfJourneySendNode(message JourneySendNodeMessageParam, type_ JourneySendNodeType) JourneyNodeUnionParam {
+func JourneyNodeParamOfSend(message JourneySendNodeMessageParam, type_ JourneySendNodeType) JourneyNodeUnionParam {
 	var variant JourneySendNodeParam
 	variant.Message = message
 	variant.Type = type_
-	return JourneyNodeUnionParam{OfJourneySendNode: &variant}
+	return JourneyNodeUnionParam{OfSend: &variant}
 }
 
-func JourneyNodeParamOfJourneyDelayDurationNode(duration string, mode JourneyDelayDurationNodeMode, type_ JourneyDelayDurationNodeType) JourneyNodeUnionParam {
+func JourneyNodeParamOfDelayForDuration(duration string, mode JourneyDelayDurationNodeMode, type_ JourneyDelayDurationNodeType) JourneyNodeUnionParam {
 	var variant JourneyDelayDurationNodeParam
 	variant.Duration = duration
 	variant.Mode = mode
 	variant.Type = type_
-	return JourneyNodeUnionParam{OfJourneyDelayDurationNode: &variant}
+	return JourneyNodeUnionParam{OfDelayForDuration: &variant}
 }
 
-func JourneyNodeParamOfJourneyDelayUntilNode(mode JourneyDelayUntilNodeMode, type_ JourneyDelayUntilNodeType, until string) JourneyNodeUnionParam {
+func JourneyNodeParamOfDelayUntil(mode JourneyDelayUntilNodeMode, type_ JourneyDelayUntilNodeType, until string) JourneyNodeUnionParam {
 	var variant JourneyDelayUntilNodeParam
 	variant.Mode = mode
 	variant.Type = type_
 	variant.Until = until
-	return JourneyNodeUnionParam{OfJourneyDelayUntilNode: &variant}
+	return JourneyNodeUnionParam{OfDelayUntil: &variant}
 }
 
-func JourneyNodeParamOfJourneyAINode(outputSchema map[string]any, type_ JourneyAINodeType) JourneyNodeUnionParam {
+func JourneyNodeParamOfAI(outputSchema map[string]any, type_ JourneyAINodeType) JourneyNodeUnionParam {
 	var variant JourneyAINodeParam
 	variant.OutputSchema = outputSchema
 	variant.Type = type_
-	return JourneyNodeUnionParam{OfJourneyAINode: &variant}
+	return JourneyNodeUnionParam{OfAI: &variant}
 }
 
-func JourneyNodeParamOfJourneyExitNode(type_ JourneyExitNodeType) JourneyNodeUnionParam {
+func JourneyNodeParamOfExit(type_ JourneyExitNodeType) JourneyNodeUnionParam {
 	var variant JourneyExitNodeParam
 	variant.Type = type_
-	return JourneyNodeUnionParam{OfJourneyExitNode: &variant}
+	return JourneyNodeUnionParam{OfExit: &variant}
 }
 
 func JourneyNodeParamOfJourneyBranchNode(default_ JourneyNodeJourneyBranchNodeDefaultParam, paths []JourneyNodeJourneyBranchNodePathParam, type_ string) JourneyNodeUnionParam {
@@ -1310,33 +1358,33 @@ func JourneyNodeParamOfJourneyBranchNode(default_ JourneyNodeJourneyBranchNodeDe
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type JourneyNodeUnionParam struct {
-	OfJourneyAPIInvokeTriggerNode *JourneyAPIInvokeTriggerNodeParam  `json:",omitzero,inline"`
-	OfJourneySegmentTriggerNode   *JourneySegmentTriggerNodeParam    `json:",omitzero,inline"`
-	OfJourneySendNode             *JourneySendNodeParam              `json:",omitzero,inline"`
-	OfJourneyDelayDurationNode    *JourneyDelayDurationNodeParam     `json:",omitzero,inline"`
-	OfJourneyDelayUntilNode       *JourneyDelayUntilNodeParam        `json:",omitzero,inline"`
-	OfJourneyFetchGetDeleteNode   *JourneyFetchGetDeleteNodeParam    `json:",omitzero,inline"`
-	OfJourneyFetchPostPutNode     *JourneyFetchPostPutNodeParam      `json:",omitzero,inline"`
-	OfJourneyAINode               *JourneyAINodeParam                `json:",omitzero,inline"`
-	OfJourneyThrottleStaticNode   *JourneyThrottleStaticNodeParam    `json:",omitzero,inline"`
-	OfJourneyThrottleDynamicNode  *JourneyThrottleDynamicNodeParam   `json:",omitzero,inline"`
-	OfJourneyExitNode             *JourneyExitNodeParam              `json:",omitzero,inline"`
-	OfJourneyBranchNode           *JourneyNodeJourneyBranchNodeParam `json:",omitzero,inline"`
+	OfAPIInvokeTrigger  *JourneyAPIInvokeTriggerNodeParam  `json:",omitzero,inline"`
+	OfSegmentTrigger    *JourneySegmentTriggerNodeParam    `json:",omitzero,inline"`
+	OfSend              *JourneySendNodeParam              `json:",omitzero,inline"`
+	OfDelayForDuration  *JourneyDelayDurationNodeParam     `json:",omitzero,inline"`
+	OfDelayUntil        *JourneyDelayUntilNodeParam        `json:",omitzero,inline"`
+	OfFetchGetDelete    *JourneyFetchGetDeleteNodeParam    `json:",omitzero,inline"`
+	OfFetchPostPut      *JourneyFetchPostPutNodeParam      `json:",omitzero,inline"`
+	OfAI                *JourneyAINodeParam                `json:",omitzero,inline"`
+	OfThrottleStatic    *JourneyThrottleStaticNodeParam    `json:",omitzero,inline"`
+	OfThrottleDynamic   *JourneyThrottleDynamicNodeParam   `json:",omitzero,inline"`
+	OfExit              *JourneyExitNodeParam              `json:",omitzero,inline"`
+	OfJourneyBranchNode *JourneyNodeJourneyBranchNodeParam `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u JourneyNodeUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfJourneyAPIInvokeTriggerNode,
-		u.OfJourneySegmentTriggerNode,
-		u.OfJourneySendNode,
-		u.OfJourneyDelayDurationNode,
-		u.OfJourneyDelayUntilNode,
-		u.OfJourneyFetchGetDeleteNode,
-		u.OfJourneyFetchPostPutNode,
-		u.OfJourneyAINode,
-		u.OfJourneyThrottleStaticNode,
-		u.OfJourneyThrottleDynamicNode,
-		u.OfJourneyExitNode,
+	return param.MarshalUnion(u, u.OfAPIInvokeTrigger,
+		u.OfSegmentTrigger,
+		u.OfSend,
+		u.OfDelayForDuration,
+		u.OfDelayUntil,
+		u.OfFetchGetDelete,
+		u.OfFetchPostPut,
+		u.OfAI,
+		u.OfThrottleStatic,
+		u.OfThrottleDynamic,
+		u.OfExit,
 		u.OfJourneyBranchNode)
 }
 func (u *JourneyNodeUnionParam) UnmarshalJSON(data []byte) error {
@@ -1344,28 +1392,28 @@ func (u *JourneyNodeUnionParam) UnmarshalJSON(data []byte) error {
 }
 
 func (u *JourneyNodeUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfJourneyAPIInvokeTriggerNode) {
-		return u.OfJourneyAPIInvokeTriggerNode
-	} else if !param.IsOmitted(u.OfJourneySegmentTriggerNode) {
-		return u.OfJourneySegmentTriggerNode
-	} else if !param.IsOmitted(u.OfJourneySendNode) {
-		return u.OfJourneySendNode
-	} else if !param.IsOmitted(u.OfJourneyDelayDurationNode) {
-		return u.OfJourneyDelayDurationNode
-	} else if !param.IsOmitted(u.OfJourneyDelayUntilNode) {
-		return u.OfJourneyDelayUntilNode
-	} else if !param.IsOmitted(u.OfJourneyFetchGetDeleteNode) {
-		return u.OfJourneyFetchGetDeleteNode
-	} else if !param.IsOmitted(u.OfJourneyFetchPostPutNode) {
-		return u.OfJourneyFetchPostPutNode
-	} else if !param.IsOmitted(u.OfJourneyAINode) {
-		return u.OfJourneyAINode
-	} else if !param.IsOmitted(u.OfJourneyThrottleStaticNode) {
-		return u.OfJourneyThrottleStaticNode
-	} else if !param.IsOmitted(u.OfJourneyThrottleDynamicNode) {
-		return u.OfJourneyThrottleDynamicNode
-	} else if !param.IsOmitted(u.OfJourneyExitNode) {
-		return u.OfJourneyExitNode
+	if !param.IsOmitted(u.OfAPIInvokeTrigger) {
+		return u.OfAPIInvokeTrigger
+	} else if !param.IsOmitted(u.OfSegmentTrigger) {
+		return u.OfSegmentTrigger
+	} else if !param.IsOmitted(u.OfSend) {
+		return u.OfSend
+	} else if !param.IsOmitted(u.OfDelayForDuration) {
+		return u.OfDelayForDuration
+	} else if !param.IsOmitted(u.OfDelayUntil) {
+		return u.OfDelayUntil
+	} else if !param.IsOmitted(u.OfFetchGetDelete) {
+		return u.OfFetchGetDelete
+	} else if !param.IsOmitted(u.OfFetchPostPut) {
+		return u.OfFetchPostPut
+	} else if !param.IsOmitted(u.OfAI) {
+		return u.OfAI
+	} else if !param.IsOmitted(u.OfThrottleStatic) {
+		return u.OfThrottleStatic
+	} else if !param.IsOmitted(u.OfThrottleDynamic) {
+		return u.OfThrottleDynamic
+	} else if !param.IsOmitted(u.OfExit) {
+		return u.OfExit
 	} else if !param.IsOmitted(u.OfJourneyBranchNode) {
 		return u.OfJourneyBranchNode
 	}
@@ -1374,7 +1422,7 @@ func (u *JourneyNodeUnionParam) asAny() any {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetSchema() map[string]any {
-	if vt := u.OfJourneyAPIInvokeTriggerNode; vt != nil {
+	if vt := u.OfAPIInvokeTrigger; vt != nil {
 		return vt.Schema
 	}
 	return nil
@@ -1382,7 +1430,7 @@ func (u JourneyNodeUnionParam) GetSchema() map[string]any {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetRequestType() *string {
-	if vt := u.OfJourneySegmentTriggerNode; vt != nil {
+	if vt := u.OfSegmentTrigger; vt != nil {
 		return (*string)(&vt.RequestType)
 	}
 	return nil
@@ -1390,7 +1438,7 @@ func (u JourneyNodeUnionParam) GetRequestType() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetEventID() *string {
-	if vt := u.OfJourneySegmentTriggerNode; vt != nil && vt.EventID.Valid() {
+	if vt := u.OfSegmentTrigger; vt != nil && vt.EventID.Valid() {
 		return &vt.EventID.Value
 	}
 	return nil
@@ -1398,7 +1446,7 @@ func (u JourneyNodeUnionParam) GetEventID() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetMessage() *JourneySendNodeMessageParam {
-	if vt := u.OfJourneySendNode; vt != nil {
+	if vt := u.OfSend; vt != nil {
 		return &vt.Message
 	}
 	return nil
@@ -1406,7 +1454,7 @@ func (u JourneyNodeUnionParam) GetMessage() *JourneySendNodeMessageParam {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetDuration() *string {
-	if vt := u.OfJourneyDelayDurationNode; vt != nil {
+	if vt := u.OfDelayForDuration; vt != nil {
 		return &vt.Duration
 	}
 	return nil
@@ -1414,7 +1462,7 @@ func (u JourneyNodeUnionParam) GetDuration() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetUntil() *string {
-	if vt := u.OfJourneyDelayUntilNode; vt != nil {
+	if vt := u.OfDelayUntil; vt != nil {
 		return &vt.Until
 	}
 	return nil
@@ -1422,7 +1470,7 @@ func (u JourneyNodeUnionParam) GetUntil() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetBody() *string {
-	if vt := u.OfJourneyFetchPostPutNode; vt != nil && vt.Body.Valid() {
+	if vt := u.OfFetchPostPut; vt != nil && vt.Body.Valid() {
 		return &vt.Body.Value
 	}
 	return nil
@@ -1430,7 +1478,7 @@ func (u JourneyNodeUnionParam) GetBody() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetOutputSchema() map[string]any {
-	if vt := u.OfJourneyAINode; vt != nil {
+	if vt := u.OfAI; vt != nil {
 		return vt.OutputSchema
 	}
 	return nil
@@ -1438,7 +1486,7 @@ func (u JourneyNodeUnionParam) GetOutputSchema() map[string]any {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetModel() *string {
-	if vt := u.OfJourneyAINode; vt != nil && vt.Model.Valid() {
+	if vt := u.OfAI; vt != nil && vt.Model.Valid() {
 		return &vt.Model.Value
 	}
 	return nil
@@ -1446,7 +1494,7 @@ func (u JourneyNodeUnionParam) GetModel() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetUserPrompt() *string {
-	if vt := u.OfJourneyAINode; vt != nil && vt.UserPrompt.Valid() {
+	if vt := u.OfAI; vt != nil && vt.UserPrompt.Valid() {
 		return &vt.UserPrompt.Value
 	}
 	return nil
@@ -1454,7 +1502,7 @@ func (u JourneyNodeUnionParam) GetUserPrompt() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetWebSearch() *bool {
-	if vt := u.OfJourneyAINode; vt != nil && vt.WebSearch.Valid() {
+	if vt := u.OfAI; vt != nil && vt.WebSearch.Valid() {
 		return &vt.WebSearch.Value
 	}
 	return nil
@@ -1462,7 +1510,7 @@ func (u JourneyNodeUnionParam) GetWebSearch() *bool {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetThrottleKey() *string {
-	if vt := u.OfJourneyThrottleDynamicNode; vt != nil {
+	if vt := u.OfThrottleDynamic; vt != nil {
 		return &vt.ThrottleKey
 	}
 	return nil
@@ -1486,9 +1534,9 @@ func (u JourneyNodeUnionParam) GetPaths() []JourneyNodeJourneyBranchNodePathPara
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetTriggerType() *string {
-	if vt := u.OfJourneyAPIInvokeTriggerNode; vt != nil {
+	if vt := u.OfAPIInvokeTrigger; vt != nil {
 		return (*string)(&vt.TriggerType)
-	} else if vt := u.OfJourneySegmentTriggerNode; vt != nil {
+	} else if vt := u.OfSegmentTrigger; vt != nil {
 		return (*string)(&vt.TriggerType)
 	}
 	return nil
@@ -1496,27 +1544,27 @@ func (u JourneyNodeUnionParam) GetTriggerType() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetType() *string {
-	if vt := u.OfJourneyAPIInvokeTriggerNode; vt != nil {
+	if vt := u.OfAPIInvokeTrigger; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfJourneySegmentTriggerNode; vt != nil {
+	} else if vt := u.OfSegmentTrigger; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfJourneySendNode; vt != nil {
+	} else if vt := u.OfSend; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfJourneyDelayDurationNode; vt != nil {
+	} else if vt := u.OfDelayForDuration; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfJourneyDelayUntilNode; vt != nil {
+	} else if vt := u.OfDelayUntil; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfJourneyFetchGetDeleteNode; vt != nil {
+	} else if vt := u.OfFetchGetDelete; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfJourneyFetchPostPutNode; vt != nil {
+	} else if vt := u.OfFetchPostPut; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfJourneyAINode; vt != nil {
+	} else if vt := u.OfAI; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfJourneyThrottleStaticNode; vt != nil {
+	} else if vt := u.OfThrottleStatic; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfJourneyThrottleDynamicNode; vt != nil {
+	} else if vt := u.OfThrottleDynamic; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfJourneyExitNode; vt != nil {
+	} else if vt := u.OfExit; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfJourneyBranchNode; vt != nil {
 		return (*string)(&vt.Type)
@@ -1526,27 +1574,27 @@ func (u JourneyNodeUnionParam) GetType() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetID() *string {
-	if vt := u.OfJourneyAPIInvokeTriggerNode; vt != nil && vt.ID.Valid() {
+	if vt := u.OfAPIInvokeTrigger; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
-	} else if vt := u.OfJourneySegmentTriggerNode; vt != nil && vt.ID.Valid() {
+	} else if vt := u.OfSegmentTrigger; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
-	} else if vt := u.OfJourneySendNode; vt != nil && vt.ID.Valid() {
+	} else if vt := u.OfSend; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
-	} else if vt := u.OfJourneyDelayDurationNode; vt != nil && vt.ID.Valid() {
+	} else if vt := u.OfDelayForDuration; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
-	} else if vt := u.OfJourneyDelayUntilNode; vt != nil && vt.ID.Valid() {
+	} else if vt := u.OfDelayUntil; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
-	} else if vt := u.OfJourneyFetchGetDeleteNode; vt != nil && vt.ID.Valid() {
+	} else if vt := u.OfFetchGetDelete; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
-	} else if vt := u.OfJourneyFetchPostPutNode; vt != nil && vt.ID.Valid() {
+	} else if vt := u.OfFetchPostPut; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
-	} else if vt := u.OfJourneyAINode; vt != nil && vt.ID.Valid() {
+	} else if vt := u.OfAI; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
-	} else if vt := u.OfJourneyThrottleStaticNode; vt != nil && vt.ID.Valid() {
+	} else if vt := u.OfThrottleStatic; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
-	} else if vt := u.OfJourneyThrottleDynamicNode; vt != nil && vt.ID.Valid() {
+	} else if vt := u.OfThrottleDynamic; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
-	} else if vt := u.OfJourneyExitNode; vt != nil && vt.ID.Valid() {
+	} else if vt := u.OfExit; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
 	} else if vt := u.OfJourneyBranchNode; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
@@ -1556,9 +1604,9 @@ func (u JourneyNodeUnionParam) GetID() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetMode() *string {
-	if vt := u.OfJourneyDelayDurationNode; vt != nil {
+	if vt := u.OfDelayForDuration; vt != nil {
 		return (*string)(&vt.Mode)
-	} else if vt := u.OfJourneyDelayUntilNode; vt != nil {
+	} else if vt := u.OfDelayUntil; vt != nil {
 		return (*string)(&vt.Mode)
 	}
 	return nil
@@ -1566,9 +1614,9 @@ func (u JourneyNodeUnionParam) GetMode() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetMergeStrategy() *string {
-	if vt := u.OfJourneyFetchGetDeleteNode; vt != nil {
+	if vt := u.OfFetchGetDelete; vt != nil {
 		return (*string)(&vt.MergeStrategy)
-	} else if vt := u.OfJourneyFetchPostPutNode; vt != nil {
+	} else if vt := u.OfFetchPostPut; vt != nil {
 		return (*string)(&vt.MergeStrategy)
 	}
 	return nil
@@ -1576,9 +1624,9 @@ func (u JourneyNodeUnionParam) GetMergeStrategy() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetMethod() *string {
-	if vt := u.OfJourneyFetchGetDeleteNode; vt != nil {
+	if vt := u.OfFetchGetDelete; vt != nil {
 		return (*string)(&vt.Method)
-	} else if vt := u.OfJourneyFetchPostPutNode; vt != nil {
+	} else if vt := u.OfFetchPostPut; vt != nil {
 		return (*string)(&vt.Method)
 	}
 	return nil
@@ -1586,9 +1634,9 @@ func (u JourneyNodeUnionParam) GetMethod() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetURL() *string {
-	if vt := u.OfJourneyFetchGetDeleteNode; vt != nil {
+	if vt := u.OfFetchGetDelete; vt != nil {
 		return (*string)(&vt.URL)
-	} else if vt := u.OfJourneyFetchPostPutNode; vt != nil {
+	} else if vt := u.OfFetchPostPut; vt != nil {
 		return (*string)(&vt.URL)
 	}
 	return nil
@@ -1596,9 +1644,9 @@ func (u JourneyNodeUnionParam) GetURL() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetMaxAllowed() *int64 {
-	if vt := u.OfJourneyThrottleStaticNode; vt != nil {
+	if vt := u.OfThrottleStatic; vt != nil {
 		return (*int64)(&vt.MaxAllowed)
-	} else if vt := u.OfJourneyThrottleDynamicNode; vt != nil {
+	} else if vt := u.OfThrottleDynamic; vt != nil {
 		return (*int64)(&vt.MaxAllowed)
 	}
 	return nil
@@ -1606,9 +1654,9 @@ func (u JourneyNodeUnionParam) GetMaxAllowed() *int64 {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetPeriod() *string {
-	if vt := u.OfJourneyThrottleStaticNode; vt != nil {
+	if vt := u.OfThrottleStatic; vt != nil {
 		return (*string)(&vt.Period)
-	} else if vt := u.OfJourneyThrottleDynamicNode; vt != nil {
+	} else if vt := u.OfThrottleDynamic; vt != nil {
 		return (*string)(&vt.Period)
 	}
 	return nil
@@ -1616,9 +1664,9 @@ func (u JourneyNodeUnionParam) GetPeriod() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetScope() *string {
-	if vt := u.OfJourneyThrottleStaticNode; vt != nil {
+	if vt := u.OfThrottleStatic; vt != nil {
 		return (*string)(&vt.Scope)
-	} else if vt := u.OfJourneyThrottleDynamicNode; vt != nil {
+	} else if vt := u.OfThrottleDynamic; vt != nil {
 		return (*string)(&vt.Scope)
 	}
 	return nil
@@ -1626,25 +1674,25 @@ func (u JourneyNodeUnionParam) GetScope() *string {
 
 // Returns a pointer to the underlying variant's Conditions property, if present.
 func (u JourneyNodeUnionParam) GetConditions() *JourneyConditionsFieldUnionParam {
-	if vt := u.OfJourneyAPIInvokeTriggerNode; vt != nil {
+	if vt := u.OfAPIInvokeTrigger; vt != nil {
 		return &vt.Conditions
-	} else if vt := u.OfJourneySegmentTriggerNode; vt != nil {
+	} else if vt := u.OfSegmentTrigger; vt != nil {
 		return &vt.Conditions
-	} else if vt := u.OfJourneySendNode; vt != nil {
+	} else if vt := u.OfSend; vt != nil {
 		return &vt.Conditions
-	} else if vt := u.OfJourneyDelayDurationNode; vt != nil {
+	} else if vt := u.OfDelayForDuration; vt != nil {
 		return &vt.Conditions
-	} else if vt := u.OfJourneyDelayUntilNode; vt != nil {
+	} else if vt := u.OfDelayUntil; vt != nil {
 		return &vt.Conditions
-	} else if vt := u.OfJourneyFetchGetDeleteNode; vt != nil {
+	} else if vt := u.OfFetchGetDelete; vt != nil {
 		return &vt.Conditions
-	} else if vt := u.OfJourneyFetchPostPutNode; vt != nil {
+	} else if vt := u.OfFetchPostPut; vt != nil {
 		return &vt.Conditions
-	} else if vt := u.OfJourneyAINode; vt != nil {
+	} else if vt := u.OfAI; vt != nil {
 		return &vt.Conditions
-	} else if vt := u.OfJourneyThrottleStaticNode; vt != nil {
+	} else if vt := u.OfThrottleStatic; vt != nil {
 		return &vt.Conditions
-	} else if vt := u.OfJourneyThrottleDynamicNode; vt != nil {
+	} else if vt := u.OfThrottleDynamic; vt != nil {
 		return &vt.Conditions
 	}
 	return nil
@@ -1652,9 +1700,9 @@ func (u JourneyNodeUnionParam) GetConditions() *JourneyConditionsFieldUnionParam
 
 // Returns a pointer to the underlying variant's Headers property, if present.
 func (u JourneyNodeUnionParam) GetHeaders() map[string]string {
-	if vt := u.OfJourneyFetchGetDeleteNode; vt != nil {
+	if vt := u.OfFetchGetDelete; vt != nil {
 		return vt.Headers
-	} else if vt := u.OfJourneyFetchPostPutNode; vt != nil {
+	} else if vt := u.OfFetchPostPut; vt != nil {
 		return vt.Headers
 	}
 	return nil
@@ -1662,9 +1710,9 @@ func (u JourneyNodeUnionParam) GetHeaders() map[string]string {
 
 // Returns a pointer to the underlying variant's QueryParams property, if present.
 func (u JourneyNodeUnionParam) GetQueryParams() map[string]string {
-	if vt := u.OfJourneyFetchGetDeleteNode; vt != nil {
+	if vt := u.OfFetchGetDelete; vt != nil {
 		return vt.QueryParams
-	} else if vt := u.OfJourneyFetchPostPutNode; vt != nil {
+	} else if vt := u.OfFetchPostPut; vt != nil {
 		return vt.QueryParams
 	}
 	return nil
@@ -1673,19 +1721,16 @@ func (u JourneyNodeUnionParam) GetQueryParams() map[string]string {
 // Returns a pointer to the underlying variant's ResponseSchema property, if
 // present.
 func (u JourneyNodeUnionParam) GetResponseSchema() map[string]any {
-	if vt := u.OfJourneyFetchGetDeleteNode; vt != nil {
+	if vt := u.OfFetchGetDelete; vt != nil {
 		return vt.ResponseSchema
-	} else if vt := u.OfJourneyFetchPostPutNode; vt != nil {
+	} else if vt := u.OfFetchPostPut; vt != nil {
 		return vt.ResponseSchema
 	}
 	return nil
 }
 
-// Branch node. Routes to one of `paths[]` whose `conditions` match, else falls
-// through to `default.nodes`. Inlined rather than referenced so the recursive
-// `nodes: JourneyNode[]` cycle stays within a single generated module (Stainless
-// Python forward-ref resolution does not span modules well for this recursion
-// shape).
+// Branch node. Routes to the first entry in `paths[]` whose `conditions` match,
+// else falls through to `default.nodes`.
 //
 // The properties Default, Paths, Type are required.
 type JourneyNodeJourneyBranchNodeParam struct {
@@ -1745,6 +1790,8 @@ func (r *JourneyNodeJourneyBranchNodePathParam) UnmarshalJSON(data []byte) error
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Request body for publishing a journey. Pass `version` to roll back to a prior
+// version; omit to publish the current draft.
 type JourneyPublishRequestParam struct {
 	Version param.Opt[string] `json:"version,omitzero"`
 	paramObj
@@ -1758,6 +1805,7 @@ func (r *JourneyPublishRequestParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A journey, with its current draft or published nodes and metadata.
 type JourneyResponse struct {
 	ID        string             `json:"id" api:"required"`
 	Created   int64              `json:"created" api:"required"`
@@ -1766,6 +1814,8 @@ type JourneyResponse struct {
 	Name      string             `json:"name" api:"required"`
 	Nodes     []JourneyNodeUnion `json:"nodes" api:"required"`
 	Published int64              `json:"published" api:"required"`
+	// Lifecycle state of a journey.
+	//
 	// Any of "DRAFT", "PUBLISHED".
 	State   JourneyState `json:"state" api:"required"`
 	Updated int64        `json:"updated" api:"required"`
@@ -1793,6 +1843,7 @@ func (r *JourneyResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Trigger fired by a segment event (`identify`, `group`, or `track`).
 type JourneySegmentTriggerNode struct {
 	// Any of "identify", "group", "track".
 	RequestType JourneySegmentTriggerNodeRequestType `json:"request_type" api:"required"`
@@ -1855,6 +1906,8 @@ const (
 	JourneySegmentTriggerNodeTypeTrigger JourneySegmentTriggerNodeType = "trigger"
 )
 
+// Trigger fired by a segment event (`identify`, `group`, or `track`).
+//
 // The properties RequestType, TriggerType, Type are required.
 type JourneySegmentTriggerNodeParam struct {
 	// Any of "identify", "group", "track".
@@ -1880,6 +1933,8 @@ func (r *JourneySegmentTriggerNodeParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Send a notification template to the recipient. Optionally override the recipient
+// address, delay the send, or attach `data`.
 type JourneySendNode struct {
 	Message JourneySendNodeMessage `json:"message" api:"required"`
 	// Any of "send".
@@ -1981,6 +2036,9 @@ const (
 	JourneySendNodeTypeSend JourneySendNodeType = "send"
 )
 
+// Send a notification template to the recipient. Optionally override the recipient
+// address, delay the send, or attach `data`.
+//
 // The properties Message, Type are required.
 type JourneySendNodeParam struct {
 	Message JourneySendNodeMessageParam `json:"message,omitzero" api:"required"`
@@ -2049,6 +2107,7 @@ func (r *JourneySendNodeMessageToParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Lifecycle state of a journey.
 type JourneyState string
 
 const (
@@ -2056,6 +2115,8 @@ const (
 	JourneyStatePublished JourneyState = "PUBLISHED"
 )
 
+// Request body for creating a notification template scoped to a journey.
+//
 // The properties Channel, Notification are required.
 type JourneyTemplateCreateRequestParam struct {
 	Channel      string                                        `json:"channel" api:"required"`
@@ -2146,6 +2207,7 @@ func (r *JourneyTemplateCreateRequestNotificationSubscriptionParam) UnmarshalJSO
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A journey-scoped notification template.
 type JourneyTemplateGetResponse struct {
 	ID      string                            `json:"id" api:"required"`
 	Brand   JourneyTemplateGetResponseBrand   `json:"brand" api:"required"`
@@ -2244,6 +2306,7 @@ func (r *JourneyTemplateGetResponseSubscription) UnmarshalJSON(data []byte) erro
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Paged list of journey-scoped notification templates.
 type JourneyTemplateListResponse struct {
 	Paging  shared.Paging            `json:"paging" api:"required"`
 	Results []JourneyTemplateSummary `json:"results" api:"required"`
@@ -2262,6 +2325,8 @@ func (r *JourneyTemplateListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Request body for publishing a journey-scoped notification template. Pass
+// `version` to roll back to a prior version; omit to publish the current draft.
 type JourneyTemplatePublishRequestParam struct {
 	Version param.Opt[string] `json:"version,omitzero"`
 	paramObj
@@ -2275,6 +2340,8 @@ func (r *JourneyTemplatePublishRequestParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Request body for replacing a journey-scoped notification template draft.
+//
 // The property Notification is required.
 type JourneyTemplateReplaceRequestParam struct {
 	Notification JourneyTemplateReplaceRequestNotificationParam `json:"notification,omitzero" api:"required"`
@@ -2363,6 +2430,8 @@ func (r *JourneyTemplateReplaceRequestNotificationSubscriptionParam) UnmarshalJS
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Summary fields of a journey-scoped notification template returned in list
+// responses.
 type JourneyTemplateSummary struct {
 	ID      string   `json:"id" api:"required"`
 	Created int64    `json:"created" api:"required"`
@@ -2393,6 +2462,8 @@ func (r *JourneyTemplateSummary) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Throttle the journey by a dynamic `throttle_key`, allowing at most `max_allowed`
+// invocations per `period`.
 type JourneyThrottleDynamicNode struct {
 	MaxAllowed int64  `json:"max_allowed" api:"required"`
 	Period     string `json:"period" api:"required"`
@@ -2448,6 +2519,9 @@ const (
 	JourneyThrottleDynamicNodeTypeThrottle JourneyThrottleDynamicNodeType = "throttle"
 )
 
+// Throttle the journey by a dynamic `throttle_key`, allowing at most `max_allowed`
+// invocations per `period`.
+//
 // The properties MaxAllowed, Period, Scope, ThrottleKey, Type are required.
 type JourneyThrottleDynamicNodeParam struct {
 	MaxAllowed int64  `json:"max_allowed" api:"required"`
@@ -2473,6 +2547,8 @@ func (r *JourneyThrottleDynamicNodeParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Throttle the journey by a static `scope` (`user` or `global`), allowing at most
+// `max_allowed` invocations per `period`.
 type JourneyThrottleStaticNode struct {
 	MaxAllowed int64  `json:"max_allowed" api:"required"`
 	Period     string `json:"period" api:"required"`
@@ -2527,6 +2603,9 @@ const (
 	JourneyThrottleStaticNodeTypeThrottle JourneyThrottleStaticNodeType = "throttle"
 )
 
+// Throttle the journey by a static `scope` (`user` or `global`), allowing at most
+// `max_allowed` invocations per `period`.
+//
 // The properties MaxAllowed, Period, Scope, Type are required.
 type JourneyThrottleStaticNodeParam struct {
 	MaxAllowed int64  `json:"max_allowed" api:"required"`
@@ -2551,6 +2630,7 @@ func (r *JourneyThrottleStaticNodeParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A published version of a journey.
 type JourneyVersionItem struct {
 	Created   int64  `json:"created" api:"required"`
 	Creator   string `json:"creator" api:"required"`
@@ -2575,6 +2655,7 @@ func (r *JourneyVersionItem) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Paged list of published journey versions, most recent first.
 type JourneyVersionsListResponse struct {
 	Paging  shared.Paging        `json:"paging" api:"required"`
 	Results []JourneyVersionItem `json:"results" api:"required"`
@@ -2661,6 +2742,7 @@ func (r *JourneysListResponse) UnmarshalJSON(data []byte) error {
 }
 
 type JourneyNewParams struct {
+	// Request body for creating a journey.
 	CreateJourneyRequest CreateJourneyRequestParam
 	paramObj
 }
@@ -2673,6 +2755,7 @@ func (r *JourneyNewParams) UnmarshalJSON(data []byte) error {
 }
 
 type JourneyGetParams struct {
+	// Version selector: `draft`, `published` (default), or `vN`.
 	Version param.Opt[string] `query:"version,omitzero" json:"-"`
 	paramObj
 }
@@ -2731,6 +2814,8 @@ func (r *JourneyInvokeParams) UnmarshalJSON(data []byte) error {
 }
 
 type JourneyPublishParams struct {
+	// Request body for publishing a journey. Pass `version` to roll back to a prior
+	// version; omit to publish the current draft.
 	JourneyPublishRequest JourneyPublishRequestParam
 	paramObj
 }
@@ -2743,6 +2828,7 @@ func (r *JourneyPublishParams) UnmarshalJSON(data []byte) error {
 }
 
 type JourneyReplaceParams struct {
+	// Request body for creating a journey.
 	CreateJourneyRequest CreateJourneyRequestParam
 	paramObj
 }
