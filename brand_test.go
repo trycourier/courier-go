@@ -27,12 +27,11 @@ func TestBrandNewWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Brands.New(context.TODO(), courier.BrandNewParams{
-		Name: "name",
-		ID:   courier.String("id"),
+		Name: "My Brand",
 		Settings: courier.BrandSettingsParam{
 			Colors: courier.BrandColorsParam{
-				Primary:   courier.String("primary"),
-				Secondary: courier.String("secondary"),
+				Primary:   courier.String("#9D3789"),
+				Secondary: courier.String("#FFFFFF"),
 			},
 			Email: courier.BrandSettingsEmailParam{
 				Footer: courier.EmailFooterParam{
@@ -93,6 +92,7 @@ func TestBrandNewWithOptionalParams(t *testing.T) {
 				Placement:          courier.BrandSettingsInAppPlacementTop,
 			},
 		},
+		ID: courier.String("id"),
 		Snippets: courier.BrandSnippetsParam{
 			Items: []courier.BrandSnippetParam{{
 				Name:  "name",

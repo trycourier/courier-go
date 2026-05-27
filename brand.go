@@ -39,7 +39,8 @@ func NewBrandService(opts ...option.RequestOption) (r BrandService) {
 	return
 }
 
-// Create a new brand
+// Create a new brand. Requires `name` and `settings` (with at least
+// `colors.primary` and `colors.secondary`).
 func (r *BrandService) New(ctx context.Context, body BrandNewParams, opts ...option.RequestOption) (res *Brand, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "brands"
@@ -768,8 +769,8 @@ func (r *BrandListResponse) UnmarshalJSON(data []byte) error {
 
 type BrandNewParams struct {
 	Name     string             `json:"name" api:"required"`
+	Settings BrandSettingsParam `json:"settings,omitzero" api:"required"`
 	ID       param.Opt[string]  `json:"id,omitzero"`
-	Settings BrandSettingsParam `json:"settings,omitzero"`
 	Snippets BrandSnippetsParam `json:"snippets,omitzero"`
 	paramObj
 }
