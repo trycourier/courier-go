@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.11.0 (2026-05-28)
+
+Full Changelog: [v4.10.0...v4.11.0](https://github.com/trycourier/courier-go/compare/v4.10.0...v4.11.0)
+
+### Features
+
+* C-18612 Add Journeys `batch` node variant to OpenAPI spec ([fc02175](https://github.com/trycourier/courier-go/commit/fc021750624443a21bf8d62c7237b4fadbf7abce))
+* Mark `settings` as required on POST /brands ([60ed32e](https://github.com/trycourier/courier-go/commit/60ed32e003d0afe27d26c1a204b402cc166f3dce))
+
 ## 4.10.0 (2026-05-19)
 
 Full Changelog: [v4.9.2...v4.10.0](https://github.com/trycourier/courier-go/compare/v4.9.2...v4.10.0)

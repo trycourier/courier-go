@@ -1071,8 +1071,8 @@ const (
 // [JourneyAPIInvokeTriggerNode], [JourneySegmentTriggerNode], [JourneySendNode],
 // [JourneyDelayDurationNode], [JourneyDelayUntilNode],
 // [JourneyFetchGetDeleteNode], [JourneyFetchPostPutNode], [JourneyAINode],
-// [JourneyThrottleStaticNode], [JourneyThrottleDynamicNode], [JourneyExitNode],
-// [JourneyNodeJourneyBranchNode].
+// [JourneyThrottleStaticNode], [JourneyThrottleDynamicNode], [JourneyNodeBatch],
+// [JourneyExitNode], [JourneyNodeJourneyBranchNode].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type JourneyNodeUnion struct {
@@ -1116,6 +1116,16 @@ type JourneyNodeUnion struct {
 	Scope      string `json:"scope"`
 	// This field is from variant [JourneyThrottleDynamicNode].
 	ThrottleKey string `json:"throttle_key"`
+	// This field is from variant [JourneyNodeBatch].
+	MaxWaitPeriod string `json:"max_wait_period"`
+	// This field is from variant [JourneyNodeBatch].
+	Retain JourneyNodeBatchRetain `json:"retain"`
+	// This field is from variant [JourneyNodeBatch].
+	WaitPeriod string `json:"wait_period"`
+	// This field is from variant [JourneyNodeBatch].
+	CategoryKey string `json:"category_key"`
+	// This field is from variant [JourneyNodeBatch].
+	MaxItems int64 `json:"max_items"`
 	// This field is from variant [JourneyNodeJourneyBranchNode].
 	Default JourneyNodeJourneyBranchNodeDefault `json:"default"`
 	// This field is from variant [JourneyNodeJourneyBranchNode].
@@ -1147,6 +1157,11 @@ type JourneyNodeUnion struct {
 		Period         respjson.Field
 		Scope          respjson.Field
 		ThrottleKey    respjson.Field
+		MaxWaitPeriod  respjson.Field
+		Retain         respjson.Field
+		WaitPeriod     respjson.Field
+		CategoryKey    respjson.Field
+		MaxItems       respjson.Field
 		Default        respjson.Field
 		Paths          respjson.Field
 		raw            string
@@ -1203,6 +1218,11 @@ func (u JourneyNodeUnion) AsThrottleDynamic() (v JourneyThrottleDynamicNode) {
 	return
 }
 
+func (u JourneyNodeUnion) AsBatch() (v JourneyNodeBatch) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
 func (u JourneyNodeUnion) AsExit() (v JourneyExitNode) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
@@ -1227,6 +1247,82 @@ func (r *JourneyNodeUnion) UnmarshalJSON(data []byte) error {
 // JourneyNodeUnionParam.Overrides()
 func (r JourneyNodeUnion) ToParam() JourneyNodeUnionParam {
 	return param.Override[JourneyNodeUnionParam](json.RawMessage(r.RawJSON()))
+}
+
+// Collect events arriving at the node into a single batch and fire one downstream
+// step with the aggregated payload. The first event into a batch owns the run;
+// later contributing events terminate at the batch step. The batch releases when
+// any of `max_items` is reached, a quiet window of `wait_period` elapses, or the
+// `max_wait_period` ceiling hits.
+type JourneyNodeBatch struct {
+	// ISO 8601 duration. Hard ceiling from the first event into the batch; releases
+	// the batch unconditionally when it elapses.
+	MaxWaitPeriod string `json:"max_wait_period" api:"required"`
+	// How to select which collected events to retain in the aggregated payload when
+	// the batch releases.
+	Retain JourneyNodeBatchRetain `json:"retain" api:"required"`
+	// Any of "user".
+	Scope string `json:"scope" api:"required"`
+	// Any of "batch".
+	Type string `json:"type" api:"required"`
+	// ISO 8601 duration. Quiet window that releases the batch when it elapses with no
+	// new contributing events. Must be less than `max_wait_period`.
+	WaitPeriod string `json:"wait_period" api:"required"`
+	ID         string `json:"id"`
+	// Optional partition key. Events with the same `category_key` are batched
+	// together; events with different values are batched separately.
+	CategoryKey string `json:"category_key"`
+	// Condition spec for a journey node. Accepts a single condition atom, an AND/OR
+	// group, or an AND/OR nested group. Omit the `conditions` property entirely to
+	// express "no conditions".
+	Conditions JourneyConditionsFieldUnion `json:"conditions"`
+	// Releases the batch once this many events have been collected.
+	MaxItems int64 `json:"max_items"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		MaxWaitPeriod respjson.Field
+		Retain        respjson.Field
+		Scope         respjson.Field
+		Type          respjson.Field
+		WaitPeriod    respjson.Field
+		ID            respjson.Field
+		CategoryKey   respjson.Field
+		Conditions    respjson.Field
+		MaxItems      respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r JourneyNodeBatch) RawJSON() string { return r.JSON.raw }
+func (r *JourneyNodeBatch) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// How to select which collected events to retain in the aggregated payload when
+// the batch releases.
+type JourneyNodeBatchRetain struct {
+	Count int64 `json:"count" api:"required"`
+	// Any of "first", "last", "highest", "lowest".
+	Type string `json:"type" api:"required"`
+	// Dot-path into the event payload (e.g. `data.priority`). Required when `type` is
+	// `highest` or `lowest`.
+	SortKey string `json:"sort_key"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Count       respjson.Field
+		Type        respjson.Field
+		SortKey     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r JourneyNodeBatchRetain) RawJSON() string { return r.JSON.raw }
+func (r *JourneyNodeBatchRetain) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // Branch node. Routes to the first entry in `paths[]` whose `conditions` match,
@@ -1368,6 +1464,7 @@ type JourneyNodeUnionParam struct {
 	OfAI                *JourneyAINodeParam                `json:",omitzero,inline"`
 	OfThrottleStatic    *JourneyThrottleStaticNodeParam    `json:",omitzero,inline"`
 	OfThrottleDynamic   *JourneyThrottleDynamicNodeParam   `json:",omitzero,inline"`
+	OfBatch             *JourneyNodeBatchParam             `json:",omitzero,inline"`
 	OfExit              *JourneyExitNodeParam              `json:",omitzero,inline"`
 	OfJourneyBranchNode *JourneyNodeJourneyBranchNodeParam `json:",omitzero,inline"`
 	paramUnion
@@ -1384,6 +1481,7 @@ func (u JourneyNodeUnionParam) MarshalJSON() ([]byte, error) {
 		u.OfAI,
 		u.OfThrottleStatic,
 		u.OfThrottleDynamic,
+		u.OfBatch,
 		u.OfExit,
 		u.OfJourneyBranchNode)
 }
@@ -1412,6 +1510,8 @@ func (u *JourneyNodeUnionParam) asAny() any {
 		return u.OfThrottleStatic
 	} else if !param.IsOmitted(u.OfThrottleDynamic) {
 		return u.OfThrottleDynamic
+	} else if !param.IsOmitted(u.OfBatch) {
+		return u.OfBatch
 	} else if !param.IsOmitted(u.OfExit) {
 		return u.OfExit
 	} else if !param.IsOmitted(u.OfJourneyBranchNode) {
@@ -1517,6 +1617,46 @@ func (u JourneyNodeUnionParam) GetThrottleKey() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u JourneyNodeUnionParam) GetMaxWaitPeriod() *string {
+	if vt := u.OfBatch; vt != nil {
+		return &vt.MaxWaitPeriod
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u JourneyNodeUnionParam) GetRetain() *JourneyNodeBatchRetainParam {
+	if vt := u.OfBatch; vt != nil {
+		return &vt.Retain
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u JourneyNodeUnionParam) GetWaitPeriod() *string {
+	if vt := u.OfBatch; vt != nil {
+		return &vt.WaitPeriod
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u JourneyNodeUnionParam) GetCategoryKey() *string {
+	if vt := u.OfBatch; vt != nil && vt.CategoryKey.Valid() {
+		return &vt.CategoryKey.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u JourneyNodeUnionParam) GetMaxItems() *int64 {
+	if vt := u.OfBatch; vt != nil && vt.MaxItems.Valid() {
+		return &vt.MaxItems.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetDefault() *JourneyNodeJourneyBranchNodeDefaultParam {
 	if vt := u.OfJourneyBranchNode; vt != nil {
 		return &vt.Default
@@ -1564,6 +1704,8 @@ func (u JourneyNodeUnionParam) GetType() *string {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfThrottleDynamic; vt != nil {
 		return (*string)(&vt.Type)
+	} else if vt := u.OfBatch; vt != nil {
+		return (*string)(&vt.Type)
 	} else if vt := u.OfExit; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfJourneyBranchNode; vt != nil {
@@ -1593,6 +1735,8 @@ func (u JourneyNodeUnionParam) GetID() *string {
 	} else if vt := u.OfThrottleStatic; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
 	} else if vt := u.OfThrottleDynamic; vt != nil && vt.ID.Valid() {
+		return &vt.ID.Value
+	} else if vt := u.OfBatch; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
 	} else if vt := u.OfExit; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
@@ -1668,6 +1812,8 @@ func (u JourneyNodeUnionParam) GetScope() *string {
 		return (*string)(&vt.Scope)
 	} else if vt := u.OfThrottleDynamic; vt != nil {
 		return (*string)(&vt.Scope)
+	} else if vt := u.OfBatch; vt != nil {
+		return (*string)(&vt.Scope)
 	}
 	return nil
 }
@@ -1693,6 +1839,8 @@ func (u JourneyNodeUnionParam) GetConditions() *JourneyConditionsFieldUnionParam
 	} else if vt := u.OfThrottleStatic; vt != nil {
 		return &vt.Conditions
 	} else if vt := u.OfThrottleDynamic; vt != nil {
+		return &vt.Conditions
+	} else if vt := u.OfBatch; vt != nil {
 		return &vt.Conditions
 	}
 	return nil
@@ -1727,6 +1875,85 @@ func (u JourneyNodeUnionParam) GetResponseSchema() map[string]any {
 		return vt.ResponseSchema
 	}
 	return nil
+}
+
+// Collect events arriving at the node into a single batch and fire one downstream
+// step with the aggregated payload. The first event into a batch owns the run;
+// later contributing events terminate at the batch step. The batch releases when
+// any of `max_items` is reached, a quiet window of `wait_period` elapses, or the
+// `max_wait_period` ceiling hits.
+//
+// The properties MaxWaitPeriod, Retain, Scope, Type, WaitPeriod are required.
+type JourneyNodeBatchParam struct {
+	// ISO 8601 duration. Hard ceiling from the first event into the batch; releases
+	// the batch unconditionally when it elapses.
+	MaxWaitPeriod string `json:"max_wait_period" api:"required"`
+	// How to select which collected events to retain in the aggregated payload when
+	// the batch releases.
+	Retain JourneyNodeBatchRetainParam `json:"retain,omitzero" api:"required"`
+	// Any of "user".
+	Scope string `json:"scope,omitzero" api:"required"`
+	// Any of "batch".
+	Type string `json:"type,omitzero" api:"required"`
+	// ISO 8601 duration. Quiet window that releases the batch when it elapses with no
+	// new contributing events. Must be less than `max_wait_period`.
+	WaitPeriod string            `json:"wait_period" api:"required"`
+	ID         param.Opt[string] `json:"id,omitzero"`
+	// Optional partition key. Events with the same `category_key` are batched
+	// together; events with different values are batched separately.
+	CategoryKey param.Opt[string] `json:"category_key,omitzero"`
+	// Releases the batch once this many events have been collected.
+	MaxItems param.Opt[int64] `json:"max_items,omitzero"`
+	// Condition spec for a journey node. Accepts a single condition atom, an AND/OR
+	// group, or an AND/OR nested group. Omit the `conditions` property entirely to
+	// express "no conditions".
+	Conditions JourneyConditionsFieldUnionParam `json:"conditions,omitzero"`
+	paramObj
+}
+
+func (r JourneyNodeBatchParam) MarshalJSON() (data []byte, err error) {
+	type shadow JourneyNodeBatchParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *JourneyNodeBatchParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[JourneyNodeBatchParam](
+		"scope", "user",
+	)
+	apijson.RegisterFieldValidator[JourneyNodeBatchParam](
+		"type", "batch",
+	)
+}
+
+// How to select which collected events to retain in the aggregated payload when
+// the batch releases.
+//
+// The properties Count, Type are required.
+type JourneyNodeBatchRetainParam struct {
+	Count int64 `json:"count" api:"required"`
+	// Any of "first", "last", "highest", "lowest".
+	Type string `json:"type,omitzero" api:"required"`
+	// Dot-path into the event payload (e.g. `data.priority`). Required when `type` is
+	// `highest` or `lowest`.
+	SortKey param.Opt[string] `json:"sort_key,omitzero"`
+	paramObj
+}
+
+func (r JourneyNodeBatchRetainParam) MarshalJSON() (data []byte, err error) {
+	type shadow JourneyNodeBatchRetainParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *JourneyNodeBatchRetainParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[JourneyNodeBatchRetainParam](
+		"type", "first", "last", "highest", "lowest",
+	)
 }
 
 // Branch node. Routes to the first entry in `paths[]` whose `conditions` match,
