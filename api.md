@@ -348,6 +348,21 @@ Methods:
 - <code title="get /bulk/{job_id}">client.Bulk.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#BulkService.GetJob">GetJob</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, jobID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#BulkGetJobResponse">BulkGetJobResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="post /bulk/{job_id}/run">client.Bulk.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#BulkService.RunJob">RunJob</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, jobID <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 
+# Digests
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#DigestCategory">DigestCategory</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#DigestInstance">DigestInstance</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#DigestInstanceListResponse">DigestInstanceListResponse</a>
+
+## Schedules
+
+Methods:
+
+- <code title="get /digests/schedules/{schedule_id}/instances">client.Digests.Schedules.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#DigestScheduleService.ListInstances">ListInstances</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, scheduleID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#DigestScheduleListInstancesParams">DigestScheduleListInstancesParams</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#DigestInstanceListResponse">DigestInstanceListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /digests/schedules/{schedule_id}/trigger">client.Digests.Schedules.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#DigestScheduleService.Release">Release</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, scheduleID <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
+
 # Inbound
 
 Response Types:

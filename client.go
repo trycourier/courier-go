@@ -27,6 +27,7 @@ type Client struct {
 	Journeys          JourneyService
 	Brands            BrandService
 	Bulk              BulkService
+	Digests           DigestService
 	Inbound           InboundService
 	Lists             ListService
 	Messages          MessageService
@@ -78,6 +79,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Journeys = NewJourneyService(opts...)
 	r.Brands = NewBrandService(opts...)
 	r.Bulk = NewBulkService(opts...)
+	r.Digests = NewDigestService(opts...)
 	r.Inbound = NewInboundService(opts...)
 	r.Lists = NewListService(opts...)
 	r.Messages = NewMessageService(opts...)
