@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.12.0 (2026-06-12)
+
+Full Changelog: [v4.11.0...v4.12.0](https://github.com/trycourier/courier-go/compare/v4.11.0...v4.12.0)
+
+### Features
+
+* **digests:** document digest REST endpoints in OpenAPI spec ([45474d2](https://github.com/trycourier/courier-go/commit/45474d2df419e6229748176dfcd4abb3b740f145))
+
 ## 4.11.0 (2026-05-28)
 
 Full Changelog: [v4.10.0...v4.11.0](https://github.com/trycourier/courier-go/compare/v4.10.0...v4.11.0)
