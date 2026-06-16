@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.13.0 (2026-06-16)
+
+Full Changelog: [v4.12.0...v4.13.0](https://github.com/trycourier/courier-go/compare/v4.12.0...v4.13.0)
+
+### Features
+
+* **openapi:** add DELETE /users/{id}/preferences/{topicId} ([07fa560](https://github.com/trycourier/courier-go/commit/07fa5600370ac5b09c780fdb1104aa5cdf8e5e89))
+
 ## 4.12.0 (2026-06-12)
 
 Full Changelog: [v4.11.0...v4.12.0](https://github.com/trycourier/courier-go/compare/v4.11.0...v4.12.0)

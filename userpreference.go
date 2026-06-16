@@ -50,6 +50,25 @@ func (r *UserPreferenceService) Get(ctx context.Context, userID string, query Us
 	return res, err
 }
 
+// Remove a user's preferences for a specific subscription topic, resetting the
+// topic to its effective default. This operation is idempotent: deleting a
+// preference that does not exist succeeds with no error.
+func (r *UserPreferenceService) DeleteTopic(ctx context.Context, topicID string, params UserPreferenceDeleteTopicParams, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if params.UserID == "" {
+		err = errors.New("missing required user_id parameter")
+		return err
+	}
+	if topicID == "" {
+		err = errors.New("missing required topic_id parameter")
+		return err
+	}
+	path := fmt.Sprintf("users/%s/preferences/%s", params.UserID, topicID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, params, nil, opts...)
+	return err
+}
+
 // Fetch user preferences for a specific subscription topic.
 func (r *UserPreferenceService) GetTopic(ctx context.Context, topicID string, params UserPreferenceGetTopicParams, opts ...option.RequestOption) (res *UserPreferenceGetTopicResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -172,6 +191,22 @@ type UserPreferenceGetParams struct {
 // URLQuery serializes [UserPreferenceGetParams]'s query parameters as
 // `url.Values`.
 func (r UserPreferenceGetParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type UserPreferenceDeleteTopicParams struct {
+	UserID string `path:"user_id" api:"required" json:"-"`
+	// Delete the preferences of a user for this specific tenant context.
+	TenantID param.Opt[string] `query:"tenant_id,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [UserPreferenceDeleteTopicParams]'s query parameters as
+// `url.Values`.
+func (r UserPreferenceDeleteTopicParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
