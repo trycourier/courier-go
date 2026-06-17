@@ -1072,7 +1072,7 @@ const (
 // [JourneyDelayDurationNode], [JourneyDelayUntilNode],
 // [JourneyFetchGetDeleteNode], [JourneyFetchPostPutNode], [JourneyAINode],
 // [JourneyThrottleStaticNode], [JourneyThrottleDynamicNode], [JourneyNodeBatch],
-// [JourneyExitNode], [JourneyNodeJourneyBranchNode].
+// [JourneyNodeAddToDigest], [JourneyExitNode], [JourneyNodeJourneyBranchNode].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type JourneyNodeUnion struct {
@@ -1126,45 +1126,48 @@ type JourneyNodeUnion struct {
 	CategoryKey string `json:"category_key"`
 	// This field is from variant [JourneyNodeBatch].
 	MaxItems int64 `json:"max_items"`
+	// This field is from variant [JourneyNodeAddToDigest].
+	SubscriptionTopicID string `json:"subscription_topic_id"`
 	// This field is from variant [JourneyNodeJourneyBranchNode].
 	Default JourneyNodeJourneyBranchNodeDefault `json:"default"`
 	// This field is from variant [JourneyNodeJourneyBranchNode].
 	Paths []JourneyNodeJourneyBranchNodePath `json:"paths"`
 	JSON  struct {
-		TriggerType    respjson.Field
-		Type           respjson.Field
-		ID             respjson.Field
-		Conditions     respjson.Field
-		Schema         respjson.Field
-		RequestType    respjson.Field
-		EventID        respjson.Field
-		Message        respjson.Field
-		Duration       respjson.Field
-		Mode           respjson.Field
-		Until          respjson.Field
-		MergeStrategy  respjson.Field
-		Method         respjson.Field
-		URL            respjson.Field
-		Headers        respjson.Field
-		QueryParams    respjson.Field
-		ResponseSchema respjson.Field
-		Body           respjson.Field
-		OutputSchema   respjson.Field
-		Model          respjson.Field
-		UserPrompt     respjson.Field
-		WebSearch      respjson.Field
-		MaxAllowed     respjson.Field
-		Period         respjson.Field
-		Scope          respjson.Field
-		ThrottleKey    respjson.Field
-		MaxWaitPeriod  respjson.Field
-		Retain         respjson.Field
-		WaitPeriod     respjson.Field
-		CategoryKey    respjson.Field
-		MaxItems       respjson.Field
-		Default        respjson.Field
-		Paths          respjson.Field
-		raw            string
+		TriggerType         respjson.Field
+		Type                respjson.Field
+		ID                  respjson.Field
+		Conditions          respjson.Field
+		Schema              respjson.Field
+		RequestType         respjson.Field
+		EventID             respjson.Field
+		Message             respjson.Field
+		Duration            respjson.Field
+		Mode                respjson.Field
+		Until               respjson.Field
+		MergeStrategy       respjson.Field
+		Method              respjson.Field
+		URL                 respjson.Field
+		Headers             respjson.Field
+		QueryParams         respjson.Field
+		ResponseSchema      respjson.Field
+		Body                respjson.Field
+		OutputSchema        respjson.Field
+		Model               respjson.Field
+		UserPrompt          respjson.Field
+		WebSearch           respjson.Field
+		MaxAllowed          respjson.Field
+		Period              respjson.Field
+		Scope               respjson.Field
+		ThrottleKey         respjson.Field
+		MaxWaitPeriod       respjson.Field
+		Retain              respjson.Field
+		WaitPeriod          respjson.Field
+		CategoryKey         respjson.Field
+		MaxItems            respjson.Field
+		SubscriptionTopicID respjson.Field
+		Default             respjson.Field
+		Paths               respjson.Field
+		raw                 string
 	} `json:"-"`
 }
 
@@ -1219,6 +1222,11 @@ func (u JourneyNodeUnion) AsThrottleDynamic() (v JourneyThrottleDynamicNode) {
 }
 
 func (u JourneyNodeUnion) AsBatch() (v JourneyNodeBatch) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u JourneyNodeUnion) AsAddToDigest() (v JourneyNodeAddToDigest) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -1322,6 +1330,36 @@ type JourneyNodeBatchRetain struct {
 // Returns the unmodified JSON received from the API
 func (r JourneyNodeBatchRetain) RawJSON() string { return r.JSON.raw }
 func (r *JourneyNodeBatchRetain) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Add the current event to a digest keyed by the given subscription topic. The
+// digest accumulates events and releases them on the schedule configured for the
+// topic.
+type JourneyNodeAddToDigest struct {
+	// The subscription topic that owns the digest the event is added to.
+	SubscriptionTopicID string `json:"subscription_topic_id" api:"required"`
+	// Any of "add-to-digest".
+	Type string `json:"type" api:"required"`
+	ID   string `json:"id"`
+	// Condition spec for a journey node. Accepts a single condition atom, an AND/OR
+	// group, or an AND/OR nested group. Omit the `conditions` property entirely to
+	// express "no conditions".
+	Conditions JourneyConditionsFieldUnion `json:"conditions"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		SubscriptionTopicID respjson.Field
+		Type                respjson.Field
+		ID                  respjson.Field
+		Conditions          respjson.Field
+		ExtraFields         map[string]respjson.Field
+		raw                 string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r JourneyNodeAddToDigest) RawJSON() string { return r.JSON.raw }
+func (r *JourneyNodeAddToDigest) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1436,6 +1474,13 @@ func JourneyNodeParamOfAI(outputSchema map[string]any, type_ JourneyAINodeType) 
 	return JourneyNodeUnionParam{OfAI: &variant}
 }
 
+func JourneyNodeParamOfAddToDigest(subscriptionTopicID string, type_ string) JourneyNodeUnionParam {
+	var variant JourneyNodeAddToDigestParam
+	variant.SubscriptionTopicID = subscriptionTopicID
+	variant.Type = type_
+	return JourneyNodeUnionParam{OfAddToDigest: &variant}
+}
+
 func JourneyNodeParamOfExit(type_ JourneyExitNodeType) JourneyNodeUnionParam {
 	var variant JourneyExitNodeParam
 	variant.Type = type_
@@ -1465,6 +1510,7 @@ type JourneyNodeUnionParam struct {
 	OfThrottleStatic    *JourneyThrottleStaticNodeParam    `json:",omitzero,inline"`
 	OfThrottleDynamic   *JourneyThrottleDynamicNodeParam   `json:",omitzero,inline"`
 	OfBatch             *JourneyNodeBatchParam             `json:",omitzero,inline"`
+	OfAddToDigest       *JourneyNodeAddToDigestParam       `json:",omitzero,inline"`
 	OfExit              *JourneyExitNodeParam              `json:",omitzero,inline"`
 	OfJourneyBranchNode *JourneyNodeJourneyBranchNodeParam `json:",omitzero,inline"`
 	paramUnion
@@ -1482,6 +1528,7 @@ func (u JourneyNodeUnionParam) MarshalJSON() ([]byte, error) {
 		u.OfThrottleStatic,
 		u.OfThrottleDynamic,
 		u.OfBatch,
+		u.OfAddToDigest,
 		u.OfExit,
 		u.OfJourneyBranchNode)
 }
@@ -1512,6 +1559,8 @@ func (u *JourneyNodeUnionParam) asAny() any {
 		return u.OfThrottleDynamic
 	} else if !param.IsOmitted(u.OfBatch) {
 		return u.OfBatch
+	} else if !param.IsOmitted(u.OfAddToDigest) {
+		return u.OfAddToDigest
 	} else if !param.IsOmitted(u.OfExit) {
 		return u.OfExit
 	} else if !param.IsOmitted(u.OfJourneyBranchNode) {
@@ -1657,6 +1706,14 @@ func (u JourneyNodeUnionParam) GetMaxItems() *int64 {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u JourneyNodeUnionParam) GetSubscriptionTopicID() *string {
+	if vt := u.OfAddToDigest; vt != nil {
+		return &vt.SubscriptionTopicID
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetDefault() *JourneyNodeJourneyBranchNodeDefaultParam {
 	if vt := u.OfJourneyBranchNode; vt != nil {
 		return &vt.Default
@@ -1706,6 +1763,8 @@ func (u JourneyNodeUnionParam) GetType() *string {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfBatch; vt != nil {
 		return (*string)(&vt.Type)
+	} else if vt := u.OfAddToDigest; vt != nil {
+		return (*string)(&vt.Type)
 	} else if vt := u.OfExit; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfJourneyBranchNode; vt != nil {
@@ -1737,6 +1796,8 @@ func (u JourneyNodeUnionParam) GetID() *string {
 	} else if vt := u.OfThrottleDynamic; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
 	} else if vt := u.OfBatch; vt != nil && vt.ID.Valid() {
+		return &vt.ID.Value
+	} else if vt := u.OfAddToDigest; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
 	} else if vt := u.OfExit; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
@@ -1841,6 +1902,8 @@ func (u JourneyNodeUnionParam) GetConditions() *JourneyConditionsFieldUnionParam
 	} else if vt := u.OfThrottleDynamic; vt != nil {
 		return &vt.Conditions
 	} else if vt := u.OfBatch; vt != nil {
+		return &vt.Conditions
+	} else if vt := u.OfAddToDigest; vt != nil {
 		return &vt.Conditions
 	}
 	return nil
@@ -1953,6 +2016,38 @@ func (r *JourneyNodeBatchRetainParam) UnmarshalJSON(data []byte) error {
 func init() {
 	apijson.RegisterFieldValidator[JourneyNodeBatchRetainParam](
 		"type", "first", "last", "highest", "lowest",
+	)
+}
+
+// Add the current event to a digest keyed by the given subscription topic. The
+// digest accumulates events and releases them on the schedule configured for the
+// topic.
+//
+// The properties SubscriptionTopicID, Type are required.
+type JourneyNodeAddToDigestParam struct {
+	// The subscription topic that owns the digest the event is added to.
+	SubscriptionTopicID string `json:"subscription_topic_id" api:"required"`
+	// Any of "add-to-digest".
+	Type string            `json:"type,omitzero" api:"required"`
+	ID   param.Opt[string] `json:"id,omitzero"`
+	// Condition spec for a journey node. Accepts a single condition atom, an AND/OR
+	// group, or an AND/OR nested group. Omit the `conditions` property entirely to
+	// express "no conditions".
+	Conditions JourneyConditionsFieldUnionParam `json:"conditions,omitzero"`
+	paramObj
+}
+
+func (r JourneyNodeAddToDigestParam) MarshalJSON() (data []byte, err error) {
+	type shadow JourneyNodeAddToDigestParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *JourneyNodeAddToDigestParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[JourneyNodeAddToDigestParam](
+		"type", "add-to-digest",
 	)
 }
 

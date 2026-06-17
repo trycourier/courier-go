@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.14.0 (2026-06-17)
+
+Full Changelog: [v4.13.0...v4.14.0](https://github.com/trycourier/courier-go/compare/v4.13.0...v4.14.0)
+
+### Features
+
+* **openapi:** add add-to-digest JourneyNode variant ([b709022](https://github.com/trycourier/courier-go/commit/b709022e662772234f303d469d066f1c0553f5c6))
+
 ## 4.13.0 (2026-06-16)
 
 Full Changelog: [v4.12.0...v4.13.0](https://github.com/trycourier/courier-go/compare/v4.12.0...v4.13.0)
