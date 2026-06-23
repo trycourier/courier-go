@@ -135,6 +135,44 @@ func (r *JourneyTemplateService) Publish(ctx context.Context, notificationID str
 	return err
 }
 
+// Replace the elemental content of a journey-scoped notification template.
+// Overwrites all elements in the template draft with the provided content.
+func (r *JourneyTemplateService) PutContent(ctx context.Context, notificationID string, params JourneyTemplatePutContentParams, opts ...option.RequestOption) (res *NotificationContentMutationResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if params.TemplateID == "" {
+		err = errors.New("missing required templateId parameter")
+		return nil, err
+	}
+	if notificationID == "" {
+		err = errors.New("missing required notificationId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("journeys/%s/templates/%s/content", params.TemplateID, notificationID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
+	return res, err
+}
+
+// Set locale-specific content overrides for a journey-scoped notification
+// template. Each element override must reference an existing element by ID.
+func (r *JourneyTemplateService) PutLocale(ctx context.Context, localeID string, params JourneyTemplatePutLocaleParams, opts ...option.RequestOption) (res *NotificationContentMutationResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if params.TemplateID == "" {
+		err = errors.New("missing required templateId parameter")
+		return nil, err
+	}
+	if params.NotificationID == "" {
+		err = errors.New("missing required notificationId parameter")
+		return nil, err
+	}
+	if localeID == "" {
+		err = errors.New("missing required localeId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("journeys/%s/templates/%s/locales/%s", params.TemplateID, params.NotificationID, localeID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
+	return res, err
+}
+
 // Replace the journey-scoped notification template draft.
 func (r *JourneyTemplateService) Replace(ctx context.Context, notificationID string, params JourneyTemplateReplaceParams, opts ...option.RequestOption) (res *JourneyTemplateGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -148,6 +186,25 @@ func (r *JourneyTemplateService) Replace(ctx context.Context, notificationID str
 	}
 	path := fmt.Sprintf("journeys/%s/templates/%s", params.TemplateID, notificationID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
+	return res, err
+}
+
+// Retrieve the elemental content of a journey-scoped notification template. The
+// response contains the versioned elements with their content checksums. Pass
+// `?version=draft` (default `published`) to retrieve the working draft, or
+// `?version=vN` for a historical version.
+func (r *JourneyTemplateService) GetContent(ctx context.Context, notificationID string, params JourneyTemplateGetContentParams, opts ...option.RequestOption) (res *NotificationContentGetResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if params.TemplateID == "" {
+		err = errors.New("missing required templateId parameter")
+		return nil, err
+	}
+	if notificationID == "" {
+		err = errors.New("missing required notificationId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("journeys/%s/templates/%s/content", params.TemplateID, notificationID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
 	return res, err
 }
 
@@ -211,6 +268,36 @@ func (r *JourneyTemplatePublishParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type JourneyTemplatePutContentParams struct {
+	TemplateID string `path:"templateId" api:"required" json:"-"`
+	// Request body for replacing the elemental content of a notification template.
+	NotificationContentPutRequest NotificationContentPutRequestParam
+	paramObj
+}
+
+func (r JourneyTemplatePutContentParams) MarshalJSON() (data []byte, err error) {
+	return shimjson.Marshal(r.NotificationContentPutRequest)
+}
+func (r *JourneyTemplatePutContentParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type JourneyTemplatePutLocaleParams struct {
+	TemplateID     string `path:"templateId" api:"required" json:"-"`
+	NotificationID string `path:"notificationId" api:"required" json:"-"`
+	// Request body for setting locale-specific content overrides. Each element
+	// override must include the target element ID.
+	NotificationLocalePutRequest NotificationLocalePutRequestParam
+	paramObj
+}
+
+func (r JourneyTemplatePutLocaleParams) MarshalJSON() (data []byte, err error) {
+	return shimjson.Marshal(r.NotificationLocalePutRequest)
+}
+func (r *JourneyTemplatePutLocaleParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type JourneyTemplateReplaceParams struct {
 	TemplateID string `path:"templateId" api:"required" json:"-"`
 	// Request body for replacing a journey-scoped notification template draft.
@@ -223,4 +310,21 @@ func (r JourneyTemplateReplaceParams) MarshalJSON() (data []byte, err error) {
 }
 func (r *JourneyTemplateReplaceParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+type JourneyTemplateGetContentParams struct {
+	TemplateID string `path:"templateId" api:"required" json:"-"`
+	// Accepts `draft`, `published`, or a version string (e.g., `v001`). Defaults to
+	// `published`.
+	Version param.Opt[string] `query:"version,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [JourneyTemplateGetContentParams]'s query parameters as
+// `url.Values`.
+func (r JourneyTemplateGetContentParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }

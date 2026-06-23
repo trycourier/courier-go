@@ -221,6 +221,87 @@ func TestJourneyTemplatePublishWithOptionalParams(t *testing.T) {
 	}
 }
 
+func TestJourneyTemplatePutContentWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := courier.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Journeys.Templates.PutContent(
+		context.TODO(),
+		"x",
+		courier.JourneyTemplatePutContentParams{
+			TemplateID: "x",
+			NotificationContentPutRequest: courier.NotificationContentPutRequestParam{
+				Content: courier.NotificationContentPutRequestContentParam{
+					Elements: []shared.ElementalNodeUnionParam{{
+						OfElementalChannelNodeWithType: &shared.ElementalChannelNodeWithTypeParam{
+							ElementalChannelNodeParam: shared.ElementalChannelNodeParam{
+								ElementalBaseNodeParam: shared.ElementalBaseNodeParam{},
+							},
+							Type: "channel",
+						},
+					}},
+					Version: courier.String("2022-01-01"),
+				},
+				State: courier.NotificationTemplateStateDraft,
+			},
+		},
+	)
+	if err != nil {
+		var apierr *courier.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestJourneyTemplatePutLocaleWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := courier.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Journeys.Templates.PutLocale(
+		context.TODO(),
+		"x",
+		courier.JourneyTemplatePutLocaleParams{
+			TemplateID:     "x",
+			NotificationID: "x",
+			NotificationLocalePutRequest: courier.NotificationLocalePutRequestParam{
+				Elements: []courier.NotificationLocalePutRequestElementParam{{
+					ID: "elem_1",
+				}, {
+					ID: "elem_2",
+				}},
+				State: courier.NotificationTemplateStateDraft,
+			},
+		},
+	)
+	if err != nil {
+		var apierr *courier.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
 func TestJourneyTemplateReplaceWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
@@ -267,6 +348,36 @@ func TestJourneyTemplateReplaceWithOptionalParams(t *testing.T) {
 				},
 				State: courier.String("state"),
 			},
+		},
+	)
+	if err != nil {
+		var apierr *courier.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestJourneyTemplateGetContentWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := courier.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Journeys.Templates.GetContent(
+		context.TODO(),
+		"x",
+		courier.JourneyTemplateGetContentParams{
+			TemplateID: "x",
+			Version:    courier.String("version"),
 		},
 	)
 	if err != nil {

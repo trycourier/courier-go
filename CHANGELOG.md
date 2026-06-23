@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.15.0 (2026-06-23)
+
+Full Changelog: [v4.14.0...v4.15.0](https://github.com/trycourier/courier-go/compare/v4.14.0...v4.15.0)
+
+### Features
+
+* **journeys:** add content + locale endpoints to journey-scoped templates ([de9ba17](https://github.com/trycourier/courier-go/commit/de9ba17c30803ae7e3e74bc7b768864ea21dbe65))
+
 ## 4.14.0 (2026-06-17)
 
 Full Changelog: [v4.13.0...v4.14.0](https://github.com/trycourier/courier-go/compare/v4.13.0...v4.14.0)
