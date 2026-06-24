@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.16.0 (2026-06-24)
+
+Full Changelog: [v4.15.1...v4.16.0](https://github.com/trycourier/courier-go/compare/v4.15.1...v4.16.0)
+
+### Features
+
+* **preferences:** workspace preference sections & nested topics endpoints ([451a4ee](https://github.com/trycourier/courier-go/commit/451a4ee18607c58b0d1d29ef209937ee2060a52b))
+
 ## 4.15.1 (2026-06-23)
 
 Full Changelog: [v4.15.0...v4.15.1](https://github.com/trycourier/courier-go/compare/v4.15.0...v4.15.1)
