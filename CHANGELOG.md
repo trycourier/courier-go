@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.16.2 (2026-06-25)
+
+Full Changelog: [v4.16.1...v4.16.2](https://github.com/trycourier/courier-go/compare/v4.16.1...v4.16.2)
+
+### Documentation
+
+* **openapi:** reword Cancel Submission description ([046c580](https://github.com/trycourier/courier-go/commit/046c5800a4e2ea9c603d6c06e2907add47882ac3))
+
 ## 4.16.1 (2026-06-25)
 
 Full Changelog: [v4.16.0...v4.16.1](https://github.com/trycourier/courier-go/compare/v4.16.0...v4.16.1)
