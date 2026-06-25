@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.16.1 (2026-06-25)
+
+Full Changelog: [v4.16.0...v4.16.1](https://github.com/trycourier/courier-go/compare/v4.16.0...v4.16.1)
+
+### Documentation
+
+* **openapi:** add full response examples to every endpoint ([eb0ec3e](https://github.com/trycourier/courier-go/commit/eb0ec3e6fc454e9e0b3c152c263b78de487aec38))
+* **openapi:** reword Get Submission Checks description ([d614631](https://github.com/trycourier/courier-go/commit/d614631cd42f53ed89a507b7de365c75ce6ef47e))
+* **openapi:** reword Replace Submission Checks description ([f3ad290](https://github.com/trycourier/courier-go/commit/f3ad29067912c709986905024273dc823ae2e22c))
+
 ## 4.16.0 (2026-06-24)
 
 Full Changelog: [v4.15.1...v4.16.0](https://github.com/trycourier/courier-go/compare/v4.15.1...v4.16.0)
