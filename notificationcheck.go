@@ -35,7 +35,7 @@ func NewNotificationCheckService(opts ...option.RequestOption) (r NotificationCh
 	return
 }
 
-// Replace the checks for a notification template submission.
+// Replace the submission checks for a notification template.
 func (r *NotificationCheckService) Update(ctx context.Context, submissionID string, params NotificationCheckUpdateParams, opts ...option.RequestOption) (res *NotificationCheckUpdateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if params.ID == "" {
