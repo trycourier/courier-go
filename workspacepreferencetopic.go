@@ -15,28 +15,29 @@ import (
 	"github.com/trycourier/courier-go/v4/option"
 )
 
-// PreferenceSectionTopicService contains methods and other services that help with
-// interacting with the Courier API.
+// WorkspacePreferenceTopicService contains methods and other services that help
+// with interacting with the Courier API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewPreferenceSectionTopicService] method instead.
-type PreferenceSectionTopicService struct {
+// the [NewWorkspacePreferenceTopicService] method instead.
+type WorkspacePreferenceTopicService struct {
 	Options []option.RequestOption
 }
 
-// NewPreferenceSectionTopicService generates a new service that applies the given
-// options to each request. These options are applied after the parent client's
-// options (if there is one), and before any request-specific options.
-func NewPreferenceSectionTopicService(opts ...option.RequestOption) (r PreferenceSectionTopicService) {
-	r = PreferenceSectionTopicService{}
+// NewWorkspacePreferenceTopicService generates a new service that applies the
+// given options to each request. These options are applied after the parent
+// client's options (if there is one), and before any request-specific options.
+func NewWorkspacePreferenceTopicService(opts ...option.RequestOption) (r WorkspacePreferenceTopicService) {
+	r = WorkspacePreferenceTopicService{}
 	r.Options = opts
 	return
 }
 
-// Create a subscription preference topic inside a section. Fails with 404 if the
-// section does not exist. The topic id is generated and returned.
-func (r *PreferenceSectionTopicService) New(ctx context.Context, sectionID string, body PreferenceSectionTopicNewParams, opts ...option.RequestOption) (res *PreferenceTopicGetResponse, err error) {
+// Create a subscription preference topic inside a workspace preference. Fails with
+// 404 if the workspace preference does not exist. The topic id is generated and
+// returned.
+func (r *WorkspacePreferenceTopicService) New(ctx context.Context, sectionID string, body WorkspacePreferenceTopicNewParams, opts ...option.RequestOption) (res *WorkspacePreferenceTopicGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if sectionID == "" {
 		err = errors.New("missing required section_id parameter")
@@ -47,9 +48,10 @@ func (r *PreferenceSectionTopicService) New(ctx context.Context, sectionID strin
 	return res, err
 }
 
-// Retrieve a topic within a section. Returns 404 if the section does not exist,
-// the topic does not exist, or the topic belongs to a different section.
-func (r *PreferenceSectionTopicService) Get(ctx context.Context, topicID string, query PreferenceSectionTopicGetParams, opts ...option.RequestOption) (res *PreferenceTopicGetResponse, err error) {
+// Retrieve a topic within a workspace preference. Returns 404 if the workspace
+// preference does not exist, the topic does not exist, or the topic belongs to a
+// different workspace preference.
+func (r *WorkspacePreferenceTopicService) Get(ctx context.Context, topicID string, query WorkspacePreferenceTopicGetParams, opts ...option.RequestOption) (res *WorkspacePreferenceTopicGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if query.SectionID == "" {
 		err = errors.New("missing required section_id parameter")
@@ -64,8 +66,8 @@ func (r *PreferenceSectionTopicService) Get(ctx context.Context, topicID string,
 	return res, err
 }
 
-// List the topics in a preference section.
-func (r *PreferenceSectionTopicService) List(ctx context.Context, sectionID string, opts ...option.RequestOption) (res *PreferenceTopicListResponse, err error) {
+// List the topics in a workspace preference.
+func (r *WorkspacePreferenceTopicService) List(ctx context.Context, sectionID string, opts ...option.RequestOption) (res *WorkspacePreferenceTopicListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if sectionID == "" {
 		err = errors.New("missing required section_id parameter")
@@ -76,8 +78,9 @@ func (r *PreferenceSectionTopicService) List(ctx context.Context, sectionID stri
 	return res, err
 }
 
-// Archive a topic and remove it from its section. Same 404 rules as GET.
-func (r *PreferenceSectionTopicService) Archive(ctx context.Context, topicID string, body PreferenceSectionTopicArchiveParams, opts ...option.RequestOption) (err error) {
+// Archive a topic and remove it from its workspace preference. Same 404 rules as
+// GET.
+func (r *WorkspacePreferenceTopicService) Archive(ctx context.Context, topicID string, body WorkspacePreferenceTopicArchiveParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if body.SectionID == "" {
@@ -93,9 +96,9 @@ func (r *PreferenceSectionTopicService) Archive(ctx context.Context, topicID str
 	return err
 }
 
-// Replace a topic within a section. Full document replacement; missing optional
-// fields are cleared. Same 404 rules as GET.
-func (r *PreferenceSectionTopicService) Replace(ctx context.Context, topicID string, params PreferenceSectionTopicReplaceParams, opts ...option.RequestOption) (res *PreferenceTopicGetResponse, err error) {
+// Replace a topic within a workspace preference. Full document replacement;
+// missing optional fields are cleared. Same 404 rules as GET.
+func (r *WorkspacePreferenceTopicService) Replace(ctx context.Context, topicID string, params WorkspacePreferenceTopicReplaceParams, opts ...option.RequestOption) (res *WorkspacePreferenceTopicGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if params.SectionID == "" {
 		err = errors.New("missing required section_id parameter")
@@ -110,40 +113,40 @@ func (r *PreferenceSectionTopicService) Replace(ctx context.Context, topicID str
 	return res, err
 }
 
-type PreferenceSectionTopicNewParams struct {
+type WorkspacePreferenceTopicNewParams struct {
 	// Request body for creating a preference topic.
-	PreferenceTopicCreateRequest PreferenceTopicCreateRequestParam
+	WorkspacePreferenceTopicCreateRequest WorkspacePreferenceTopicCreateRequestParam
 	paramObj
 }
 
-func (r PreferenceSectionTopicNewParams) MarshalJSON() (data []byte, err error) {
-	return shimjson.Marshal(r.PreferenceTopicCreateRequest)
+func (r WorkspacePreferenceTopicNewParams) MarshalJSON() (data []byte, err error) {
+	return shimjson.Marshal(r.WorkspacePreferenceTopicCreateRequest)
 }
-func (r *PreferenceSectionTopicNewParams) UnmarshalJSON(data []byte) error {
+func (r *WorkspacePreferenceTopicNewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type PreferenceSectionTopicGetParams struct {
+type WorkspacePreferenceTopicGetParams struct {
 	SectionID string `path:"section_id" api:"required" json:"-"`
 	paramObj
 }
 
-type PreferenceSectionTopicArchiveParams struct {
+type WorkspacePreferenceTopicArchiveParams struct {
 	SectionID string `path:"section_id" api:"required" json:"-"`
 	paramObj
 }
 
-type PreferenceSectionTopicReplaceParams struct {
+type WorkspacePreferenceTopicReplaceParams struct {
 	SectionID string `path:"section_id" api:"required" json:"-"`
 	// Request body for replacing a preference topic. Full document replacement;
 	// missing optional fields are cleared.
-	PreferenceTopicReplaceRequest PreferenceTopicReplaceRequestParam
+	WorkspacePreferenceTopicReplaceRequest WorkspacePreferenceTopicReplaceRequestParam
 	paramObj
 }
 
-func (r PreferenceSectionTopicReplaceParams) MarshalJSON() (data []byte, err error) {
-	return shimjson.Marshal(r.PreferenceTopicReplaceRequest)
+func (r WorkspacePreferenceTopicReplaceParams) MarshalJSON() (data []byte, err error) {
+	return shimjson.Marshal(r.WorkspacePreferenceTopicReplaceRequest)
 }
-func (r *PreferenceSectionTopicReplaceParams) UnmarshalJSON(data []byte) error {
+func (r *WorkspacePreferenceTopicReplaceParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
