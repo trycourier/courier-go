@@ -51,7 +51,7 @@ func (r *NotificationCheckService) Update(ctx context.Context, submissionID stri
 	return res, err
 }
 
-// Retrieve the checks for a notification template submission.
+// Retrieve the submission checks for a notification template.
 func (r *NotificationCheckService) List(ctx context.Context, submissionID string, query NotificationCheckListParams, opts ...option.RequestOption) (res *NotificationCheckListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if query.ID == "" {
