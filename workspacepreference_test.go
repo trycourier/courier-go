@@ -14,7 +14,7 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
-func TestPreferenceSectionNewWithOptionalParams(t *testing.T) {
+func TestWorkspacePreferenceNewWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,8 +27,8 @@ func TestPreferenceSectionNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.PreferenceSections.New(context.TODO(), courier.PreferenceSectionNewParams{
-		PreferenceSectionCreateRequest: courier.PreferenceSectionCreateRequestParam{
+	_, err := client.WorkspacePreferences.New(context.TODO(), courier.WorkspacePreferenceNewParams{
+		WorkspacePreferenceCreateRequest: courier.WorkspacePreferenceCreateRequestParam{
 			Name:             "Account Notifications",
 			HasCustomRouting: courier.Bool(true),
 			RoutingOptions:   []shared.ChannelClassification{shared.ChannelClassificationDirectMessage},
@@ -43,7 +43,7 @@ func TestPreferenceSectionNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestPreferenceSectionGet(t *testing.T) {
+func TestWorkspacePreferenceGet(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -56,7 +56,7 @@ func TestPreferenceSectionGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.PreferenceSections.Get(context.TODO(), "section_id")
+	_, err := client.WorkspacePreferences.Get(context.TODO(), "section_id")
 	if err != nil {
 		var apierr *courier.Error
 		if errors.As(err, &apierr) {
@@ -66,7 +66,7 @@ func TestPreferenceSectionGet(t *testing.T) {
 	}
 }
 
-func TestPreferenceSectionList(t *testing.T) {
+func TestWorkspacePreferenceList(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -79,7 +79,7 @@ func TestPreferenceSectionList(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.PreferenceSections.List(context.TODO())
+	_, err := client.WorkspacePreferences.List(context.TODO())
 	if err != nil {
 		var apierr *courier.Error
 		if errors.As(err, &apierr) {
@@ -89,7 +89,7 @@ func TestPreferenceSectionList(t *testing.T) {
 	}
 }
 
-func TestPreferenceSectionArchive(t *testing.T) {
+func TestWorkspacePreferenceArchive(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -102,7 +102,7 @@ func TestPreferenceSectionArchive(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	err := client.PreferenceSections.Archive(context.TODO(), "section_id")
+	err := client.WorkspacePreferences.Archive(context.TODO(), "section_id")
 	if err != nil {
 		var apierr *courier.Error
 		if errors.As(err, &apierr) {
@@ -112,7 +112,7 @@ func TestPreferenceSectionArchive(t *testing.T) {
 	}
 }
 
-func TestPreferenceSectionPublish(t *testing.T) {
+func TestWorkspacePreferencePublish(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -125,7 +125,7 @@ func TestPreferenceSectionPublish(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.PreferenceSections.Publish(context.TODO())
+	_, err := client.WorkspacePreferences.Publish(context.TODO())
 	if err != nil {
 		var apierr *courier.Error
 		if errors.As(err, &apierr) {
@@ -135,7 +135,7 @@ func TestPreferenceSectionPublish(t *testing.T) {
 	}
 }
 
-func TestPreferenceSectionReplaceWithOptionalParams(t *testing.T) {
+func TestWorkspacePreferenceReplaceWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -148,11 +148,11 @@ func TestPreferenceSectionReplaceWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.PreferenceSections.Replace(
+	_, err := client.WorkspacePreferences.Replace(
 		context.TODO(),
 		"section_id",
-		courier.PreferenceSectionReplaceParams{
-			PreferenceSectionReplaceRequest: courier.PreferenceSectionReplaceRequestParam{
+		courier.WorkspacePreferenceReplaceParams{
+			WorkspacePreferenceReplaceRequest: courier.WorkspacePreferenceReplaceRequestParam{
 				Name:             "name",
 				HasCustomRouting: courier.Bool(true),
 				RoutingOptions:   []shared.ChannelClassification{shared.ChannelClassificationDirectMessage},

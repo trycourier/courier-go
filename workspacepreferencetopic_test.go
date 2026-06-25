@@ -14,7 +14,7 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
-func TestPreferenceSectionTopicNewWithOptionalParams(t *testing.T) {
+func TestWorkspacePreferenceTopicNewWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,12 +27,12 @@ func TestPreferenceSectionTopicNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.PreferenceSections.Topics.New(
+	_, err := client.WorkspacePreferences.Topics.New(
 		context.TODO(),
 		"section_id",
-		courier.PreferenceSectionTopicNewParams{
-			PreferenceTopicCreateRequest: courier.PreferenceTopicCreateRequestParam{
-				DefaultStatus:            courier.PreferenceTopicCreateRequestDefaultStatusOptedOut,
+		courier.WorkspacePreferenceTopicNewParams{
+			WorkspacePreferenceTopicCreateRequest: courier.WorkspacePreferenceTopicCreateRequestParam{
+				DefaultStatus:            courier.WorkspacePreferenceTopicCreateRequestDefaultStatusOptedOut,
 				Name:                     "Marketing",
 				AllowedPreferences:       []string{"snooze"},
 				IncludeUnsubscribeHeader: courier.Bool(true),
@@ -52,7 +52,7 @@ func TestPreferenceSectionTopicNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestPreferenceSectionTopicGet(t *testing.T) {
+func TestWorkspacePreferenceTopicGet(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -65,10 +65,10 @@ func TestPreferenceSectionTopicGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.PreferenceSections.Topics.Get(
+	_, err := client.WorkspacePreferences.Topics.Get(
 		context.TODO(),
 		"topic_id",
-		courier.PreferenceSectionTopicGetParams{
+		courier.WorkspacePreferenceTopicGetParams{
 			SectionID: "section_id",
 		},
 	)
@@ -81,7 +81,7 @@ func TestPreferenceSectionTopicGet(t *testing.T) {
 	}
 }
 
-func TestPreferenceSectionTopicList(t *testing.T) {
+func TestWorkspacePreferenceTopicList(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -94,7 +94,7 @@ func TestPreferenceSectionTopicList(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.PreferenceSections.Topics.List(context.TODO(), "section_id")
+	_, err := client.WorkspacePreferences.Topics.List(context.TODO(), "section_id")
 	if err != nil {
 		var apierr *courier.Error
 		if errors.As(err, &apierr) {
@@ -104,7 +104,7 @@ func TestPreferenceSectionTopicList(t *testing.T) {
 	}
 }
 
-func TestPreferenceSectionTopicArchive(t *testing.T) {
+func TestWorkspacePreferenceTopicArchive(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -117,10 +117,10 @@ func TestPreferenceSectionTopicArchive(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	err := client.PreferenceSections.Topics.Archive(
+	err := client.WorkspacePreferences.Topics.Archive(
 		context.TODO(),
 		"topic_id",
-		courier.PreferenceSectionTopicArchiveParams{
+		courier.WorkspacePreferenceTopicArchiveParams{
 			SectionID: "section_id",
 		},
 	)
@@ -133,7 +133,7 @@ func TestPreferenceSectionTopicArchive(t *testing.T) {
 	}
 }
 
-func TestPreferenceSectionTopicReplaceWithOptionalParams(t *testing.T) {
+func TestWorkspacePreferenceTopicReplaceWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -146,13 +146,13 @@ func TestPreferenceSectionTopicReplaceWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.PreferenceSections.Topics.Replace(
+	_, err := client.WorkspacePreferences.Topics.Replace(
 		context.TODO(),
 		"topic_id",
-		courier.PreferenceSectionTopicReplaceParams{
+		courier.WorkspacePreferenceTopicReplaceParams{
 			SectionID: "section_id",
-			PreferenceTopicReplaceRequest: courier.PreferenceTopicReplaceRequestParam{
-				DefaultStatus:            courier.PreferenceTopicReplaceRequestDefaultStatusOptedOut,
+			WorkspacePreferenceTopicReplaceRequest: courier.WorkspacePreferenceTopicReplaceRequestParam{
+				DefaultStatus:            courier.WorkspacePreferenceTopicReplaceRequestDefaultStatusOptedOut,
 				Name:                     "name",
 				AllowedPreferences:       []string{"snooze"},
 				IncludeUnsubscribeHeader: courier.Bool(true),
