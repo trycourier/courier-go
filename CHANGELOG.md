@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.17.0 (2026-06-29)
+
+Full Changelog: [v4.16.2...v4.17.0](https://github.com/trycourier/courier-go/compare/v4.16.2...v4.17.0)
+
+### Features
+
+* **openapi:** Journeys cancel-by-token endpoint + send-node experiments (C-18986) ([ae6187e](https://github.com/trycourier/courier-go/commit/ae6187e92fbd2548f2d1a52849cd693483a28c12))
+
 ## 4.16.2 (2026-06-25)
 
 Full Changelog: [v4.16.1...v4.16.2](https://github.com/trycourier/courier-go/compare/v4.16.1...v4.16.2)
