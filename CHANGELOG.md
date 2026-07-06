@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.17.1 (2026-07-06)
+
+Full Changelog: [v4.17.0...v4.17.1](https://github.com/trycourier/courier-go/compare/v4.17.0...v4.17.1)
+
+### Documentation
+
+* **openapi:** reword Cancel journey runs 400 description (re-trigger deploy) ([518b1f3](https://github.com/trycourier/courier-go/commit/518b1f31aa092525180493191bf9c89a90adc1e3))
+
 ## 4.17.0 (2026-07-06)
 
 Full Changelog: [v4.16.2...v4.17.0](https://github.com/trycourier/courier-go/compare/v4.16.2...v4.17.0)
