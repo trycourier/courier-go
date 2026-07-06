@@ -94,10 +94,9 @@ func (r *JourneyService) Archive(ctx context.Context, templateID string, opts ..
 // Cancel journey runs. The request body must contain EXACTLY ONE of
 // `cancelation_token` (cancels every run associated with the token) or `run_id`
 // (cancels a single tenant-scoped run). Supplying both or neither is a `400`. A
-// `run_id` that does not exist for the caller's tenant returns `404`. Cancelation
-// is idempotent and non-clobbering: a run that has already finished
-// (`PROCESSED`/`ERROR`) or was already `CANCELED` is left untouched and its
-// current status is echoed back.
+// `run_id` that does not match a run for the tenant returns `404`. Cancelation is
+// idempotent: a run that has already finished (`PROCESSED`/`ERROR`) or was already
+// `CANCELED` is left unchanged and its current status is returned.
 func (r *JourneyService) Cancel(ctx context.Context, body JourneyCancelParams, opts ...option.RequestOption) (res *CancelJourneyResponseUnion, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "journeys/cancel"
@@ -279,9 +278,9 @@ func (r *CancelJourneyResponseTokenBranch) UnmarshalJSON(data []byte) error {
 
 type CancelJourneyResponseRunIDBranch struct {
 	RunID string `json:"run_id" api:"required"`
-	// The run's resulting status. `CANCELED` when the run was active and we canceled
-	// it; `PROCESSED` or `ERROR` when the run had already finished and was left
-	// untouched; `CANCELED` for an already-canceled run.
+	// The run's resulting status. `CANCELED` when the run was active and has been
+	// canceled; `PROCESSED` or `ERROR` when the run had already finished and was left
+	// unchanged; `CANCELED` for an already-canceled run.
 	Status string `json:"status" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1016,10 +1015,10 @@ type JourneyExperiment struct {
 	BucketingKey string `json:"bucketingKey" api:"required"`
 	// Between 2 and 10 weighted template variants.
 	Variants []JourneyExperimentVariant `json:"variants" api:"required"`
-	// Server-authoritative experiment id (prefixed `exp_`). Omit to have the server
-	// mint one; when supplied it must be a valid `exp_` id.
+	// Unique experiment id (prefixed `exp_`). Omit to have one generated
+	// automatically; when supplied it must be a valid `exp_` id.
 	ID string `json:"id"`
-	// Optional, cosmetic display name for the experiment.
+	// Optional display name for the experiment.
 	Name string `json:"name"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1058,10 +1057,10 @@ type JourneyExperimentParam struct {
 	BucketingKey string `json:"bucketingKey" api:"required"`
 	// Between 2 and 10 weighted template variants.
 	Variants []JourneyExperimentVariantParam `json:"variants,omitzero" api:"required"`
-	// Server-authoritative experiment id (prefixed `exp_`). Omit to have the server
-	// mint one; when supplied it must be a valid `exp_` id.
+	// Unique experiment id (prefixed `exp_`). Omit to have one generated
+	// automatically; when supplied it must be a valid `exp_` id.
 	ID param.Opt[string] `json:"id,omitzero"`
-	// Optional, cosmetic display name for the experiment.
+	// Optional display name for the experiment.
 	Name param.Opt[string] `json:"name,omitzero"`
 	paramObj
 }
@@ -1074,9 +1073,9 @@ func (r *JourneyExperimentParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// A single weighted arm of an experiment. Variant ids must be unique within the
-// experiment and the sum of all variant weights must be greater than 0. Weights
-// are relative (no sum-to-100 requirement) — routing normalizes them
+// A single weighted variant of an experiment. Variant ids must be unique within
+// the experiment and the sum of all variant weights must be greater than 0.
+// Weights are relative (no sum-to-100 requirement) — routing normalizes them
 // proportionally.
 type JourneyExperimentVariant struct {
 	ID string `json:"id" api:"required"`
@@ -1084,7 +1083,7 @@ type JourneyExperimentVariant struct {
 	TemplateID string `json:"templateId" api:"required"`
 	// Relative routing weight. Must be non-negative.
 	Weight float64 `json:"weight" api:"required"`
-	// Optional, cosmetic display name for the variant.
+	// Optional display name for the variant.
 	Name string `json:"name"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1113,9 +1112,9 @@ func (r JourneyExperimentVariant) ToParam() JourneyExperimentVariantParam {
 	return param.Override[JourneyExperimentVariantParam](json.RawMessage(r.RawJSON()))
 }
 
-// A single weighted arm of an experiment. Variant ids must be unique within the
-// experiment and the sum of all variant weights must be greater than 0. Weights
-// are relative (no sum-to-100 requirement) — routing normalizes them
+// A single weighted variant of an experiment. Variant ids must be unique within
+// the experiment and the sum of all variant weights must be greater than 0.
+// Weights are relative (no sum-to-100 requirement) — routing normalizes them
 // proportionally.
 //
 // The properties ID, TemplateID, Weight are required.
@@ -1125,7 +1124,7 @@ type JourneyExperimentVariantParam struct {
 	TemplateID string `json:"templateId" api:"required"`
 	// Relative routing weight. Must be non-negative.
 	Weight float64 `json:"weight" api:"required"`
-	// Optional, cosmetic display name for the variant.
+	// Optional display name for the variant.
 	Name param.Opt[string] `json:"name,omitzero"`
 	paramObj
 }
