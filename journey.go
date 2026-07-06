@@ -91,6 +91,19 @@ func (r *JourneyService) Archive(ctx context.Context, templateID string, opts ..
 	return err
 }
 
+// Cancel journey runs. The request body must include EXACTLY ONE of
+// `cancelation_token` (cancels every run associated with the token) or `run_id`
+// (cancels a single tenant-scoped run). Supplying both or neither is a `400`. A
+// `run_id` that does not match a run for the tenant returns `404`. Cancelation is
+// idempotent: a run that has already finished (`PROCESSED`/`ERROR`) or was already
+// `CANCELED` is left unchanged and its current status is returned.
+func (r *JourneyService) Cancel(ctx context.Context, body JourneyCancelParams, opts ...option.RequestOption) (res *CancelJourneyResponseUnion, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "journeys/cancel"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return res, err
+}
+
 // Invoke a journey by id or alias to start a new run. The response includes a
 // `runId` identifying the run.
 func (r *JourneyService) Invoke(ctx context.Context, templateID string, body JourneyInvokeParams, opts ...option.RequestOption) (res *JourneysInvokeResponse, err error) {
@@ -144,6 +157,144 @@ func (r *JourneyService) Replace(ctx context.Context, templateID string, body Jo
 	path := fmt.Sprintf("journeys/%s", templateID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
 	return res, err
+}
+
+func CancelJourneyRequestParamOfByCancelationToken(cancelationToken string) CancelJourneyRequestUnionParam {
+	var variant CancelJourneyRequestByCancelationTokenParam
+	variant.CancelationToken = cancelationToken
+	return CancelJourneyRequestUnionParam{OfByCancelationToken: &variant}
+}
+
+func CancelJourneyRequestParamOfByRunID(runID string) CancelJourneyRequestUnionParam {
+	var variant CancelJourneyRequestByRunIDParam
+	variant.RunID = runID
+	return CancelJourneyRequestUnionParam{OfByRunID: &variant}
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type CancelJourneyRequestUnionParam struct {
+	OfByCancelationToken *CancelJourneyRequestByCancelationTokenParam `json:",omitzero,inline"`
+	OfByRunID            *CancelJourneyRequestByRunIDParam            `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u CancelJourneyRequestUnionParam) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfByCancelationToken, u.OfByRunID)
+}
+func (u *CancelJourneyRequestUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *CancelJourneyRequestUnionParam) asAny() any {
+	if !param.IsOmitted(u.OfByCancelationToken) {
+		return u.OfByCancelationToken
+	} else if !param.IsOmitted(u.OfByRunID) {
+		return u.OfByRunID
+	}
+	return nil
+}
+
+// The property CancelationToken is required.
+type CancelJourneyRequestByCancelationTokenParam struct {
+	CancelationToken string `json:"cancelation_token" api:"required"`
+	paramObj
+}
+
+func (r CancelJourneyRequestByCancelationTokenParam) MarshalJSON() (data []byte, err error) {
+	type shadow CancelJourneyRequestByCancelationTokenParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *CancelJourneyRequestByCancelationTokenParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property RunID is required.
+type CancelJourneyRequestByRunIDParam struct {
+	RunID string `json:"run_id" api:"required"`
+	paramObj
+}
+
+func (r CancelJourneyRequestByRunIDParam) MarshalJSON() (data []byte, err error) {
+	type shadow CancelJourneyRequestByRunIDParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *CancelJourneyRequestByRunIDParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// CancelJourneyResponseUnion contains all possible properties and values from
+// [CancelJourneyResponseTokenBranch], [CancelJourneyResponseRunIDBranch].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type CancelJourneyResponseUnion struct {
+	// This field is from variant [CancelJourneyResponseTokenBranch].
+	CancelationToken string `json:"cancelation_token"`
+	// This field is from variant [CancelJourneyResponseRunIDBranch].
+	RunID string `json:"run_id"`
+	// This field is from variant [CancelJourneyResponseRunIDBranch].
+	Status string `json:"status"`
+	JSON   struct {
+		CancelationToken respjson.Field
+		RunID            respjson.Field
+		Status           respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+func (u CancelJourneyResponseUnion) AsTokenBranch() (v CancelJourneyResponseTokenBranch) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u CancelJourneyResponseUnion) AsRunIDBranch() (v CancelJourneyResponseRunIDBranch) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u CancelJourneyResponseUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *CancelJourneyResponseUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type CancelJourneyResponseTokenBranch struct {
+	CancelationToken string `json:"cancelation_token" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CancelationToken respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CancelJourneyResponseTokenBranch) RawJSON() string { return r.JSON.raw }
+func (r *CancelJourneyResponseTokenBranch) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type CancelJourneyResponseRunIDBranch struct {
+	RunID string `json:"run_id" api:"required"`
+	// The run's resulting status. `CANCELED` when the run was active and has been
+	// canceled; `PROCESSED` or `ERROR` when the run had already finished and was left
+	// unchanged; `CANCELED` for an already-canceled run.
+	Status string `json:"status" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		RunID       respjson.Field
+		Status      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CancelJourneyResponseRunIDBranch) RawJSON() string { return r.JSON.raw }
+func (r *CancelJourneyResponseRunIDBranch) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // Request body for creating a journey.
@@ -855,6 +1006,137 @@ func (r *JourneyExitNodeParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A/B experiment config for a send node. The recipient is deterministically
+// bucketed by `bucketingKey` and routed to one of the `variants` in proportion to
+// its `weight`. Present on a send node INSTEAD OF `message.template`.
+type JourneyExperiment struct {
+	// The value used to deterministically assign a recipient to a variant. Must be
+	// non-empty with no leading or trailing whitespace.
+	BucketingKey string `json:"bucketingKey" api:"required"`
+	// Between 2 and 10 weighted template variants.
+	Variants []JourneyExperimentVariant `json:"variants" api:"required"`
+	// Unique experiment id (prefixed `exp_`). Omit to have one generated
+	// automatically; when supplied it must be a valid `exp_` id.
+	ID string `json:"id"`
+	// Optional display name for the experiment.
+	Name string `json:"name"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		BucketingKey respjson.Field
+		Variants     respjson.Field
+		ID           respjson.Field
+		Name         respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r JourneyExperiment) RawJSON() string { return r.JSON.raw }
+func (r *JourneyExperiment) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this JourneyExperiment to a JourneyExperimentParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// JourneyExperimentParam.Overrides()
+func (r JourneyExperiment) ToParam() JourneyExperimentParam {
+	return param.Override[JourneyExperimentParam](json.RawMessage(r.RawJSON()))
+}
+
+// A/B experiment config for a send node. The recipient is deterministically
+// bucketed by `bucketingKey` and routed to one of the `variants` in proportion to
+// its `weight`. Present on a send node INSTEAD OF `message.template`.
+//
+// The properties BucketingKey, Variants are required.
+type JourneyExperimentParam struct {
+	// The value used to deterministically assign a recipient to a variant. Must be
+	// non-empty with no leading or trailing whitespace.
+	BucketingKey string `json:"bucketingKey" api:"required"`
+	// Between 2 and 10 weighted template variants.
+	Variants []JourneyExperimentVariantParam `json:"variants,omitzero" api:"required"`
+	// Unique experiment id (prefixed `exp_`). Omit to have one generated
+	// automatically; when supplied it must be a valid `exp_` id.
+	ID param.Opt[string] `json:"id,omitzero"`
+	// Optional display name for the experiment.
+	Name param.Opt[string] `json:"name,omitzero"`
+	paramObj
+}
+
+func (r JourneyExperimentParam) MarshalJSON() (data []byte, err error) {
+	type shadow JourneyExperimentParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *JourneyExperimentParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A single weighted variant of an experiment. Variant ids must be unique within
+// the experiment and the sum of all variant weights must be greater than 0.
+// Weights are relative (no sum-to-100 requirement) — routing normalizes them
+// proportionally.
+type JourneyExperimentVariant struct {
+	ID string `json:"id" api:"required"`
+	// The notification template sent for this variant.
+	TemplateID string `json:"templateId" api:"required"`
+	// Relative routing weight. Must be non-negative.
+	Weight float64 `json:"weight" api:"required"`
+	// Optional display name for the variant.
+	Name string `json:"name"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		TemplateID  respjson.Field
+		Weight      respjson.Field
+		Name        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r JourneyExperimentVariant) RawJSON() string { return r.JSON.raw }
+func (r *JourneyExperimentVariant) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this JourneyExperimentVariant to a
+// JourneyExperimentVariantParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// JourneyExperimentVariantParam.Overrides()
+func (r JourneyExperimentVariant) ToParam() JourneyExperimentVariantParam {
+	return param.Override[JourneyExperimentVariantParam](json.RawMessage(r.RawJSON()))
+}
+
+// A single weighted variant of an experiment. Variant ids must be unique within
+// the experiment and the sum of all variant weights must be greater than 0.
+// Weights are relative (no sum-to-100 requirement) — routing normalizes them
+// proportionally.
+//
+// The properties ID, TemplateID, Weight are required.
+type JourneyExperimentVariantParam struct {
+	ID string `json:"id" api:"required"`
+	// The notification template sent for this variant.
+	TemplateID string `json:"templateId" api:"required"`
+	// Relative routing weight. Must be non-negative.
+	Weight float64 `json:"weight" api:"required"`
+	// Optional display name for the variant.
+	Name param.Opt[string] `json:"name,omitzero"`
+	paramObj
+}
+
+func (r JourneyExperimentVariantParam) MarshalJSON() (data []byte, err error) {
+	type shadow JourneyExperimentVariantParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *JourneyExperimentVariantParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Issue an HTTP GET or DELETE request and merge the response into the journey
 // state per `merge_strategy`.
 type JourneyFetchGetDeleteNode struct {
@@ -1089,6 +1371,8 @@ type JourneyNodeUnion struct {
 	EventID string `json:"event_id"`
 	// This field is from variant [JourneySendNode].
 	Message JourneySendNodeMessage `json:"message"`
+	// This field is from variant [JourneySendNode].
+	Experiment JourneyExperiment `json:"experiment"`
 	// This field is from variant [JourneyDelayDurationNode].
 	Duration string `json:"duration"`
 	Mode     string `json:"mode"`
@@ -1141,6 +1425,7 @@ type JourneyNodeUnion struct {
 		RequestType         respjson.Field
 		EventID             respjson.Field
 		Message             respjson.Field
+		Experiment          respjson.Field
 		Duration            respjson.Field
 		Mode                respjson.Field
 		Until               respjson.Field
@@ -1597,6 +1882,14 @@ func (u JourneyNodeUnionParam) GetEventID() *string {
 func (u JourneyNodeUnionParam) GetMessage() *JourneySendNodeMessageParam {
 	if vt := u.OfSend; vt != nil {
 		return &vt.Message
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u JourneyNodeUnionParam) GetExperiment() *JourneyExperimentParam {
+	if vt := u.OfSend; vt != nil {
+		return &vt.Experiment
 	}
 	return nil
 }
@@ -2255,8 +2548,11 @@ func (r *JourneySegmentTriggerNodeParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Send a notification template to the recipient. Optionally override the recipient
-// address, delay the send, or attach `data`.
+// Send to the recipient. A send node sources its content from EXACTLY ONE of
+// `message.template` (a single notification template) or `experiment` (an A/B
+// split across weighted template variants) — supplying both, or neither, is
+// rejected. Optionally override the recipient address, delay the send, or attach
+// `data`.
 type JourneySendNode struct {
 	Message JourneySendNodeMessage `json:"message" api:"required"`
 	// Any of "send".
@@ -2266,12 +2562,17 @@ type JourneySendNode struct {
 	// group, or an AND/OR nested group. Omit the `conditions` property entirely to
 	// express "no conditions".
 	Conditions JourneyConditionsFieldUnion `json:"conditions"`
+	// A/B experiment config for a send node. The recipient is deterministically
+	// bucketed by `bucketingKey` and routed to one of the `variants` in proportion to
+	// its `weight`. Present on a send node INSTEAD OF `message.template`.
+	Experiment JourneyExperiment `json:"experiment"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Message     respjson.Field
 		Type        respjson.Field
 		ID          respjson.Field
 		Conditions  respjson.Field
+		Experiment  respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -2293,15 +2594,15 @@ func (r JourneySendNode) ToParam() JourneySendNodeParam {
 }
 
 type JourneySendNodeMessage struct {
-	Template string                      `json:"template" api:"required"`
 	Data     map[string]any              `json:"data"`
 	Delay    JourneySendNodeMessageDelay `json:"delay"`
+	Template string                      `json:"template"`
 	To       JourneySendNodeMessageTo    `json:"to"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Template    respjson.Field
 		Data        respjson.Field
 		Delay       respjson.Field
+		Template    respjson.Field
 		To          respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -2358,8 +2659,11 @@ const (
 	JourneySendNodeTypeSend JourneySendNodeType = "send"
 )
 
-// Send a notification template to the recipient. Optionally override the recipient
-// address, delay the send, or attach `data`.
+// Send to the recipient. A send node sources its content from EXACTLY ONE of
+// `message.template` (a single notification template) or `experiment` (an A/B
+// split across weighted template variants) — supplying both, or neither, is
+// rejected. Optionally override the recipient address, delay the send, or attach
+// `data`.
 //
 // The properties Message, Type are required.
 type JourneySendNodeParam struct {
@@ -2371,6 +2675,10 @@ type JourneySendNodeParam struct {
 	// group, or an AND/OR nested group. Omit the `conditions` property entirely to
 	// express "no conditions".
 	Conditions JourneyConditionsFieldUnionParam `json:"conditions,omitzero"`
+	// A/B experiment config for a send node. The recipient is deterministically
+	// bucketed by `bucketingKey` and routed to one of the `variants` in proportion to
+	// its `weight`. Present on a send node INSTEAD OF `message.template`.
+	Experiment JourneyExperimentParam `json:"experiment,omitzero"`
 	paramObj
 }
 
@@ -2382,9 +2690,8 @@ func (r *JourneySendNodeParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The property Template is required.
 type JourneySendNodeMessageParam struct {
-	Template string                           `json:"template" api:"required"`
+	Template param.Opt[string]                `json:"template,omitzero"`
 	Data     map[string]any                   `json:"data,omitzero"`
 	Delay    JourneySendNodeMessageDelayParam `json:"delay,omitzero"`
 	To       JourneySendNodeMessageToParam    `json:"to,omitzero"`
@@ -3118,6 +3425,21 @@ const (
 	JourneyListParamsVersionPublished JourneyListParamsVersion = "published"
 	JourneyListParamsVersionDraft     JourneyListParamsVersion = "draft"
 )
+
+type JourneyCancelParams struct {
+	// Request body for `POST /journeys/cancel`. Provide EXACTLY ONE of
+	// `cancelation_token` (cancels every run associated with the token) or `run_id`
+	// (cancels a single tenant-scoped run).
+	CancelJourneyRequest CancelJourneyRequestUnionParam
+	paramObj
+}
+
+func (r JourneyCancelParams) MarshalJSON() (data []byte, err error) {
+	return shimjson.Marshal(r.CancelJourneyRequest)
+}
+func (r *JourneyCancelParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 type JourneyInvokeParams struct {
 	// Request body for invoking a journey. Requires either a user identifier or a
