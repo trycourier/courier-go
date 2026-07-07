@@ -62,6 +62,7 @@ func TestAudienceUpdateWithOptionalParams(t *testing.T) {
 					Path:     courier.String("path"),
 					Value:    courier.String("value"),
 				}},
+				Operator: shared.AudienceFilterConfigOperatorAnd,
 			},
 			Name:     courier.String("name"),
 			Operator: courier.AudienceUpdateParamsOperatorAnd,

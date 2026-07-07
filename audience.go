@@ -106,7 +106,8 @@ type Audience struct {
 	UpdatedAt string `json:"updated_at" api:"required"`
 	// Filter configuration for audience membership containing an array of filter rules
 	Filter shared.AudienceFilterConfig `json:"filter" api:"nullable"`
-	// The logical operator (AND/OR) for the top-level filter
+	// The logical operator (AND/OR) combining the top-level `filter.filters`.
+	// Convenience alias for `filter.operator`.
 	//
 	// Any of "AND", "OR".
 	Operator AudienceOperator `json:"operator"`
@@ -130,7 +131,8 @@ func (r *Audience) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The logical operator (AND/OR) for the top-level filter
+// The logical operator (AND/OR) combining the top-level `filter.filters`.
+// Convenience alias for `filter.operator`.
 type AudienceOperator string
 
 const (
@@ -219,7 +221,9 @@ type AudienceUpdateParams struct {
 	Description param.Opt[string] `json:"description,omitzero"`
 	// The name of the audience
 	Name param.Opt[string] `json:"name,omitzero"`
-	// The logical operator (AND/OR) for the top-level filter
+	// The logical operator (AND/OR) combining the top-level `filter.filters`.
+	// Convenience alias for `filter.operator`: if set, it is applied to the top-level
+	// filter group. Prefer setting `operator` directly inside `filter`.
 	//
 	// Any of "AND", "OR".
 	Operator AudienceUpdateParamsOperator `json:"operator,omitzero"`
@@ -236,7 +240,9 @@ func (r *AudienceUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The logical operator (AND/OR) for the top-level filter
+// The logical operator (AND/OR) combining the top-level `filter.filters`.
+// Convenience alias for `filter.operator`: if set, it is applied to the top-level
+// filter group. Prefer setting `operator` directly inside `filter`.
 type AudienceUpdateParamsOperator string
 
 const (
