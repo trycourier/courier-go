@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.17.2 (2026-07-07)
+
+Full Changelog: [v4.17.1...v4.17.2](https://github.com/trycourier/courier-go/compare/v4.17.1...v4.17.2)
+
+### Documentation
+
+* **openapi:** document audiences filter combinator (SUP-686) ([98ad0a0](https://github.com/trycourier/courier-go/commit/98ad0a0dd1b332152b50afca54ef4af19f1d599f))
+
 ## 4.17.1 (2026-07-06)
 
 Full Changelog: [v4.17.0...v4.17.1](https://github.com/trycourier/courier-go/compare/v4.17.0...v4.17.1)
