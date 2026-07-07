@@ -53,6 +53,19 @@ const AudienceFilterPathAccountID = shared.AudienceFilterPathAccountID
 // This is an alias to an internal type.
 type AudienceFilterConfig = shared.AudienceFilterConfig
 
+// The logical operator (AND/OR) combining the rules in `filters`. Required when
+// `filters` contains more than one rule. If omitted, the top-level `operator`
+// field on the request is used instead.
+//
+// This is an alias to an internal type.
+type AudienceFilterConfigOperator = shared.AudienceFilterConfigOperator
+
+// Equals "AND"
+const AudienceFilterConfigOperatorAnd = shared.AudienceFilterConfigOperatorAnd
+
+// Equals "OR"
+const AudienceFilterConfigOperatorOr = shared.AudienceFilterConfigOperatorOr
+
 // Filter configuration for audience membership containing an array of filter rules
 //
 // This is an alias to an internal type.
