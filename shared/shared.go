@@ -62,9 +62,16 @@ const (
 type AudienceFilterConfig struct {
 	// Array of filter rules (single conditions or nested groups)
 	Filters []FilterConfig `json:"filters" api:"required"`
+	// The logical operator (AND/OR) combining the rules in `filters`. Required when
+	// `filters` contains more than one rule. If omitted, the top-level `operator`
+	// field on the request is used instead.
+	//
+	// Any of "AND", "OR".
+	Operator AudienceFilterConfigOperator `json:"operator"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Filters     respjson.Field
+		Operator    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -85,12 +92,28 @@ func (r AudienceFilterConfig) ToParam() AudienceFilterConfigParam {
 	return param.Override[AudienceFilterConfigParam](json.RawMessage(r.RawJSON()))
 }
 
+// The logical operator (AND/OR) combining the rules in `filters`. Required when
+// `filters` contains more than one rule. If omitted, the top-level `operator`
+// field on the request is used instead.
+type AudienceFilterConfigOperator string
+
+const (
+	AudienceFilterConfigOperatorAnd AudienceFilterConfigOperator = "AND"
+	AudienceFilterConfigOperatorOr  AudienceFilterConfigOperator = "OR"
+)
+
 // Filter configuration for audience membership containing an array of filter rules
 //
 // The property Filters is required.
 type AudienceFilterConfigParam struct {
 	// Array of filter rules (single conditions or nested groups)
 	Filters []FilterConfigParam `json:"filters,omitzero" api:"required"`
+	// The logical operator (AND/OR) combining the rules in `filters`. Required when
+	// `filters` contains more than one rule. If omitted, the top-level `operator`
+	// field on the request is used instead.
+	//
+	// Any of "AND", "OR".
+	Operator AudienceFilterConfigOperator `json:"operator,omitzero"`
 	paramObj
 }
 
