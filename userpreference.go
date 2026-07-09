@@ -354,7 +354,7 @@ type UserPreferenceBulkReplaceParams struct {
 	// provided. Any existing override not listed here is reset to its topic default;
 	// an empty array resets every existing override.
 	Topics []UserPreferenceBulkReplaceParamsTopic `json:"topics,omitzero" api:"required"`
-	// Update the preferences of a user for this specific tenant context.
+	// Replace the preferences of a user for this specific tenant context.
 	TenantID param.Opt[string] `query:"tenant_id,omitzero" json:"-"`
 	paramObj
 }
