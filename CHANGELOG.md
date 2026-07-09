@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.18.0 (2026-07-09)
+
+Full Changelog: [v4.17.3...v4.18.0](https://github.com/trycourier/courier-go/compare/v4.17.3...v4.18.0)
+
+### Features
+
+* Add bulk user preference upsert and replace endpoints ([2e3a282](https://github.com/trycourier/courier-go/commit/2e3a282bda05903a877d3ac7c54ae5e090a25dd2))
+* Preferences v3 REST fields: section/topic description + publish body ([d72fe66](https://github.com/trycourier/courier-go/commit/d72fe66386443893cff39069fad88383a8194c4b))
+
 ## 4.17.3 (2026-07-09)
 
 Full Changelog: [v4.17.2...v4.17.3](https://github.com/trycourier/courier-go/compare/v4.17.2...v4.17.3)

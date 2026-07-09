@@ -87,10 +87,10 @@ func (r *WorkspacePreferenceService) Archive(ctx context.Context, sectionID stri
 // Publish the workspace's preferences page. Takes a snapshot of every workspace
 // preference with its topics under a new published version, making the current
 // state visible on the hosted preferences page (non-draft).
-func (r *WorkspacePreferenceService) Publish(ctx context.Context, opts ...option.RequestOption) (res *PublishPreferencesResponse, err error) {
+func (r *WorkspacePreferenceService) Publish(ctx context.Context, body WorkspacePreferencePublishParams, opts ...option.RequestOption) (res *PublishPreferencesResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "preferences/publish"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return res, err
 }
 
@@ -105,6 +105,28 @@ func (r *WorkspacePreferenceService) Replace(ctx context.Context, sectionID stri
 	path := fmt.Sprintf("preferences/sections/%s", sectionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
 	return res, err
+}
+
+// Optional page metadata to apply when publishing the workspace's preferences
+// page. All fields are optional; omitted fields fall back to the page defaults
+// (and the workspace default brand).
+type PublishPreferencesRequestParam struct {
+	// Brand for the hosted page - "default" (workspace default brand), "none" (no
+	// brand), or a specific brand id. Defaults to "default".
+	BrandID param.Opt[string] `json:"brand_id,omitzero"`
+	// Description shown under the heading on the hosted preferences page.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// Heading shown at the top of the hosted preferences page.
+	Heading param.Opt[string] `json:"heading,omitzero"`
+	paramObj
+}
+
+func (r PublishPreferencesRequestParam) MarshalJSON() (data []byte, err error) {
+	type shadow PublishPreferencesRequestParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *PublishPreferencesRequestParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // Result of publishing the workspace's preferences page.
@@ -143,6 +165,8 @@ func (r *PublishPreferencesResponse) UnmarshalJSON(data []byte) error {
 type WorkspacePreferenceCreateRequestParam struct {
 	// Human-readable name for the workspace preference.
 	Name string `json:"name" api:"required"`
+	// Optional description shown under the section on the hosted preferences page.
+	Description param.Opt[string] `json:"description,omitzero"`
 	// Whether the workspace preference defines custom routing for its topics.
 	HasCustomRouting param.Opt[bool] `json:"has_custom_routing,omitzero"`
 	// Default channels for the workspace preference. Defaults to empty if omitted.
@@ -174,6 +198,8 @@ type WorkspacePreferenceGetResponse struct {
 	Topics []WorkspacePreferenceTopicGetResponse `json:"topics" api:"required"`
 	// Id of the creator.
 	Creator string `json:"creator" api:"nullable"`
+	// Optional description shown under the section on the hosted preferences page.
+	Description string `json:"description" api:"nullable"`
 	// ISO-8601 timestamp of the last update.
 	Updated string `json:"updated" api:"nullable"`
 	// Id of the last updater.
@@ -187,6 +213,7 @@ type WorkspacePreferenceGetResponse struct {
 		RoutingOptions   respjson.Field
 		Topics           respjson.Field
 		Creator          respjson.Field
+		Description      respjson.Field
 		Updated          respjson.Field
 		Updater          respjson.Field
 		ExtraFields      map[string]respjson.Field
@@ -224,6 +251,9 @@ func (r *WorkspacePreferenceListResponse) UnmarshalJSON(data []byte) error {
 type WorkspacePreferenceReplaceRequestParam struct {
 	// Human-readable name for the workspace preference.
 	Name string `json:"name" api:"required"`
+	// Optional description shown under the section on the hosted preferences page.
+	// Omit to clear.
+	Description param.Opt[string] `json:"description,omitzero"`
 	// Whether the workspace preference defines custom routing for its topics.
 	HasCustomRouting param.Opt[bool] `json:"has_custom_routing,omitzero"`
 	// Default channels for the workspace preference. Omit to clear.
@@ -249,6 +279,8 @@ type WorkspacePreferenceTopicCreateRequestParam struct {
 	DefaultStatus WorkspacePreferenceTopicCreateRequestDefaultStatus `json:"default_status,omitzero" api:"required"`
 	// Human-readable name for the preference topic.
 	Name string `json:"name" api:"required"`
+	// Optional description shown under the topic on the hosted preferences page.
+	Description param.Opt[string] `json:"description,omitzero"`
 	// Whether to include a list-unsubscribe header on emails for this topic.
 	IncludeUnsubscribeHeader param.Opt[bool] `json:"include_unsubscribe_header,omitzero"`
 	// Preference controls a recipient may customize for this topic. Defaults to empty
@@ -306,6 +338,8 @@ type WorkspacePreferenceTopicGetResponse struct {
 	Updated string `json:"updated" api:"required"`
 	// Id of the creator.
 	Creator string `json:"creator" api:"nullable"`
+	// Optional description shown under the topic on the hosted preferences page.
+	Description string `json:"description" api:"nullable"`
 	// Id of the last updater.
 	Updater string `json:"updater" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -320,6 +354,7 @@ type WorkspacePreferenceTopicGetResponse struct {
 		TopicData                respjson.Field
 		Updated                  respjson.Field
 		Creator                  respjson.Field
+		Description              respjson.Field
 		Updater                  respjson.Field
 		ExtraFields              map[string]respjson.Field
 		raw                      string
@@ -369,6 +404,9 @@ type WorkspacePreferenceTopicReplaceRequestParam struct {
 	DefaultStatus WorkspacePreferenceTopicReplaceRequestDefaultStatus `json:"default_status,omitzero" api:"required"`
 	// Human-readable name for the preference topic.
 	Name string `json:"name" api:"required"`
+	// Optional description shown under the topic on the hosted preferences page. Omit
+	// to clear.
+	Description param.Opt[string] `json:"description,omitzero"`
 	// Whether to include a list-unsubscribe header on emails for this topic.
 	IncludeUnsubscribeHeader param.Opt[bool] `json:"include_unsubscribe_header,omitzero"`
 	// Preference controls a recipient may customize. Omit to clear.
@@ -409,6 +447,21 @@ func (r WorkspacePreferenceNewParams) MarshalJSON() (data []byte, err error) {
 	return shimjson.Marshal(r.WorkspacePreferenceCreateRequest)
 }
 func (r *WorkspacePreferenceNewParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type WorkspacePreferencePublishParams struct {
+	// Optional page metadata to apply when publishing the workspace's preferences
+	// page. All fields are optional; omitted fields fall back to the page defaults
+	// (and the workspace default brand).
+	PublishPreferencesRequest PublishPreferencesRequestParam
+	paramObj
+}
+
+func (r WorkspacePreferencePublishParams) MarshalJSON() (data []byte, err error) {
+	return shimjson.Marshal(r.PublishPreferencesRequest)
+}
+func (r *WorkspacePreferencePublishParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
