@@ -50,6 +50,62 @@ func (r *UserPreferenceService) Get(ctx context.Context, userID string, query Us
 	return res, err
 }
 
+// Replace a user's complete set of preference overrides in a single request. The
+// topics in the request body become the recipient's entire set of overrides:
+// listed topics are created or updated, and every existing override that is not
+// included in the body is reset to its topic default. Submitting an empty `topics`
+// array is a valid clear-all that resets every existing override.
+//
+// This operation is validation-atomic (all-or-nothing): structural validation
+// fails fast with a single `400`, and if any topic is semantically invalid (an
+// unknown topic, a `REQUIRED` topic that cannot be opted out, or a custom routing
+// request that is not available on the workspace's plan) the request returns a
+// single `400` aggregating every failure in `errors` and writes nothing. On
+// success it returns `200` with `items` (the complete resulting override set) and
+// `deleted` (the ids of the overrides that were reset to default).
+//
+// Every `topic_id` in the response — in `items`, `deleted`, and any `errors` — is
+// returned in Courier's canonical topic id form, regardless of the form supplied
+// in the request.
+func (r *UserPreferenceService) BulkReplace(ctx context.Context, userID string, params UserPreferenceBulkReplaceParams, opts ...option.RequestOption) (res *UserPreferenceBulkReplaceResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if userID == "" {
+		err = errors.New("missing required user_id parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("users/%s/preferences", userID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
+	return res, err
+}
+
+// Additively create or update a user's preferences for one or more subscription
+// topics in a single request. Only the topics included in the request body are
+// created or updated; any existing overrides for topics not listed are left
+// untouched.
+//
+// Structural validation of the request body fails fast with a single `400`. Beyond
+// that, each topic is processed independently (partial-success, not
+// all-or-nothing): valid topics are written and returned in `items`, while topics
+// that cannot be applied are collected in `errors` with a per-topic `reason` (for
+// example an unknown topic, a `REQUIRED` topic that cannot be opted out, a custom
+// routing request that is not available on the workspace's plan, or a write
+// failure). The request therefore returns `200` with both lists whenever the body
+// is structurally valid.
+//
+// Every `topic_id` in the response — in both `items` and `errors` — is returned in
+// Courier's canonical topic id form, regardless of the form supplied in the
+// request.
+func (r *UserPreferenceService) BulkUpdate(ctx context.Context, userID string, params UserPreferenceBulkUpdateParams, opts ...option.RequestOption) (res *UserPreferenceBulkUpdateResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if userID == "" {
+		err = errors.New("missing required user_id parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("users/%s/preferences", userID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	return res, err
+}
+
 // Remove a user's preferences for a specific subscription topic, resetting the
 // topic to its effective default. This operation is idempotent: deleting a
 // preference that does not exist succeeds with no error.
@@ -101,6 +157,42 @@ func (r *UserPreferenceService) UpdateOrNewTopic(ctx context.Context, topicID st
 	return res, err
 }
 
+// A single topic override echoed in a bulk preference response.
+type BulkPreferenceTopic struct {
+	CustomRouting    []shared.ChannelClassification `json:"custom_routing" api:"required"`
+	HasCustomRouting bool                           `json:"has_custom_routing" api:"required"`
+	// The applied subscription status. Echoes the requested value, so it is always
+	// OPTED_IN or OPTED_OUT.
+	//
+	// Any of "OPTED_IN", "OPTED_OUT".
+	Status  BulkPreferenceTopicStatus `json:"status" api:"required"`
+	TopicID string                    `json:"topic_id" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CustomRouting    respjson.Field
+		HasCustomRouting respjson.Field
+		Status           respjson.Field
+		TopicID          respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r BulkPreferenceTopic) RawJSON() string { return r.JSON.raw }
+func (r *BulkPreferenceTopic) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The applied subscription status. Echoes the requested value, so it is always
+// OPTED_IN or OPTED_OUT.
+type BulkPreferenceTopicStatus string
+
+const (
+	BulkPreferenceTopicStatusOptedIn  BulkPreferenceTopicStatus = "OPTED_IN"
+	BulkPreferenceTopicStatusOptedOut BulkPreferenceTopicStatus = "OPTED_OUT"
+)
+
 type TopicPreference struct {
 	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
 	DefaultStatus shared.PreferenceStatus `json:"default_status" api:"required"`
@@ -150,6 +242,66 @@ func (r *UserPreferenceGetResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type UserPreferenceBulkReplaceResponse struct {
+	// The ids of the overrides that were reset to their topic default.
+	Deleted []string `json:"deleted" api:"required"`
+	// The complete resulting set of topic overrides for the user.
+	Items []BulkPreferenceTopic `json:"items" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Deleted     respjson.Field
+		Items       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r UserPreferenceBulkReplaceResponse) RawJSON() string { return r.JSON.raw }
+func (r *UserPreferenceBulkReplaceResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type UserPreferenceBulkUpdateResponse struct {
+	// The topics that could not be applied, each with a reason.
+	Errors []UserPreferenceBulkUpdateResponseError `json:"errors" api:"required"`
+	// The topics that were successfully created or updated.
+	Items []BulkPreferenceTopic `json:"items" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Errors      respjson.Field
+		Items       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r UserPreferenceBulkUpdateResponse) RawJSON() string { return r.JSON.raw }
+func (r *UserPreferenceBulkUpdateResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A single topic that could not be applied in a bulk preference request.
+type UserPreferenceBulkUpdateResponseError struct {
+	// A human-readable explanation of why the topic could not be applied.
+	Reason  string `json:"reason" api:"required"`
+	TopicID string `json:"topic_id" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Reason      respjson.Field
+		TopicID     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r UserPreferenceBulkUpdateResponseError) RawJSON() string { return r.JSON.raw }
+func (r *UserPreferenceBulkUpdateResponseError) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type UserPreferenceGetTopicResponse struct {
 	Topic TopicPreference `json:"topic" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -195,6 +347,117 @@ func (r UserPreferenceGetParams) URLQuery() (v url.Values, err error) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+type UserPreferenceBulkReplaceParams struct {
+	// The complete set of topic overrides for the user. Up to 50 topics may be
+	// provided. Any existing override not listed here is reset to its topic default;
+	// an empty array resets every existing override.
+	Topics []UserPreferenceBulkReplaceParamsTopic `json:"topics,omitzero" api:"required"`
+	// Update the preferences of a user for this specific tenant context.
+	TenantID param.Opt[string] `query:"tenant_id,omitzero" json:"-"`
+	paramObj
+}
+
+func (r UserPreferenceBulkReplaceParams) MarshalJSON() (data []byte, err error) {
+	type shadow UserPreferenceBulkReplaceParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *UserPreferenceBulkReplaceParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// URLQuery serializes [UserPreferenceBulkReplaceParams]'s query parameters as
+// `url.Values`.
+func (r UserPreferenceBulkReplaceParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// The properties Status, TopicID are required.
+type UserPreferenceBulkReplaceParamsTopic struct {
+	// The subscription status to apply for this topic.
+	//
+	// Any of "OPTED_IN", "OPTED_OUT".
+	Status string `json:"status,omitzero" api:"required"`
+	// A unique identifier associated with a subscription topic.
+	TopicID string `json:"topic_id" api:"required"`
+	// Whether the recipient has chosen specific delivery channels for this topic.
+	HasCustomRouting param.Opt[bool] `json:"has_custom_routing,omitzero"`
+	// The channels a user has chosen to receive notifications through for this topic.
+	CustomRouting []shared.ChannelClassification `json:"custom_routing,omitzero"`
+	paramObj
+}
+
+func (r UserPreferenceBulkReplaceParamsTopic) MarshalJSON() (data []byte, err error) {
+	type shadow UserPreferenceBulkReplaceParamsTopic
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *UserPreferenceBulkReplaceParamsTopic) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[UserPreferenceBulkReplaceParamsTopic](
+		"status", "OPTED_IN", "OPTED_OUT",
+	)
+}
+
+type UserPreferenceBulkUpdateParams struct {
+	// The topics to create or update. Between 1 and 50 topics may be provided in a
+	// single request.
+	Topics []UserPreferenceBulkUpdateParamsTopic `json:"topics,omitzero" api:"required"`
+	// Update the preferences of a user for this specific tenant context.
+	TenantID param.Opt[string] `query:"tenant_id,omitzero" json:"-"`
+	paramObj
+}
+
+func (r UserPreferenceBulkUpdateParams) MarshalJSON() (data []byte, err error) {
+	type shadow UserPreferenceBulkUpdateParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *UserPreferenceBulkUpdateParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// URLQuery serializes [UserPreferenceBulkUpdateParams]'s query parameters as
+// `url.Values`.
+func (r UserPreferenceBulkUpdateParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// The properties Status, TopicID are required.
+type UserPreferenceBulkUpdateParamsTopic struct {
+	// The subscription status to apply for this topic.
+	//
+	// Any of "OPTED_IN", "OPTED_OUT".
+	Status string `json:"status,omitzero" api:"required"`
+	// A unique identifier associated with a subscription topic.
+	TopicID string `json:"topic_id" api:"required"`
+	// Whether the recipient has chosen specific delivery channels for this topic.
+	HasCustomRouting param.Opt[bool] `json:"has_custom_routing,omitzero"`
+	// The channels a user has chosen to receive notifications through for this topic.
+	CustomRouting []shared.ChannelClassification `json:"custom_routing,omitzero"`
+	paramObj
+}
+
+func (r UserPreferenceBulkUpdateParamsTopic) MarshalJSON() (data []byte, err error) {
+	type shadow UserPreferenceBulkUpdateParamsTopic
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *UserPreferenceBulkUpdateParamsTopic) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[UserPreferenceBulkUpdateParamsTopic](
+		"status", "OPTED_IN", "OPTED_OUT",
+	)
 }
 
 type UserPreferenceDeleteTopicParams struct {
