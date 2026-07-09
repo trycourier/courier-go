@@ -98,6 +98,22 @@ func (r *MessageService) History(ctx context.Context, messageID string, query Me
 	return res, err
 }
 
+// Resend a previously sent message. The original send request is loaded from
+// storage and a brand-new send is enqueued for the same recipient and content,
+// producing a **new** `messageId` — the original message is not modified.
+// Throttled by a per-message rate limit; a repeat inside the limit window returns
+// `429 Too Many Requests`.
+func (r *MessageService) Resend(ctx context.Context, messageID string, opts ...option.RequestOption) (res *MessageResendResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if messageID == "" {
+		err = errors.New("missing required message_id parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("messages/%s/resend", messageID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
+	return res, err
+}
+
 type MessageDetails struct {
 	// A unique identifier associated with the message you wish to retrieve (results
 	// from a send).
@@ -340,6 +356,24 @@ type MessageHistoryResponse struct {
 // Returns the unmodified JSON received from the API
 func (r MessageHistoryResponse) RawJSON() string { return r.JSON.raw }
 func (r *MessageHistoryResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type MessageResendResponse struct {
+	// The new message id for the resent message. It is distinct from the id of the
+	// original message that was resent.
+	MessageID string `json:"messageId" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		MessageID   respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MessageResendResponse) RawJSON() string { return r.JSON.raw }
+func (r *MessageResendResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
