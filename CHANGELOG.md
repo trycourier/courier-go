@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.17.3 (2026-07-09)
+
+Full Changelog: [v4.17.2...v4.17.3](https://github.com/trycourier/courier-go/compare/v4.17.2...v4.17.3)
+
+### Chores
+
+* update api-spec with new message resend endpoint ([0399593](https://github.com/trycourier/courier-go/commit/03995931a3f30e6f0796e613869ffeb34ea7dd00))
+
 ## 4.17.2 (2026-07-07)
 
 Full Changelog: [v4.17.1...v4.17.2](https://github.com/trycourier/courier-go/compare/v4.17.1...v4.17.2)
