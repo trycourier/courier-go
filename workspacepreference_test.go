@@ -30,6 +30,7 @@ func TestWorkspacePreferenceNewWithOptionalParams(t *testing.T) {
 	_, err := client.WorkspacePreferences.New(context.TODO(), courier.WorkspacePreferenceNewParams{
 		WorkspacePreferenceCreateRequest: courier.WorkspacePreferenceCreateRequestParam{
 			Name:             "Account Notifications",
+			Description:      courier.String("description"),
 			HasCustomRouting: courier.Bool(true),
 			RoutingOptions:   []shared.ChannelClassification{shared.ChannelClassificationDirectMessage},
 		},
@@ -112,7 +113,7 @@ func TestWorkspacePreferenceArchive(t *testing.T) {
 	}
 }
 
-func TestWorkspacePreferencePublish(t *testing.T) {
+func TestWorkspacePreferencePublishWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -125,7 +126,13 @@ func TestWorkspacePreferencePublish(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.WorkspacePreferences.Publish(context.TODO())
+	_, err := client.WorkspacePreferences.Publish(context.TODO(), courier.WorkspacePreferencePublishParams{
+		PublishPreferencesRequest: courier.PublishPreferencesRequestParam{
+			BrandID:     courier.String("brand_id"),
+			Description: courier.String("description"),
+			Heading:     courier.String("heading"),
+		},
+	})
 	if err != nil {
 		var apierr *courier.Error
 		if errors.As(err, &apierr) {
@@ -154,6 +161,7 @@ func TestWorkspacePreferenceReplaceWithOptionalParams(t *testing.T) {
 		courier.WorkspacePreferenceReplaceParams{
 			WorkspacePreferenceReplaceRequest: courier.WorkspacePreferenceReplaceRequestParam{
 				Name:             "name",
+				Description:      courier.String("description"),
 				HasCustomRouting: courier.Bool(true),
 				RoutingOptions:   []shared.ChannelClassification{shared.ChannelClassificationDirectMessage},
 			},
