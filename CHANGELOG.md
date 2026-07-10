@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.18.2 (2026-07-10)
+
+Full Changelog: [v4.18.1...v4.18.2](https://github.com/trycourier/courier-go/compare/v4.18.1...v4.18.2)
+
+### Documentation
+
+* **openapi:** canonical type-id prefixes across all examples ([#162](https://github.com/trycourier/courier-go/issues/162)) ([b420292](https://github.com/trycourier/courier-go/commit/b4202920c7ede6c5f6da86382f14ebfea6abcff8))
+* **openapi:** use canonical type-id prefixes in id examples ([#160](https://github.com/trycourier/courier-go/issues/160)) ([992b0c7](https://github.com/trycourier/courier-go/commit/992b0c7a100e028702bf7dc8d71ec86229bfaf5b))
+
 ## 4.18.1 (2026-07-09)
 
 Full Changelog: [v4.18.0...v4.18.1](https://github.com/trycourier/courier-go/compare/v4.18.0...v4.18.1)
