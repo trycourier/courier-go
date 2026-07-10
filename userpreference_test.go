@@ -62,7 +62,7 @@ func TestUserPreferenceBulkReplaceWithOptionalParams(t *testing.T) {
 		courier.UserPreferenceBulkReplaceParams{
 			Topics: []courier.UserPreferenceBulkReplaceParamsTopic{{
 				Status:           "OPTED_IN",
-				TopicID:          "74Q4QGFBEX481DP6JRPMV751H4XT",
+				TopicID:          "pt_01kx4h2jdafq8bk996nn92357r",
 				CustomRouting:    []shared.ChannelClassification{shared.ChannelClassificationInbox, shared.ChannelClassificationEmail},
 				HasCustomRouting: courier.Bool(true),
 			}},
@@ -97,12 +97,12 @@ func TestUserPreferenceBulkUpdateWithOptionalParams(t *testing.T) {
 		courier.UserPreferenceBulkUpdateParams{
 			Topics: []courier.UserPreferenceBulkUpdateParamsTopic{{
 				Status:           "OPTED_IN",
-				TopicID:          "74Q4QGFBEX481DP6JRPMV751H4XT",
+				TopicID:          "pt_01kx4h2jdafq8bk996nn92357r",
 				CustomRouting:    []shared.ChannelClassification{shared.ChannelClassificationInbox, shared.ChannelClassificationEmail},
 				HasCustomRouting: courier.Bool(true),
 			}, {
 				Status:           "OPTED_OUT",
-				TopicID:          "5Q4QGFBEX481DP6JRPMV751H4YU",
+				TopicID:          "pt_01kx4h2jdafq8bk99eyt3dx43x",
 				CustomRouting:    []shared.ChannelClassification{shared.ChannelClassificationDirectMessage},
 				HasCustomRouting: courier.Bool(true),
 			}},
