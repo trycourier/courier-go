@@ -31,7 +31,7 @@ func TestNotificationNewWithOptionalParams(t *testing.T) {
 		NotificationTemplateCreateRequest: courier.NotificationTemplateCreateRequestParam{
 			Notification: courier.NotificationTemplatePayloadParam{
 				Brand: courier.NotificationTemplatePayloadBrandParam{
-					ID: "brand_abc",
+					ID: "bnd_01kx4mrd0pfzw8wt7pn7p2fzag",
 				},
 				Content: shared.ElementalContentParam{
 					Elements: []shared.ElementalNodeUnionParam{{
@@ -46,7 +46,7 @@ func TestNotificationNewWithOptionalParams(t *testing.T) {
 				},
 				Name: "Welcome Email",
 				Routing: courier.NotificationTemplatePayloadRoutingParam{
-					StrategyID: "rs_123",
+					StrategyID: "rs_01kx4h2jdafq8bk9amzvy6hbv0",
 				},
 				Subscription: courier.NotificationTemplatePayloadSubscriptionParam{
 					TopicID: "pt_01kx4h2jdafq8bk9a26x0kvd1t",
