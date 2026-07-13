@@ -998,22 +998,26 @@ type NotificationTemplateSummary struct {
 	// Any of "DRAFT", "PUBLISHED".
 	State NotificationTemplateSummaryState `json:"state" api:"required"`
 	Tags  []string                         `json:"tags" api:"required"`
+	// The linked subscription (preference) topic of the published version. Omitted
+	// when no topic is linked or the template has never been published.
+	SubscriptionTopicID string `json:"subscription_topic_id"`
 	// Epoch milliseconds of last update.
 	Updated int64 `json:"updated"`
 	// User ID of the last updater.
 	Updater string `json:"updater"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          respjson.Field
-		Created     respjson.Field
-		Creator     respjson.Field
-		Name        respjson.Field
-		State       respjson.Field
-		Tags        respjson.Field
-		Updated     respjson.Field
-		Updater     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		ID                  respjson.Field
+		Created             respjson.Field
+		Creator             respjson.Field
+		Name                respjson.Field
+		State               respjson.Field
+		Tags                respjson.Field
+		SubscriptionTopicID respjson.Field
+		Updated             respjson.Field
+		Updater             respjson.Field
+		ExtraFields         map[string]respjson.Field
+		raw                 string
 	} `json:"-"`
 }
 
@@ -1161,26 +1165,29 @@ type NotificationListResponseResultUnion struct {
 	// This field is from variant [NotificationTemplateSummary].
 	State NotificationTemplateSummaryState `json:"state"`
 	// This field is from variant [NotificationTemplateSummary].
+	SubscriptionTopicID string `json:"subscription_topic_id"`
+	// This field is from variant [NotificationTemplateSummary].
 	Updated int64 `json:"updated"`
 	// This field is from variant [NotificationTemplateSummary].
 	Updater string `json:"updater"`
 	JSON    struct {
-		ID        respjson.Field
-		CreatedAt respjson.Field
-		EventIDs  respjson.Field
-		Routing   respjson.Field
-		TopicID   respjson.Field
-		UpdatedAt respjson.Field
-		Note      respjson.Field
-		Tags      respjson.Field
-		Title     respjson.Field
-		Created   respjson.Field
-		Creator   respjson.Field
-		Name      respjson.Field
-		State     respjson.Field
-		Updated   respjson.Field
-		Updater   respjson.Field
-		raw       string
+		ID                  respjson.Field
+		CreatedAt           respjson.Field
+		EventIDs            respjson.Field
+		Routing             respjson.Field
+		TopicID             respjson.Field
+		UpdatedAt           respjson.Field
+		Note                respjson.Field
+		Tags                respjson.Field
+		Title               respjson.Field
+		Created             respjson.Field
+		Creator             respjson.Field
+		Name                respjson.Field
+		State               respjson.Field
+		SubscriptionTopicID respjson.Field
+		Updated             respjson.Field
+		Updater             respjson.Field
+		raw                 string
 	} `json:"-"`
 }
 
