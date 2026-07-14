@@ -85,6 +85,23 @@ func (r *NotificationService) Archive(ctx context.Context, id string, opts ...op
 	return err
 }
 
+// Duplicate a notification template. Creates a standalone copy within the same
+// workspace and environment, with " COPY" appended to the title. The copy clones
+// the source draft's tags, brand, subscription topic, routing strategy, channels,
+// and content, and is always created as a standalone template (it is not linked to
+// any journey or broadcast, even if the source was). Templates that are scoped to
+// a journey or a broadcast cannot be duplicated through this endpoint.
+func (r *NotificationService) Duplicate(ctx context.Context, id string, opts ...option.RequestOption) (res *NotificationTemplateResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("notifications/%s/duplicate", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
+	return res, err
+}
+
 // List versions of a notification template.
 func (r *NotificationService) ListVersions(ctx context.Context, id string, query NotificationListVersionsParams, opts ...option.RequestOption) (res *NotificationTemplateVersionListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
