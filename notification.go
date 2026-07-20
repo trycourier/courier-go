@@ -85,6 +85,23 @@ func (r *NotificationService) Archive(ctx context.Context, id string, opts ...op
 	return err
 }
 
+// Duplicate a notification template. Creates a standalone copy within the same
+// workspace and environment, with " COPY" appended to the title. The copy clones
+// the source draft's tags, brand, subscription topic, routing strategy, channels,
+// and content, and is always created as a standalone template (it is not linked to
+// any journey or broadcast, even if the source was). Templates that are scoped to
+// a journey or a broadcast cannot be duplicated through this endpoint.
+func (r *NotificationService) Duplicate(ctx context.Context, id string, opts ...option.RequestOption) (res *NotificationTemplateResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("notifications/%s/duplicate", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
+	return res, err
+}
+
 // List versions of a notification template.
 func (r *NotificationService) ListVersions(ctx context.Context, id string, query NotificationListVersionsParams, opts ...option.RequestOption) (res *NotificationTemplateVersionListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -998,22 +1015,30 @@ type NotificationTemplateSummary struct {
 	// Any of "DRAFT", "PUBLISHED".
 	State NotificationTemplateSummaryState `json:"state" api:"required"`
 	Tags  []string                         `json:"tags" api:"required"`
+	// The linked subscription (preference) topic of the published version. Omitted
+	// when no topic is linked or the template has never been published.
+	SubscriptionTopicID string `json:"subscription_topic_id"`
+	// Alias of subscription_topic_id, provided under the same name V1 list items use
+	// for the linked topic. Always carries the same value as subscription_topic_id.
+	TopicID string `json:"topic_id"`
 	// Epoch milliseconds of last update.
 	Updated int64 `json:"updated"`
 	// User ID of the last updater.
 	Updater string `json:"updater"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          respjson.Field
-		Created     respjson.Field
-		Creator     respjson.Field
-		Name        respjson.Field
-		State       respjson.Field
-		Tags        respjson.Field
-		Updated     respjson.Field
-		Updater     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		ID                  respjson.Field
+		Created             respjson.Field
+		Creator             respjson.Field
+		Name                respjson.Field
+		State               respjson.Field
+		Tags                respjson.Field
+		SubscriptionTopicID respjson.Field
+		TopicID             respjson.Field
+		Updated             respjson.Field
+		Updater             respjson.Field
+		ExtraFields         map[string]respjson.Field
+		raw                 string
 	} `json:"-"`
 }
 
@@ -1141,8 +1166,7 @@ type NotificationListResponseResultUnion struct {
 	EventIDs []string `json:"event_ids"`
 	// This field is from variant [NotificationListResponseResultNotification].
 	Routing shared.MessageRouting `json:"routing"`
-	// This field is from variant [NotificationListResponseResultNotification].
-	TopicID string `json:"topic_id"`
+	TopicID string                `json:"topic_id"`
 	// This field is from variant [NotificationListResponseResultNotification].
 	UpdatedAt int64 `json:"updated_at"`
 	// This field is from variant [NotificationListResponseResultNotification].
@@ -1161,26 +1185,29 @@ type NotificationListResponseResultUnion struct {
 	// This field is from variant [NotificationTemplateSummary].
 	State NotificationTemplateSummaryState `json:"state"`
 	// This field is from variant [NotificationTemplateSummary].
+	SubscriptionTopicID string `json:"subscription_topic_id"`
+	// This field is from variant [NotificationTemplateSummary].
 	Updated int64 `json:"updated"`
 	// This field is from variant [NotificationTemplateSummary].
 	Updater string `json:"updater"`
 	JSON    struct {
-		ID        respjson.Field
-		CreatedAt respjson.Field
-		EventIDs  respjson.Field
-		Routing   respjson.Field
-		TopicID   respjson.Field
-		UpdatedAt respjson.Field
-		Note      respjson.Field
-		Tags      respjson.Field
-		Title     respjson.Field
-		Created   respjson.Field
-		Creator   respjson.Field
-		Name      respjson.Field
-		State     respjson.Field
-		Updated   respjson.Field
-		Updater   respjson.Field
-		raw       string
+		ID                  respjson.Field
+		CreatedAt           respjson.Field
+		EventIDs            respjson.Field
+		Routing             respjson.Field
+		TopicID             respjson.Field
+		UpdatedAt           respjson.Field
+		Note                respjson.Field
+		Tags                respjson.Field
+		Title               respjson.Field
+		Created             respjson.Field
+		Creator             respjson.Field
+		Name                respjson.Field
+		State               respjson.Field
+		SubscriptionTopicID respjson.Field
+		Updated             respjson.Field
+		Updater             respjson.Field
+		raw                 string
 	} `json:"-"`
 }
 
