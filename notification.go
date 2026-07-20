@@ -1018,6 +1018,9 @@ type NotificationTemplateSummary struct {
 	// The linked subscription (preference) topic of the published version. Omitted
 	// when no topic is linked or the template has never been published.
 	SubscriptionTopicID string `json:"subscription_topic_id"`
+	// Alias of subscription_topic_id, provided under the same name V1 list items use
+	// for the linked topic. Always carries the same value as subscription_topic_id.
+	TopicID string `json:"topic_id"`
 	// Epoch milliseconds of last update.
 	Updated int64 `json:"updated"`
 	// User ID of the last updater.
@@ -1031,6 +1034,7 @@ type NotificationTemplateSummary struct {
 		State               respjson.Field
 		Tags                respjson.Field
 		SubscriptionTopicID respjson.Field
+		TopicID             respjson.Field
 		Updated             respjson.Field
 		Updater             respjson.Field
 		ExtraFields         map[string]respjson.Field
@@ -1162,8 +1166,7 @@ type NotificationListResponseResultUnion struct {
 	EventIDs []string `json:"event_ids"`
 	// This field is from variant [NotificationListResponseResultNotification].
 	Routing shared.MessageRouting `json:"routing"`
-	// This field is from variant [NotificationListResponseResultNotification].
-	TopicID string `json:"topic_id"`
+	TopicID string                `json:"topic_id"`
 	// This field is from variant [NotificationListResponseResultNotification].
 	UpdatedAt int64 `json:"updated_at"`
 	// This field is from variant [NotificationListResponseResultNotification].
