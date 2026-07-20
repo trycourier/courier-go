@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.19.0 (2026-07-20)
+
+Full Changelog: [v4.18.2...v4.19.0](https://github.com/trycourier/courier-go/compare/v4.18.2...v4.19.0)
+
+### Features
+
+* Document POST /notifications/{id}/duplicate [C-18607] ([#165](https://github.com/trycourier/courier-go/issues/165)) ([13c63b9](https://github.com/trycourier/courier-go/commit/13c63b98d6b007d6b943bdd6b536fa66ca74d9c4))
+* Merge pull request [#149](https://github.com/trycourier/courier-go/issues/149) from trycourier/geraldosilva/c-19201-notification-template-subscription-topic-id ([abee5c0](https://github.com/trycourier/courier-go/commit/abee5c055ccba4e0c9bc031f99b4e97be0302f1b))
+* Merge pull request [#168](https://github.com/trycourier/courier-go/issues/168) from trycourier/geraldosilva/c-19419-topic-id-notification-template-summary ([554e742](https://github.com/trycourier/courier-go/commit/554e74246735ab33bc3674c1d12ec71427130046))
+* **stlc:** configurable CI runner and private-production-repo support in workflow templates ([e19b813](https://github.com/trycourier/courier-go/commit/e19b813222200da2f1a5e9e14dcd8f060bc3f100))
+
 ## 4.18.2 (2026-07-10)
 
 Full Changelog: [v4.18.1...v4.18.2](https://github.com/trycourier/courier-go/compare/v4.18.1...v4.18.2)
