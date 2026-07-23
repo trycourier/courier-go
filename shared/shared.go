@@ -577,36 +577,6 @@ func (r *ElementalContentParam) UnmarshalJSON(data []byte) error {
 }
 
 // Syntactic sugar to provide a fast shorthand for Courier Elemental Blocks.
-type ElementalContentSugar struct {
-	// The text content displayed in the notification.
-	Body string `json:"body" api:"required"`
-	// Title/subject displayed by supported channels.
-	Title string `json:"title" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Body        respjson.Field
-		Title       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ElementalContentSugar) RawJSON() string { return r.JSON.raw }
-func (r *ElementalContentSugar) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this ElementalContentSugar to a ElementalContentSugarParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// ElementalContentSugarParam.Overrides()
-func (r ElementalContentSugar) ToParam() ElementalContentSugarParam {
-	return param.Override[ElementalContentSugarParam](json.RawMessage(r.RawJSON()))
-}
-
-// Syntactic sugar to provide a fast shorthand for Courier Elemental Blocks.
 //
 // The properties Body, Title are required.
 type ElementalContentSugarParam struct {
@@ -1293,32 +1263,6 @@ type MessageChannels map[string]Channel
 
 type MessageChannelsParam map[string]ChannelParam
 
-type MessageContext struct {
-	// Tenant id used to load brand/default preferences/context.
-	TenantID string `json:"tenant_id" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		TenantID    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r MessageContext) RawJSON() string { return r.JSON.raw }
-func (r *MessageContext) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this MessageContext to a MessageContextParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// MessageContextParam.Overrides()
-func (r MessageContext) ToParam() MessageContextParam {
-	return param.Override[MessageContextParam](json.RawMessage(r.RawJSON()))
-}
-
 type MessageContextParam struct {
 	// Tenant id used to load brand/default preferences/context.
 	TenantID param.Opt[string] `json:"tenant_id,omitzero"`
@@ -1822,47 +1766,6 @@ func (r *Paging) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type Preference struct {
-	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
-	Status             PreferenceStatus    `json:"status" api:"required"`
-	ChannelPreferences []ChannelPreference `json:"channel_preferences" api:"nullable"`
-	Rules              []Rule              `json:"rules" api:"nullable"`
-	// Any of "subscription", "list", "recipient".
-	Source PreferenceSource `json:"source" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Status             respjson.Field
-		ChannelPreferences respjson.Field
-		Rules              respjson.Field
-		Source             respjson.Field
-		ExtraFields        map[string]respjson.Field
-		raw                string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r Preference) RawJSON() string { return r.JSON.raw }
-func (r *Preference) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this Preference to a PreferenceParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// PreferenceParam.Overrides()
-func (r Preference) ToParam() PreferenceParam {
-	return param.Override[PreferenceParam](json.RawMessage(r.RawJSON()))
-}
-
-type PreferenceSource string
-
-const (
-	PreferenceSourceSubscription PreferenceSource = "subscription"
-	PreferenceSourceList         PreferenceSource = "list"
-	PreferenceSourceRecipient    PreferenceSource = "recipient"
-)
-
 // The property Status is required.
 type PreferenceParam struct {
 	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
@@ -1881,6 +1784,14 @@ func (r PreferenceParam) MarshalJSON() (data []byte, err error) {
 func (r *PreferenceParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type PreferenceSource string
+
+const (
+	PreferenceSourceSubscription PreferenceSource = "subscription"
+	PreferenceSourceList         PreferenceSource = "list"
+	PreferenceSourceRecipient    PreferenceSource = "recipient"
+)
 
 type PreferenceStatus string
 
@@ -2247,78 +2158,6 @@ func (r TimeoutsParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *TimeoutsParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type UserRecipient struct {
-	// Deprecated - Use `tenant_id` instead.
-	AccountID string `json:"account_id" api:"nullable"`
-	// Context such as tenant_id to send the notification with.
-	Context MessageContext `json:"context" api:"nullable"`
-	Data    map[string]any `json:"data" api:"nullable"`
-	// The user's email address.
-	Email string `json:"email" api:"nullable"`
-	// The id of the list to send the message to.
-	ListID string `json:"list_id" api:"nullable"`
-	// The user's preferred ISO 639-1 language code.
-	Locale string `json:"locale" api:"nullable"`
-	// The user's phone number.
-	PhoneNumber string                   `json:"phone_number" api:"nullable"`
-	Preferences UserRecipientPreferences `json:"preferences" api:"nullable"`
-	// The id of the tenant the user is associated with.
-	TenantID string `json:"tenant_id" api:"nullable"`
-	// The user's unique identifier. Typically, this will match the user id of a user
-	// in your system.
-	UserID string `json:"user_id" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		AccountID   respjson.Field
-		Context     respjson.Field
-		Data        respjson.Field
-		Email       respjson.Field
-		ListID      respjson.Field
-		Locale      respjson.Field
-		PhoneNumber respjson.Field
-		Preferences respjson.Field
-		TenantID    respjson.Field
-		UserID      respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r UserRecipient) RawJSON() string { return r.JSON.raw }
-func (r *UserRecipient) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this UserRecipient to a UserRecipientParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// UserRecipientParam.Overrides()
-func (r UserRecipient) ToParam() UserRecipientParam {
-	return param.Override[UserRecipientParam](json.RawMessage(r.RawJSON()))
-}
-
-type UserRecipientPreferences struct {
-	Notifications map[string]Preference `json:"notifications" api:"required"`
-	Categories    map[string]Preference `json:"categories" api:"nullable"`
-	TemplateID    string                `json:"templateId" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Notifications respjson.Field
-		Categories    respjson.Field
-		TemplateID    respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r UserRecipientPreferences) RawJSON() string { return r.JSON.raw }
-func (r *UserRecipientPreferences) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
