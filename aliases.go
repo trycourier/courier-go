@@ -203,11 +203,6 @@ type ElementalContentParam = shared.ElementalContentParam
 // Syntactic sugar to provide a fast shorthand for Courier Elemental Blocks.
 //
 // This is an alias to an internal type.
-type ElementalContentSugar = shared.ElementalContentSugar
-
-// Syntactic sugar to provide a fast shorthand for Courier Elemental Blocks.
-//
-// This is an alias to an internal type.
 type ElementalContentSugarParam = shared.ElementalContentSugarParam
 
 // This is an alias to an internal type.
@@ -322,9 +317,6 @@ type MessageChannels = shared.MessageChannels
 type MessageChannelsParam = shared.MessageChannelsParam
 
 // This is an alias to an internal type.
-type MessageContext = shared.MessageContext
-
-// This is an alias to an internal type.
 type MessageContextParam = shared.MessageContextParam
 
 // This is an alias to an internal type.
@@ -392,7 +384,7 @@ type PagerdutyRecipientParam = shared.PagerdutyRecipientParam
 type Paging = shared.Paging
 
 // This is an alias to an internal type.
-type Preference = shared.Preference
+type PreferenceParam = shared.PreferenceParam
 
 // This is an alias to an internal type.
 type PreferenceSource = shared.PreferenceSource
@@ -405,9 +397,6 @@ const PreferenceSourceList = shared.PreferenceSourceList
 
 // Equals "recipient"
 const PreferenceSourceRecipient = shared.PreferenceSourceRecipient
-
-// This is an alias to an internal type.
-type PreferenceParam = shared.PreferenceParam
 
 // This is an alias to an internal type.
 type PreferenceStatus = shared.PreferenceStatus
@@ -485,12 +474,6 @@ type Timeouts = shared.Timeouts
 
 // This is an alias to an internal type.
 type TimeoutsParam = shared.TimeoutsParam
-
-// This is an alias to an internal type.
-type UserRecipient = shared.UserRecipient
-
-// This is an alias to an internal type.
-type UserRecipientPreferences = shared.UserRecipientPreferences
 
 // This is an alias to an internal type.
 type UserRecipientParam = shared.UserRecipientParam
