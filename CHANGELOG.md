@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.20.0 (2026-07-23)
+
+Full Changelog: [v4.19.0...v4.20.0](https://github.com/trycourier/courier-go/compare/v4.19.0...v4.20.0)
+
+### Features
+
+* Remove /bulk endpoints from api-spec (C-19507) ([#171](https://github.com/trycourier/courier-go/issues/171)) ([a4a530a](https://github.com/trycourier/courier-go/commit/a4a530a74caa861f6c6e1f6f0c1983c74f4e72cb))
+
 ## 4.19.0 (2026-07-20)
 
 Full Changelog: [v4.18.2...v4.19.0](https://github.com/trycourier/courier-go/compare/v4.18.2...v4.19.0)
