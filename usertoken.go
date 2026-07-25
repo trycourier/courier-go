@@ -36,7 +36,8 @@ func NewUserTokenService(opts ...option.RequestOption) (r UserTokenService) {
 	return
 }
 
-// Get single token available for a `:token`
+// Returns one device token with its provider key, status and status reason, expiry
+// date, and any properties stored alongside it.
 func (r *UserTokenService) Get(ctx context.Context, token string, query UserTokenGetParams, opts ...option.RequestOption) (res *UserTokenGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if query.UserID == "" {
@@ -52,7 +53,8 @@ func (r *UserTokenService) Get(ctx context.Context, token string, query UserToke
 	return res, err
 }
 
-// Apply a JSON Patch (RFC 6902) to the specified token.
+// Applies a JSON Patch to a device token, changing its status, expiry, or
+// properties without re-registering it.
 func (r *UserTokenService) Update(ctx context.Context, token string, params UserTokenUpdateParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -69,7 +71,8 @@ func (r *UserTokenService) Update(ctx context.Context, token string, params User
 	return err
 }
 
-// Gets all tokens available for a :user_id
+// Returns every device token registered for a user, each with its provider key,
+// status, and expiry date.
 func (r *UserTokenService) List(ctx context.Context, userID string, opts ...option.RequestOption) (res *UserTokenListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
@@ -81,7 +84,8 @@ func (r *UserTokenService) List(ctx context.Context, userID string, opts ...opti
 	return res, err
 }
 
-// Delete User Token
+// Deletes one device token for a user, addressed by the token value, so push sends
+// no longer target that device.
 func (r *UserTokenService) Delete(ctx context.Context, token string, body UserTokenDeleteParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -98,7 +102,8 @@ func (r *UserTokenService) Delete(ctx context.Context, token string, body UserTo
 	return err
 }
 
-// Adds multiple tokens to a user and overwrites matching existing tokens.
+// Registers several device tokens for a user in one call, overwriting any stored
+// token with a matching value.
 func (r *UserTokenService) AddMultiple(ctx context.Context, userID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -111,7 +116,8 @@ func (r *UserTokenService) AddMultiple(ctx context.Context, userID string, opts 
 	return err
 }
 
-// Adds a single token to a user and overwrites a matching existing token.
+// Registers one device token for a user against a provider key, overwriting the
+// token if it already exists. Push sends resolve tokens per user.
 func (r *UserTokenService) AddSingle(ctx context.Context, token string, params UserTokenAddSingleParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)

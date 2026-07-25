@@ -35,7 +35,8 @@ func NewNotificationCheckService(opts ...option.RequestOption) (r NotificationCh
 	return
 }
 
-// Replace the submission checks for a notification template.
+// Replaces the approval checks on a template submission with the complete set
+// supplied in the request body.
 func (r *NotificationCheckService) Update(ctx context.Context, submissionID string, params NotificationCheckUpdateParams, opts ...option.RequestOption) (res *NotificationCheckUpdateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if params.ID == "" {
@@ -51,7 +52,8 @@ func (r *NotificationCheckService) Update(ctx context.Context, submissionID stri
 	return res, err
 }
 
-// Retrieve the submission checks for a notification template.
+// Returns the approval checks recorded for a template submission, each with its
+// pass or fail result.
 func (r *NotificationCheckService) List(ctx context.Context, submissionID string, query NotificationCheckListParams, opts ...option.RequestOption) (res *NotificationCheckListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if query.ID == "" {
@@ -67,7 +69,8 @@ func (r *NotificationCheckService) List(ctx context.Context, submissionID string
 	return res, err
 }
 
-// Cancel a submission for a notification template.
+// Cancels a pending template submission, withdrawing it from the approval
+// workflow. The template stays in draft and can be resubmitted later.
 func (r *NotificationCheckService) Delete(ctx context.Context, submissionID string, body NotificationCheckDeleteParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)

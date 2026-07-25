@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.20.1 (2026-07-25)
+
+Full Changelog: [v4.20.0...v4.20.1](https://github.com/trycourier/courier-go/compare/v4.20.0...v4.20.1)
+
+### Documentation
+
+* **openapi:** describe user topic-preference fields explicitly ([#172](https://github.com/trycourier/courier-go/issues/172)) ([3dc1ef3](https://github.com/trycourier/courier-go/commit/3dc1ef355f33024d26aec99819dcbe6e13dbf95d))
+* **openapi:** rewrite operation descriptions for agents and SEO ([#174](https://github.com/trycourier/courier-go/issues/174)) ([3ec82f8](https://github.com/trycourier/courier-go/commit/3ec82f84d82e399f9c0dce814416b0dd06294ff5))
+
 ## 4.20.0 (2026-07-23)
 
 Full Changelog: [v4.19.0...v4.20.0](https://github.com/trycourier/courier-go/compare/v4.19.0...v4.20.0)

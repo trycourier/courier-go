@@ -38,7 +38,8 @@ func NewUserPreferenceService(opts ...option.RequestOption) (r UserPreferenceSer
 	return
 }
 
-// Fetch all user preferences.
+// Returns a user's preference overrides with paging, one entry per subscription
+// topic they have set a choice for.
 func (r *UserPreferenceService) Get(ctx context.Context, userID string, query UserPreferenceGetParams, opts ...option.RequestOption) (res *UserPreferenceGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
@@ -50,23 +51,8 @@ func (r *UserPreferenceService) Get(ctx context.Context, userID string, query Us
 	return res, err
 }
 
-// Replace a user's complete set of preference overrides in a single request. The
-// topics in the request body become the recipient's entire set of overrides:
-// listed topics are created or updated, and every existing override that is not
-// included in the body is reset to its topic default. Submitting an empty `topics`
-// array is a valid clear-all that resets every existing override.
-//
-// This operation is validation-atomic (all-or-nothing): structural validation
-// fails fast with a single `400`, and if any topic is semantically invalid (an
-// unknown topic, a `REQUIRED` topic that cannot be opted out, or a custom routing
-// request that is not available on the workspace's plan) the request returns a
-// single `400` aggregating every failure in `errors` and writes nothing. On
-// success it returns `200` with `items` (the complete resulting override set) and
-// `deleted` (the ids of the overrides that were reset to default).
-//
-// Every `topic_id` in the response — in `items`, `deleted`, and any `errors` — is
-// returned in Courier's canonical topic id form, regardless of the form supplied
-// in the request.
+// Replaces a user's entire set of preference overrides. Any topic you leave out is
+// reset to its default, so send the full set rather than a subset.
 func (r *UserPreferenceService) BulkReplace(ctx context.Context, userID string, params UserPreferenceBulkReplaceParams, opts ...option.RequestOption) (res *UserPreferenceBulkReplaceResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
@@ -78,23 +64,8 @@ func (r *UserPreferenceService) BulkReplace(ctx context.Context, userID string, 
 	return res, err
 }
 
-// Additively create or update a user's preferences for one or more subscription
-// topics in a single request. Only the topics included in the request body are
-// created or updated; any existing overrides for topics not listed are left
-// untouched.
-//
-// Structural validation of the request body fails fast with a single `400`. Beyond
-// that, each topic is processed independently (partial-success, not
-// all-or-nothing): valid topics are written and returned in `items`, while topics
-// that cannot be applied are collected in `errors` with a per-topic `reason` (for
-// example an unknown topic, a `REQUIRED` topic that cannot be opted out, a custom
-// routing request that is not available on the workspace's plan, or a write
-// failure). The request therefore returns `200` with both lists whenever the body
-// is structurally valid.
-//
-// Every `topic_id` in the response — in both `items` and `errors` — is returned in
-// Courier's canonical topic id form, regardless of the form supplied in the
-// request.
+// Adds or updates a user's preferences for several subscription topics at once.
+// Topics you leave out keep whatever they were set to before.
 func (r *UserPreferenceService) BulkUpdate(ctx context.Context, userID string, params UserPreferenceBulkUpdateParams, opts ...option.RequestOption) (res *UserPreferenceBulkUpdateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
@@ -106,9 +77,8 @@ func (r *UserPreferenceService) BulkUpdate(ctx context.Context, userID string, p
 	return res, err
 }
 
-// Remove a user's preferences for a specific subscription topic, resetting the
-// topic to its effective default. This operation is idempotent: deleting a
-// preference that does not exist succeeds with no error.
+// Removes a user's override for one subscription topic, resetting it to the
+// effective default from the tenant or workspace.
 func (r *UserPreferenceService) DeleteTopic(ctx context.Context, topicID string, params UserPreferenceDeleteTopicParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -125,7 +95,8 @@ func (r *UserPreferenceService) DeleteTopic(ctx context.Context, topicID string,
 	return err
 }
 
-// Fetch user preferences for a specific subscription topic.
+// Returns a user's opt-in status and channel choices for one subscription topic,
+// or the effective default if they have set no override.
 func (r *UserPreferenceService) GetTopic(ctx context.Context, topicID string, params UserPreferenceGetTopicParams, opts ...option.RequestOption) (res *UserPreferenceGetTopicResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if params.UserID == "" {
@@ -141,7 +112,8 @@ func (r *UserPreferenceService) GetTopic(ctx context.Context, topicID string, pa
 	return res, err
 }
 
-// Update or Create user preferences for a specific subscription topic.
+// Sets a user's opt-in status and channel choices for one subscription topic,
+// overriding the tenant default for that topic only.
 func (r *UserPreferenceService) UpdateOrNewTopic(ctx context.Context, topicID string, params UserPreferenceUpdateOrNewTopicParams, opts ...option.RequestOption) (res *UserPreferenceUpdateOrNewTopicResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if params.UserID == "" {
@@ -194,15 +166,28 @@ const (
 )
 
 type TopicPreference struct {
+	// The topic's default status, returned on reads. It applies whenever the user has
+	// no override of their own (status equals this value).
+	//
 	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
 	DefaultStatus shared.PreferenceStatus `json:"default_status" api:"required"`
+	// The user's subscription status for this topic. OPTED_IN or OPTED_OUT reflect the
+	// user's own choice; REQUIRED is a topic-level default set in the preferences
+	// editor, not a user choice.
+	//
 	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
-	Status    shared.PreferenceStatus `json:"status" api:"required"`
-	TopicID   string                  `json:"topic_id" api:"required"`
-	TopicName string                  `json:"topic_name" api:"required"`
-	// The Channels a user has chosen to receive notifications through for this topic
-	CustomRouting    []shared.ChannelClassification `json:"custom_routing" api:"nullable"`
-	HasCustomRouting bool                           `json:"has_custom_routing" api:"nullable"`
+	Status shared.PreferenceStatus `json:"status" api:"required"`
+	// The unique identifier of the subscription topic this preference applies to.
+	TopicID string `json:"topic_id" api:"required"`
+	// The display name of the subscription topic, returned on reads.
+	TopicName string `json:"topic_name" api:"required"`
+	// The channels the user has chosen to receive this topic on, present only when
+	// has_custom_routing is true. One or more of: direct_message, email, push, sms,
+	// webhook, inbox.
+	CustomRouting []shared.ChannelClassification `json:"custom_routing" api:"nullable"`
+	// Whether the user has chosen specific delivery channels for this topic (listed in
+	// custom_routing) rather than the topic's default routing.
+	HasCustomRouting bool `json:"has_custom_routing" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		DefaultStatus    respjson.Field
@@ -519,10 +504,17 @@ func (r UserPreferenceUpdateOrNewTopicParams) URLQuery() (v url.Values, err erro
 
 // The property Status is required.
 type UserPreferenceUpdateOrNewTopicParamsTopic struct {
+	// The subscription status to set: OPTED_IN or OPTED_OUT. REQUIRED is a topic-level
+	// default, not a user choice; the API rejects opting a user out of a REQUIRED
+	// topic.
+	//
 	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
-	Status           shared.PreferenceStatus `json:"status,omitzero" api:"required"`
-	HasCustomRouting param.Opt[bool]         `json:"has_custom_routing,omitzero"`
-	// The Channels a user has chosen to receive notifications through for this topic
+	Status shared.PreferenceStatus `json:"status,omitzero" api:"required"`
+	// Set to true to route this topic to the channels in custom_routing instead of the
+	// topic's default routing.
+	HasCustomRouting param.Opt[bool] `json:"has_custom_routing,omitzero"`
+	// The channels to deliver this topic on when has_custom_routing is true. One or
+	// more of: direct_message, email, push, sms, webhook, inbox.
 	CustomRouting []shared.ChannelClassification `json:"custom_routing,omitzero"`
 	paramObj
 }

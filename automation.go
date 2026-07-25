@@ -38,7 +38,8 @@ func NewAutomationService(opts ...option.RequestOption) (r AutomationService) {
 	return
 }
 
-// Get the list of automations.
+// Lists the workspace's saved automation templates, each with its id and a cursor
+// for paging to the next page of results.
 func (r *AutomationService) List(ctx context.Context, query AutomationListParams, opts ...option.RequestOption) (res *AutomationTemplateListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "automations"

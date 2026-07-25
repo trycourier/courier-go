@@ -34,10 +34,8 @@ func NewAutomationInvokeService(opts ...option.RequestOption) (r AutomationInvok
 	return
 }
 
-// Invoke an ad hoc automation run. This endpoint accepts a JSON payload with a
-// series of automation steps. For information about what steps are available,
-// checkout the ad hoc automation guide
-// [here](https://www.courier.com/docs/automations/steps/).
+// Runs a series of automation steps supplied inline, without a saved template, and
+// returns a runId.
 func (r *AutomationInvokeService) InvokeAdHoc(ctx context.Context, body AutomationInvokeInvokeAdHocParams, opts ...option.RequestOption) (res *AutomationInvokeResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "automations/invoke"
@@ -45,7 +43,8 @@ func (r *AutomationInvokeService) InvokeAdHoc(ctx context.Context, body Automati
 	return res, err
 }
 
-// Invoke an automation run from an automation template.
+// Starts an automation run from a saved template for one recipient, with optional
+// data and profile, and returns a runId.
 func (r *AutomationInvokeService) InvokeByTemplate(ctx context.Context, templateID string, body AutomationInvokeInvokeByTemplateParams, opts ...option.RequestOption) (res *AutomationInvokeResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if templateID == "" {
