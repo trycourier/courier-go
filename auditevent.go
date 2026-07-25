@@ -38,7 +38,8 @@ func NewAuditEventService(opts ...option.RequestOption) (r AuditEventService) {
 	return
 }
 
-// Fetch a specific audit event by ID.
+// Returns one audit event by id, including the actor who performed it, the target
+// they changed, the source, the event type, and a timestamp.
 func (r *AuditEventService) Get(ctx context.Context, auditEventID string, opts ...option.RequestOption) (res *AuditEvent, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if auditEventID == "" {
@@ -50,7 +51,8 @@ func (r *AuditEventService) Get(ctx context.Context, auditEventID string, opts .
 	return res, err
 }
 
-// Fetch the list of audit events
+// Returns the workspace's audit event log with cursor paging. Each event records
+// the actor, target, source, type, and timestamp of a change.
 func (r *AuditEventService) List(ctx context.Context, query AuditEventListParams, opts ...option.RequestOption) (res *AuditEventListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "audit-events"

@@ -38,7 +38,8 @@ func NewAudienceService(opts ...option.RequestOption) (r AudienceService) {
 	return
 }
 
-// Returns the specified audience by id.
+// Returns one audience with its name, description, and the filter and AND or OR
+// operator that decide which users belong to it.
 func (r *AudienceService) Get(ctx context.Context, audienceID string, opts ...option.RequestOption) (res *Audience, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if audienceID == "" {
@@ -50,7 +51,8 @@ func (r *AudienceService) Get(ctx context.Context, audienceID string, opts ...op
 	return res, err
 }
 
-// Creates or updates audience.
+// Creates or replaces an audience from a filter and an AND or OR operator.
+// Membership recalculates automatically as profiles change.
 func (r *AudienceService) Update(ctx context.Context, audienceID string, body AudienceUpdateParams, opts ...option.RequestOption) (res *AudienceUpdateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if audienceID == "" {
@@ -62,7 +64,8 @@ func (r *AudienceService) Update(ctx context.Context, audienceID string, body Au
 	return res, err
 }
 
-// Get the audiences associated with the authorization token.
+// Returns the audiences in the workspace with paging. Audiences are filter-based
+// groups that recalculate as user profiles change.
 func (r *AudienceService) List(ctx context.Context, query AudienceListParams, opts ...option.RequestOption) (res *AudienceListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "audiences"
@@ -70,7 +73,8 @@ func (r *AudienceService) List(ctx context.Context, query AudienceListParams, op
 	return res, err
 }
 
-// Deletes the specified audience.
+// Deletes an audience permanently, so update any caller sending to it by audience
+// id first. Those sends fail once the audience is gone.
 func (r *AudienceService) Delete(ctx context.Context, audienceID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -83,7 +87,8 @@ func (r *AudienceService) Delete(ctx context.Context, audienceID string, opts ..
 	return err
 }
 
-// Get list of members of an audience.
+// Returns the users currently matching an audience filter, with paging. Membership
+// is recalculated, so results shift as profiles change.
 func (r *AudienceService) ListMembers(ctx context.Context, audienceID string, query AudienceListMembersParams, opts ...option.RequestOption) (res *AudienceListMembersResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if audienceID == "" {

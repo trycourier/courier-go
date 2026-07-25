@@ -32,7 +32,8 @@ func NewRequestService(opts ...option.RequestOption) (r RequestService) {
 	return
 }
 
-// Archive message
+// Archives a send request by its request id. Use it to remove test sends or
+// superseded requests from the message list without deleting them.
 func (r *RequestService) Archive(ctx context.Context, requestID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)

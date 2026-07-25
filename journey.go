@@ -43,12 +43,8 @@ func NewJourneyService(opts ...option.RequestOption) (r JourneyService) {
 	return
 }
 
-// Create a journey. Defaults to `DRAFT` state; pass `state: "PUBLISHED"` to
-// publish on create. Send nodes are not allowed on `POST`. The standard flow is:
-// create the journey shell here, add notification templates with
-// `POST /journeys/{templateId}/templates`, then wire them into the journey with
-// `PUT /journeys/{templateId}`. Call `POST /journeys/{templateId}/publish` to
-// publish a draft after the fact.
+// Creates a journey from a set of nodes, in draft state unless you pass a
+// published state. Send nodes cannot be included until their templates exist.
 func (r *JourneyService) New(ctx context.Context, body JourneyNewParams, opts ...option.RequestOption) (res *JourneyResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "journeys"
@@ -69,7 +65,8 @@ func (r *JourneyService) Get(ctx context.Context, templateID string, query Journ
 	return res, err
 }
 
-// Get the list of journeys.
+// Lists the workspace's journeys, each carrying a name, state, and enabled flag.
+// Paged by cursor.
 func (r *JourneyService) List(ctx context.Context, query JourneyListParams, opts ...option.RequestOption) (res *JourneysListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "journeys"
@@ -77,8 +74,8 @@ func (r *JourneyService) List(ctx context.Context, query JourneyListParams, opts
 	return res, err
 }
 
-// Archive a journey. Archived journeys cannot be invoked. Existing journey runs
-// continue to completion.
+// Archives a journey so it can no longer be invoked. Runs already in flight
+// continue to completion, so archiving never strands a user mid-sequence.
 func (r *JourneyService) Archive(ctx context.Context, templateID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -91,12 +88,8 @@ func (r *JourneyService) Archive(ctx context.Context, templateID string, opts ..
 	return err
 }
 
-// Cancel journey runs. The request body must include EXACTLY ONE of
-// `cancelation_token` (cancels every run associated with the token) or `run_id`
-// (cancels a single tenant-scoped run). Supplying both or neither returns a `400`.
-// A `run_id` that does not match a run for the tenant returns `404`. Cancelation
-// is idempotent: a run that has already finished (`PROCESSED`/`ERROR`) or was
-// already `CANCELED` is left unchanged and its current status is returned.
+// Cancels in-flight journey runs, either every run sharing a cancelation token or
+// one run by id. Use it to stop a sequence when the event resolves.
 func (r *JourneyService) Cancel(ctx context.Context, body JourneyCancelParams, opts ...option.RequestOption) (res *CancelJourneyResponseUnion, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "journeys/cancel"
@@ -104,8 +97,8 @@ func (r *JourneyService) Cancel(ctx context.Context, body JourneyCancelParams, o
 	return res, err
 }
 
-// Invoke a journey by id or alias to start a new run. The response includes a
-// `runId` identifying the run.
+// Starts a journey run for one user and returns a runId. Runs execute
+// asynchronously, so the response arrives before any message is sent.
 func (r *JourneyService) Invoke(ctx context.Context, templateID string, body JourneyInvokeParams, opts ...option.RequestOption) (res *JourneysInvokeResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if templateID == "" {
@@ -117,7 +110,8 @@ func (r *JourneyService) Invoke(ctx context.Context, templateID string, body Jou
 	return res, err
 }
 
-// List published versions of a journey, ordered most recent first.
+// Lists a journey's published versions, most recent first, so you have a version
+// id to roll back to. Paged by cursor.
 func (r *JourneyService) ListVersions(ctx context.Context, templateID string, opts ...option.RequestOption) (res *JourneyVersionsListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if templateID == "" {
@@ -129,9 +123,8 @@ func (r *JourneyService) ListVersions(ctx context.Context, templateID string, op
 	return res, err
 }
 
-// Publish the current draft as a new version. Body is optional; pass
-// `{ "version": "vN" }` to roll back to a prior version instead. Returns 404 if
-// the journey has no draft to publish.
+// Publishes a journey's current draft as a new version, making it live for new
+// runs. Pass a version instead to roll back to an earlier one.
 func (r *JourneyService) Publish(ctx context.Context, templateID string, body JourneyPublishParams, opts ...option.RequestOption) (res *JourneyResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if templateID == "" {
@@ -143,11 +136,8 @@ func (r *JourneyService) Publish(ctx context.Context, templateID string, body Jo
 	return res, err
 }
 
-// Replace the journey draft. Updates the working draft only; call
-// `POST /journeys/{templateId}/publish` to make it live, or pass
-// `state: "PUBLISHED"` in this request to publish immediately. Send-node
-// `template` ids must already exist and be scoped to this journey, and node ids
-// must not be claimed by another journey.
+// Replaces a journey's working draft, leaving the published version live until you
+// publish. Reach for this when editing a journey already running.
 func (r *JourneyService) Replace(ctx context.Context, templateID string, body JourneyReplaceParams, opts ...option.RequestOption) (res *JourneyResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if templateID == "" {

@@ -43,7 +43,8 @@ func NewTenantService(opts ...option.RequestOption) (r TenantService) {
 	return
 }
 
-// Get a Tenant
+// Returns one tenant with its name, parent tenant id, default preferences,
+// properties, and the user profile applied to its members.
 func (r *TenantService) Get(ctx context.Context, tenantID string, opts ...option.RequestOption) (res *Tenant, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if tenantID == "" {
@@ -55,7 +56,8 @@ func (r *TenantService) Get(ctx context.Context, tenantID string, opts ...option
 	return res, err
 }
 
-// Create or Replace a Tenant
+// Creates or replaces a tenant from a name, parent, brand, properties, and default
+// preferences supplied in the request body.
 func (r *TenantService) Update(ctx context.Context, tenantID string, body TenantUpdateParams, opts ...option.RequestOption) (res *Tenant, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if tenantID == "" {
@@ -67,7 +69,8 @@ func (r *TenantService) Update(ctx context.Context, tenantID string, body Tenant
 	return res, err
 }
 
-// Get a List of Tenants
+// Lists the workspace's tenants, each carrying a name, parent tenant, properties,
+// and default preferences. Paged.
 func (r *TenantService) List(ctx context.Context, query TenantListParams, opts ...option.RequestOption) (res *TenantListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "tenants"
@@ -75,7 +78,8 @@ func (r *TenantService) List(ctx context.Context, query TenantListParams, opts .
 	return res, err
 }
 
-// Delete a Tenant
+// Deletes a tenant. Its members' workspace-level profiles and preferences live
+// outside the tenant and are managed separately.
 func (r *TenantService) Delete(ctx context.Context, tenantID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -88,7 +92,8 @@ func (r *TenantService) Delete(ctx context.Context, tenantID string, opts ...opt
 	return err
 }
 
-// Get Users in Tenant
+// Returns the users belonging to a tenant with cursor paging. Use it to see who a
+// tenant-scoped send will reach.
 func (r *TenantService) ListUsers(ctx context.Context, tenantID string, query TenantListUsersParams, opts ...option.RequestOption) (res *TenantListUsersResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if tenantID == "" {

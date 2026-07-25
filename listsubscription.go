@@ -38,7 +38,8 @@ func NewListSubscriptionService(opts ...option.RequestOption) (r ListSubscriptio
 	return
 }
 
-// Get the list's subscriptions.
+// Returns the users subscribed to a list with paging, each with the preferences
+// recorded for that subscription.
 func (r *ListSubscriptionService) List(ctx context.Context, listID string, query ListSubscriptionListParams, opts ...option.RequestOption) (res *ListSubscriptionListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if listID == "" {
@@ -78,8 +79,8 @@ func (r *ListSubscriptionService) Subscribe(ctx context.Context, listID string, 
 	return err
 }
 
-// Subscribe a user to an existing list (note: if the List does not exist, it will
-// be automatically created).
+// Subscribes one user to a list, creating the list if it does not yet exist.
+// Optional preferences apply to this subscription only.
 func (r *ListSubscriptionService) SubscribeUser(ctx context.Context, userID string, params ListSubscriptionSubscribeUserParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -96,7 +97,8 @@ func (r *ListSubscriptionService) SubscribeUser(ctx context.Context, userID stri
 	return err
 }
 
-// Delete a subscription to a list by list ID and user ID.
+// Removes one user's subscription to a list, addressed by list id and user id. The
+// user's profile and other subscriptions are separate resources.
 func (r *ListSubscriptionService) UnsubscribeUser(ctx context.Context, userID string, body ListSubscriptionUnsubscribeUserParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)

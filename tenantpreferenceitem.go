@@ -34,7 +34,8 @@ func NewTenantPreferenceItemService(opts ...option.RequestOption) (r TenantPrefe
 	return
 }
 
-// Create or Replace Default Preferences For Topic
+// Sets a tenant's default opt-in status for one subscription topic, which applies
+// to every member unless a user sets their own override.
 func (r *TenantPreferenceItemService) Update(ctx context.Context, topicID string, params TenantPreferenceItemUpdateParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -51,7 +52,8 @@ func (r *TenantPreferenceItemService) Update(ctx context.Context, topicID string
 	return err
 }
 
-// Remove Default Preferences For Topic
+// Removes a tenant's default preference for one subscription topic, addressed by
+// tenant id and topic id.
 func (r *TenantPreferenceItemService) Delete(ctx context.Context, topicID string, body TenantPreferenceItemDeleteParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)

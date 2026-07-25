@@ -34,7 +34,8 @@ func NewSendService(opts ...option.RequestOption) (r SendService) {
 	return
 }
 
-// Send a message to one or more recipients.
+// Sends a message to one or more recipients and returns a requestId. Courier
+// routes it to email, SMS, push, chat, or in-app based on your rules.
 func (r *SendService) Message(ctx context.Context, body SendMessageParams, opts ...option.RequestOption) (res *SendMessageResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "send"

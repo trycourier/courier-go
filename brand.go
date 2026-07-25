@@ -39,8 +39,8 @@ func NewBrandService(opts ...option.RequestOption) (r BrandService) {
 	return
 }
 
-// Create a new brand. Requires `name` and `settings` (with at least
-// `colors.primary` and `colors.secondary`).
+// Creates a brand from a name and settings, including primary and secondary
+// colors. Brands supply the logo, colors, and styling that templates render with.
 func (r *BrandService) New(ctx context.Context, body BrandNewParams, opts ...option.RequestOption) (res *Brand, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "brands"
@@ -48,7 +48,8 @@ func (r *BrandService) New(ctx context.Context, body BrandNewParams, opts ...opt
 	return res, err
 }
 
-// Fetch a specific brand by brand ID.
+// Returns one brand by id, including its colors, logo and styling settings,
+// Handlebars snippets, and published version.
 func (r *BrandService) Get(ctx context.Context, brandID string, opts ...option.RequestOption) (res *Brand, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if brandID == "" {
@@ -60,7 +61,8 @@ func (r *BrandService) Get(ctx context.Context, brandID string, opts ...option.R
 	return res, err
 }
 
-// Replace an existing brand with the supplied values.
+// Replaces a brand with the values you supply, so send the complete settings and
+// snippets rather than only the fields you want changed.
 func (r *BrandService) Update(ctx context.Context, brandID string, body BrandUpdateParams, opts ...option.RequestOption) (res *Brand, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if brandID == "" {
@@ -72,7 +74,8 @@ func (r *BrandService) Update(ctx context.Context, brandID string, body BrandUpd
 	return res, err
 }
 
-// Get the list of brands.
+// Lists the workspace's brands. Every entry carries its name, styling settings,
+// snippets, and published version.
 func (r *BrandService) List(ctx context.Context, query BrandListParams, opts ...option.RequestOption) (res *BrandListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "brands"
@@ -80,7 +83,8 @@ func (r *BrandService) List(ctx context.Context, query BrandListParams, opts ...
 	return res, err
 }
 
-// Delete a brand by brand ID.
+// Deletes a brand by id. Reassign any template or tenant that references it before
+// deleting to keep their styling intact.
 func (r *BrandService) Delete(ctx context.Context, brandID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)

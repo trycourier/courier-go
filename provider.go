@@ -40,8 +40,8 @@ func NewProviderService(opts ...option.RequestOption) (r ProviderService) {
 	return
 }
 
-// Create a new provider configuration. The `provider` field must be a known
-// Courier provider key (see catalog).
+// Configures a provider integration from a Courier provider key and its settings.
+// Check the catalog endpoint for the schema each provider expects.
 func (r *ProviderService) New(ctx context.Context, body ProviderNewParams, opts ...option.RequestOption) (res *Provider, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "providers"
@@ -49,7 +49,8 @@ func (r *ProviderService) New(ctx context.Context, body ProviderNewParams, opts 
 	return res, err
 }
 
-// Fetch a single provider configuration by ID.
+// Returns one configured provider by id, including its channel, provider key,
+// alias, title, and current settings.
 func (r *ProviderService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Provider, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -61,11 +62,8 @@ func (r *ProviderService) Get(ctx context.Context, id string, opts ...option.Req
 	return res, err
 }
 
-// Replace an existing provider configuration. The `provider` key is required and
-// determines which provider-specific settings schema is applied. All other fields
-// are optional — omitted fields are cleared from the stored configuration (this is
-// a full replacement, not a partial merge). Changing the provider type for an
-// existing configuration is not supported.
+// Replaces a provider's configuration in full, clearing any field you omit rather
+// than merging it. Send the complete settings object.
 func (r *ProviderService) Update(ctx context.Context, id string, body ProviderUpdateParams, opts ...option.RequestOption) (res *Provider, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -77,8 +75,8 @@ func (r *ProviderService) Update(ctx context.Context, id string, body ProviderUp
 	return res, err
 }
 
-// List configured provider integrations for the current workspace. Supports
-// cursor-based pagination.
+// Lists the provider integrations configured in the workspace, one entry per
+// channel and provider key with its alias and settings.
 func (r *ProviderService) List(ctx context.Context, query ProviderListParams, opts ...option.RequestOption) (res *ProviderListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "providers"
@@ -86,8 +84,8 @@ func (r *ProviderService) List(ctx context.Context, query ProviderListParams, op
 	return res, err
 }
 
-// Delete a provider configuration. Returns 409 if the provider is still referenced
-// by routing or notifications.
+// Deletes a provider configuration, which fails while routing strategies or
+// templates still reference it. Update those references first.
 func (r *ProviderService) Delete(ctx context.Context, id string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)

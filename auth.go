@@ -33,7 +33,8 @@ func NewAuthService(opts ...option.RequestOption) (r AuthService) {
 	return
 }
 
-// Returns a new access token.
+// Returns a JWT for authenticating client-side SDKs such as the Inbox. You supply
+// the scope and an expires_in duration, both required.
 func (r *AuthService) IssueToken(ctx context.Context, body AuthIssueTokenParams, opts ...option.RequestOption) (res *AuthIssueTokenResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "auth/issue-token"

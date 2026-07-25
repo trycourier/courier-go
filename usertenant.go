@@ -37,7 +37,8 @@ func NewUserTenantService(opts ...option.RequestOption) (r UserTenantService) {
 	return
 }
 
-// Returns a paginated list of user tenant associations.
+// Returns the tenants a user belongs to, with cursor paging. A user can belong to
+// many tenants, each with its own profile and preferences.
 func (r *UserTenantService) List(ctx context.Context, userID string, query UserTenantListParams, opts ...option.RequestOption) (res *UserTenantListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
@@ -49,9 +50,8 @@ func (r *UserTenantService) List(ctx context.Context, userID string, query UserT
 	return res, err
 }
 
-// This endpoint is used to add a user to multiple tenants in one call. A custom
-// profile can also be supplied for each tenant. This profile will be merged with
-// the user's main profile when sending to the user with that tenant.
+// Adds a user to several tenants in one call, each optionally with a per-tenant
+// profile that overrides their workspace profile.
 func (r *UserTenantService) AddMultiple(ctx context.Context, userID string, body UserTenantAddMultipleParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -64,10 +64,8 @@ func (r *UserTenantService) AddMultiple(ctx context.Context, userID string, body
 	return err
 }
 
-// This endpoint is used to add a single tenant.
-//
-// A custom profile can also be supplied with the tenant. This profile will be
-// merged with the user's main profile when sending to the user with that tenant.
+// Adds a user to one tenant, optionally with a tenant-specific profile that
+// overrides their workspace profile for sends in that tenant.
 func (r *UserTenantService) AddSingle(ctx context.Context, tenantID string, params UserTenantAddSingleParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -84,7 +82,8 @@ func (r *UserTenantService) AddSingle(ctx context.Context, tenantID string, para
 	return err
 }
 
-// Removes a user from any tenants they may have been associated with.
+// Removes a user from every tenant they belong to in one call. Their
+// workspace-level profile is a separate resource.
 func (r *UserTenantService) RemoveAll(ctx context.Context, userID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -97,7 +96,8 @@ func (r *UserTenantService) RemoveAll(ctx context.Context, userID string, opts .
 	return err
 }
 
-// Removes a user from the supplied tenant.
+// Removes a user from one tenant. Their other tenant memberships and workspace
+// profile are managed through separate endpoints.
 func (r *UserTenantService) RemoveSingle(ctx context.Context, tenantID string, body UserTenantRemoveSingleParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)

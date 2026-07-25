@@ -41,7 +41,8 @@ func NewTenantTemplateService(opts ...option.RequestOption) (r TenantTemplateSer
 	return
 }
 
-// Get a Template in Tenant
+// Returns a tenant's notification template with its content, version, and created,
+// updated, and published timestamps.
 func (r *TenantTemplateService) Get(ctx context.Context, templateID string, query TenantTemplateGetParams, opts ...option.RequestOption) (res *BaseTemplateTenantAssociation, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if query.TenantID == "" {
@@ -57,7 +58,8 @@ func (r *TenantTemplateService) Get(ctx context.Context, templateID string, quer
 	return res, err
 }
 
-// List Templates in Tenant
+// Lists a tenant's notification templates, each carrying its version and published
+// timestamp. Paged.
 func (r *TenantTemplateService) List(ctx context.Context, tenantID string, query TenantTemplateListParams, opts ...option.RequestOption) (res *TenantTemplateListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if tenantID == "" {
@@ -69,12 +71,8 @@ func (r *TenantTemplateService) List(ctx context.Context, tenantID string, query
 	return res, err
 }
 
-// Deletes the tenant's notification template with the given `template_id`.
-//
-// Returns **204 No Content** with an empty body on success.
-//
-// Returns **404** if there is no template with this ID for the tenant, including a
-// second `DELETE` after a successful removal.
+// Deletes a tenant's notification template by id. Sends for that tenant then use
+// the workspace template registered under the same id.
 func (r *TenantTemplateService) Delete(ctx context.Context, templateID string, body TenantTemplateDeleteParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -91,10 +89,8 @@ func (r *TenantTemplateService) Delete(ctx context.Context, templateID string, b
 	return err
 }
 
-// Publishes a specific version of a notification template for a tenant.
-//
-// The template must already exist in the tenant's notification map. If no version
-// is specified, defaults to publishing the "latest" version.
+// Publishes a version of a tenant's notification template, making it the content
+// that tenant's sends render from until you publish another.
 func (r *TenantTemplateService) Publish(ctx context.Context, templateID string, params TenantTemplatePublishParams, opts ...option.RequestOption) (res *PostTenantTemplatePublishResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if params.TenantID == "" {
@@ -110,13 +106,8 @@ func (r *TenantTemplateService) Publish(ctx context.Context, templateID string, 
 	return res, err
 }
 
-// Creates or updates a notification template for a tenant.
-//
-// If the template already exists for the tenant, it will be updated (200).
-// Otherwise, a new template is created (201).
-//
-// Optionally publishes the template immediately if the `published` flag is set to
-// true.
+// Creates or updates a notification template scoped to one tenant, letting a
+// tenant override the content the workspace template would send.
 func (r *TenantTemplateService) Replace(ctx context.Context, templateID string, params TenantTemplateReplaceParams, opts ...option.RequestOption) (res *PutTenantTemplateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if params.TenantID == "" {
