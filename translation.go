@@ -34,7 +34,8 @@ func NewTranslationService(opts ...option.RequestOption) (r TranslationService) 
 	return
 }
 
-// Get translations by locale
+// Returns the translation strings stored for one domain and locale, for use in
+// localized notification content.
 func (r *TranslationService) Get(ctx context.Context, locale string, query TranslationGetParams, opts ...option.RequestOption) (res *string, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if query.Domain == "" {
@@ -50,7 +51,8 @@ func (r *TranslationService) Get(ctx context.Context, locale string, query Trans
 	return res, err
 }
 
-// Update a translation
+// Uploads the translation strings for one domain and locale. Courier uses them to
+// render localized content for recipients in that locale.
 func (r *TranslationService) Update(ctx context.Context, locale string, params TranslationUpdateParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)

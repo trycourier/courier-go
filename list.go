@@ -40,7 +40,8 @@ func NewListService(opts ...option.RequestOption) (r ListService) {
 	return
 }
 
-// Returns a list based on the list ID provided.
+// Returns one list by id with its name and created and updated timestamps. Fetch
+// its subscribers separately with the subscriptions endpoint.
 func (r *ListService) Get(ctx context.Context, listID string, opts ...option.RequestOption) (res *SubscriptionList, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if listID == "" {
@@ -52,7 +53,8 @@ func (r *ListService) Get(ctx context.Context, listID string, opts ...option.Req
 	return res, err
 }
 
-// Create or replace an existing list with the supplied values.
+// Creates or replaces a list from a name and preferences. Subscribers are managed
+// through the separate subscriptions endpoints.
 func (r *ListService) Update(ctx context.Context, listID string, body ListUpdateParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -65,7 +67,8 @@ func (r *ListService) Update(ctx context.Context, listID string, body ListUpdate
 	return err
 }
 
-// Returns all of the lists, with the ability to filter based on a pattern.
+// Returns the workspace's lists, filterable by a pattern to fetch a subset such as
+// every regional list. Paged by cursor.
 func (r *ListService) List(ctx context.Context, query ListListParams, opts ...option.RequestOption) (res *ListListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "lists"
@@ -73,7 +76,8 @@ func (r *ListService) List(ctx context.Context, query ListListParams, opts ...op
 	return res, err
 }
 
-// Delete a list by list ID.
+// Deletes a list, halting sends that target it. A previously deleted list can be
+// brought back with the companion restore endpoint.
 func (r *ListService) Delete(ctx context.Context, listID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -86,7 +90,8 @@ func (r *ListService) Delete(ctx context.Context, listID string, opts ...option.
 	return err
 }
 
-// Restore a previously deleted list.
+// Restores a previously deleted list along with its subscribers, so a list removed
+// by mistake can be brought back rather than rebuilt.
 func (r *ListService) Restore(ctx context.Context, listID string, body ListRestoreParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)

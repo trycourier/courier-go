@@ -48,8 +48,8 @@ func (r *RoutingStrategyService) New(ctx context.Context, body RoutingStrategyNe
 	return res, err
 }
 
-// Retrieve a routing strategy by ID. Returns the full entity including routing
-// content and metadata.
+// Returns one routing strategy by id with its name, tags, channels, and the
+// routing rules that decide provider order and fallback.
 func (r *RoutingStrategyService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *RoutingStrategyGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -85,8 +85,8 @@ func (r *RoutingStrategyService) Archive(ctx context.Context, id string, opts ..
 	return err
 }
 
-// List notification templates associated with a routing strategy. Includes
-// template metadata only, not full content.
+// Returns the notification templates using a routing strategy, with paging. Check
+// this before changing a strategy that templates depend on.
 func (r *RoutingStrategyService) ListNotifications(ctx context.Context, id string, query RoutingStrategyListNotificationsParams, opts ...option.RequestOption) (res *AssociatedNotificationListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {

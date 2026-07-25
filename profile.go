@@ -38,8 +38,8 @@ func NewProfileService(opts ...option.RequestOption) (r ProfileService) {
 	return
 }
 
-// Merge the supplied values with an existing profile or create a new profile if
-// one doesn't already exist.
+// Merges the supplied values into a user's profile, creating it if absent and
+// leaving any key you omit untouched. Prefer this for everyday writes.
 func (r *ProfileService) New(ctx context.Context, userID string, body ProfileNewParams, opts ...option.RequestOption) (res *ProfileNewResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
@@ -51,7 +51,8 @@ func (r *ProfileService) New(ctx context.Context, userID string, body ProfileNew
 	return res, err
 }
 
-// Returns the specified user profile.
+// Returns a user's stored profile and preferences, including the email address,
+// phone number, and push tokens Courier can reach them on.
 func (r *ProfileService) Get(ctx context.Context, userID string, opts ...option.RequestOption) (res *ProfileGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
@@ -63,7 +64,8 @@ func (r *ProfileService) Get(ctx context.Context, userID string, opts ...option.
 	return res, err
 }
 
-// Update a profile
+// Applies a JSON Patch to a user profile, adding, removing, or replacing
+// individual fields without sending the whole object.
 func (r *ProfileService) Update(ctx context.Context, userID string, body ProfileUpdateParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -76,7 +78,8 @@ func (r *ProfileService) Update(ctx context.Context, userID string, body Profile
 	return err
 }
 
-// Deletes the specified user profile.
+// Deletes a user's profile and stored contact details. List subscriptions and
+// preferences are separate resources, so remove those too if required.
 func (r *ProfileService) Delete(ctx context.Context, userID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -89,11 +92,8 @@ func (r *ProfileService) Delete(ctx context.Context, userID string, opts ...opti
 	return err
 }
 
-// When using `PUT`, be sure to include all the key-value pairs required by the
-// recipient's profile. Any key-value pairs that exist in the profile but fail to
-// be included in the `PUT` request will be removed from the profile. Remember, a
-// `PUT` update is a full replacement of the data. For partial updates, use the
-// [Patch](https://www.courier.com/docs/reference/profiles/patch/) request.
+// Overwrites a user profile in full, removing any key absent from the request
+// body. Use the patch endpoint when changing a single field.
 func (r *ProfileService) Replace(ctx context.Context, userID string, body ProfileReplaceParams, opts ...option.RequestOption) (res *ProfileReplaceResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {

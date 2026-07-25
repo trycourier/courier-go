@@ -39,9 +39,8 @@ func NewWorkspacePreferenceService(opts ...option.RequestOption) (r WorkspacePre
 	return
 }
 
-// Create a workspace preference. The workspace preference id is generated and
-// returned. Topics are created inside a workspace preference via POST
-// /preferences/sections/{section_id}/topics.
+// Creates a workspace preference and returns its generated id. Add subscription
+// topics to it afterwards with the topics endpoint.
 func (r *WorkspacePreferenceService) New(ctx context.Context, body WorkspacePreferenceNewParams, opts ...option.RequestOption) (res *WorkspacePreferenceGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "preferences/sections"
@@ -49,7 +48,8 @@ func (r *WorkspacePreferenceService) New(ctx context.Context, body WorkspacePref
 	return res, err
 }
 
-// Retrieve a workspace preference by id, including its topics.
+// Returns one workspace preference by id, including its subscription topics,
+// routing options, and custom routing flag.
 func (r *WorkspacePreferenceService) Get(ctx context.Context, sectionID string, opts ...option.RequestOption) (res *WorkspacePreferenceGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if sectionID == "" {
@@ -61,8 +61,8 @@ func (r *WorkspacePreferenceService) Get(ctx context.Context, sectionID string, 
 	return res, err
 }
 
-// List the workspace's preferences. Each workspace preference embeds its topics.
-// Scoped to the workspace of the API key.
+// Returns the workspace's preferences, each embedding its subscription topics,
+// routing options, and whether custom routing is allowed.
 func (r *WorkspacePreferenceService) List(ctx context.Context, opts ...option.RequestOption) (res *WorkspacePreferenceListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "preferences/sections"
@@ -84,9 +84,8 @@ func (r *WorkspacePreferenceService) Archive(ctx context.Context, sectionID stri
 	return err
 }
 
-// Publish the workspace's preferences page. Takes a snapshot of every workspace
-// preference with its topics under a new published version, making the current
-// state visible on the hosted preferences page (non-draft).
+// Publishes the workspace preference page, snapshotting every preference and
+// topic, and returns the page id and a preview URL.
 func (r *WorkspacePreferenceService) Publish(ctx context.Context, body WorkspacePreferencePublishParams, opts ...option.RequestOption) (res *PublishPreferencesResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "preferences/publish"

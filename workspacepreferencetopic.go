@@ -34,9 +34,8 @@ func NewWorkspacePreferenceTopicService(opts ...option.RequestOption) (r Workspa
 	return
 }
 
-// Create a subscription preference topic inside a workspace preference. Fails with
-// 404 if the workspace preference does not exist. The topic id is generated and
-// returned.
+// Creates a subscription topic inside a workspace preference. The default status
+// sets whether users start opted in, opted out, or required.
 func (r *WorkspacePreferenceTopicService) New(ctx context.Context, sectionID string, body WorkspacePreferenceTopicNewParams, opts ...option.RequestOption) (res *WorkspacePreferenceTopicGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if sectionID == "" {
@@ -48,9 +47,8 @@ func (r *WorkspacePreferenceTopicService) New(ctx context.Context, sectionID str
 	return res, err
 }
 
-// Retrieve a topic within a workspace preference. Returns 404 if the workspace
-// preference does not exist, the topic does not exist, or the topic belongs to a
-// different workspace preference.
+// Returns one subscription topic with its default status, routing options, allowed
+// preferences, and unsubscribe header setting.
 func (r *WorkspacePreferenceTopicService) Get(ctx context.Context, topicID string, query WorkspacePreferenceTopicGetParams, opts ...option.RequestOption) (res *WorkspacePreferenceTopicGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if query.SectionID == "" {
@@ -66,7 +64,8 @@ func (r *WorkspacePreferenceTopicService) Get(ctx context.Context, topicID strin
 	return res, err
 }
 
-// List the topics in a workspace preference.
+// Returns the subscription topics inside a workspace preference, each with its
+// default status and routing options.
 func (r *WorkspacePreferenceTopicService) List(ctx context.Context, sectionID string, opts ...option.RequestOption) (res *WorkspacePreferenceTopicListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if sectionID == "" {
@@ -78,8 +77,8 @@ func (r *WorkspacePreferenceTopicService) List(ctx context.Context, sectionID st
 	return res, err
 }
 
-// Archive a topic and remove it from its workspace preference. Same 404 rules as
-// GET.
+// Archives a subscription topic and removes it from its workspace preference,
+// addressed by section id and topic id.
 func (r *WorkspacePreferenceTopicService) Archive(ctx context.Context, topicID string, body WorkspacePreferenceTopicArchiveParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
