@@ -41,10 +41,16 @@ func NewWorkspacePreferenceService(opts ...option.RequestOption) (r WorkspacePre
 
 // Creates a workspace preference and returns its generated id. Add subscription
 // topics to it afterwards with the topics endpoint.
-func (r *WorkspacePreferenceService) New(ctx context.Context, body WorkspacePreferenceNewParams, opts ...option.RequestOption) (res *WorkspacePreferenceGetResponse, err error) {
+func (r *WorkspacePreferenceService) New(ctx context.Context, params WorkspacePreferenceNewParams, opts ...option.RequestOption) (res *WorkspacePreferenceGetResponse, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "preferences/sections"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
@@ -86,10 +92,16 @@ func (r *WorkspacePreferenceService) Archive(ctx context.Context, sectionID stri
 
 // Publishes the workspace preference page, snapshotting every preference and
 // topic, and returns the page id and a preview URL.
-func (r *WorkspacePreferenceService) Publish(ctx context.Context, body WorkspacePreferencePublishParams, opts ...option.RequestOption) (res *PublishPreferencesResponse, err error) {
+func (r *WorkspacePreferenceService) Publish(ctx context.Context, params WorkspacePreferencePublishParams, opts ...option.RequestOption) (res *PublishPreferencesResponse, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "preferences/publish"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
@@ -439,6 +451,8 @@ const (
 type WorkspacePreferenceNewParams struct {
 	// Request body for creating a workspace preference.
 	WorkspacePreferenceCreateRequest WorkspacePreferenceCreateRequestParam
+	IdempotencyKey                   param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration           param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
 	paramObj
 }
 
@@ -450,6 +464,8 @@ func (r *WorkspacePreferenceNewParams) UnmarshalJSON(data []byte) error {
 }
 
 type WorkspacePreferencePublishParams struct {
+	IdempotencyKey         param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
 	// Optional page metadata to apply when publishing the workspace's preferences
 	// page. All fields are optional; omitted fields fall back to the page defaults
 	// (and the workspace default brand).

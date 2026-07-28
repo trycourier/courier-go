@@ -61,6 +61,8 @@ func TestJourneyTemplateNewWithOptionalParams(t *testing.T) {
 				ProviderKey: courier.String("x"),
 				State:       courier.String("state"),
 			},
+			IdempotencyKey:         courier.String("order-ORD-456-user-123"),
+			XIdempotencyExpiration: courier.String("1785312000"),
 		},
 	)
 	if err != nil {
@@ -210,6 +212,8 @@ func TestJourneyTemplatePublishWithOptionalParams(t *testing.T) {
 			JourneyTemplatePublishRequest: courier.JourneyTemplatePublishRequestParam{
 				Version: courier.String("v321669910225"),
 			},
+			IdempotencyKey:         courier.String("order-ORD-456-user-123"),
+			XIdempotencyExpiration: courier.String("1785312000"),
 		},
 	)
 	if err != nil {

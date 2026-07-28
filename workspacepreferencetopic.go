@@ -13,6 +13,7 @@ import (
 	shimjson "github.com/trycourier/courier-go/v4/internal/encoding/json"
 	"github.com/trycourier/courier-go/v4/internal/requestconfig"
 	"github.com/trycourier/courier-go/v4/option"
+	"github.com/trycourier/courier-go/v4/packages/param"
 )
 
 // WorkspacePreferenceTopicService contains methods and other services that help
@@ -36,14 +37,20 @@ func NewWorkspacePreferenceTopicService(opts ...option.RequestOption) (r Workspa
 
 // Creates a subscription topic inside a workspace preference. The default status
 // sets whether users start opted in, opted out, or required.
-func (r *WorkspacePreferenceTopicService) New(ctx context.Context, sectionID string, body WorkspacePreferenceTopicNewParams, opts ...option.RequestOption) (res *WorkspacePreferenceTopicGetResponse, err error) {
+func (r *WorkspacePreferenceTopicService) New(ctx context.Context, sectionID string, params WorkspacePreferenceTopicNewParams, opts ...option.RequestOption) (res *WorkspacePreferenceTopicGetResponse, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if sectionID == "" {
 		err = errors.New("missing required section_id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("preferences/sections/%s/topics", sectionID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
@@ -115,6 +122,8 @@ func (r *WorkspacePreferenceTopicService) Replace(ctx context.Context, topicID s
 type WorkspacePreferenceTopicNewParams struct {
 	// Request body for creating a preference topic.
 	WorkspacePreferenceTopicCreateRequest WorkspacePreferenceTopicCreateRequestParam
+	IdempotencyKey                        param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration                param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
 	paramObj
 }
 

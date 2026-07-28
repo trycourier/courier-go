@@ -40,14 +40,20 @@ func NewProfileService(opts ...option.RequestOption) (r ProfileService) {
 
 // Merges the supplied values into a user's profile, creating it if absent and
 // leaving any key you omit untouched. Prefer this for everyday writes.
-func (r *ProfileService) New(ctx context.Context, userID string, body ProfileNewParams, opts ...option.RequestOption) (res *ProfileNewResponse, err error) {
+func (r *ProfileService) New(ctx context.Context, userID string, params ProfileNewParams, opts ...option.RequestOption) (res *ProfileNewResponse, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("profiles/%s", userID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
@@ -185,7 +191,9 @@ const (
 )
 
 type ProfileNewParams struct {
-	Profile map[string]any `json:"profile,omitzero" api:"required"`
+	Profile                map[string]any    `json:"profile,omitzero" api:"required"`
+	IdempotencyKey         param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
 	paramObj
 }
 

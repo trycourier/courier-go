@@ -53,7 +53,13 @@ func (r *ListSubscriptionService) List(ctx context.Context, listID string, query
 
 // Subscribes additional users to the list, without modifying existing
 // subscriptions. If the list does not exist, it will be automatically created.
-func (r *ListSubscriptionService) Add(ctx context.Context, listID string, body ListSubscriptionAddParams, opts ...option.RequestOption) (err error) {
+func (r *ListSubscriptionService) Add(ctx context.Context, listID string, params ListSubscriptionAddParams, opts ...option.RequestOption) (err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if listID == "" {
@@ -61,7 +67,7 @@ func (r *ListSubscriptionService) Add(ctx context.Context, listID string, body L
 		return err
 	}
 	path := fmt.Sprintf("lists/%s/subscriptions", listID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, nil, opts...)
 	return err
 }
 
@@ -169,7 +175,9 @@ func (r ListSubscriptionListParams) URLQuery() (v url.Values, err error) {
 }
 
 type ListSubscriptionAddParams struct {
-	Recipients []PutSubscriptionsRecipientParam `json:"recipients,omitzero" api:"required"`
+	Recipients             []PutSubscriptionsRecipientParam `json:"recipients,omitzero" api:"required"`
+	IdempotencyKey         param.Opt[string]                `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration param.Opt[string]                `header:"x-idempotency-expiration,omitzero" json:"-"`
 	paramObj
 }
 

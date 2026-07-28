@@ -41,10 +41,16 @@ func NewRoutingStrategyService(opts ...option.RequestOption) (r RoutingStrategyS
 
 // Create a routing strategy. Requires a name and routing configuration at minimum.
 // Channels and providers default to empty if omitted.
-func (r *RoutingStrategyService) New(ctx context.Context, body RoutingStrategyNewParams, opts ...option.RequestOption) (res *RoutingStrategyGetResponse, err error) {
+func (r *RoutingStrategyService) New(ctx context.Context, params RoutingStrategyNewParams, opts ...option.RequestOption) (res *RoutingStrategyGetResponse, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "routing-strategies"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
@@ -295,6 +301,8 @@ func (r *RoutingStrategySummary) UnmarshalJSON(data []byte) error {
 type RoutingStrategyNewParams struct {
 	// Request body for creating a routing strategy.
 	RoutingStrategyCreateRequest RoutingStrategyCreateRequestParam
+	IdempotencyKey               param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration       param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
 	paramObj
 }
 

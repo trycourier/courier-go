@@ -36,33 +36,47 @@ func NewAutomationInvokeService(opts ...option.RequestOption) (r AutomationInvok
 
 // Runs a series of automation steps supplied inline, without a saved template, and
 // returns a runId.
-func (r *AutomationInvokeService) InvokeAdHoc(ctx context.Context, body AutomationInvokeInvokeAdHocParams, opts ...option.RequestOption) (res *AutomationInvokeResponse, err error) {
+func (r *AutomationInvokeService) InvokeAdHoc(ctx context.Context, params AutomationInvokeInvokeAdHocParams, opts ...option.RequestOption) (res *AutomationInvokeResponse, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "automations/invoke"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Starts an automation run from a saved template for one recipient, with optional
 // data and profile, and returns a runId.
-func (r *AutomationInvokeService) InvokeByTemplate(ctx context.Context, templateID string, body AutomationInvokeInvokeByTemplateParams, opts ...option.RequestOption) (res *AutomationInvokeResponse, err error) {
+func (r *AutomationInvokeService) InvokeByTemplate(ctx context.Context, templateID string, params AutomationInvokeInvokeByTemplateParams, opts ...option.RequestOption) (res *AutomationInvokeResponse, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if templateID == "" {
 		err = errors.New("missing required templateId parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("automations/%s/invoke", templateID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 type AutomationInvokeInvokeAdHocParams struct {
-	Automation AutomationInvokeInvokeAdHocParamsAutomation `json:"automation,omitzero" api:"required"`
-	Brand      param.Opt[string]                           `json:"brand,omitzero"`
-	Recipient  param.Opt[string]                           `json:"recipient,omitzero"`
-	Template   param.Opt[string]                           `json:"template,omitzero"`
-	Data       map[string]any                              `json:"data,omitzero"`
-	Profile    map[string]any                              `json:"profile,omitzero"`
+	Automation             AutomationInvokeInvokeAdHocParamsAutomation `json:"automation,omitzero" api:"required"`
+	Brand                  param.Opt[string]                           `json:"brand,omitzero"`
+	Recipient              param.Opt[string]                           `json:"recipient,omitzero"`
+	Template               param.Opt[string]                           `json:"template,omitzero"`
+	IdempotencyKey         param.Opt[string]                           `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration param.Opt[string]                           `header:"x-idempotency-expiration,omitzero" json:"-"`
+	Data                   map[string]any                              `json:"data,omitzero"`
+	Profile                map[string]any                              `json:"profile,omitzero"`
 	paramObj
 }
 
@@ -464,11 +478,13 @@ func init() {
 }
 
 type AutomationInvokeInvokeByTemplateParams struct {
-	Recipient param.Opt[string] `json:"recipient,omitzero" api:"required"`
-	Brand     param.Opt[string] `json:"brand,omitzero"`
-	Template  param.Opt[string] `json:"template,omitzero"`
-	Data      map[string]any    `json:"data,omitzero"`
-	Profile   map[string]any    `json:"profile,omitzero"`
+	Recipient              param.Opt[string] `json:"recipient,omitzero" api:"required"`
+	Brand                  param.Opt[string] `json:"brand,omitzero"`
+	Template               param.Opt[string] `json:"template,omitzero"`
+	IdempotencyKey         param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
+	Data                   map[string]any    `json:"data,omitzero"`
+	Profile                map[string]any    `json:"profile,omitzero"`
 	paramObj
 }
 
