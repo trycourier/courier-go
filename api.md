@@ -389,6 +389,15 @@ Methods:
 - <code title="put /lists/{list_id}/subscriptions/{user_id}">client.Lists.Subscriptions.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#ListSubscriptionService.SubscribeUser">SubscribeUser</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, userID <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#ListSubscriptionSubscribeUserParams">ListSubscriptionSubscribeUserParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 - <code title="delete /lists/{list_id}/subscriptions/{user_id}">client.Lists.Subscriptions.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#ListSubscriptionService.UnsubscribeUser">UnsubscribeUser</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, userID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#ListSubscriptionUnsubscribeUserParams">ListSubscriptionUnsubscribeUserParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 
+# Inbox
+
+## Messages
+
+Methods:
+
+- <code title="delete /inbox/messages/{message_id}">client.Inbox.Messages.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#InboxMessageService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, messageID <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
+- <code title="put /inbox/messages/{message_id}/restore">client.Inbox.Messages.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#InboxMessageService.Restore">Restore</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, messageID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#InboxMessageRestoreParams">InboxMessageRestoreParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
+
 # Messages
 
 Response Types:
