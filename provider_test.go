@@ -32,7 +32,9 @@ func TestProviderNewWithOptionalParams(t *testing.T) {
 		Settings: map[string]any{
 			"foo": "bar",
 		},
-		Title: courier.String("title"),
+		Title:                  courier.String("title"),
+		IdempotencyKey:         courier.String("order-ORD-456-user-123"),
+		XIdempotencyExpiration: courier.String("1785312000"),
 	})
 	if err != nil {
 		var apierr *courier.Error

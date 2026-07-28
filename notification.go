@@ -44,10 +44,16 @@ func NewNotificationService(opts ...option.RequestOption) (r NotificationService
 
 // Create a notification template. Requires all fields in the notification object.
 // Templates are created in draft state by default.
-func (r *NotificationService) New(ctx context.Context, body NotificationNewParams, opts ...option.RequestOption) (res *NotificationTemplateResponse, err error) {
+func (r *NotificationService) New(ctx context.Context, params NotificationNewParams, opts ...option.RequestOption) (res *NotificationTemplateResponse, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "notifications"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
@@ -116,7 +122,13 @@ func (r *NotificationService) ListVersions(ctx context.Context, id string, query
 
 // Publish a notification template. Publishes the current draft by default. Pass a
 // version in the request body to publish a specific historical version.
-func (r *NotificationService) Publish(ctx context.Context, id string, body NotificationPublishParams, opts ...option.RequestOption) (err error) {
+func (r *NotificationService) Publish(ctx context.Context, id string, params NotificationPublishParams, opts ...option.RequestOption) (err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if id == "" {
@@ -124,7 +136,7 @@ func (r *NotificationService) Publish(ctx context.Context, id string, body Notif
 		return err
 	}
 	path := fmt.Sprintf("notifications/%s/publish", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, nil, opts...)
 	return err
 }
 
@@ -1362,6 +1374,8 @@ func (r *NotificationGetContentResponseUnion) UnmarshalJSON(data []byte) error {
 type NotificationNewParams struct {
 	// Request body for creating a notification template.
 	NotificationTemplateCreateRequest NotificationTemplateCreateRequestParam
+	IdempotencyKey                    param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration            param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
 	paramObj
 }
 
@@ -1423,6 +1437,8 @@ func (r NotificationListVersionsParams) URLQuery() (v url.Values, err error) {
 }
 
 type NotificationPublishParams struct {
+	IdempotencyKey         param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
 	// Optional request body for publishing a notification template. Omit or send an
 	// empty object to publish the current draft.
 	NotificationTemplatePublishRequest NotificationTemplatePublishRequestParam

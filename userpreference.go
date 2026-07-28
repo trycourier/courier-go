@@ -67,6 +67,12 @@ func (r *UserPreferenceService) BulkReplace(ctx context.Context, userID string, 
 // Adds or updates a user's preferences for several subscription topics at once.
 // Topics you leave out keep whatever they were set to before.
 func (r *UserPreferenceService) BulkUpdate(ctx context.Context, userID string, params UserPreferenceBulkUpdateParams, opts ...option.RequestOption) (res *UserPreferenceBulkUpdateResponse, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
@@ -395,7 +401,9 @@ type UserPreferenceBulkUpdateParams struct {
 	// single request.
 	Topics []UserPreferenceBulkUpdateParamsTopic `json:"topics,omitzero" api:"required"`
 	// Update the preferences of a user for this specific tenant context.
-	TenantID param.Opt[string] `query:"tenant_id,omitzero" json:"-"`
+	TenantID               param.Opt[string] `query:"tenant_id,omitzero" json:"-"`
+	IdempotencyKey         param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
 	paramObj
 }
 

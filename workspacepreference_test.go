@@ -34,6 +34,8 @@ func TestWorkspacePreferenceNewWithOptionalParams(t *testing.T) {
 			HasCustomRouting: courier.Bool(true),
 			RoutingOptions:   []shared.ChannelClassification{shared.ChannelClassificationDirectMessage},
 		},
+		IdempotencyKey:         courier.String("order-ORD-456-user-123"),
+		XIdempotencyExpiration: courier.String("1785312000"),
 	})
 	if err != nil {
 		var apierr *courier.Error
@@ -132,6 +134,8 @@ func TestWorkspacePreferencePublishWithOptionalParams(t *testing.T) {
 			Description: courier.String("description"),
 			Heading:     courier.String("heading"),
 		},
+		IdempotencyKey:         courier.String("order-ORD-456-user-123"),
+		XIdempotencyExpiration: courier.String("1785312000"),
 	})
 	if err != nil {
 		var apierr *courier.Error

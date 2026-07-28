@@ -39,14 +39,20 @@ func NewJourneyTemplateService(opts ...option.RequestOption) (r JourneyTemplateS
 
 // Create a notification template scoped to this journey. Defaults to `DRAFT`
 // state; pass `state: "PUBLISHED"` to publish on create.
-func (r *JourneyTemplateService) New(ctx context.Context, templateID string, body JourneyTemplateNewParams, opts ...option.RequestOption) (res *JourneyTemplateGetResponse, err error) {
+func (r *JourneyTemplateService) New(ctx context.Context, templateID string, params JourneyTemplateNewParams, opts ...option.RequestOption) (res *JourneyTemplateGetResponse, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if templateID == "" {
 		err = errors.New("missing required templateId parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("journeys/%s/templates", templateID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
@@ -118,6 +124,12 @@ func (r *JourneyTemplateService) ListVersions(ctx context.Context, notificationI
 // Publishes a journey-scoped template's draft as a new version. Pass a version
 // instead to roll back the template to an earlier publish.
 func (r *JourneyTemplateService) Publish(ctx context.Context, notificationID string, params JourneyTemplatePublishParams, opts ...option.RequestOption) (err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if params.TemplateID == "" {
@@ -208,6 +220,8 @@ func (r *JourneyTemplateService) GetContent(ctx context.Context, notificationID 
 type JourneyTemplateNewParams struct {
 	// Request body for creating a notification template scoped to a journey.
 	JourneyTemplateCreateRequest JourneyTemplateCreateRequestParam
+	IdempotencyKey               param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration       param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
 	paramObj
 }
 
@@ -251,7 +265,9 @@ type JourneyTemplateListVersionsParams struct {
 }
 
 type JourneyTemplatePublishParams struct {
-	TemplateID string `path:"templateId" api:"required" json:"-"`
+	TemplateID             string            `path:"templateId" api:"required" json:"-"`
+	IdempotencyKey         param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
 	// Request body for publishing a journey-scoped notification template. Pass
 	// `version` to roll back to a prior version; omit to publish the current draft.
 	JourneyTemplatePublishRequest JourneyTemplatePublishRequestParam

@@ -41,10 +41,16 @@ func NewBrandService(opts ...option.RequestOption) (r BrandService) {
 
 // Creates a brand from a name and settings, including primary and secondary
 // colors. Brands supply the logo, colors, and styling that templates render with.
-func (r *BrandService) New(ctx context.Context, body BrandNewParams, opts ...option.RequestOption) (res *Brand, err error) {
+func (r *BrandService) New(ctx context.Context, params BrandNewParams, opts ...option.RequestOption) (res *Brand, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "brands"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
@@ -772,10 +778,12 @@ func (r *BrandListResponse) UnmarshalJSON(data []byte) error {
 }
 
 type BrandNewParams struct {
-	Name     string             `json:"name" api:"required"`
-	Settings BrandSettingsParam `json:"settings,omitzero" api:"required"`
-	ID       param.Opt[string]  `json:"id,omitzero"`
-	Snippets BrandSnippetsParam `json:"snippets,omitzero"`
+	Name                   string             `json:"name" api:"required"`
+	Settings               BrandSettingsParam `json:"settings,omitzero" api:"required"`
+	ID                     param.Opt[string]  `json:"id,omitzero"`
+	IdempotencyKey         param.Opt[string]  `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration param.Opt[string]  `header:"x-idempotency-expiration,omitzero" json:"-"`
+	Snippets               BrandSnippetsParam `json:"snippets,omitzero"`
 	paramObj
 }
 

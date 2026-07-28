@@ -57,6 +57,8 @@ func TestJourneyNewWithOptionalParams(t *testing.T) {
 			Enabled: courier.Bool(true),
 			State:   courier.JourneyStateDraft,
 		},
+		IdempotencyKey:         courier.String("order-ORD-456-user-123"),
+		XIdempotencyExpiration: courier.String("1785312000"),
 	})
 	if err != nil {
 		var apierr *courier.Error
@@ -145,7 +147,7 @@ func TestJourneyArchive(t *testing.T) {
 	}
 }
 
-func TestJourneyCancel(t *testing.T) {
+func TestJourneyCancelWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -164,6 +166,8 @@ func TestJourneyCancel(t *testing.T) {
 				CancelationToken: "order-1234",
 			},
 		},
+		IdempotencyKey:         courier.String("order-ORD-456-user-123"),
+		XIdempotencyExpiration: courier.String("1785312000"),
 	})
 	if err != nil {
 		var apierr *courier.Error
@@ -201,6 +205,8 @@ func TestJourneyInvokeWithOptionalParams(t *testing.T) {
 				},
 				UserID: courier.String("user-123"),
 			},
+			IdempotencyKey:         courier.String("order-ORD-456-user-123"),
+			XIdempotencyExpiration: courier.String("1785312000"),
 		},
 	)
 	if err != nil {
@@ -255,6 +261,8 @@ func TestJourneyPublishWithOptionalParams(t *testing.T) {
 			JourneyPublishRequest: courier.JourneyPublishRequestParam{
 				Version: courier.String("v321669910225"),
 			},
+			IdempotencyKey:         courier.String("order-ORD-456-user-123"),
+			XIdempotencyExpiration: courier.String("1785312000"),
 		},
 	)
 	if err != nil {

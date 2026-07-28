@@ -66,14 +66,20 @@ func (r *ProfileListService) Delete(ctx context.Context, userID string, opts ...
 
 // Subscribes a user to one or more lists, creating any list that does not yet
 // exist. Optional preferences apply to each subscription.
-func (r *ProfileListService) Subscribe(ctx context.Context, userID string, body ProfileListSubscribeParams, opts ...option.RequestOption) (res *ProfileListSubscribeResponse, err error) {
+func (r *ProfileListService) Subscribe(ctx context.Context, userID string, params ProfileListSubscribeParams, opts ...option.RequestOption) (res *ProfileListSubscribeResponse, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("profiles/%s/lists", userID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
@@ -186,7 +192,9 @@ func (r ProfileListGetParams) URLQuery() (v url.Values, err error) {
 }
 
 type ProfileListSubscribeParams struct {
-	Lists []SubscribeToListsRequestItemParam `json:"lists,omitzero" api:"required"`
+	Lists                  []SubscribeToListsRequestItemParam `json:"lists,omitzero" api:"required"`
+	IdempotencyKey         param.Opt[string]                  `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration param.Opt[string]                  `header:"x-idempotency-expiration,omitzero" json:"-"`
 	paramObj
 }
 

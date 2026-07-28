@@ -42,10 +42,16 @@ func NewProviderService(opts ...option.RequestOption) (r ProviderService) {
 
 // Configures a provider integration from a Courier provider key and its settings.
 // Check the catalog endpoint for the schema each provider expects.
-func (r *ProviderService) New(ctx context.Context, body ProviderNewParams, opts ...option.RequestOption) (res *Provider, err error) {
+func (r *ProviderService) New(ctx context.Context, params ProviderNewParams, opts ...option.RequestOption) (res *Provider, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "providers"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
@@ -218,7 +224,9 @@ type ProviderNewParams struct {
 	// Optional alias for this configuration.
 	Alias param.Opt[string] `json:"alias,omitzero"`
 	// Optional display title. Omit to use "Default Configuration".
-	Title param.Opt[string] `json:"title,omitzero"`
+	Title                  param.Opt[string] `json:"title,omitzero"`
+	IdempotencyKey         param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
 	// Provider-specific settings (snake_case keys). Defaults to an empty object when
 	// omitted. Use the catalog endpoint to discover required fields for a given
 	// provider — omitting a required field returns a 400 validation error.

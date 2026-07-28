@@ -45,10 +45,16 @@ func NewJourneyService(opts ...option.RequestOption) (r JourneyService) {
 
 // Creates a journey from a set of nodes, in draft state unless you pass a
 // published state. Send nodes cannot be included until their templates exist.
-func (r *JourneyService) New(ctx context.Context, body JourneyNewParams, opts ...option.RequestOption) (res *JourneyResponse, err error) {
+func (r *JourneyService) New(ctx context.Context, params JourneyNewParams, opts ...option.RequestOption) (res *JourneyResponse, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "journeys"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
@@ -90,23 +96,35 @@ func (r *JourneyService) Archive(ctx context.Context, templateID string, opts ..
 
 // Cancels in-flight journey runs, either every run sharing a cancelation token or
 // one run by id. Use it to stop a sequence when the event resolves.
-func (r *JourneyService) Cancel(ctx context.Context, body JourneyCancelParams, opts ...option.RequestOption) (res *CancelJourneyResponseUnion, err error) {
+func (r *JourneyService) Cancel(ctx context.Context, params JourneyCancelParams, opts ...option.RequestOption) (res *CancelJourneyResponseUnion, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "journeys/cancel"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
 // Starts a journey run for one user and returns a runId. Runs execute
 // asynchronously, so the response arrives before any message is sent.
-func (r *JourneyService) Invoke(ctx context.Context, templateID string, body JourneyInvokeParams, opts ...option.RequestOption) (res *JourneysInvokeResponse, err error) {
+func (r *JourneyService) Invoke(ctx context.Context, templateID string, params JourneyInvokeParams, opts ...option.RequestOption) (res *JourneysInvokeResponse, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if templateID == "" {
 		err = errors.New("missing required templateId parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("journeys/%s/invoke", templateID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
@@ -125,14 +143,20 @@ func (r *JourneyService) ListVersions(ctx context.Context, templateID string, op
 
 // Publishes a journey's current draft as a new version, making it live for new
 // runs. Pass a version instead to roll back to an earlier one.
-func (r *JourneyService) Publish(ctx context.Context, templateID string, body JourneyPublishParams, opts ...option.RequestOption) (res *JourneyResponse, err error) {
+func (r *JourneyService) Publish(ctx context.Context, templateID string, params JourneyPublishParams, opts ...option.RequestOption) (res *JourneyResponse, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if templateID == "" {
 		err = errors.New("missing required templateId parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("journeys/%s/publish", templateID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
@@ -3362,7 +3386,9 @@ func (r *JourneysListResponse) UnmarshalJSON(data []byte) error {
 
 type JourneyNewParams struct {
 	// Request body for creating a journey.
-	CreateJourneyRequest CreateJourneyRequestParam
+	CreateJourneyRequest   CreateJourneyRequestParam
+	IdempotencyKey         param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
 	paramObj
 }
 
@@ -3420,7 +3446,9 @@ type JourneyCancelParams struct {
 	// Request body for `POST /journeys/cancel`. Provide EXACTLY ONE of
 	// `cancelation_token` (cancels every run associated with the token) or `run_id`
 	// (cancels a single tenant-scoped run).
-	CancelJourneyRequest CancelJourneyRequestUnionParam
+	CancelJourneyRequest   CancelJourneyRequestUnionParam
+	IdempotencyKey         param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
 	paramObj
 }
 
@@ -3436,7 +3464,9 @@ type JourneyInvokeParams struct {
 	// profile with contact information. User identifiers can be provided via user_id
 	// field, or resolved from profile/data objects (user_id, userId, or anonymousId
 	// fields).
-	JourneysInvokeRequest JourneysInvokeRequestParam
+	JourneysInvokeRequest  JourneysInvokeRequestParam
+	IdempotencyKey         param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
 	paramObj
 }
 
@@ -3448,6 +3478,8 @@ func (r *JourneyInvokeParams) UnmarshalJSON(data []byte) error {
 }
 
 type JourneyPublishParams struct {
+	IdempotencyKey         param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
 	// Request body for publishing a journey. Pass `version` to roll back to a prior
 	// version; omit to publish the current draft.
 	JourneyPublishRequest JourneyPublishRequestParam

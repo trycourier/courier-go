@@ -106,7 +106,9 @@ func TestUserPreferenceBulkUpdateWithOptionalParams(t *testing.T) {
 				CustomRouting:    []shared.ChannelClassification{shared.ChannelClassificationDirectMessage},
 				HasCustomRouting: courier.Bool(true),
 			}},
-			TenantID: courier.String("tenant_id"),
+			TenantID:               courier.String("tenant_id"),
+			IdempotencyKey:         courier.String("order-ORD-456-user-123"),
+			XIdempotencyExpiration: courier.String("1785312000"),
 		},
 	)
 	if err != nil {
