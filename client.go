@@ -29,6 +29,7 @@ type Client struct {
 	Digests              DigestService
 	Inbound              InboundService
 	Lists                ListService
+	Inbox                InboxService
 	Messages             MessageService
 	Requests             RequestService
 	Notifications        NotificationService
@@ -81,6 +82,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Digests = NewDigestService(opts...)
 	r.Inbound = NewInboundService(opts...)
 	r.Lists = NewListService(opts...)
+	r.Inbox = NewInboxService(opts...)
 	r.Messages = NewMessageService(opts...)
 	r.Requests = NewRequestService(opts...)
 	r.Notifications = NewNotificationService(opts...)
