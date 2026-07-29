@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.22.0 (2026-07-29)
+
+Full Changelog: [v4.21.0...v4.22.0](https://github.com/trycourier/courier-go/compare/v4.21.0...v4.22.0)
+
+### Features
+
+* **broadcasts:** document Broadcasts CRUD REST API ([#170](https://github.com/trycourier/courier-go/issues/170)) ([db2aac2](https://github.com/trycourier/courier-go/commit/db2aac29d286040c64adcef7acdd586ee8993fd2))
+
 ## 4.21.0 (2026-07-29)
 
 Full Changelog: [v4.20.0...v4.21.0](https://github.com/trycourier/courier-go/compare/v4.20.0...v4.21.0)

@@ -38,7 +38,8 @@ type Client struct {
 	Automations AutomationService
 	// Build, version, publish, invoke, and cancel multi-step notification workflows,
 	// along with the templates scoped to them.
-	Journeys JourneyService
+	Journeys   JourneyService
+	Broadcasts BroadcastService
 	// Manage the logos, colors, and layout that give the templates you send a
 	// consistent look.
 	Brands  BrandService
@@ -113,6 +114,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Auth = NewAuthService(opts...)
 	r.Automations = NewAutomationService(opts...)
 	r.Journeys = NewJourneyService(opts...)
+	r.Broadcasts = NewBroadcastService(opts...)
 	r.Brands = NewBrandService(opts...)
 	r.Digests = NewDigestService(opts...)
 	r.Inbound = NewInboundService(opts...)
