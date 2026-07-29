@@ -15,6 +15,9 @@ import (
 	"github.com/trycourier/courier-go/v4/packages/param"
 )
 
+// Invoke a stored automation template or an ad hoc automation defined in the
+// request.
+//
 // AutomationInvokeService contains methods and other services that help with
 // interacting with the Courier API.
 //

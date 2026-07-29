@@ -16,6 +16,9 @@ import (
 	"github.com/trycourier/courier-go/v4/packages/param"
 )
 
+// Inspect what has accumulated in a digest schedule and release a digest ahead of
+// its next scheduled delivery.
+//
 // DigestScheduleService contains methods and other services that help with
 // interacting with the Courier API.
 //

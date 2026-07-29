@@ -15,6 +15,9 @@ import (
 	"github.com/trycourier/courier-go/v4/option"
 )
 
+// Manage tenants — the organizations, teams, or accounts your users belong to —
+// along with their users and default preferences.
+//
 // TenantPreferenceItemService contains methods and other services that help with
 // interacting with the Courier API.
 //

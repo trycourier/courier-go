@@ -18,6 +18,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Manage the workspace catalog of subscription topics, the sections that group
+// them, and publishing the preference page.
+//
 // WorkspacePreferenceService contains methods and other services that help with
 // interacting with the Courier API.
 //
@@ -26,7 +29,9 @@ import (
 // the [NewWorkspacePreferenceService] method instead.
 type WorkspacePreferenceService struct {
 	Options []option.RequestOption
-	Topics  WorkspacePreferenceTopicService
+	// Manage the workspace catalog of subscription topics, the sections that group
+	// them, and publishing the preference page.
+	Topics WorkspacePreferenceTopicService
 }
 
 // NewWorkspacePreferenceService generates a new service that applies the given

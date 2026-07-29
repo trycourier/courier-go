@@ -19,6 +19,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Store the contact information Courier delivers to for each user — email, phone
+// number, push tokens, and any custom data you send to.
+//
 // ProfileListService contains methods and other services that help with
 // interacting with the Courier API.
 //

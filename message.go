@@ -19,6 +19,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Look up the messages Courier has accepted, inspect their delivery history and
+// rendered output, and cancel, resend, or archive them.
+//
 // MessageService contains methods and other services that help with interacting
 // with the Courier API.
 //

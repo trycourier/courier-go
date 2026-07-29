@@ -19,6 +19,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Define filter-based groups whose membership Courier recalculates as user
+// profiles change.
+//
 // AudienceService contains methods and other services that help with interacting
 // with the Courier API.
 //

@@ -22,6 +22,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Build, version, publish, invoke, and cancel multi-step notification workflows,
+// along with the templates scoped to them.
+//
 // JourneyService contains methods and other services that help with interacting
 // with the Courier API.
 //
@@ -29,7 +32,9 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewJourneyService] method instead.
 type JourneyService struct {
-	Options   []option.RequestOption
+	Options []option.RequestOption
+	// Build, version, publish, invoke, and cancel multi-step notification workflows,
+	// along with the templates scoped to them.
 	Templates JourneyTemplateService
 }
 

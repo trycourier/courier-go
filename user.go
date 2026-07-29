@@ -13,10 +13,16 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewUserService] method instead.
 type UserService struct {
-	Options     []option.RequestOption
+	Options []option.RequestOption
+	// Read and write a single user's notification preferences, per topic and per
+	// channel.
 	Preferences UserPreferenceService
-	Tenants     UserTenantService
-	Tokens      UserTokenService
+	// Associate a user with one or more tenants, and read or remove those
+	// associations.
+	Tenants UserTenantService
+	// Register and manage the APNS and FCM device tokens Courier delivers push
+	// notifications to.
+	Tokens UserTokenService
 }
 
 // NewUserService generates a new service that applies the given options to each

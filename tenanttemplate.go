@@ -20,6 +20,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Manage the templates and template versions scoped to a single tenant, including
+// the ones authored in the embedded designer.
+//
 // TenantTemplateService contains methods and other services that help with
 // interacting with the Courier API.
 //
@@ -27,7 +30,9 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewTenantTemplateService] method instead.
 type TenantTemplateService struct {
-	Options  []option.RequestOption
+	Options []option.RequestOption
+	// Manage the templates and template versions scoped to a single tenant, including
+	// the ones authored in the embedded designer.
 	Versions TenantTemplateVersionService
 }
 

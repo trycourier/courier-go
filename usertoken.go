@@ -17,6 +17,9 @@ import (
 	"github.com/trycourier/courier-go/v4/packages/respjson"
 )
 
+// Register and manage the APNS and FCM device tokens Courier delivers push
+// notifications to.
+//
 // UserTokenService contains methods and other services that help with interacting
 // with the Courier API.
 //

@@ -15,6 +15,9 @@ import (
 	"github.com/trycourier/courier-go/v4/option"
 )
 
+// Store and retrieve the translation strings Courier uses to render localized
+// template content.
+//
 // TranslationService contains methods and other services that help with
 // interacting with the Courier API.
 //

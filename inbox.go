@@ -13,7 +13,8 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewInboxService] method instead.
 type InboxService struct {
-	Options  []option.RequestOption
+	Options []option.RequestOption
+	// Manage the messages in a user's in-app inbox.
 	Messages InboxMessageService
 }
 

@@ -14,6 +14,8 @@ import (
 	"github.com/trycourier/courier-go/v4/packages/respjson"
 )
 
+// Record an inbound event that triggers the journeys and automations mapped to it.
+//
 // InboundService contains methods and other services that help with interacting
 // with the Courier API.
 //
