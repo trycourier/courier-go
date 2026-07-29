@@ -20,6 +20,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Create a one-off send to a list or audience, author its content, then send it
+// immediately or schedule it for later.
+//
 // BroadcastService contains methods and other services that help with interacting
 // with the Courier API.
 //
