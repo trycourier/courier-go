@@ -17,6 +17,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Configure the channel providers Courier delivers through, and browse the
+// provider types it supports.
+//
 // ProviderCatalogService contains methods and other services that help with
 // interacting with the Courier API.
 //

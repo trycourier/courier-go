@@ -16,6 +16,9 @@ import (
 	"github.com/trycourier/courier-go/v4/packages/respjson"
 )
 
+// Create, update, version, publish, and localize notification templates and their
+// content.
+//
 // NotificationCheckService contains methods and other services that help with
 // interacting with the Courier API.
 //

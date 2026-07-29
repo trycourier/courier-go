@@ -16,6 +16,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Send a message to one or more recipients — users, lists, audiences, or tenants —
+// across every channel you have configured.
+//
 // SendService contains methods and other services that help with interacting with
 // the Courier API.
 //

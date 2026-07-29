@@ -15,7 +15,9 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewDigestService] method instead.
 type DigestService struct {
-	Options   []option.RequestOption
+	Options []option.RequestOption
+	// Inspect what has accumulated in a digest schedule and release a digest ahead of
+	// its next scheduled delivery.
 	Schedules DigestScheduleService
 }
 

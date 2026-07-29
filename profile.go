@@ -17,6 +17,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Store the contact information Courier delivers to for each user — email, phone
+// number, push tokens, and any custom data you send to.
+//
 // ProfileService contains methods and other services that help with interacting
 // with the Courier API.
 //
@@ -25,7 +28,9 @@ import (
 // the [NewProfileService] method instead.
 type ProfileService struct {
 	Options []option.RequestOption
-	Lists   ProfileListService
+	// Store the contact information Courier delivers to for each user — email, phone
+	// number, push tokens, and any custom data you send to.
+	Lists ProfileListService
 }
 
 // NewProfileService generates a new service that applies the given options to each

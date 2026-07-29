@@ -21,6 +21,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Create, update, version, publish, and localize notification templates and their
+// content.
+//
 // NotificationService contains methods and other services that help with
 // interacting with the Courier API.
 //
@@ -29,7 +32,9 @@ import (
 // the [NewNotificationService] method instead.
 type NotificationService struct {
 	Options []option.RequestOption
-	Checks  NotificationCheckService
+	// Create, update, version, publish, and localize notification templates and their
+	// content.
+	Checks NotificationCheckService
 }
 
 // NewNotificationService generates a new service that applies the given options to

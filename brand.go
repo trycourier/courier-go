@@ -20,6 +20,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Manage the logos, colors, and layout that give the templates you send a
+// consistent look.
+//
 // BrandService contains methods and other services that help with interacting with
 // the Courier API.
 //

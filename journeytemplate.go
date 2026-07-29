@@ -18,6 +18,9 @@ import (
 	"github.com/trycourier/courier-go/v4/packages/param"
 )
 
+// Build, version, publish, invoke, and cancel multi-step notification workflows,
+// along with the templates scoped to them.
+//
 // JourneyTemplateService contains methods and other services that help with
 // interacting with the Courier API.
 //

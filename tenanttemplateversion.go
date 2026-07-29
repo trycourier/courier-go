@@ -13,6 +13,9 @@ import (
 	"github.com/trycourier/courier-go/v4/option"
 )
 
+// Manage the templates and template versions scoped to a single tenant, including
+// the ones authored in the embedded designer.
+//
 // TenantTemplateVersionService contains methods and other services that help with
 // interacting with the Courier API.
 //

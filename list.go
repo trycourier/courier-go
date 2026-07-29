@@ -19,6 +19,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Manage static groups of users that you subscribe explicitly, and send to them by
+// list id or list pattern.
+//
 // ListService contains methods and other services that help with interacting with
 // the Courier API.
 //
@@ -26,7 +29,9 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewListService] method instead.
 type ListService struct {
-	Options       []option.RequestOption
+	Options []option.RequestOption
+	// Manage static groups of users that you subscribe explicitly, and send to them by
+	// list id or list pattern.
 	Subscriptions ListSubscriptionService
 }
 

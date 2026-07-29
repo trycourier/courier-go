@@ -20,6 +20,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Define reusable channel routing and failover strategies, and see which templates
+// use them.
+//
 // RoutingStrategyService contains methods and other services that help with
 // interacting with the Courier API.
 //

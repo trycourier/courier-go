@@ -19,6 +19,8 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Read the audit trail of configuration and access changes in your workspace.
+//
 // AuditEventService contains methods and other services that help with interacting
 // with the Courier API.
 //

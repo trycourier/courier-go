@@ -19,6 +19,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Read and write a single user's notification preferences, per topic and per
+// channel.
+//
 // UserPreferenceService contains methods and other services that help with
 // interacting with the Courier API.
 //

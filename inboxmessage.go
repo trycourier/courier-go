@@ -15,6 +15,8 @@ import (
 	"github.com/trycourier/courier-go/v4/packages/param"
 )
 
+// Manage the messages in a user's in-app inbox.
+//
 // InboxMessageService contains methods and other services that help with
 // interacting with the Courier API.
 //

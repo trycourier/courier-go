@@ -19,6 +19,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Configure the channel providers Courier delivers through, and browse the
+// provider types it supports.
+//
 // ProviderService contains methods and other services that help with interacting
 // with the Courier API.
 //
@@ -27,6 +30,8 @@ import (
 // the [NewProviderService] method instead.
 type ProviderService struct {
 	Options []option.RequestOption
+	// Configure the channel providers Courier delivers through, and browse the
+	// provider types it supports.
 	Catalog ProviderCatalogService
 }
 

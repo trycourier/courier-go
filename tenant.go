@@ -20,6 +20,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Manage tenants — the organizations, teams, or accounts your users belong to —
+// along with their users and default preferences.
+//
 // TenantService contains methods and other services that help with interacting
 // with the Courier API.
 //
@@ -29,7 +32,9 @@ import (
 type TenantService struct {
 	Options     []option.RequestOption
 	Preferences TenantPreferenceService
-	Templates   TenantTemplateService
+	// Manage the templates and template versions scoped to a single tenant, including
+	// the ones authored in the embedded designer.
+	Templates TenantTemplateService
 }
 
 // NewTenantService generates a new service that applies the given options to each
