@@ -14,6 +14,10 @@ import (
 	"github.com/trycourier/courier-go/v4/packages/respjson"
 )
 
+// Issue scoped, short-lived JWTs so client-side SDKs — Inbox, Preferences, and the
+// embedded designer — can call Courier as a single user. Server-side requests
+// authenticate with your workspace API key instead.
+//
 // AuthService contains methods and other services that help with interacting with
 // the Courier API.
 //
@@ -33,7 +37,8 @@ func NewAuthService(opts ...option.RequestOption) (r AuthService) {
 	return
 }
 
-// Returns a new access token.
+// Returns a JWT for authenticating client-side SDKs such as the Inbox. You supply
+// the scope and an expires_in duration, both required.
 func (r *AuthService) IssueToken(ctx context.Context, body AuthIssueTokenParams, opts ...option.RequestOption) (res *AuthIssueTokenResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "auth/issue-token"

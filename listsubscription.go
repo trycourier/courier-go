@@ -19,6 +19,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Manage static groups of users that you subscribe explicitly, and send to them by
+// list id or list pattern.
+//
 // ListSubscriptionService contains methods and other services that help with
 // interacting with the Courier API.
 //
@@ -38,7 +41,8 @@ func NewListSubscriptionService(opts ...option.RequestOption) (r ListSubscriptio
 	return
 }
 
-// Get the list's subscriptions.
+// Returns the users subscribed to a list with paging, each with the preferences
+// recorded for that subscription.
 func (r *ListSubscriptionService) List(ctx context.Context, listID string, query ListSubscriptionListParams, opts ...option.RequestOption) (res *ListSubscriptionListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if listID == "" {
@@ -52,7 +56,13 @@ func (r *ListSubscriptionService) List(ctx context.Context, listID string, query
 
 // Subscribes additional users to the list, without modifying existing
 // subscriptions. If the list does not exist, it will be automatically created.
-func (r *ListSubscriptionService) Add(ctx context.Context, listID string, body ListSubscriptionAddParams, opts ...option.RequestOption) (err error) {
+func (r *ListSubscriptionService) Add(ctx context.Context, listID string, params ListSubscriptionAddParams, opts ...option.RequestOption) (err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if listID == "" {
@@ -60,7 +70,7 @@ func (r *ListSubscriptionService) Add(ctx context.Context, listID string, body L
 		return err
 	}
 	path := fmt.Sprintf("lists/%s/subscriptions", listID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, nil, opts...)
 	return err
 }
 
@@ -78,8 +88,8 @@ func (r *ListSubscriptionService) Subscribe(ctx context.Context, listID string, 
 	return err
 }
 
-// Subscribe a user to an existing list (note: if the List does not exist, it will
-// be automatically created).
+// Subscribes one user to a list, creating the list if it does not yet exist.
+// Optional preferences apply to this subscription only.
 func (r *ListSubscriptionService) SubscribeUser(ctx context.Context, userID string, params ListSubscriptionSubscribeUserParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -96,7 +106,8 @@ func (r *ListSubscriptionService) SubscribeUser(ctx context.Context, userID stri
 	return err
 }
 
-// Delete a subscription to a list by list ID and user ID.
+// Removes one user's subscription to a list, addressed by list id and user id. The
+// user's profile and other subscriptions are separate resources.
 func (r *ListSubscriptionService) UnsubscribeUser(ctx context.Context, userID string, body ListSubscriptionUnsubscribeUserParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -167,7 +178,9 @@ func (r ListSubscriptionListParams) URLQuery() (v url.Values, err error) {
 }
 
 type ListSubscriptionAddParams struct {
-	Recipients []PutSubscriptionsRecipientParam `json:"recipients,omitzero" api:"required"`
+	Recipients             []PutSubscriptionsRecipientParam `json:"recipients,omitzero" api:"required"`
+	IdempotencyKey         param.Opt[string]                `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration param.Opt[string]                `header:"x-idempotency-expiration,omitzero" json:"-"`
 	paramObj
 }
 

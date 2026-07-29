@@ -20,6 +20,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Define reusable channel routing and failover strategies, and see which templates
+// use them.
+//
 // RoutingStrategyService contains methods and other services that help with
 // interacting with the Courier API.
 //
@@ -41,15 +44,21 @@ func NewRoutingStrategyService(opts ...option.RequestOption) (r RoutingStrategyS
 
 // Create a routing strategy. Requires a name and routing configuration at minimum.
 // Channels and providers default to empty if omitted.
-func (r *RoutingStrategyService) New(ctx context.Context, body RoutingStrategyNewParams, opts ...option.RequestOption) (res *RoutingStrategyGetResponse, err error) {
+func (r *RoutingStrategyService) New(ctx context.Context, params RoutingStrategyNewParams, opts ...option.RequestOption) (res *RoutingStrategyGetResponse, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "routing-strategies"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
-// Retrieve a routing strategy by ID. Returns the full entity including routing
-// content and metadata.
+// Returns one routing strategy by id with its name, tags, channels, and the
+// routing rules that decide provider order and fallback.
 func (r *RoutingStrategyService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *RoutingStrategyGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -85,8 +94,8 @@ func (r *RoutingStrategyService) Archive(ctx context.Context, id string, opts ..
 	return err
 }
 
-// List notification templates associated with a routing strategy. Includes
-// template metadata only, not full content.
+// Returns the notification templates using a routing strategy, with paging. Check
+// this before changing a strategy that templates depend on.
 func (r *RoutingStrategyService) ListNotifications(ctx context.Context, id string, query RoutingStrategyListNotificationsParams, opts ...option.RequestOption) (res *AssociatedNotificationListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -295,6 +304,8 @@ func (r *RoutingStrategySummary) UnmarshalJSON(data []byte) error {
 type RoutingStrategyNewParams struct {
 	// Request body for creating a routing strategy.
 	RoutingStrategyCreateRequest RoutingStrategyCreateRequestParam
+	IdempotencyKey               param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration       param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
 	paramObj
 }
 

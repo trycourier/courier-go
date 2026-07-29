@@ -4,6 +4,7 @@ package courier
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"slices"
 
@@ -15,6 +16,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Send a message to one or more recipients — users, lists, audiences, or tenants —
+// across every channel you have configured.
+//
 // SendService contains methods and other services that help with interacting with
 // the Courier API.
 //
@@ -34,11 +38,18 @@ func NewSendService(opts ...option.RequestOption) (r SendService) {
 	return
 }
 
-// Send a message to one or more recipients.
-func (r *SendService) Message(ctx context.Context, body SendMessageParams, opts ...option.RequestOption) (res *SendMessageResponse, err error) {
+// Sends a message to one or more recipients and returns a requestId. Courier
+// routes it to email, SMS, push, chat, or in-app based on your rules.
+func (r *SendService) Message(ctx context.Context, params SendMessageParams, opts ...option.RequestOption) (res *SendMessageResponse, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "send"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
@@ -65,7 +76,9 @@ func (r *SendMessageResponse) UnmarshalJSON(data []byte) error {
 type SendMessageParams struct {
 	// The message property has the following primary top-level properties. They define
 	// the destination and content of the message.
-	Message SendMessageParamsMessage `json:"message,omitzero" api:"required"`
+	Message                SendMessageParamsMessage `json:"message,omitzero" api:"required"`
+	IdempotencyKey         param.Opt[string]        `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration param.Opt[string]        `header:"x-idempotency-expiration,omitzero" json:"-"`
 	paramObj
 }
 

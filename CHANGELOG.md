@@ -1,5 +1,21 @@
 # Changelog
 
+## 4.21.0 (2026-07-29)
+
+Full Changelog: [v4.20.0...v4.21.0](https://github.com/trycourier/courier-go/compare/v4.20.0...v4.21.0)
+
+### Features
+
+* Document DELETE/PUT restore for inbox messages (C-19268) ([#175](https://github.com/trycourier/courier-go/issues/175)) ([d0a9614](https://github.com/trycourier/courier-go/commit/d0a96143e897d859c2041344a4fb2542b4b0ae9c))
+* spec: rename and reorder the API reference sections ([#179](https://github.com/trycourier/courier-go/issues/179)) ([df3c8e2](https://github.com/trycourier/courier-go/commit/df3c8e27dbc7aedc3f97997c6a6c284dd0b4bfe0))
+
+
+### Documentation
+
+* **openapi:** describe user topic-preference fields explicitly ([#172](https://github.com/trycourier/courier-go/issues/172)) ([3dc1ef3](https://github.com/trycourier/courier-go/commit/3dc1ef355f33024d26aec99819dcbe6e13dbf95d))
+* **openapi:** document Idempotency-Key header on idempotent POST endpoints ([#176](https://github.com/trycourier/courier-go/issues/176)) ([ccb6dd7](https://github.com/trycourier/courier-go/commit/ccb6dd72787226385115f83c42c09955b79e1cc2))
+* **openapi:** rewrite operation descriptions for agents and SEO ([#174](https://github.com/trycourier/courier-go/issues/174)) ([3ec82f8](https://github.com/trycourier/courier-go/commit/3ec82f84d82e399f9c0dce814416b0dd06294ff5))
+
 ## 4.20.0 (2026-07-23)
 
 Full Changelog: [v4.19.0...v4.20.0](https://github.com/trycourier/courier-go/compare/v4.19.0...v4.20.0)

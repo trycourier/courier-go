@@ -66,7 +66,7 @@ func TestProfileListDelete(t *testing.T) {
 	}
 }
 
-func TestProfileListSubscribe(t *testing.T) {
+func TestProfileListSubscribeWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -112,6 +112,8 @@ func TestProfileListSubscribe(t *testing.T) {
 					},
 				},
 			}},
+			IdempotencyKey:         courier.String("order-ORD-456-user-123"),
+			XIdempotencyExpiration: courier.String("1785312000"),
 		},
 	)
 	if err != nil {

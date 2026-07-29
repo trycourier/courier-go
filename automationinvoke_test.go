@@ -57,8 +57,10 @@ func TestAutomationInvokeInvokeAdHocWithOptionalParams(t *testing.T) {
 		Profile: map[string]any{
 			"tenant_id": "bar",
 		},
-		Recipient: courier.String("user-yes"),
-		Template:  courier.String("template"),
+		Recipient:              courier.String("user-yes"),
+		Template:               courier.String("template"),
+		IdempotencyKey:         courier.String("order-ORD-456-user-123"),
+		XIdempotencyExpiration: courier.String("1785312000"),
 	})
 	if err != nil {
 		var apierr *courier.Error
@@ -94,7 +96,9 @@ func TestAutomationInvokeInvokeByTemplateWithOptionalParams(t *testing.T) {
 			Profile: map[string]any{
 				"foo": "bar",
 			},
-			Template: courier.String("template"),
+			Template:               courier.String("template"),
+			IdempotencyKey:         courier.String("order-ORD-456-user-123"),
+			XIdempotencyExpiration: courier.String("1785312000"),
 		},
 	)
 	if err != nil {

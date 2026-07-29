@@ -17,6 +17,9 @@ import (
 	"github.com/trycourier/courier-go/v4/packages/respjson"
 )
 
+// Invoke a stored automation template or an ad hoc automation defined in the
+// request.
+//
 // AutomationService contains methods and other services that help with interacting
 // with the Courier API.
 //
@@ -25,7 +28,9 @@ import (
 // the [NewAutomationService] method instead.
 type AutomationService struct {
 	Options []option.RequestOption
-	Invoke  AutomationInvokeService
+	// Invoke a stored automation template or an ad hoc automation defined in the
+	// request.
+	Invoke AutomationInvokeService
 }
 
 // NewAutomationService generates a new service that applies the given options to
@@ -38,7 +43,8 @@ func NewAutomationService(opts ...option.RequestOption) (r AutomationService) {
 	return
 }
 
-// Get the list of automations.
+// Lists the workspace's saved automation templates, each with its id and a cursor
+// for paging to the next page of results.
 func (r *AutomationService) List(ctx context.Context, query AutomationListParams, opts ...option.RequestOption) (res *AutomationTemplateListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "automations"

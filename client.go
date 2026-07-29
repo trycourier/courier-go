@@ -17,27 +17,63 @@ import (
 // interacting with the Courier API. You should not instantiate this client
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options              []option.RequestOption
-	Send                 SendService
-	Audiences            AudienceService
-	Providers            ProviderService
-	AuditEvents          AuditEventService
-	Auth                 AuthService
-	Automations          AutomationService
-	Journeys             JourneyService
-	Brands               BrandService
-	Digests              DigestService
-	Inbound              InboundService
-	Lists                ListService
-	Messages             MessageService
-	Requests             RequestService
-	Notifications        NotificationService
-	RoutingStrategies    RoutingStrategyService
+	Options []option.RequestOption
+	// Send a message to one or more recipients — users, lists, audiences, or tenants —
+	// across every channel you have configured.
+	Send SendService
+	// Define filter-based groups whose membership Courier recalculates as user
+	// profiles change.
+	Audiences AudienceService
+	// Configure the channel providers Courier delivers through, and browse the
+	// provider types it supports.
+	Providers ProviderService
+	// Read the audit trail of configuration and access changes in your workspace.
+	AuditEvents AuditEventService
+	// Issue scoped, short-lived JWTs so client-side SDKs — Inbox, Preferences, and the
+	// embedded designer — can call Courier as a single user. Server-side requests
+	// authenticate with your workspace API key instead.
+	Auth AuthService
+	// Invoke a stored automation template or an ad hoc automation defined in the
+	// request.
+	Automations AutomationService
+	// Build, version, publish, invoke, and cancel multi-step notification workflows,
+	// along with the templates scoped to them.
+	Journeys JourneyService
+	// Manage the logos, colors, and layout that give the templates you send a
+	// consistent look.
+	Brands  BrandService
+	Digests DigestService
+	// Record an inbound event that triggers the journeys and automations mapped to it.
+	Inbound InboundService
+	// Manage static groups of users that you subscribe explicitly, and send to them by
+	// list id or list pattern.
+	Lists ListService
+	Inbox InboxService
+	// Look up the messages Courier has accepted, inspect their delivery history and
+	// rendered output, and cancel, resend, or archive them.
+	Messages MessageService
+	// Look up the messages Courier has accepted, inspect their delivery history and
+	// rendered output, and cancel, resend, or archive them.
+	Requests RequestService
+	// Create, update, version, publish, and localize notification templates and their
+	// content.
+	Notifications NotificationService
+	// Define reusable channel routing and failover strategies, and see which templates
+	// use them.
+	RoutingStrategies RoutingStrategyService
+	// Manage the workspace catalog of subscription topics, the sections that group
+	// them, and publishing the preference page.
 	WorkspacePreferences WorkspacePreferenceService
-	Profiles             ProfileService
-	Tenants              TenantService
-	Translations         TranslationService
-	Users                UserService
+	// Store the contact information Courier delivers to for each user — email, phone
+	// number, push tokens, and any custom data you send to.
+	Profiles ProfileService
+	// Manage tenants — the organizations, teams, or accounts your users belong to —
+	// along with their users and default preferences.
+	Tenants TenantService
+	// Store and retrieve the translation strings Courier uses to render localized
+	// template content.
+	Translations TranslationService
+	Users        UserService
 }
 
 // DefaultClientOptions read from the environment (COURIER_API_KEY,
@@ -81,6 +117,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Digests = NewDigestService(opts...)
 	r.Inbound = NewInboundService(opts...)
 	r.Lists = NewListService(opts...)
+	r.Inbox = NewInboxService(opts...)
 	r.Messages = NewMessageService(opts...)
 	r.Requests = NewRequestService(opts...)
 	r.Notifications = NewNotificationService(opts...)

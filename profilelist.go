@@ -19,6 +19,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Store the contact information Courier delivers to for each user — email, phone
+// number, push tokens, and any custom data you send to.
+//
 // ProfileListService contains methods and other services that help with
 // interacting with the Courier API.
 //
@@ -38,7 +41,8 @@ func NewProfileListService(opts ...option.RequestOption) (r ProfileListService) 
 	return
 }
 
-// Returns the subscribed lists for a specified user.
+// Returns the lists a user is subscribed to, with paging. Use it to check what a
+// recipient will receive before sending to a list.
 func (r *ProfileListService) Get(ctx context.Context, userID string, query ProfileListGetParams, opts ...option.RequestOption) (res *ProfileListGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
@@ -50,7 +54,8 @@ func (r *ProfileListService) Get(ctx context.Context, userID string, query Profi
 	return res, err
 }
 
-// Removes all list subscriptions for given user.
+// Removes every list subscription for a user at once. Their profile and
+// preferences are untouched, so this only affects list-targeted sends.
 func (r *ProfileListService) Delete(ctx context.Context, userID string, opts ...option.RequestOption) (res *ProfileListDeleteResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
@@ -62,16 +67,22 @@ func (r *ProfileListService) Delete(ctx context.Context, userID string, opts ...
 	return res, err
 }
 
-// Subscribes the given user to one or more lists. If the list does not exist, it
-// will be created.
-func (r *ProfileListService) Subscribe(ctx context.Context, userID string, body ProfileListSubscribeParams, opts ...option.RequestOption) (res *ProfileListSubscribeResponse, err error) {
+// Subscribes a user to one or more lists, creating any list that does not yet
+// exist. Optional preferences apply to each subscription.
+func (r *ProfileListService) Subscribe(ctx context.Context, userID string, params ProfileListSubscribeParams, opts ...option.RequestOption) (res *ProfileListSubscribeResponse, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("profiles/%s/lists", userID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
@@ -184,7 +195,9 @@ func (r ProfileListGetParams) URLQuery() (v url.Values, err error) {
 }
 
 type ProfileListSubscribeParams struct {
-	Lists []SubscribeToListsRequestItemParam `json:"lists,omitzero" api:"required"`
+	Lists                  []SubscribeToListsRequestItemParam `json:"lists,omitzero" api:"required"`
+	IdempotencyKey         param.Opt[string]                  `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration param.Opt[string]                  `header:"x-idempotency-expiration,omitzero" json:"-"`
 	paramObj
 }
 

@@ -17,6 +17,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Store the contact information Courier delivers to for each user — email, phone
+// number, push tokens, and any custom data you send to.
+//
 // ProfileService contains methods and other services that help with interacting
 // with the Courier API.
 //
@@ -25,7 +28,9 @@ import (
 // the [NewProfileService] method instead.
 type ProfileService struct {
 	Options []option.RequestOption
-	Lists   ProfileListService
+	// Store the contact information Courier delivers to for each user — email, phone
+	// number, push tokens, and any custom data you send to.
+	Lists ProfileListService
 }
 
 // NewProfileService generates a new service that applies the given options to each
@@ -38,20 +43,27 @@ func NewProfileService(opts ...option.RequestOption) (r ProfileService) {
 	return
 }
 
-// Merge the supplied values with an existing profile or create a new profile if
-// one doesn't already exist.
-func (r *ProfileService) New(ctx context.Context, userID string, body ProfileNewParams, opts ...option.RequestOption) (res *ProfileNewResponse, err error) {
+// Merges the supplied values into a user's profile, creating it if absent and
+// leaving any key you omit untouched. Prefer this for everyday writes.
+func (r *ProfileService) New(ctx context.Context, userID string, params ProfileNewParams, opts ...option.RequestOption) (res *ProfileNewResponse, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
 		err = errors.New("missing required user_id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("profiles/%s", userID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
-// Returns the specified user profile.
+// Returns a user's stored profile and preferences, including the email address,
+// phone number, and push tokens Courier can reach them on.
 func (r *ProfileService) Get(ctx context.Context, userID string, opts ...option.RequestOption) (res *ProfileGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
@@ -63,7 +75,8 @@ func (r *ProfileService) Get(ctx context.Context, userID string, opts ...option.
 	return res, err
 }
 
-// Update a profile
+// Applies a JSON Patch to a user profile, adding, removing, or replacing
+// individual fields without sending the whole object.
 func (r *ProfileService) Update(ctx context.Context, userID string, body ProfileUpdateParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -76,7 +89,8 @@ func (r *ProfileService) Update(ctx context.Context, userID string, body Profile
 	return err
 }
 
-// Deletes the specified user profile.
+// Deletes a user's profile and stored contact details. List subscriptions and
+// preferences are separate resources, so remove those too if required.
 func (r *ProfileService) Delete(ctx context.Context, userID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -89,11 +103,8 @@ func (r *ProfileService) Delete(ctx context.Context, userID string, opts ...opti
 	return err
 }
 
-// When using `PUT`, be sure to include all the key-value pairs required by the
-// recipient's profile. Any key-value pairs that exist in the profile but fail to
-// be included in the `PUT` request will be removed from the profile. Remember, a
-// `PUT` update is a full replacement of the data. For partial updates, use the
-// [Patch](https://www.courier.com/docs/reference/profiles/patch/) request.
+// Overwrites a user profile in full, removing any key absent from the request
+// body. Use the patch endpoint when changing a single field.
 func (r *ProfileService) Replace(ctx context.Context, userID string, body ProfileReplaceParams, opts ...option.RequestOption) (res *ProfileReplaceResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
@@ -185,7 +196,9 @@ const (
 )
 
 type ProfileNewParams struct {
-	Profile map[string]any `json:"profile,omitzero" api:"required"`
+	Profile                map[string]any    `json:"profile,omitzero" api:"required"`
+	IdempotencyKey         param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
 	paramObj
 }
 

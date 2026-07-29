@@ -17,6 +17,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Configure the channel providers Courier delivers through, and browse the
+// provider types it supports.
+//
 // ProviderCatalogService contains methods and other services that help with
 // interacting with the Courier API.
 //
@@ -36,10 +39,8 @@ func NewProviderCatalogService(opts ...option.RequestOption) (r ProviderCatalogS
 	return
 }
 
-// Returns the catalog of available provider types with their display names,
-// descriptions, and configuration schema fields (snake_case, with `type` and
-// `required`). Providers with no configurable schema return only `provider`,
-// `name`, and `description`.
+// Returns the provider types Courier supports, each with a display name,
+// description, and the configuration fields it requires.
 func (r *ProviderCatalogService) List(ctx context.Context, query ProviderCatalogListParams, opts ...option.RequestOption) (res *ProviderCatalogListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "providers/catalog"

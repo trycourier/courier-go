@@ -55,6 +55,8 @@ func TestNotificationNewWithOptionalParams(t *testing.T) {
 			},
 			State: courier.NotificationTemplateCreateRequestStateDraft,
 		},
+		IdempotencyKey:         courier.String("order-ORD-456-user-123"),
+		XIdempotencyExpiration: courier.String("1785312000"),
 	})
 	if err != nil {
 		var apierr *courier.Error
@@ -217,6 +219,8 @@ func TestNotificationPublishWithOptionalParams(t *testing.T) {
 			NotificationTemplatePublishRequest: courier.NotificationTemplatePublishRequestParam{
 				Version: courier.String("v321669910225"),
 			},
+			IdempotencyKey:         courier.String("order-ORD-456-user-123"),
+			XIdempotencyExpiration: courier.String("1785312000"),
 		},
 	)
 	if err != nil {

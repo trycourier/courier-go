@@ -14,7 +14,9 @@ import (
 // the [NewTenantPreferenceService] method instead.
 type TenantPreferenceService struct {
 	Options []option.RequestOption
-	Items   TenantPreferenceItemService
+	// Manage tenants — the organizations, teams, or accounts your users belong to —
+	// along with their users and default preferences.
+	Items TenantPreferenceItemService
 }
 
 // NewTenantPreferenceService generates a new service that applies the given

@@ -21,6 +21,9 @@ import (
 	"github.com/trycourier/courier-go/v4/shared"
 )
 
+// Create, update, version, publish, and localize notification templates and their
+// content.
+//
 // NotificationService contains methods and other services that help with
 // interacting with the Courier API.
 //
@@ -29,7 +32,9 @@ import (
 // the [NewNotificationService] method instead.
 type NotificationService struct {
 	Options []option.RequestOption
-	Checks  NotificationCheckService
+	// Create, update, version, publish, and localize notification templates and their
+	// content.
+	Checks NotificationCheckService
 }
 
 // NewNotificationService generates a new service that applies the given options to
@@ -44,10 +49,16 @@ func NewNotificationService(opts ...option.RequestOption) (r NotificationService
 
 // Create a notification template. Requires all fields in the notification object.
 // Templates are created in draft state by default.
-func (r *NotificationService) New(ctx context.Context, body NotificationNewParams, opts ...option.RequestOption) (res *NotificationTemplateResponse, err error) {
+func (r *NotificationService) New(ctx context.Context, params NotificationNewParams, opts ...option.RequestOption) (res *NotificationTemplateResponse, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	path := "notifications"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
@@ -64,7 +75,8 @@ func (r *NotificationService) Get(ctx context.Context, id string, query Notifica
 	return res, err
 }
 
-// List notification templates in your workspace.
+// Lists the workspace's notification templates. Each carries a name, tags, brand,
+// routing, and its draft or published state.
 func (r *NotificationService) List(ctx context.Context, query NotificationListParams, opts ...option.RequestOption) (res *NotificationListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "notifications"
@@ -72,7 +84,8 @@ func (r *NotificationService) List(ctx context.Context, query NotificationListPa
 	return res, err
 }
 
-// Archive a notification template.
+// Archives a notification template, preventing new sends from referencing it. The
+// template stays retrievable for its version history.
 func (r *NotificationService) Archive(ctx context.Context, id string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -85,12 +98,9 @@ func (r *NotificationService) Archive(ctx context.Context, id string, opts ...op
 	return err
 }
 
-// Duplicate a notification template. Creates a standalone copy within the same
-// workspace and environment, with " COPY" appended to the title. The copy clones
-// the source draft's tags, brand, subscription topic, routing strategy, channels,
-// and content, and is always created as a standalone template (it is not linked to
-// any journey or broadcast, even if the source was). Templates that are scoped to
-// a journey or a broadcast cannot be duplicated through this endpoint.
+// Copies a notification template within the same workspace and environment,
+// appending " COPY" to the title. The copy is standalone and independently
+// editable.
 func (r *NotificationService) Duplicate(ctx context.Context, id string, opts ...option.RequestOption) (res *NotificationTemplateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -102,7 +112,8 @@ func (r *NotificationService) Duplicate(ctx context.Context, id string, opts ...
 	return res, err
 }
 
-// List versions of a notification template.
+// Returns a notification template's published versions, most recent first, for
+// comparison or rollback. Paged.
 func (r *NotificationService) ListVersions(ctx context.Context, id string, query NotificationListVersionsParams, opts ...option.RequestOption) (res *NotificationTemplateVersionListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -116,7 +127,13 @@ func (r *NotificationService) ListVersions(ctx context.Context, id string, query
 
 // Publish a notification template. Publishes the current draft by default. Pass a
 // version in the request body to publish a specific historical version.
-func (r *NotificationService) Publish(ctx context.Context, id string, body NotificationPublishParams, opts ...option.RequestOption) (err error) {
+func (r *NotificationService) Publish(ctx context.Context, id string, params NotificationPublishParams, opts ...option.RequestOption) (err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if id == "" {
@@ -124,13 +141,12 @@ func (r *NotificationService) Publish(ctx context.Context, id string, body Notif
 		return err
 	}
 	path := fmt.Sprintf("notifications/%s/publish", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, nil, opts...)
 	return err
 }
 
-// Replace the elemental content of a notification template. Overwrites all
-// elements in the template with the provided content. Only supported for V2
-// (elemental) templates.
+// Replaces all Elemental content in a template, overwriting every existing
+// element. Supported for V2 templates only, not V1 blocks and channels.
 func (r *NotificationService) PutContent(ctx context.Context, id string, body NotificationPutContentParams, opts ...option.RequestOption) (res *NotificationContentMutationResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -142,8 +158,8 @@ func (r *NotificationService) PutContent(ctx context.Context, id string, body No
 	return res, err
 }
 
-// Update a single element within a notification template. Only supported for V2
-// (elemental) templates.
+// Replaces one Elemental element in a template, addressed by its element id.
+// Supported for V2 templates only, not V1 blocks and channels.
 func (r *NotificationService) PutElement(ctx context.Context, elementID string, params NotificationPutElementParams, opts ...option.RequestOption) (res *NotificationContentMutationResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if params.ID == "" {
@@ -159,9 +175,8 @@ func (r *NotificationService) PutElement(ctx context.Context, elementID string, 
 	return res, err
 }
 
-// Set locale-specific content overrides for a notification template. Each element
-// override must reference an existing element by ID. Only supported for V2
-// (elemental) templates.
+// Sets locale-specific content overrides for a template. Each override must
+// reference an element that already exists in the default content.
 func (r *NotificationService) PutLocale(ctx context.Context, localeID string, params NotificationPutLocaleParams, opts ...option.RequestOption) (res *NotificationContentMutationResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if params.ID == "" {
@@ -177,7 +192,8 @@ func (r *NotificationService) PutLocale(ctx context.Context, localeID string, pa
 	return res, err
 }
 
-// Replace a notification template. All fields are required.
+// Replaces a notification template in full, so send every field rather than only
+// the ones you want changed. Publish separately to make it live.
 func (r *NotificationService) Replace(ctx context.Context, id string, body NotificationReplaceParams, opts ...option.RequestOption) (res *NotificationTemplateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -189,10 +205,8 @@ func (r *NotificationService) Replace(ctx context.Context, id string, body Notif
 	return res, err
 }
 
-// Retrieve the content of a notification template. The response shape depends on
-// whether the template uses V1 (blocks/channels) or V2 (elemental) content. Use
-// the `version` query parameter to select draft, published, or a specific
-// historical version.
+// Returns a template's content and checksum. V2 templates return Elemental
+// elements, while V1 templates return blocks and channels instead.
 func (r *NotificationService) GetContent(ctx context.Context, id string, query NotificationGetContentParams, opts ...option.RequestOption) (res *NotificationGetContentResponseUnion, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -1365,6 +1379,8 @@ func (r *NotificationGetContentResponseUnion) UnmarshalJSON(data []byte) error {
 type NotificationNewParams struct {
 	// Request body for creating a notification template.
 	NotificationTemplateCreateRequest NotificationTemplateCreateRequestParam
+	IdempotencyKey                    param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration            param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
 	paramObj
 }
 
@@ -1426,6 +1442,8 @@ func (r NotificationListVersionsParams) URLQuery() (v url.Values, err error) {
 }
 
 type NotificationPublishParams struct {
+	IdempotencyKey         param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
 	// Optional request body for publishing a notification template. Omit or send an
 	// empty object to publish the current draft.
 	NotificationTemplatePublishRequest NotificationTemplatePublishRequestParam

@@ -13,8 +13,12 @@ import (
 	shimjson "github.com/trycourier/courier-go/v4/internal/encoding/json"
 	"github.com/trycourier/courier-go/v4/internal/requestconfig"
 	"github.com/trycourier/courier-go/v4/option"
+	"github.com/trycourier/courier-go/v4/packages/param"
 )
 
+// Manage the workspace catalog of subscription topics, the sections that group
+// them, and publishing the preference page.
+//
 // WorkspacePreferenceTopicService contains methods and other services that help
 // with interacting with the Courier API.
 //
@@ -34,23 +38,27 @@ func NewWorkspacePreferenceTopicService(opts ...option.RequestOption) (r Workspa
 	return
 }
 
-// Create a subscription preference topic inside a workspace preference. Fails with
-// 404 if the workspace preference does not exist. The topic id is generated and
-// returned.
-func (r *WorkspacePreferenceTopicService) New(ctx context.Context, sectionID string, body WorkspacePreferenceTopicNewParams, opts ...option.RequestOption) (res *WorkspacePreferenceTopicGetResponse, err error) {
+// Creates a subscription topic inside a workspace preference. The default status
+// sets whether users start opted in, opted out, or required.
+func (r *WorkspacePreferenceTopicService) New(ctx context.Context, sectionID string, params WorkspacePreferenceTopicNewParams, opts ...option.RequestOption) (res *WorkspacePreferenceTopicGetResponse, err error) {
+	if !param.IsOmitted(params.IdempotencyKey) {
+		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
+	}
+	if !param.IsOmitted(params.XIdempotencyExpiration) {
+		opts = append(opts, option.WithHeader("x-idempotency-expiration", fmt.Sprintf("%v", params.XIdempotencyExpiration.Value)))
+	}
 	opts = slices.Concat(r.Options, opts)
 	if sectionID == "" {
 		err = errors.New("missing required section_id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("preferences/sections/%s/topics", sectionID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return res, err
 }
 
-// Retrieve a topic within a workspace preference. Returns 404 if the workspace
-// preference does not exist, the topic does not exist, or the topic belongs to a
-// different workspace preference.
+// Returns one subscription topic with its default status, routing options, allowed
+// preferences, and unsubscribe header setting.
 func (r *WorkspacePreferenceTopicService) Get(ctx context.Context, topicID string, query WorkspacePreferenceTopicGetParams, opts ...option.RequestOption) (res *WorkspacePreferenceTopicGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if query.SectionID == "" {
@@ -66,7 +74,8 @@ func (r *WorkspacePreferenceTopicService) Get(ctx context.Context, topicID strin
 	return res, err
 }
 
-// List the topics in a workspace preference.
+// Returns the subscription topics inside a workspace preference, each with its
+// default status and routing options.
 func (r *WorkspacePreferenceTopicService) List(ctx context.Context, sectionID string, opts ...option.RequestOption) (res *WorkspacePreferenceTopicListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if sectionID == "" {
@@ -78,8 +87,8 @@ func (r *WorkspacePreferenceTopicService) List(ctx context.Context, sectionID st
 	return res, err
 }
 
-// Archive a topic and remove it from its workspace preference. Same 404 rules as
-// GET.
+// Archives a subscription topic and removes it from its workspace preference,
+// addressed by section id and topic id.
 func (r *WorkspacePreferenceTopicService) Archive(ctx context.Context, topicID string, body WorkspacePreferenceTopicArchiveParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -116,6 +125,8 @@ func (r *WorkspacePreferenceTopicService) Replace(ctx context.Context, topicID s
 type WorkspacePreferenceTopicNewParams struct {
 	// Request body for creating a preference topic.
 	WorkspacePreferenceTopicCreateRequest WorkspacePreferenceTopicCreateRequestParam
+	IdempotencyKey                        param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	XIdempotencyExpiration                param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
 	paramObj
 }
 
