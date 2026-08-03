@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.23.0 (2026-08-03)
+
+Full Changelog: [v4.22.0...v4.23.0](https://github.com/trycourier/courier-go/compare/v4.22.0...v4.23.0)
+
+### Features
+
+* Merge pull request [#183](https://github.com/trycourier/courier-go/issues/183) from trycourier/dantran/c-19684-api-spec-document-messagecontexttenant_id-on-journey-send ([c419965](https://github.com/trycourier/courier-go/commit/c4199653fcf7806fc28fcc1a02cd1ab37591e9e2))
+* spec: remove inbox message delete/restore endpoints for now (C-19268) ([#182](https://github.com/trycourier/courier-go/issues/182)) ([7b870e9](https://github.com/trycourier/courier-go/commit/7b870e97339df4efe12b6e92a7429499f1423507))
+* spec: reorder API reference sections to match the Studio nav ([#180](https://github.com/trycourier/courier-go/issues/180)) ([08b4677](https://github.com/trycourier/courier-go/commit/08b4677d3e37992aeed9599b0b21f72efa6154e9))
+
 ## 4.22.0 (2026-07-29)
 
 Full Changelog: [v4.21.0...v4.22.0](https://github.com/trycourier/courier-go/compare/v4.21.0...v4.22.0)

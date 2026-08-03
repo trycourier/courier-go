@@ -38,7 +38,9 @@ type Client struct {
 	Automations AutomationService
 	// Build, version, publish, invoke, and cancel multi-step notification workflows,
 	// along with the templates scoped to them.
-	Journeys   JourneyService
+	Journeys JourneyService
+	// Create a one-off send to a list or audience, author its content, then send it
+	// immediately or schedule it for later.
 	Broadcasts BroadcastService
 	// Manage the logos, colors, and layout that give the templates you send a
 	// consistent look.
@@ -49,7 +51,6 @@ type Client struct {
 	// Manage static groups of users that you subscribe explicitly, and send to them by
 	// list id or list pattern.
 	Lists ListService
-	Inbox InboxService
 	// Look up the messages Courier has accepted, inspect their delivery history and
 	// rendered output, and cancel, resend, or archive them.
 	Messages MessageService
@@ -119,7 +120,6 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Digests = NewDigestService(opts...)
 	r.Inbound = NewInboundService(opts...)
 	r.Lists = NewListService(opts...)
-	r.Inbox = NewInboxService(opts...)
 	r.Messages = NewMessageService(opts...)
 	r.Requests = NewRequestService(opts...)
 	r.Notifications = NewNotificationService(opts...)

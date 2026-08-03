@@ -42,16 +42,51 @@ func TestJourneyNewWithOptionalParams(t *testing.T) {
 					},
 				},
 			}, {
-				OfAPIInvokeTrigger: &courier.JourneyAPIInvokeTriggerNodeParam{
-					TriggerType: courier.JourneyAPIInvokeTriggerNodeTriggerTypeAPIInvoke,
-					Type:        courier.JourneyAPIInvokeTriggerNodeTypeTrigger,
-					ID:          courier.String("send-1"),
+				OfSend: &courier.JourneySendNodeParam{
+					Message: courier.JourneySendNodeMessageParam{
+						Context: courier.JourneySendNodeMessageContextParam{
+							TenantID: "x",
+						},
+						Data: map[string]any{
+							"foo": "bar",
+						},
+						Delay: courier.JourneySendNodeMessageDelayParam{
+							Until:    "x",
+							Timezone: courier.String("x"),
+						},
+						Template: courier.String("nt_01kx4h2jdafq8bk9aftxak4b40"),
+						To: courier.JourneySendNodeMessageToParam{
+							EmailOverride:       courier.String("x"),
+							PhoneNumberOverride: courier.String("x"),
+							UserIDOverride:      courier.String("x"),
+						},
+					},
+					Type: courier.JourneySendNodeTypeSend,
+					ID:   courier.String("send-1"),
 					Conditions: courier.JourneyConditionsFieldUnionParam{
 						OfSingleCondition: courier.JourneyConditionAtom{"string", "string"},
 					},
-					Schema: map[string]any{
-						"foo": "bar",
+					Experiment: courier.JourneyExperimentParam{
+						BucketingKey: "x",
+						Variants: []courier.JourneyExperimentVariantParam{{
+							ID:         "x",
+							TemplateID: "x",
+							Weight:     0,
+							Name:       courier.String("name"),
+						}, {
+							ID:         "x",
+							TemplateID: "x",
+							Weight:     0,
+							Name:       courier.String("name"),
+						}},
+						ID:   courier.String("x"),
+						Name: courier.String("name"),
 					},
+				},
+			}, {
+				OfExit: &courier.JourneyExitNodeParam{
+					Type: courier.JourneyExitNodeTypeExit,
+					ID:   courier.String("exit-1"),
 				},
 			}},
 			Enabled: courier.Bool(true),
