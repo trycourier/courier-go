@@ -2570,8 +2570,8 @@ func (r *JourneySegmentTriggerNodeParam) UnmarshalJSON(data []byte) error {
 // Send to the recipient. A send node sources its content from EXACTLY ONE of
 // `message.template` (a single notification template) or `experiment` (an A/B
 // split across weighted template variants) — supplying both, or neither, is
-// rejected. Optionally override the recipient address, delay the send, or attach
-// `data`.
+// rejected. Optionally override the recipient address, send as a tenant, delay the
+// send, or attach `data`.
 type JourneySendNode struct {
 	Message JourneySendNodeMessage `json:"message" api:"required"`
 	// Any of "send".
@@ -2613,12 +2613,16 @@ func (r JourneySendNode) ToParam() JourneySendNodeParam {
 }
 
 type JourneySendNodeMessage struct {
-	Data     map[string]any              `json:"data"`
-	Delay    JourneySendNodeMessageDelay `json:"delay"`
-	Template string                      `json:"template"`
-	To       JourneySendNodeMessageTo    `json:"to"`
+	// Tenant context for this send. Set it to deliver on behalf of one of your
+	// customers, so the message uses that tenant's brand and settings.
+	Context  JourneySendNodeMessageContext `json:"context"`
+	Data     map[string]any                `json:"data"`
+	Delay    JourneySendNodeMessageDelay   `json:"delay"`
+	Template string                        `json:"template"`
+	To       JourneySendNodeMessageTo      `json:"to"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Context     respjson.Field
 		Data        respjson.Field
 		Delay       respjson.Field
 		Template    respjson.Field
@@ -2631,6 +2635,35 @@ type JourneySendNodeMessage struct {
 // Returns the unmodified JSON received from the API
 func (r JourneySendNodeMessage) RawJSON() string { return r.JSON.raw }
 func (r *JourneySendNodeMessage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Tenant context for this send. Set it to deliver on behalf of one of your
+// customers, so the message uses that tenant's brand and settings.
+type JourneySendNodeMessageContext struct {
+	// The tenant to send as. Accepts either a literal tenant id (`acme-tenant`) or a
+	// whole-string mustache reference to a value the run already holds —
+	// `{{data.tenant_id}}` from the invocation payload, or `{{f1.body.tenant_id}}`
+	// from the response of an earlier fetch node with id `f1`. A reference is resolved
+	// separately on every run, so a single journey can deliver as many tenants. Two
+	// forms are rejected with `400`: mid-string interpolation such as
+	// `tenant-{{data.region}}`, and any value beginning with `refs.`, which is
+	// reserved for internal use. A reference that resolves to nothing at run time does
+	// not stop the run — the message is still sent, with no tenant context — so make
+	// sure the referenced value is always present. `GET` returns the value in the same
+	// form it was supplied.
+	TenantID string `json:"tenant_id" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		TenantID    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r JourneySendNodeMessageContext) RawJSON() string { return r.JSON.raw }
+func (r *JourneySendNodeMessageContext) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -2681,8 +2714,8 @@ const (
 // Send to the recipient. A send node sources its content from EXACTLY ONE of
 // `message.template` (a single notification template) or `experiment` (an A/B
 // split across weighted template variants) — supplying both, or neither, is
-// rejected. Optionally override the recipient address, delay the send, or attach
-// `data`.
+// rejected. Optionally override the recipient address, send as a tenant, delay the
+// send, or attach `data`.
 //
 // The properties Message, Type are required.
 type JourneySendNodeParam struct {
@@ -2710,10 +2743,13 @@ func (r *JourneySendNodeParam) UnmarshalJSON(data []byte) error {
 }
 
 type JourneySendNodeMessageParam struct {
-	Template param.Opt[string]                `json:"template,omitzero"`
-	Data     map[string]any                   `json:"data,omitzero"`
-	Delay    JourneySendNodeMessageDelayParam `json:"delay,omitzero"`
-	To       JourneySendNodeMessageToParam    `json:"to,omitzero"`
+	Template param.Opt[string] `json:"template,omitzero"`
+	// Tenant context for this send. Set it to deliver on behalf of one of your
+	// customers, so the message uses that tenant's brand and settings.
+	Context JourneySendNodeMessageContextParam `json:"context,omitzero"`
+	Data    map[string]any                     `json:"data,omitzero"`
+	Delay   JourneySendNodeMessageDelayParam   `json:"delay,omitzero"`
+	To      JourneySendNodeMessageToParam      `json:"to,omitzero"`
 	paramObj
 }
 
@@ -2722,6 +2758,34 @@ func (r JourneySendNodeMessageParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *JourneySendNodeMessageParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Tenant context for this send. Set it to deliver on behalf of one of your
+// customers, so the message uses that tenant's brand and settings.
+//
+// The property TenantID is required.
+type JourneySendNodeMessageContextParam struct {
+	// The tenant to send as. Accepts either a literal tenant id (`acme-tenant`) or a
+	// whole-string mustache reference to a value the run already holds —
+	// `{{data.tenant_id}}` from the invocation payload, or `{{f1.body.tenant_id}}`
+	// from the response of an earlier fetch node with id `f1`. A reference is resolved
+	// separately on every run, so a single journey can deliver as many tenants. Two
+	// forms are rejected with `400`: mid-string interpolation such as
+	// `tenant-{{data.region}}`, and any value beginning with `refs.`, which is
+	// reserved for internal use. A reference that resolves to nothing at run time does
+	// not stop the run — the message is still sent, with no tenant context — so make
+	// sure the referenced value is always present. `GET` returns the value in the same
+	// form it was supplied.
+	TenantID string `json:"tenant_id" api:"required"`
+	paramObj
+}
+
+func (r JourneySendNodeMessageContextParam) MarshalJSON() (data []byte, err error) {
+	type shadow JourneySendNodeMessageContextParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *JourneySendNodeMessageContextParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
