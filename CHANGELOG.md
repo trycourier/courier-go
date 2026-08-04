@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.24.0 (2026-08-04)
+
+Full Changelog: [v4.23.0...v4.24.0](https://github.com/trycourier/courier-go/compare/v4.23.0...v4.24.0)
+
+### Features
+
+* Merge pull request [#178](https://github.com/trycourier/courier-go/issues/178) from trycourier/geraldosilva/c-19484-elemental-formatting-controls ([6467efd](https://github.com/trycourier/courier-go/commit/6467efd89780645350d583a8b8ef7db950459957))
+
 ## 4.23.0 (2026-08-03)
 
 Full Changelog: [v4.22.0...v4.23.0](https://github.com/trycourier/courier-go/compare/v4.22.0...v4.23.0)
