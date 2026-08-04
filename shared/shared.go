@@ -415,12 +415,25 @@ type ElementalChannelNode struct {
 	// The channel the contents of this element should be applied to. Can be `email`,
 	// `push`, `direct_message`, `sms` or a provider such as slack
 	Channel string `json:"channel"`
+	// Email only. Document-level base font size (CSS px, e.g. `16px`) for body content
+	// — text, quote, list and action button labels. Heading styles (`h1`/`h2`/`h3`)
+	// and `subtext` keep their preset sizes.
+	FontSize string `json:"font_size" api:"nullable"`
+	// Email only. Document-level line height (CSS px or unitless multiplier, e.g.
+	// `24px` or `1.5`) applied to all body content unless overridden per block.
+	LineHeight string `json:"line_height" api:"nullable"`
+	// Email only. Document-level body padding applied once around the email body, as a
+	// CSS px shorthand (1–4 values), e.g. `48px 64px`.
+	Padding string `json:"padding" api:"nullable"`
 	// Raw data to apply to the channel. If `elements` has not been specified, `raw` is
 	// required.
 	Raw map[string]any `json:"raw" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Channel     respjson.Field
+		FontSize    respjson.Field
+		LineHeight  respjson.Field
+		Padding     respjson.Field
 		Raw         respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -457,6 +470,16 @@ type ElementalChannelNodeParam struct {
 	// The channel the contents of this element should be applied to. Can be `email`,
 	// `push`, `direct_message`, `sms` or a provider such as slack
 	Channel param.Opt[string] `json:"channel,omitzero"`
+	// Email only. Document-level base font size (CSS px, e.g. `16px`) for body content
+	// — text, quote, list and action button labels. Heading styles (`h1`/`h2`/`h3`)
+	// and `subtext` keep their preset sizes.
+	FontSize param.Opt[string] `json:"font_size,omitzero"`
+	// Email only. Document-level line height (CSS px or unitless multiplier, e.g.
+	// `24px` or `1.5`) applied to all body content unless overridden per block.
+	LineHeight param.Opt[string] `json:"line_height,omitzero"`
+	// Email only. Document-level body padding applied once around the email body, as a
+	// CSS px shorthand (1–4 values), e.g. `48px 64px`.
+	Padding param.Opt[string] `json:"padding,omitzero"`
 	// Raw data to apply to the channel. If `elements` has not been specified, `raw` is
 	// required.
 	Raw map[string]any `json:"raw,omitzero"`
@@ -795,16 +818,25 @@ type ElementalNodeUnion struct {
 	// This field is from variant [ElementalChannelNodeWithType].
 	Channel string `json:"channel"`
 	// This field is from variant [ElementalChannelNodeWithType].
+	FontSize string `json:"font_size"`
+	// This field is from variant [ElementalChannelNodeWithType].
+	LineHeight string `json:"line_height"`
+	// This field is from variant [ElementalChannelNodeWithType].
+	Padding string `json:"padding"`
+	// This field is from variant [ElementalChannelNodeWithType].
 	Raw  map[string]any `json:"raw"`
 	JSON struct {
-		Channels respjson.Field
-		If       respjson.Field
-		Loop     respjson.Field
-		Ref      respjson.Field
-		Type     respjson.Field
-		Channel  respjson.Field
-		Raw      respjson.Field
-		raw      string
+		Channels   respjson.Field
+		If         respjson.Field
+		Loop       respjson.Field
+		Ref        respjson.Field
+		Type       respjson.Field
+		Channel    respjson.Field
+		FontSize   respjson.Field
+		LineHeight respjson.Field
+		Padding    respjson.Field
+		Raw        respjson.Field
+		raw        string
 	} `json:"-"`
 }
 
@@ -918,6 +950,30 @@ func (u *ElementalNodeUnionParam) asAny() any {
 func (u ElementalNodeUnionParam) GetChannel() *string {
 	if vt := u.OfElementalChannelNodeWithType; vt != nil && vt.Channel.Valid() {
 		return &vt.Channel.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetFontSize() *string {
+	if vt := u.OfElementalChannelNodeWithType; vt != nil && vt.FontSize.Valid() {
+		return &vt.FontSize.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetLineHeight() *string {
+	if vt := u.OfElementalChannelNodeWithType; vt != nil && vt.LineHeight.Valid() {
+		return &vt.LineHeight.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetPadding() *string {
+	if vt := u.OfElementalChannelNodeWithType; vt != nil && vt.Padding.Valid() {
+		return &vt.Padding.Value
 	}
 	return nil
 }
