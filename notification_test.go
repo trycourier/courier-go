@@ -29,29 +29,32 @@ func TestNotificationNewWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Notifications.New(context.TODO(), courier.NotificationNewParams{
 		NotificationTemplateCreateRequest: courier.NotificationTemplateCreateRequestParam{
-			Notification: courier.NotificationTemplatePayloadParam{
-				Brand: courier.NotificationTemplatePayloadBrandParam{
-					ID: "bnd_01kx4mrd0pfzw8wt7pn7p2fzag",
-				},
-				Content: shared.ElementalContentParam{
-					Elements: []shared.ElementalNodeUnionParam{{
-						OfElementalChannelNodeWithType: &shared.ElementalChannelNodeWithTypeParam{
-							ElementalChannelNodeParam: shared.ElementalChannelNodeParam{
-								ElementalBaseNodeParam: shared.ElementalBaseNodeParam{},
+			Notification: courier.NotificationTemplateWritePayloadParam{
+				NotificationTemplatePayloadParam: courier.NotificationTemplatePayloadParam{
+					Brand: courier.NotificationTemplatePayloadBrandParam{
+						ID: "bnd_01kx4mrd0pfzw8wt7pn7p2fzag",
+					},
+					Content: shared.ElementalContentParam{
+						Elements: []shared.ElementalNodeUnionParam{{
+							OfElementalChannelNodeWithType: &shared.ElementalChannelNodeWithTypeParam{
+								ElementalChannelNodeParam: shared.ElementalChannelNodeParam{
+									ElementalBaseNodeParam: shared.ElementalBaseNodeParam{},
+								},
+								Type: "channel",
 							},
-							Type: "channel",
-						},
-					}},
-					Version: "2022-01-01",
+						}},
+						Version: "2022-01-01",
+					},
+					Name: "Welcome Email",
+					Routing: courier.NotificationTemplatePayloadRoutingParam{
+						StrategyID: "rs_01kx4h2jdafq8bk9amzvy6hbv0",
+					},
+					Subscription: courier.NotificationTemplatePayloadSubscriptionParam{
+						TopicID: "pt_01kx4h2jdafq8bk9a26x0kvd1t",
+					},
+					Tags: []string{"onboarding", "welcome"},
 				},
-				Name: "Welcome Email",
-				Routing: courier.NotificationTemplatePayloadRoutingParam{
-					StrategyID: "rs_01kx4h2jdafq8bk9amzvy6hbv0",
-				},
-				Subscription: courier.NotificationTemplatePayloadSubscriptionParam{
-					TopicID: "pt_01kx4h2jdafq8bk9a26x0kvd1t",
-				},
-				Tags: []string{"onboarding", "welcome"},
+				Alias: courier.String("welcome"),
 			},
 			State: courier.NotificationTemplateCreateRequestStateDraft,
 		},
@@ -369,29 +372,32 @@ func TestNotificationReplaceWithOptionalParams(t *testing.T) {
 		"id",
 		courier.NotificationReplaceParams{
 			NotificationTemplateUpdateRequest: courier.NotificationTemplateUpdateRequestParam{
-				Notification: courier.NotificationTemplatePayloadParam{
-					Brand: courier.NotificationTemplatePayloadBrandParam{
-						ID: "id",
-					},
-					Content: shared.ElementalContentParam{
-						Elements: []shared.ElementalNodeUnionParam{{
-							OfElementalChannelNodeWithType: &shared.ElementalChannelNodeWithTypeParam{
-								ElementalChannelNodeParam: shared.ElementalChannelNodeParam{
-									ElementalBaseNodeParam: shared.ElementalBaseNodeParam{},
+				Notification: courier.NotificationTemplateWritePayloadParam{
+					NotificationTemplatePayloadParam: courier.NotificationTemplatePayloadParam{
+						Brand: courier.NotificationTemplatePayloadBrandParam{
+							ID: "id",
+						},
+						Content: shared.ElementalContentParam{
+							Elements: []shared.ElementalNodeUnionParam{{
+								OfElementalChannelNodeWithType: &shared.ElementalChannelNodeWithTypeParam{
+									ElementalChannelNodeParam: shared.ElementalChannelNodeParam{
+										ElementalBaseNodeParam: shared.ElementalBaseNodeParam{},
+									},
+									Type: "channel",
 								},
-								Type: "channel",
-							},
-						}},
-						Version: "2022-01-01",
+							}},
+							Version: "2022-01-01",
+						},
+						Name: "Updated Name",
+						Routing: courier.NotificationTemplatePayloadRoutingParam{
+							StrategyID: "strategy_id",
+						},
+						Subscription: courier.NotificationTemplatePayloadSubscriptionParam{
+							TopicID: "topic_id",
+						},
+						Tags: []string{"updated"},
 					},
-					Name: "Updated Name",
-					Routing: courier.NotificationTemplatePayloadRoutingParam{
-						StrategyID: "strategy_id",
-					},
-					Subscription: courier.NotificationTemplatePayloadSubscriptionParam{
-						TopicID: "topic_id",
-					},
-					Tags: []string{"updated"},
+					Alias: courier.String("alias"),
 				},
 				State: courier.NotificationTemplateUpdateRequestStatePublished,
 			},

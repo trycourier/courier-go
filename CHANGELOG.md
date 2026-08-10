@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.25.0 (2026-08-10)
+
+Full Changelog: [v4.24.0...v4.25.0](https://github.com/trycourier/courier-go/compare/v4.24.0...v4.25.0)
+
+### Features
+
+* Merge pull request [#185](https://github.com/trycourier/courier-go/issues/185) from trycourier/geraldosilva/c-19821-notifications-alias-v2 ([683d7f1](https://github.com/trycourier/courier-go/commit/683d7f138ef6fbbecf0001017ea4dc9c4a8fcc75))
+
 ## 4.24.0 (2026-08-04)
 
 Full Changelog: [v4.23.0...v4.24.0](https://github.com/trycourier/courier-go/compare/v4.23.0...v4.24.0)
