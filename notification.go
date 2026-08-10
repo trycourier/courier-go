@@ -754,13 +754,49 @@ func (r *NotificationLocalePutRequestElementParam) UnmarshalJSON(data []byte) er
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// NotificationTemplateAliasUnion contains all possible properties and values from
+// [string], [[]string].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfString OfStringArray]
+type NotificationTemplateAliasUnion struct {
+	// This field will be present if the value is a [string] instead of an object.
+	OfString string `json:",inline"`
+	// This field will be present if the value is a [[]string] instead of an object.
+	OfStringArray []string `json:",inline"`
+	JSON          struct {
+		OfString      respjson.Field
+		OfStringArray respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+func (u NotificationTemplateAliasUnion) AsString() (v string) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u NotificationTemplateAliasUnion) AsStringArray() (v []string) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u NotificationTemplateAliasUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *NotificationTemplateAliasUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Request body for creating a notification template.
 //
 // The property Notification is required.
 type NotificationTemplateCreateRequestParam struct {
-	// Core template fields used in POST and PUT request bodies (nested under a
-	// `notification` key) and returned at the top level in responses.
-	Notification NotificationTemplatePayloadParam `json:"notification,omitzero" api:"required"`
+	// Template fields accepted in POST and PUT request bodies, nested under a
+	// `notification` key.
+	Notification NotificationTemplateWritePayloadParam `json:"notification,omitzero" api:"required"`
 	// Template state after creation. Case-insensitive input, normalized to uppercase
 	// in the response. Defaults to "DRAFT".
 	//
@@ -986,6 +1022,12 @@ type NotificationTemplateResponse struct {
 	//
 	// Any of "DRAFT", "PUBLISHED".
 	State string `json:"state" api:"required"`
+	// A template's send-time alias as returned by a read, omitted entirely when it has
+	// none. Usually a single string; an array for a template that resolves from
+	// several aliases, which writes through this API can no longer produce — only
+	// templates predating that restriction, or aliases attached outside this API, hold
+	// more than one.
+	Alias NotificationTemplateAliasUnion `json:"alias"`
 	// Epoch milliseconds of last update.
 	Updated int64 `json:"updated"`
 	// User ID of the last updater.
@@ -996,6 +1038,7 @@ type NotificationTemplateResponse struct {
 		Created     respjson.Field
 		Creator     respjson.Field
 		State       respjson.Field
+		Alias       respjson.Field
 		Updated     respjson.Field
 		Updater     respjson.Field
 		ExtraFields map[string]respjson.Field
@@ -1070,13 +1113,14 @@ const (
 )
 
 // Request body for replacing a notification template. Same shape as create. All
-// fields required (PUT = full replacement).
+// fields required (PUT = full replacement), except `alias`, whose omission means
+// "leave the existing aliases alone".
 //
 // The property Notification is required.
 type NotificationTemplateUpdateRequestParam struct {
-	// Core template fields used in POST and PUT request bodies (nested under a
-	// `notification` key) and returned at the top level in responses.
-	Notification NotificationTemplatePayloadParam `json:"notification,omitzero" api:"required"`
+	// Template fields accepted in POST and PUT request bodies, nested under a
+	// `notification` key.
+	Notification NotificationTemplateWritePayloadParam `json:"notification,omitzero" api:"required"`
 	// Template state after update. Case-insensitive input, normalized to uppercase in
 	// the response. Defaults to "DRAFT".
 	//
@@ -1118,6 +1162,28 @@ type NotificationTemplateVersionListResponse struct {
 func (r NotificationTemplateVersionListResponse) RawJSON() string { return r.JSON.raw }
 func (r *NotificationTemplateVersionListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+// Template fields accepted in POST and PUT request bodies, nested under a
+// `notification` key.
+type NotificationTemplateWritePayloadParam struct {
+	// Send-time alias for this template — the value you pass as `event` to POST /send.
+	// Writes accept a single alias only. Optional, with three distinct meanings. Omit
+	// it to leave any existing aliases untouched. Send a string to make this the
+	// template's only alias — a template that already resolved from several aliases
+	// keeps just this one and the rest are detached. Send null to remove every alias
+	// from the template. An alias may not be claimed by another template — doing so
+	// returns 409 — and may not begin with "tenant/".
+	Alias param.Opt[string] `json:"alias,omitzero"`
+	NotificationTemplatePayloadParam
+}
+
+func (r NotificationTemplateWritePayloadParam) MarshalJSON() (data []byte, err error) {
+	type shadow struct {
+		*NotificationTemplateWritePayloadParam
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
 }
 
 // A version entry for a notification template.
@@ -1502,7 +1568,8 @@ func (r *NotificationPutLocaleParams) UnmarshalJSON(data []byte) error {
 
 type NotificationReplaceParams struct {
 	// Request body for replacing a notification template. Same shape as create. All
-	// fields required (PUT = full replacement).
+	// fields required (PUT = full replacement), except `alias`, whose omission means
+	// "leave the existing aliases alone".
 	NotificationTemplateUpdateRequest NotificationTemplateUpdateRequestParam
 	paramObj
 }
