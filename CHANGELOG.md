@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.25.1 (2026-08-12)
+
+Full Changelog: [v4.25.0...v4.25.1](https://github.com/trycourier/courier-go/compare/v4.25.0...v4.25.1)
+
 ## 4.25.0 (2026-08-10)
 
 Full Changelog: [v4.24.0...v4.25.0](https://github.com/trycourier/courier-go/compare/v4.24.0...v4.25.0)
