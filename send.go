@@ -39,7 +39,8 @@ func NewSendService(opts ...option.RequestOption) (r SendService) {
 }
 
 // Sends a message to one or more recipients and returns a requestId. Courier
-// routes it to email, SMS, push, chat, or in-app based on your rules.
+// routes it to email, SMS, push, chat, or in-app based on your rules. Use the
+// returned requestId to look up delivery status via the Messages API.
 func (r *SendService) Message(ctx context.Context, params SendMessageParams, opts ...option.RequestOption) (res *SendMessageResponse, err error) {
 	if !param.IsOmitted(params.IdempotencyKey) {
 		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
