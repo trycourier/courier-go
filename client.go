@@ -42,6 +42,7 @@ type Client struct {
 	// Create a one-off send to a list or audience, author its content, then send it
 	// immediately or schedule it for later.
 	Broadcasts BroadcastService
+	Bulk       BulkService
 	// Manage the logos, colors, and layout that give the templates you send a
 	// consistent look.
 	Brands  BrandService
@@ -116,6 +117,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Automations = NewAutomationService(opts...)
 	r.Journeys = NewJourneyService(opts...)
 	r.Broadcasts = NewBroadcastService(opts...)
+	r.Bulk = NewBulkService(opts...)
 	r.Brands = NewBrandService(opts...)
 	r.Digests = NewDigestService(opts...)
 	r.Inbound = NewInboundService(opts...)
