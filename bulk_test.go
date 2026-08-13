@@ -32,7 +32,9 @@ func TestBulkAddUsers(t *testing.T) {
 		"job_id",
 		courier.BulkAddUsersParams{
 			Users: []courier.InboundBulkMessageUserParam{{
-				Data: map[string]any{},
+				Data: map[string]any{
+					"name": "Jane",
+				},
 				Preferences: shared.RecipientPreferencesParam{
 					Categories: map[string]shared.NotificationPreferenceDetailsParam{
 						"foo": {
@@ -60,9 +62,9 @@ func TestBulkAddUsers(t *testing.T) {
 					},
 				},
 				Profile: map[string]any{
-					"foo": "bar",
+					"email": "bar",
 				},
-				Recipient: courier.String("recipient"),
+				Recipient: courier.String("user_abc"),
 				To: shared.UserRecipientParam{
 					AccountID: courier.String("account_id"),
 					Context: shared.MessageContextParam{
@@ -134,8 +136,8 @@ func TestBulkNewJobWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Bulk.NewJob(context.TODO(), courier.BulkNewJobParams{
 		Message: courier.InboundBulkMessageParam{
-			Event: "event",
-			Brand: courier.String("brand"),
+			Event: "welcome-series",
+			Brand: courier.String("bnd_01kx4mrd0pfzw8wt7pn7p2fzag"),
 			Content: courier.InboundBulkMessageContentUnionParam{
 				OfElementalContentSugar: &shared.ElementalContentSugarParam{
 					Body:  "body",
@@ -143,7 +145,7 @@ func TestBulkNewJobWithOptionalParams(t *testing.T) {
 				},
 			},
 			Data: map[string]any{
-				"foo": "bar",
+				"campaign": "bar",
 			},
 			Locale: map[string]map[string]any{
 				"foo": {

@@ -54,17 +54,17 @@ func TestAudienceUpdateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"audience_id",
 		courier.AudienceUpdateParams{
-			Description: courier.String("description"),
+			Description: courier.String("Users located in the US"),
 			Filter: shared.AudienceFilterConfigParam{
 				Filters: []shared.FilterConfigParam{{
-					Operator: "operator",
+					Operator: "EQ",
 					Filters:  []shared.FilterConfigParam{},
-					Path:     courier.String("path"),
-					Value:    courier.String("value"),
+					Path:     courier.String("profile.location"),
+					Value:    courier.String("US"),
 				}},
 				Operator: shared.AudienceFilterConfigOperatorAnd,
 			},
-			Name:     courier.String("name"),
+			Name:     courier.String("Engaged US Users"),
 			Operator: courier.AudienceUpdateParamsOperatorAnd,
 		},
 	)

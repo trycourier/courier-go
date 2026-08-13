@@ -61,7 +61,35 @@ func TestListSubscriptionAddWithOptionalParams(t *testing.T) {
 		"list_id",
 		courier.ListSubscriptionAddParams{
 			Recipients: []courier.PutSubscriptionsRecipientParam{{
-				RecipientID: "recipientId",
+				RecipientID: "user_abc",
+				Preferences: shared.RecipientPreferencesParam{
+					Categories: map[string]shared.NotificationPreferenceDetailsParam{
+						"foo": {
+							Status: shared.PreferenceStatusOptedIn,
+							ChannelPreferences: []shared.ChannelPreferenceParam{{
+								Channel: shared.ChannelClassificationDirectMessage,
+							}},
+							Rules: []shared.RuleParam{{
+								Until: "until",
+								Start: courier.String("start"),
+							}},
+						},
+					},
+					Notifications: map[string]shared.NotificationPreferenceDetailsParam{
+						"foo": {
+							Status: shared.PreferenceStatusOptedIn,
+							ChannelPreferences: []shared.ChannelPreferenceParam{{
+								Channel: shared.ChannelClassificationDirectMessage,
+							}},
+							Rules: []shared.RuleParam{{
+								Until: "until",
+								Start: courier.String("start"),
+							}},
+						},
+					},
+				},
+			}, {
+				RecipientID: "user_def",
 				Preferences: shared.RecipientPreferencesParam{
 					Categories: map[string]shared.NotificationPreferenceDetailsParam{
 						"foo": {
@@ -120,7 +148,35 @@ func TestListSubscriptionSubscribe(t *testing.T) {
 		"list_id",
 		courier.ListSubscriptionSubscribeParams{
 			Recipients: []courier.PutSubscriptionsRecipientParam{{
-				RecipientID: "recipientId",
+				RecipientID: "user_abc",
+				Preferences: shared.RecipientPreferencesParam{
+					Categories: map[string]shared.NotificationPreferenceDetailsParam{
+						"foo": {
+							Status: shared.PreferenceStatusOptedIn,
+							ChannelPreferences: []shared.ChannelPreferenceParam{{
+								Channel: shared.ChannelClassificationDirectMessage,
+							}},
+							Rules: []shared.RuleParam{{
+								Until: "until",
+								Start: courier.String("start"),
+							}},
+						},
+					},
+					Notifications: map[string]shared.NotificationPreferenceDetailsParam{
+						"foo": {
+							Status: shared.PreferenceStatusOptedIn,
+							ChannelPreferences: []shared.ChannelPreferenceParam{{
+								Channel: shared.ChannelClassificationDirectMessage,
+							}},
+							Rules: []shared.RuleParam{{
+								Until: "until",
+								Start: courier.String("start"),
+							}},
+						},
+					},
+				},
+			}, {
+				RecipientID: "user_def",
 				Preferences: shared.RecipientPreferencesParam{
 					Categories: map[string]shared.NotificationPreferenceDetailsParam{
 						"foo": {
@@ -191,7 +247,7 @@ func TestListSubscriptionSubscribeUserWithOptionalParams(t *testing.T) {
 					},
 				},
 				Notifications: map[string]shared.NotificationPreferenceDetailsParam{
-					"foo": {
+					"nt_01kx4h2jdafq8bk9aftxak4b40": {
 						Status: shared.PreferenceStatusOptedIn,
 						ChannelPreferences: []shared.ChannelPreferenceParam{{
 							Channel: shared.ChannelClassificationDirectMessage,

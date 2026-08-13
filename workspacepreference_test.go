@@ -130,9 +130,9 @@ func TestWorkspacePreferencePublishWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.WorkspacePreferences.Publish(context.TODO(), courier.WorkspacePreferencePublishParams{
 		PublishPreferencesRequest: courier.PublishPreferencesRequestParam{
-			BrandID:     courier.String("brand_id"),
-			Description: courier.String("description"),
-			Heading:     courier.String("heading"),
+			BrandID:     courier.String("bnd_01kx4mrd0pfzw8wt7pn7p2fzag"),
+			Description: courier.String("Choose what you hear from us about."),
+			Heading:     courier.String("Notification Preferences"),
 		},
 		IdempotencyKey:         courier.String("order-ORD-456-user-123"),
 		XIdempotencyExpiration: courier.String("1785312000"),
@@ -164,10 +164,10 @@ func TestWorkspacePreferenceReplaceWithOptionalParams(t *testing.T) {
 		"section_id",
 		courier.WorkspacePreferenceReplaceParams{
 			WorkspacePreferenceReplaceRequest: courier.WorkspacePreferenceReplaceRequestParam{
-				Name:             "name",
+				Name:             "Account Notifications",
 				Description:      courier.String("description"),
 				HasCustomRouting: courier.Bool(true),
-				RoutingOptions:   []shared.ChannelClassification{shared.ChannelClassificationDirectMessage},
+				RoutingOptions:   []shared.ChannelClassification{shared.ChannelClassificationEmail, shared.ChannelClassificationPush},
 			},
 		},
 	)

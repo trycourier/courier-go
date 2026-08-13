@@ -155,12 +155,12 @@ func TestWorkspacePreferenceTopicReplaceWithOptionalParams(t *testing.T) {
 		courier.WorkspacePreferenceTopicReplaceParams{
 			SectionID: "section_id",
 			WorkspacePreferenceTopicReplaceRequest: courier.WorkspacePreferenceTopicReplaceRequestParam{
-				DefaultStatus:            courier.WorkspacePreferenceTopicReplaceRequestDefaultStatusOptedOut,
-				Name:                     "name",
-				AllowedPreferences:       []string{"snooze"},
+				DefaultStatus:            courier.WorkspacePreferenceTopicReplaceRequestDefaultStatusOptedIn,
+				Name:                     "Product Updates",
+				AllowedPreferences:       []string{"channel_preferences"},
 				Description:              courier.String("description"),
 				IncludeUnsubscribeHeader: courier.Bool(true),
-				RoutingOptions:           []shared.ChannelClassification{shared.ChannelClassificationDirectMessage},
+				RoutingOptions:           []shared.ChannelClassification{shared.ChannelClassificationEmail, shared.ChannelClassificationInbox},
 				TopicData: map[string]any{
 					"foo": "bar",
 				},

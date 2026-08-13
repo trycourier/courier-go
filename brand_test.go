@@ -151,11 +151,11 @@ func TestBrandUpdateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"brand_id",
 		courier.BrandUpdateParams{
-			Name: "name",
+			Name: "My Brand",
 			Settings: courier.BrandSettingsParam{
 				Colors: courier.BrandColorsParam{
-					Primary:   courier.String("primary"),
-					Secondary: courier.String("secondary"),
+					Primary:   courier.String("#9D3789"),
+					Secondary: courier.String("#FFFFFF"),
 				},
 				Email: courier.BrandSettingsEmailParam{
 					Footer: courier.EmailFooterParam{

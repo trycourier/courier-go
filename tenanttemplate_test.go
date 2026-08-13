@@ -121,7 +121,7 @@ func TestTenantTemplatePublishWithOptionalParams(t *testing.T) {
 		courier.TenantTemplatePublishParams{
 			TenantID: "tenant_id",
 			PostTenantTemplatePublishRequest: courier.PostTenantTemplatePublishRequestParam{
-				Version: courier.String("version"),
+				Version: courier.String("latest"),
 			},
 		},
 	)
@@ -166,7 +166,7 @@ func TestTenantTemplateReplaceWithOptionalParams(t *testing.T) {
 								Type: "text",
 							},
 						}},
-						Version: "version",
+						Version: "2022-01-01",
 					},
 					Channels: shared.MessageChannelsParam{
 						"foo": shared.ChannelParam{
@@ -212,9 +212,9 @@ func TestTenantTemplateReplaceWithOptionalParams(t *testing.T) {
 					},
 					Routing: shared.MessageRoutingParam{
 						Channels: []shared.MessageRoutingChannelUnionParam{{
-							OfString: courier.String("string"),
+							OfString: courier.String("email"),
 						}},
-						Method: shared.MessageRoutingMethodAll,
+						Method: shared.MessageRoutingMethodSingle,
 					},
 				},
 				Published: courier.Bool(true),

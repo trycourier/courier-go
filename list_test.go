@@ -54,7 +54,7 @@ func TestListUpdateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"list_id",
 		courier.ListUpdateParams{
-			Name: "name",
+			Name: "Product Updates",
 			Preferences: shared.RecipientPreferencesParam{
 				Categories: map[string]shared.NotificationPreferenceDetailsParam{
 					"foo": {
