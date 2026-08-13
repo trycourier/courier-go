@@ -61,9 +61,9 @@ func TestUserTokenUpdate(t *testing.T) {
 		courier.UserTokenUpdateParams{
 			UserID: "user_id",
 			Patch: []courier.UserTokenUpdateParamsPatch{{
-				Op:    "op",
-				Path:  "path",
-				Value: courier.String("value"),
+				Op:    "replace",
+				Path:  "/expiry_date",
+				Value: courier.String("2024-12-31T00:00:00.000Z"),
 			}},
 		},
 	)
@@ -172,7 +172,7 @@ func TestUserTokenAddSingleWithOptionalParams(t *testing.T) {
 			ProviderKey: courier.UserTokenAddSingleParamsProviderKeyFirebaseFcm,
 			Device: courier.UserTokenAddSingleParamsDevice{
 				AdID:         courier.String("ad_id"),
-				AppID:        courier.String("app_id"),
+				AppID:        courier.String("com.example.app"),
 				DeviceID:     courier.String("device_id"),
 				Manufacturer: courier.String("manufacturer"),
 				Model:        courier.String("model"),

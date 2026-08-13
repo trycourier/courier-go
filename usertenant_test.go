@@ -61,7 +61,14 @@ func TestUserTenantAddMultiple(t *testing.T) {
 		"user_id",
 		courier.UserTenantAddMultipleParams{
 			Tenants: []courier.TenantAssociationParam{{
-				TenantID: "tenant_id",
+				TenantID: "tenant_abc",
+				Profile: map[string]any{
+					"foo": "bar",
+				},
+				Type:   courier.TenantAssociationTypeUser,
+				UserID: courier.String("user_id"),
+			}, {
+				TenantID: "tenant_def",
 				Profile: map[string]any{
 					"foo": "bar",
 				},
@@ -98,7 +105,7 @@ func TestUserTenantAddSingleWithOptionalParams(t *testing.T) {
 		courier.UserTenantAddSingleParams{
 			UserID: "user_id",
 			Profile: map[string]any{
-				"foo": "bar",
+				"role": "bar",
 			},
 		},
 	)

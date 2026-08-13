@@ -88,13 +88,13 @@ func TestAutomationInvokeInvokeByTemplateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"templateId",
 		courier.AutomationInvokeInvokeByTemplateParams{
-			Recipient: courier.String("recipient"),
+			Recipient: courier.String("user_abc"),
 			Brand:     courier.String("brand"),
 			Data: map[string]any{
-				"foo": "bar",
+				"orderId": "bar",
 			},
 			Profile: map[string]any{
-				"foo": "bar",
+				"email": "bar",
 			},
 			Template:               courier.String("template"),
 			IdempotencyKey:         courier.String("order-ORD-456-user-123"),

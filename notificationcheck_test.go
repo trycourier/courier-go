@@ -32,7 +32,7 @@ func TestNotificationCheckUpdate(t *testing.T) {
 		courier.NotificationCheckUpdateParams{
 			ID: "id",
 			Checks: []courier.BaseCheckParam{{
-				ID:     "id",
+				ID:     "abc-123",
 				Status: courier.BaseCheckStatusResolved,
 				Type:   courier.BaseCheckTypeCustom,
 			}},

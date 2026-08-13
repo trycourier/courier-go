@@ -60,7 +60,7 @@ func TestTranslationUpdate(t *testing.T) {
 		"locale",
 		courier.TranslationUpdateParams{
 			Domain: "domain",
-			Body:   "body",
+			Body:   "msgid \"Hello\"\nmsgstr \"Hola\"",
 		},
 	)
 	if err != nil {

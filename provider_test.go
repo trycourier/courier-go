@@ -27,12 +27,12 @@ func TestProviderNewWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Providers.New(context.TODO(), courier.ProviderNewParams{
-		Provider: "provider",
+		Provider: "sendgrid",
 		Alias:    courier.String("alias"),
 		Settings: map[string]any{
-			"foo": "bar",
+			"api_key": "bar",
 		},
-		Title:                  courier.String("title"),
+		Title:                  courier.String("Production SendGrid"),
 		IdempotencyKey:         courier.String("order-ORD-456-user-123"),
 		XIdempotencyExpiration: courier.String("1785312000"),
 	})
@@ -85,12 +85,12 @@ func TestProviderUpdateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"id",
 		courier.ProviderUpdateParams{
-			Provider: "provider",
+			Provider: "sendgrid",
 			Alias:    courier.String("alias"),
 			Settings: map[string]any{
-				"foo": "bar",
+				"api_key": "bar",
 			},
-			Title: courier.String("title"),
+			Title: courier.String("Production SendGrid"),
 		},
 	)
 	if err != nil {

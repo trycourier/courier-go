@@ -84,7 +84,7 @@ func TestProfileListSubscribeWithOptionalParams(t *testing.T) {
 		"user_id",
 		courier.ProfileListSubscribeParams{
 			Lists: []courier.SubscribeToListsRequestItemParam{{
-				ListID: "listId",
+				ListID: "example.list.id",
 				Preferences: shared.RecipientPreferencesParam{
 					Categories: map[string]shared.NotificationPreferenceDetailsParam{
 						"foo": {

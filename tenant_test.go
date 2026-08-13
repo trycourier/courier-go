@@ -54,8 +54,8 @@ func TestTenantUpdateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"tenant_id",
 		courier.TenantUpdateParams{
-			Name:    "name",
-			BrandID: courier.String("brand_id"),
+			Name:    "Acme Corp",
+			BrandID: courier.String("bnd_01kx4mrd0pfzw8wt7pn7p2fzag"),
 			DefaultPreferences: courier.DefaultPreferencesParam{
 				Items: []courier.DefaultPreferencesItemParam{{
 					SubscriptionTopicNewParam: courier.SubscriptionTopicNewParam{
@@ -68,7 +68,7 @@ func TestTenantUpdateWithOptionalParams(t *testing.T) {
 			},
 			ParentTenantID: courier.String("parent_tenant_id"),
 			Properties: map[string]any{
-				"foo": "bar",
+				"plan": "bar",
 			},
 			UserProfile: map[string]any{
 				"foo": "bar",

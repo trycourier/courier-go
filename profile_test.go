@@ -31,7 +31,8 @@ func TestProfileNewWithOptionalParams(t *testing.T) {
 		"user_id",
 		courier.ProfileNewParams{
 			Profile: map[string]any{
-				"foo": "bar",
+				"email":        "bar",
+				"phone_number": "bar",
 			},
 			IdempotencyKey:         courier.String("order-ORD-456-user-123"),
 			XIdempotencyExpiration: courier.String("1785312000"),
@@ -87,9 +88,9 @@ func TestProfileUpdate(t *testing.T) {
 		"user_id",
 		courier.ProfileUpdateParams{
 			Patch: []courier.ProfileUpdateParamsPatch{{
-				Op:    "op",
-				Path:  "path",
-				Value: "value",
+				Op:    "replace",
+				Path:  "/email",
+				Value: "jdoe@example.com",
 			}},
 		},
 	)
@@ -143,7 +144,9 @@ func TestProfileReplace(t *testing.T) {
 		"user_id",
 		courier.ProfileReplaceParams{
 			Profile: map[string]any{
-				"foo": "bar",
+				"email":        "bar",
+				"phone_number": "bar",
+				"locale":       "bar",
 			},
 		},
 	)
