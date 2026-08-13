@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.25.1](https://github.com/trycourier/courier-go/compare/v4.25.0...v4.25.1) (2026-08-13)
+
+
+### Chores
+
+* **api:** regenerate SDK ([#147](https://github.com/trycourier/courier-go/issues/147)) ([7a27ab2](https://github.com/trycourier/courier-go/commit/7a27ab2ee424f7b3ecf68ffdc4fe9e4fc5cd6be6))
+
+
+### Documentation
+
+* sync README from api-spec ([#143](https://github.com/trycourier/courier-go/issues/143)) ([4316091](https://github.com/trycourier/courier-go/commit/431609196e810a93fcae67c725e16cd374880d2f))
+
 ## 4.25.0 (2026-08-10)
 
 Full Changelog: [v4.24.0...v4.25.0](https://github.com/trycourier/courier-go/compare/v4.24.0...v4.25.0)
