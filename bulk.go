@@ -70,7 +70,8 @@ func (r *BulkService) NewJob(ctx context.Context, body BulkNewJobParams, opts ..
 	return res, err
 }
 
-// Get Bulk Job Users
+// Returns the users ingested into a bulk job with paging, each carrying the status
+// Courier recorded for it and the id of the message it produced.
 func (r *BulkService) ListUsers(ctx context.Context, jobID string, query BulkListUsersParams, opts ...option.RequestOption) (res *BulkListUsersResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if jobID == "" {
@@ -82,7 +83,9 @@ func (r *BulkService) ListUsers(ctx context.Context, jobID string, query BulkLis
 	return res, err
 }
 
-// Get a bulk job
+// Returns a bulk job's message definition, its status — CREATED, PROCESSING,
+// COMPLETED, or ERROR — and running counts of users received, messages enqueued,
+// and failures. Poll it to follow a job through to completion.
 func (r *BulkService) GetJob(ctx context.Context, jobID string, opts ...option.RequestOption) (res *BulkGetJobResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if jobID == "" {
@@ -94,7 +97,9 @@ func (r *BulkService) GetJob(ctx context.Context, jobID string, opts ...option.R
 	return res, err
 }
 
-// Run a bulk job
+// Starts processing a bulk job, sending to every user ingested into it. Returns
+// 204 immediately; the job runs asynchronously, so poll the job to watch its
+// status and counts.
 func (r *BulkService) RunJob(ctx context.Context, jobID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
