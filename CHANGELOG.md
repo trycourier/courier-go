@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.25.2](https://github.com/trycourier/courier-go/compare/v4.25.1...v4.25.2) (2026-08-13)
+
+
+### Documentation
+
+* **api:** say what the bulk job endpoints return ([#154](https://github.com/trycourier/courier-go/issues/154)) ([e21748c](https://github.com/trycourier/courier-go/commit/e21748c3258af1824894e60dbd6a8de5b29842f1))
+
 ## [4.25.1](https://github.com/trycourier/courier-go/compare/v4.25.0...v4.25.1) (2026-08-13)
 
 
