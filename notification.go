@@ -98,20 +98,6 @@ func (r *NotificationService) Archive(ctx context.Context, id string, opts ...op
 	return err
 }
 
-// Copies a notification template within the same workspace and environment,
-// appending " COPY" to the title. The copy is standalone and independently
-// editable.
-func (r *NotificationService) Duplicate(ctx context.Context, id string, opts ...option.RequestOption) (res *NotificationTemplateResponse, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if id == "" {
-		err = errors.New("missing required id parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("notifications/%s/duplicate", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
-	return res, err
-}
-
 // Returns a notification template's published versions, most recent first, for
 // comparison or rollback. Paged.
 func (r *NotificationService) ListVersions(ctx context.Context, id string, query NotificationListVersionsParams, opts ...option.RequestOption) (res *NotificationTemplateVersionListResponse, err error) {
