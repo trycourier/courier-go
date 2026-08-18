@@ -197,6 +197,14 @@ type TopicPreference struct {
 	// Whether the user has chosen specific delivery channels for this topic (listed in
 	// custom_routing) rather than the topic's default routing.
 	HasCustomRouting bool `json:"has_custom_routing" api:"nullable"`
+	// The unique identifier of the section this topic belongs to. Always present when
+	// listing a user's preferences; omitted by the single-topic read when the topic
+	// has no resolvable section.
+	SectionID string `json:"section_id"`
+	// The display name of the section this topic belongs to. Always present when
+	// listing a user's preferences; omitted by the single-topic read when the topic
+	// has no resolvable section.
+	SectionName string `json:"section_name"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		DefaultStatus    respjson.Field
@@ -205,6 +213,8 @@ type TopicPreference struct {
 		TopicName        respjson.Field
 		CustomRouting    respjson.Field
 		HasCustomRouting respjson.Field
+		SectionID        respjson.Field
+		SectionName      respjson.Field
 		ExtraFields      map[string]respjson.Field
 		raw              string
 	} `json:"-"`
