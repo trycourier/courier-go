@@ -1,5 +1,21 @@
 # Changelog
 
+## [4.26.0](https://github.com/trycourier/courier-go/compare/v4.25.2...v4.26.0) (2026-08-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* **api:** match the spec to the backend — apn/expo token types and the phantom notifications.duplicate ([#156](https://github.com/trycourier/courier-go/issues/156))
+
+### Features
+
+* **api:** match the spec to the backend — apn/expo token types and the phantom notifications.duplicate ([#156](https://github.com/trycourier/courier-go/issues/156)) ([41a2ef3](https://github.com/trycourier/courier-go/commit/41a2ef3401a249aa9cf963d1d08aff855e8b25f7))
+
+
+### Chores
+
+* release 4.26.0 ([10178f4](https://github.com/trycourier/courier-go/commit/10178f481e8f6645a868a527e38eee787c3a9090))
+
 ## [4.25.2](https://github.com/trycourier/courier-go/compare/v4.25.1...v4.25.2) (2026-08-13)
 
 
