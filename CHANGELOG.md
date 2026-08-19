@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.27.0](https://github.com/trycourier/courier-go/compare/v4.26.0...v4.27.0) (2026-08-19)
+
+
+### Features
+
+* **api:** add automation and journey run log endpoints ([#160](https://github.com/trycourier/courier-go/issues/160)) ([14ab3dd](https://github.com/trycourier/courier-go/commit/14ab3dd716417c86ee5d9336b6359cd4344a2ecc))
+* **api:** document section_id and section_name on a user's topic preference ([#158](https://github.com/trycourier/courier-go/issues/158)) ([babdaea](https://github.com/trycourier/courier-go/commit/babdaea7fc63af6faca73b79e2ec3ca6bb31eb00))
+
 ## [4.26.0](https://github.com/trycourier/courier-go/compare/v4.25.2...v4.26.0) (2026-08-18)
 
 
