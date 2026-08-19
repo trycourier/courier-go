@@ -31,6 +31,9 @@ type AutomationService struct {
 	// Invoke a stored automation template or an ad hoc automation defined in the
 	// request.
 	Invoke AutomationInvokeService
+	// Invoke a stored automation template or an ad hoc automation defined in the
+	// request.
+	Runs AutomationRunService
 }
 
 // NewAutomationService generates a new service that applies the given options to
@@ -40,6 +43,7 @@ func NewAutomationService(opts ...option.RequestOption) (r AutomationService) {
 	r = AutomationService{}
 	r.Options = opts
 	r.Invoke = NewAutomationInvokeService(opts...)
+	r.Runs = NewAutomationRunService(opts...)
 	return
 }
 
@@ -65,6 +69,113 @@ type AutomationInvokeResponse struct {
 // Returns the unmodified JSON received from the API
 func (r AutomationInvokeResponse) RawJSON() string { return r.JSON.raw }
 func (r *AutomationInvokeResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// An Automation run as it appears in a list response.
+type AutomationRunListItem struct {
+	// A unique identifier representing the run.
+	RunID string `json:"run_id" api:"required"`
+	// Internal provenance strings describing what started the run, e.g.
+	// `invoke/<template_id>` or `segment/page/Pricing Page`. Diagnostic only — the
+	// format is unstable and should not be parsed.
+	Source []string `json:"source" api:"required"`
+	// When the run started, as an ISO 8601 timestamp.
+	CreatedAt string `json:"created_at"`
+	// The state of the run: `PROCESSING`, `PROCESSED`, `WAITING`, `CANCELED`, `ERROR`,
+	// `THROTTLED`, or `NOT PROCESSED`. Not an enum — new values have been added
+	// before.
+	Status string `json:"status"`
+	// The id of the Automation Template this run belongs to.
+	TemplateID string `json:"template_id"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		RunID       respjson.Field
+		Source      respjson.Field
+		CreatedAt   respjson.Field
+		Status      respjson.Field
+		TemplateID  respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r AutomationRunListItem) RawJSON() string { return r.JSON.raw }
+func (r *AutomationRunListItem) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A page of Automation runs.
+type AutomationRunListResponse struct {
+	Runs []AutomationRunListItem `json:"runs" api:"required"`
+	// Pass back as `cursor` to fetch the next page. Absent on the last page.
+	NextCursor string `json:"next_cursor"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Runs        respjson.Field
+		NextCursor  respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r AutomationRunListResponse) RawJSON() string { return r.JSON.raw }
+func (r *AutomationRunListResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// One executed step of an Automation run.
+type AutomationRunStep struct {
+	// The kind of step that ran, e.g. `send`, `delay`, or `update-profile`.
+	Action string `json:"action" api:"required"`
+	// The state of the step: the seven run statuses, plus `SKIPPED` and `COMPUTING`.
+	// Not an enum — new values have been added before.
+	Status string `json:"status" api:"required"`
+	// When the step started, as an ISO 8601 timestamp.
+	CreatedAt string `json:"created_at"`
+	// The message this step produced, present on send steps. Pass it to
+	// `GET /messages/{message_id}` for delivery status. A send to a List or an
+	// Audience yields one id for the request, not one per recipient.
+	MessageID string `json:"message_id"`
+	// A unique identifier representing the step.
+	StepID string `json:"step_id"`
+	// When the step last changed state, as an ISO 8601 timestamp.
+	UpdatedAt string `json:"updated_at"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Action      respjson.Field
+		Status      respjson.Field
+		CreatedAt   respjson.Field
+		MessageID   respjson.Field
+		StepID      respjson.Field
+		UpdatedAt   respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r AutomationRunStep) RawJSON() string { return r.JSON.raw }
+func (r *AutomationRunStep) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Every step of an Automation run. Not paginated.
+type AutomationRunStepsResponse struct {
+	Steps []AutomationRunStep `json:"steps" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Steps       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r AutomationRunStepsResponse) RawJSON() string { return r.JSON.raw }
+func (r *AutomationRunStepsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

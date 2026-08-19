@@ -36,6 +36,9 @@ type JourneyService struct {
 	// Build, version, publish, invoke, and cancel multi-step notification workflows,
 	// along with the templates scoped to them.
 	Templates JourneyTemplateService
+	// Build, version, publish, invoke, and cancel multi-step notification workflows,
+	// along with the templates scoped to them.
+	Runs JourneyRunService
 }
 
 // NewJourneyService generates a new service that applies the given options to each
@@ -45,6 +48,7 @@ func NewJourneyService(opts ...option.RequestOption) (r JourneyService) {
 	r = JourneyService{}
 	r.Options = opts
 	r.Templates = NewJourneyTemplateService(opts...)
+	r.Runs = NewJourneyRunService(opts...)
 	return
 }
 
@@ -534,6 +538,95 @@ func (r JourneyAPIInvokeTriggerNodeParam) MarshalJSON() (data []byte, err error)
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *JourneyAPIInvokeTriggerNodeParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Trigger fired when a user newly matches an Audience. Leaving and re-joining the
+// Audience re-enters the Journey. Membership is new-members-only: users already in
+// the Audience when the Journey is published do not enter. Unlike the v2
+// Automations audience trigger, there is no member scope, event type, or frequency
+// mode to configure, and `audience_id` must name one Audience — wildcards are not
+// supported.
+type JourneyAudienceTriggerNode struct {
+	// The Audience to watch. Must name a single Audience; wildcards are not supported.
+	AudienceID string `json:"audience_id" api:"required"`
+	// Any of "audience".
+	TriggerType JourneyAudienceTriggerNodeTriggerType `json:"trigger_type" api:"required"`
+	// Any of "trigger".
+	Type JourneyAudienceTriggerNodeType `json:"type" api:"required"`
+	ID   string                         `json:"id"`
+	// Condition spec for a journey node. Accepts a single condition atom, an AND/OR
+	// group, or an AND/OR nested group. Omit the `conditions` property entirely to
+	// express "no conditions".
+	Conditions JourneyConditionsFieldUnion `json:"conditions"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		AudienceID  respjson.Field
+		TriggerType respjson.Field
+		Type        respjson.Field
+		ID          respjson.Field
+		Conditions  respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r JourneyAudienceTriggerNode) RawJSON() string { return r.JSON.raw }
+func (r *JourneyAudienceTriggerNode) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this JourneyAudienceTriggerNode to a
+// JourneyAudienceTriggerNodeParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// JourneyAudienceTriggerNodeParam.Overrides()
+func (r JourneyAudienceTriggerNode) ToParam() JourneyAudienceTriggerNodeParam {
+	return param.Override[JourneyAudienceTriggerNodeParam](json.RawMessage(r.RawJSON()))
+}
+
+type JourneyAudienceTriggerNodeTriggerType string
+
+const (
+	JourneyAudienceTriggerNodeTriggerTypeAudience JourneyAudienceTriggerNodeTriggerType = "audience"
+)
+
+type JourneyAudienceTriggerNodeType string
+
+const (
+	JourneyAudienceTriggerNodeTypeTrigger JourneyAudienceTriggerNodeType = "trigger"
+)
+
+// Trigger fired when a user newly matches an Audience. Leaving and re-joining the
+// Audience re-enters the Journey. Membership is new-members-only: users already in
+// the Audience when the Journey is published do not enter. Unlike the v2
+// Automations audience trigger, there is no member scope, event type, or frequency
+// mode to configure, and `audience_id` must name one Audience — wildcards are not
+// supported.
+//
+// The properties AudienceID, TriggerType, Type are required.
+type JourneyAudienceTriggerNodeParam struct {
+	// The Audience to watch. Must name a single Audience; wildcards are not supported.
+	AudienceID string `json:"audience_id" api:"required"`
+	// Any of "audience".
+	TriggerType JourneyAudienceTriggerNodeTriggerType `json:"trigger_type,omitzero" api:"required"`
+	// Any of "trigger".
+	Type JourneyAudienceTriggerNodeType `json:"type,omitzero" api:"required"`
+	ID   param.Opt[string]              `json:"id,omitzero"`
+	// Condition spec for a journey node. Accepts a single condition atom, an AND/OR
+	// group, or an AND/OR nested group. Omit the `conditions` property entirely to
+	// express "no conditions".
+	Conditions JourneyConditionsFieldUnionParam `json:"conditions,omitzero"`
+	paramObj
+}
+
+func (r JourneyAudienceTriggerNodeParam) MarshalJSON() (data []byte, err error) {
+	type shadow JourneyAudienceTriggerNodeParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *JourneyAudienceTriggerNodeParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1369,7 +1462,8 @@ const (
 )
 
 // JourneyNodeUnion contains all possible properties and values from
-// [JourneyAPIInvokeTriggerNode], [JourneySegmentTriggerNode], [JourneySendNode],
+// [JourneyAPIInvokeTriggerNode], [JourneySegmentTriggerNode],
+// [JourneyAudienceTriggerNode], [JourneyWebhookTriggerNode], [JourneySendNode],
 // [JourneyDelayDurationNode], [JourneyDelayUntilNode],
 // [JourneyFetchGetDeleteNode], [JourneyFetchPostPutNode], [JourneyAINode],
 // [JourneyThrottleStaticNode], [JourneyThrottleDynamicNode], [JourneyNodeBatch],
@@ -1386,8 +1480,11 @@ type JourneyNodeUnion struct {
 	Schema map[string]any `json:"schema"`
 	// This field is from variant [JourneySegmentTriggerNode].
 	RequestType JourneySegmentTriggerNodeRequestType `json:"request_type"`
-	// This field is from variant [JourneySegmentTriggerNode].
-	EventID string `json:"event_id"`
+	EventID     string                               `json:"event_id"`
+	// This field is from variant [JourneyAudienceTriggerNode].
+	AudienceID string `json:"audience_id"`
+	// This field is from variant [JourneyWebhookTriggerNode].
+	EventSource string `json:"event_source"`
 	// This field is from variant [JourneySendNode].
 	Message JourneySendNodeMessage `json:"message"`
 	// This field is from variant [JourneySendNode].
@@ -1443,6 +1540,8 @@ type JourneyNodeUnion struct {
 		Schema              respjson.Field
 		RequestType         respjson.Field
 		EventID             respjson.Field
+		AudienceID          respjson.Field
+		EventSource         respjson.Field
 		Message             respjson.Field
 		Experiment          respjson.Field
 		Duration            respjson.Field
@@ -1481,6 +1580,16 @@ func (u JourneyNodeUnion) AsAPIInvokeTrigger() (v JourneyAPIInvokeTriggerNode) {
 }
 
 func (u JourneyNodeUnion) AsSegmentTrigger() (v JourneySegmentTriggerNode) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u JourneyNodeUnion) AsAudienceTrigger() (v JourneyAudienceTriggerNode) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u JourneyNodeUnion) AsWebhookTrigger() (v JourneyWebhookTriggerNode) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -1748,6 +1857,22 @@ func JourneyNodeParamOfSegmentTrigger(requestType JourneySegmentTriggerNodeReque
 	return JourneyNodeUnionParam{OfSegmentTrigger: &variant}
 }
 
+func JourneyNodeParamOfAudienceTrigger(audienceID string, triggerType JourneyAudienceTriggerNodeTriggerType, type_ JourneyAudienceTriggerNodeType) JourneyNodeUnionParam {
+	var variant JourneyAudienceTriggerNodeParam
+	variant.AudienceID = audienceID
+	variant.TriggerType = triggerType
+	variant.Type = type_
+	return JourneyNodeUnionParam{OfAudienceTrigger: &variant}
+}
+
+func JourneyNodeParamOfWebhookTrigger(eventSource string, triggerType JourneyWebhookTriggerNodeTriggerType, type_ JourneyWebhookTriggerNodeType) JourneyNodeUnionParam {
+	var variant JourneyWebhookTriggerNodeParam
+	variant.EventSource = eventSource
+	variant.TriggerType = triggerType
+	variant.Type = type_
+	return JourneyNodeUnionParam{OfWebhookTrigger: &variant}
+}
+
 func JourneyNodeParamOfSend(message JourneySendNodeMessageParam, type_ JourneySendNodeType) JourneyNodeUnionParam {
 	var variant JourneySendNodeParam
 	variant.Message = message
@@ -1805,6 +1930,8 @@ func JourneyNodeParamOfJourneyBranchNode(default_ JourneyNodeJourneyBranchNodeDe
 type JourneyNodeUnionParam struct {
 	OfAPIInvokeTrigger  *JourneyAPIInvokeTriggerNodeParam  `json:",omitzero,inline"`
 	OfSegmentTrigger    *JourneySegmentTriggerNodeParam    `json:",omitzero,inline"`
+	OfAudienceTrigger   *JourneyAudienceTriggerNodeParam   `json:",omitzero,inline"`
+	OfWebhookTrigger    *JourneyWebhookTriggerNodeParam    `json:",omitzero,inline"`
 	OfSend              *JourneySendNodeParam              `json:",omitzero,inline"`
 	OfDelayForDuration  *JourneyDelayDurationNodeParam     `json:",omitzero,inline"`
 	OfDelayUntil        *JourneyDelayUntilNodeParam        `json:",omitzero,inline"`
@@ -1823,6 +1950,8 @@ type JourneyNodeUnionParam struct {
 func (u JourneyNodeUnionParam) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfAPIInvokeTrigger,
 		u.OfSegmentTrigger,
+		u.OfAudienceTrigger,
+		u.OfWebhookTrigger,
 		u.OfSend,
 		u.OfDelayForDuration,
 		u.OfDelayUntil,
@@ -1845,6 +1974,10 @@ func (u *JourneyNodeUnionParam) asAny() any {
 		return u.OfAPIInvokeTrigger
 	} else if !param.IsOmitted(u.OfSegmentTrigger) {
 		return u.OfSegmentTrigger
+	} else if !param.IsOmitted(u.OfAudienceTrigger) {
+		return u.OfAudienceTrigger
+	} else if !param.IsOmitted(u.OfWebhookTrigger) {
+		return u.OfWebhookTrigger
 	} else if !param.IsOmitted(u.OfSend) {
 		return u.OfSend
 	} else if !param.IsOmitted(u.OfDelayForDuration) {
@@ -1890,9 +2023,17 @@ func (u JourneyNodeUnionParam) GetRequestType() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u JourneyNodeUnionParam) GetEventID() *string {
-	if vt := u.OfSegmentTrigger; vt != nil && vt.EventID.Valid() {
-		return &vt.EventID.Value
+func (u JourneyNodeUnionParam) GetAudienceID() *string {
+	if vt := u.OfAudienceTrigger; vt != nil {
+		return &vt.AudienceID
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u JourneyNodeUnionParam) GetEventSource() *string {
+	if vt := u.OfWebhookTrigger; vt != nil {
+		return &vt.EventSource
 	}
 	return nil
 }
@@ -2047,6 +2188,10 @@ func (u JourneyNodeUnionParam) GetTriggerType() *string {
 		return (*string)(&vt.TriggerType)
 	} else if vt := u.OfSegmentTrigger; vt != nil {
 		return (*string)(&vt.TriggerType)
+	} else if vt := u.OfAudienceTrigger; vt != nil {
+		return (*string)(&vt.TriggerType)
+	} else if vt := u.OfWebhookTrigger; vt != nil {
+		return (*string)(&vt.TriggerType)
 	}
 	return nil
 }
@@ -2056,6 +2201,10 @@ func (u JourneyNodeUnionParam) GetType() *string {
 	if vt := u.OfAPIInvokeTrigger; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfSegmentTrigger; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfAudienceTrigger; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfWebhookTrigger; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfSend; vt != nil {
 		return (*string)(&vt.Type)
@@ -2091,6 +2240,10 @@ func (u JourneyNodeUnionParam) GetID() *string {
 		return &vt.ID.Value
 	} else if vt := u.OfSegmentTrigger; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
+	} else if vt := u.OfAudienceTrigger; vt != nil && vt.ID.Valid() {
+		return &vt.ID.Value
+	} else if vt := u.OfWebhookTrigger; vt != nil && vt.ID.Valid() {
+		return &vt.ID.Value
 	} else if vt := u.OfSend; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
 	} else if vt := u.OfDelayForDuration; vt != nil && vt.ID.Valid() {
@@ -2115,6 +2268,16 @@ func (u JourneyNodeUnionParam) GetID() *string {
 		return &vt.ID.Value
 	} else if vt := u.OfJourneyBranchNode; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u JourneyNodeUnionParam) GetEventID() *string {
+	if vt := u.OfSegmentTrigger; vt != nil && vt.EventID.Valid() {
+		return &vt.EventID.Value
+	} else if vt := u.OfWebhookTrigger; vt != nil && vt.EventID.Valid() {
+		return &vt.EventID.Value
 	}
 	return nil
 }
@@ -2196,6 +2359,10 @@ func (u JourneyNodeUnionParam) GetConditions() *JourneyConditionsFieldUnionParam
 	if vt := u.OfAPIInvokeTrigger; vt != nil {
 		return &vt.Conditions
 	} else if vt := u.OfSegmentTrigger; vt != nil {
+		return &vt.Conditions
+	} else if vt := u.OfAudienceTrigger; vt != nil {
+		return &vt.Conditions
+	} else if vt := u.OfWebhookTrigger; vt != nil {
 		return &vt.Conditions
 	} else if vt := u.OfSend; vt != nil {
 		return &vt.Conditions
@@ -2477,9 +2644,176 @@ func (r *JourneyResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Trigger fired by a segment event (`identify`, `group`, or `track`).
+// One run of a Journey. `status` and `created_at` are absent on a small number of
+// legacy runs stored without them.
+type JourneyRun struct {
+	// A unique identifier representing the run.
+	RunID string `json:"run_id" api:"required"`
+	// Internal provenance strings describing what started the run, e.g.
+	// `invoke/<journey_id>` or `segment/page/Pricing Page`. Diagnostic only — the
+	// format is unstable and should not be parsed.
+	Source []string `json:"source" api:"required"`
+	// When the run started, as an ISO 8601 timestamp.
+	CreatedAt string `json:"created_at"`
+	// The state of the run: `PROCESSING`, `PROCESSED`, `WAITING`, `CANCELED`, `ERROR`,
+	// `THROTTLED`, or `NOT PROCESSED`. Not an enum — new values have been added
+	// before.
+	Status string `json:"status"`
+	// The id of the Journey this run belongs to.
+	TemplateID string `json:"template_id"`
+	// When the run last changed state, as an ISO 8601 timestamp.
+	UpdatedAt string `json:"updated_at"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		RunID       respjson.Field
+		Source      respjson.Field
+		CreatedAt   respjson.Field
+		Status      respjson.Field
+		TemplateID  respjson.Field
+		UpdatedAt   respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r JourneyRun) RawJSON() string { return r.JSON.raw }
+func (r *JourneyRun) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A Journey run as it appears in a list response, without `updated_at`.
+type JourneyRunListItem struct {
+	// A unique identifier representing the run.
+	RunID string `json:"run_id" api:"required"`
+	// Internal provenance strings describing what started the run. Diagnostic only.
+	Source []string `json:"source" api:"required"`
+	// When the run started, as an ISO 8601 timestamp.
+	CreatedAt string `json:"created_at"`
+	// The state of the run. See `JourneyRun.status` for the values it takes.
+	Status string `json:"status"`
+	// The id of the Journey this run belongs to.
+	TemplateID string `json:"template_id"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		RunID       respjson.Field
+		Source      respjson.Field
+		CreatedAt   respjson.Field
+		Status      respjson.Field
+		TemplateID  respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r JourneyRunListItem) RawJSON() string { return r.JSON.raw }
+func (r *JourneyRunListItem) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A page of Journey runs.
+type JourneyRunListResponse struct {
+	Runs []JourneyRunListItem `json:"runs" api:"required"`
+	// Pass back as `cursor` to fetch the next page. Absent on the last page.
+	NextCursor string `json:"next_cursor"`
+	// Pass back as `cursor` to fetch the previous page. Absent on the first page.
+	PrevCursor string `json:"prev_cursor"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Runs        respjson.Field
+		NextCursor  respjson.Field
+		PrevCursor  respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r JourneyRunListResponse) RawJSON() string { return r.JSON.raw }
+func (r *JourneyRunListResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A single Journey run.
+type JourneyRunResponse struct {
+	// One run of a Journey. `status` and `created_at` are absent on a small number of
+	// legacy runs stored without them.
+	Run JourneyRun `json:"run" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Run         respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r JourneyRunResponse) RawJSON() string { return r.JSON.raw }
+func (r *JourneyRunResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// One executed node of a Journey run. `node_id` is the id of the node in the
+// published Journey, so a step maps directly onto the Journey graph.
+type JourneyRunStep struct {
+	// The kind of node that ran, e.g. `send`, `delay`, or `exit`.
+	Action string `json:"action" api:"required"`
+	// The state of the step: the seven run statuses, plus `SKIPPED` and `COMPUTING`.
+	// Not an enum — new values have been added before.
+	Status string `json:"status" api:"required"`
+	// When the step started, as an ISO 8601 timestamp.
+	CreatedAt string `json:"created_at"`
+	// The message this step produced, present on send steps. Pass it to
+	// `GET /messages/{message_id}` for delivery status. A send to a List or an
+	// Audience yields one id for the request, not one per recipient.
+	MessageID string `json:"message_id"`
+	// The id of the node in the published Journey that this step executed.
+	NodeID string `json:"node_id"`
+	// When the step last changed state, as an ISO 8601 timestamp.
+	UpdatedAt string `json:"updated_at"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Action      respjson.Field
+		Status      respjson.Field
+		CreatedAt   respjson.Field
+		MessageID   respjson.Field
+		NodeID      respjson.Field
+		UpdatedAt   respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r JourneyRunStep) RawJSON() string { return r.JSON.raw }
+func (r *JourneyRunStep) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Every step of a Journey run. Not paginated.
+type JourneyRunStepsResponse struct {
+	Steps []JourneyRunStep `json:"steps" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Steps       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r JourneyRunStepsResponse) RawJSON() string { return r.JSON.raw }
+func (r *JourneyRunStepsResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Trigger fired by a segment event (`identify`, `group`, `track`, or `page`). A
+// trigger with no `event_id` fires on any event of its type — the only shape
+// `identify` and `group` can take, and the one that catches a stock
+// `analytics.page()` call.
 type JourneySegmentTriggerNode struct {
-	// Any of "identify", "group", "track".
+	// Any of "identify", "group", "track", "page".
 	RequestType JourneySegmentTriggerNodeRequestType `json:"request_type" api:"required"`
 	// Any of "segment".
 	TriggerType JourneySegmentTriggerNodeTriggerType `json:"trigger_type" api:"required"`
@@ -2526,6 +2860,7 @@ const (
 	JourneySegmentTriggerNodeRequestTypeIdentify JourneySegmentTriggerNodeRequestType = "identify"
 	JourneySegmentTriggerNodeRequestTypeGroup    JourneySegmentTriggerNodeRequestType = "group"
 	JourneySegmentTriggerNodeRequestTypeTrack    JourneySegmentTriggerNodeRequestType = "track"
+	JourneySegmentTriggerNodeRequestTypePage     JourneySegmentTriggerNodeRequestType = "page"
 )
 
 type JourneySegmentTriggerNodeTriggerType string
@@ -2540,11 +2875,14 @@ const (
 	JourneySegmentTriggerNodeTypeTrigger JourneySegmentTriggerNodeType = "trigger"
 )
 
-// Trigger fired by a segment event (`identify`, `group`, or `track`).
+// Trigger fired by a segment event (`identify`, `group`, `track`, or `page`). A
+// trigger with no `event_id` fires on any event of its type — the only shape
+// `identify` and `group` can take, and the one that catches a stock
+// `analytics.page()` call.
 //
 // The properties RequestType, TriggerType, Type are required.
 type JourneySegmentTriggerNodeParam struct {
-	// Any of "identify", "group", "track".
+	// Any of "identify", "group", "track", "page".
 	RequestType JourneySegmentTriggerNodeRequestType `json:"request_type,omitzero" api:"required"`
 	// Any of "segment".
 	TriggerType JourneySegmentTriggerNodeTriggerType `json:"trigger_type,omitzero" api:"required"`
@@ -3383,6 +3721,100 @@ type JourneyVersionsListResponse struct {
 // Returns the unmodified JSON received from the API
 func (r JourneyVersionsListResponse) RawJSON() string { return r.JSON.raw }
 func (r *JourneyVersionsListResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Trigger fired when an external system POSTs to the webhook URL minted for
+// `event_source`. Narrow it to one event with `event_id`, or omit `event_id` to
+// accept every event delivered to the URL.
+type JourneyWebhookTriggerNode struct {
+	// The provider key the webhook URL is minted for. Required, and must not contain a
+	// forward slash.
+	EventSource string `json:"event_source" api:"required"`
+	// Any of "webhook".
+	TriggerType JourneyWebhookTriggerNodeTriggerType `json:"trigger_type" api:"required"`
+	// Any of "trigger".
+	Type JourneyWebhookTriggerNodeType `json:"type" api:"required"`
+	ID   string                        `json:"id"`
+	// Condition spec for a journey node. Accepts a single condition atom, an AND/OR
+	// group, or an AND/OR nested group. Omit the `conditions` property entirely to
+	// express "no conditions".
+	Conditions JourneyConditionsFieldUnion `json:"conditions"`
+	// An optional event filter, matched against the payload's `event` field. A sender
+	// that supplies no `event` matches the literal `custom`. Must not contain a
+	// forward slash. Omit to accept every event delivered to the URL.
+	EventID string `json:"event_id"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		EventSource respjson.Field
+		TriggerType respjson.Field
+		Type        respjson.Field
+		ID          respjson.Field
+		Conditions  respjson.Field
+		EventID     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r JourneyWebhookTriggerNode) RawJSON() string { return r.JSON.raw }
+func (r *JourneyWebhookTriggerNode) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this JourneyWebhookTriggerNode to a
+// JourneyWebhookTriggerNodeParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// JourneyWebhookTriggerNodeParam.Overrides()
+func (r JourneyWebhookTriggerNode) ToParam() JourneyWebhookTriggerNodeParam {
+	return param.Override[JourneyWebhookTriggerNodeParam](json.RawMessage(r.RawJSON()))
+}
+
+type JourneyWebhookTriggerNodeTriggerType string
+
+const (
+	JourneyWebhookTriggerNodeTriggerTypeWebhook JourneyWebhookTriggerNodeTriggerType = "webhook"
+)
+
+type JourneyWebhookTriggerNodeType string
+
+const (
+	JourneyWebhookTriggerNodeTypeTrigger JourneyWebhookTriggerNodeType = "trigger"
+)
+
+// Trigger fired when an external system POSTs to the webhook URL minted for
+// `event_source`. Narrow it to one event with `event_id`, or omit `event_id` to
+// accept every event delivered to the URL.
+//
+// The properties EventSource, TriggerType, Type are required.
+type JourneyWebhookTriggerNodeParam struct {
+	// The provider key the webhook URL is minted for. Required, and must not contain a
+	// forward slash.
+	EventSource string `json:"event_source" api:"required"`
+	// Any of "webhook".
+	TriggerType JourneyWebhookTriggerNodeTriggerType `json:"trigger_type,omitzero" api:"required"`
+	// Any of "trigger".
+	Type JourneyWebhookTriggerNodeType `json:"type,omitzero" api:"required"`
+	ID   param.Opt[string]             `json:"id,omitzero"`
+	// An optional event filter, matched against the payload's `event` field. A sender
+	// that supplies no `event` matches the literal `custom`. Must not contain a
+	// forward slash. Omit to accept every event delivered to the URL.
+	EventID param.Opt[string] `json:"event_id,omitzero"`
+	// Condition spec for a journey node. Accepts a single condition atom, an AND/OR
+	// group, or an AND/OR nested group. Omit the `conditions` property entirely to
+	// express "no conditions".
+	Conditions JourneyConditionsFieldUnionParam `json:"conditions,omitzero"`
+	paramObj
+}
+
+func (r JourneyWebhookTriggerNodeParam) MarshalJSON() (data []byte, err error) {
+	type shadow JourneyWebhookTriggerNodeParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *JourneyWebhookTriggerNodeParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
