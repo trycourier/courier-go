@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"slices"
+	"time"
 
 	"github.com/trycourier/courier-go/v4/internal/apijson"
 	"github.com/trycourier/courier-go/v4/internal/apiquery"
@@ -96,6 +97,37 @@ func (r *NotificationService) Archive(ctx context.Context, id string, opts ...op
 	path := fmt.Sprintf("notifications/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
 	return err
+}
+
+// Fetch the delivery funnel for one Notification Template as a time series — sent,
+// delivered, opened, clicked, errors, and undeliverable — broken out per provider
+// and channel inside each bucket. Sum the entries in a bucket for its totals;
+// there is no bucket-level total.
+//
+// Choose the window absolutely with `start` and `end`, or relatively with
+// `lookback` (an ISO 8601 duration). `start` and `end` take precedence when both
+// are supplied, and a request carrying neither defaults to `lookback=P30D`. The
+// window is snapped outwards onto the `granularity` grid so every bucket it
+// overlaps is returned whole, and the snapped boundaries come back as `start` and
+// `end` — align a chart on those rather than on what was requested. Every boundary
+// is UTC; there is no timezone support.
+//
+// Every bucket in the window is returned, including the quiet ones, whose `data`
+// array is empty, so a series is directly plottable with no gap filling
+// client-side. An unknown template id returns `200` with an all-empty series
+// rather than `404`, and messages sent without a Notification Template never
+// appear here.
+//
+// Available in the US region only.
+func (r *NotificationService) GetMetrics(ctx context.Context, id string, query NotificationGetMetricsParams, opts ...option.RequestOption) (res *NotificationMetricsResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("notifications/%s/metrics", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return res, err
 }
 
 // Returns a notification template's published versions, most recent first, for
@@ -737,6 +769,110 @@ func (r NotificationLocalePutRequestElementParam) MarshalJSON() (data []byte, er
 	return param.MarshalWithExtras(r, (*shadow)(&r), r.ExtraFields)
 }
 func (r *NotificationLocalePutRequestElementParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type NotificationMetricsResponse struct {
+	// End of the window actually queried, ceiled onto the granularity grid.
+	// Second-precision UTC.
+	End time.Time `json:"end" api:"required" format:"date-time"`
+	// Bucket size the series was built at.
+	//
+	// Any of "HOUR", "DAY", "WEEK", "MONTH".
+	Granularity NotificationMetricsResponseGranularity `json:"granularity" api:"required"`
+	// The template the series describes, echoed from the request.
+	NotificationID string `json:"notificationId" api:"required"`
+	// One entry per bucket between `start` and `end`, oldest first, including buckets
+	// with no activity.
+	Series []NotificationMetricsResponseSeries `json:"series" api:"required"`
+	// Inclusive start of the window actually queried, floored onto the granularity
+	// grid. Second-precision UTC.
+	Start time.Time `json:"start" api:"required" format:"date-time"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		End            respjson.Field
+		Granularity    respjson.Field
+		NotificationID respjson.Field
+		Series         respjson.Field
+		Start          respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r NotificationMetricsResponse) RawJSON() string { return r.JSON.raw }
+func (r *NotificationMetricsResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Bucket size the series was built at.
+type NotificationMetricsResponseGranularity string
+
+const (
+	NotificationMetricsResponseGranularityHour  NotificationMetricsResponseGranularity = "HOUR"
+	NotificationMetricsResponseGranularityDay   NotificationMetricsResponseGranularity = "DAY"
+	NotificationMetricsResponseGranularityWeek  NotificationMetricsResponseGranularity = "WEEK"
+	NotificationMetricsResponseGranularityMonth NotificationMetricsResponseGranularity = "MONTH"
+)
+
+type NotificationMetricsResponseSeries struct {
+	// One entry per provider and channel that handled a message in this bucket. Empty
+	// when nothing was sent.
+	Data []NotificationMetricsResponseSeriesData `json:"data" api:"required"`
+	// Start of the bucket, second-precision UTC.
+	Period time.Time `json:"period" api:"required" format:"date-time"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		Period      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r NotificationMetricsResponseSeries) RawJSON() string { return r.JSON.raw }
+func (r *NotificationMetricsResponseSeries) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type NotificationMetricsResponseSeriesData struct {
+	// Channel the provider delivered on, e.g. `email`.
+	Channel string `json:"channel" api:"required"`
+	// Messages with at least one tracked link click.
+	Clicked int64 `json:"clicked" api:"required"`
+	// Messages the provider confirmed as delivered.
+	Delivered int64 `json:"delivered" api:"required"`
+	// Messages the provider rejected or failed on, including ones a later provider
+	// then delivered.
+	Errors int64 `json:"errors" api:"required"`
+	// Messages opened at least once. Always `0` on channels with no open tracking.
+	Opened int64 `json:"opened" api:"required"`
+	// Provider that handled the messages, e.g. `sendgrid`.
+	Provider string `json:"provider" api:"required"`
+	// Messages handed to the provider.
+	Sent int64 `json:"sent" api:"required"`
+	// Messages Courier could not deliver on any provider for the channel.
+	Undeliverable int64 `json:"undeliverable" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Channel       respjson.Field
+		Clicked       respjson.Field
+		Delivered     respjson.Field
+		Errors        respjson.Field
+		Opened        respjson.Field
+		Provider      respjson.Field
+		Sent          respjson.Field
+		Undeliverable respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r NotificationMetricsResponseSeriesData) RawJSON() string { return r.JSON.raw }
+func (r *NotificationMetricsResponseSeriesData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1475,6 +1611,53 @@ func (r NotificationListParams) URLQuery() (v url.Values, err error) {
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
+
+type NotificationGetMetricsParams struct {
+	// The end of the window, as an ISO 8601 timestamp with an offset. Must be supplied
+	// together with `start`. An `end` in the future is accepted and not clamped — the
+	// trailing buckets come back empty.
+	End param.Opt[time.Time] `query:"end,omitzero" format:"date-time" json:"-"`
+	// The length of the window, counted back from now, as an ISO 8601 duration
+	// (`P30D`, `P12W`, `PT12H`). Defaults to `P30D`, and is ignored when `start` and
+	// `end` are supplied. A malformed or non-positive duration returns `400`.
+	Lookback param.Opt[string] `query:"lookback,omitzero" json:"-"`
+	// The inclusive start of the window, as an ISO 8601 timestamp with an offset
+	// (`2026-04-01T00:00:00Z`). Must be supplied together with `end` and be earlier
+	// than it; either one alone returns `400`.
+	Start param.Opt[time.Time] `query:"start,omitzero" format:"date-time" json:"-"`
+	// The size of each bucket in the series. Defaults to `DAY`. `WEEK` buckets start
+	// on Sunday. A fine granularity caps the window it can cover: `HOUR` spans at most
+	// 7 days and `DAY` at most 90 days, and a wider window returns `400` — request a
+	// coarser granularity instead. `WEEK` and `MONTH` are uncapped, subject to the
+	// 1000-bucket limit on a single response.
+	//
+	// Any of "HOUR", "DAY", "WEEK", "MONTH".
+	Granularity NotificationGetMetricsParamsGranularity `query:"granularity,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [NotificationGetMetricsParams]'s query parameters as
+// `url.Values`.
+func (r NotificationGetMetricsParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// The size of each bucket in the series. Defaults to `DAY`. `WEEK` buckets start
+// on Sunday. A fine granularity caps the window it can cover: `HOUR` spans at most
+// 7 days and `DAY` at most 90 days, and a wider window returns `400` — request a
+// coarser granularity instead. `WEEK` and `MONTH` are uncapped, subject to the
+// 1000-bucket limit on a single response.
+type NotificationGetMetricsParamsGranularity string
+
+const (
+	NotificationGetMetricsParamsGranularityHour  NotificationGetMetricsParamsGranularity = "HOUR"
+	NotificationGetMetricsParamsGranularityDay   NotificationGetMetricsParamsGranularity = "DAY"
+	NotificationGetMetricsParamsGranularityWeek  NotificationGetMetricsParamsGranularity = "WEEK"
+	NotificationGetMetricsParamsGranularityMonth NotificationGetMetricsParamsGranularity = "MONTH"
+)
 
 type NotificationListVersionsParams struct {
 	// Opaque pagination cursor from a previous response. Omit for the first page.
