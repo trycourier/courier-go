@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.28.0](https://github.com/trycourier/courier-go/compare/v4.27.0...v4.28.0) (2026-08-26)
+
+
+### Features
+
+* **api:** document the template send metrics endpoint ([#161](https://github.com/trycourier/courier-go/issues/161)) ([4587a05](https://github.com/trycourier/courier-go/commit/4587a05d90a87580c4316e34ca4ada27c18f2cca))
+
 ## [4.27.0](https://github.com/trycourier/courier-go/compare/v4.26.0...v4.27.0) (2026-08-19)
 
 
