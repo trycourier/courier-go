@@ -2957,7 +2957,10 @@ type JourneySendNodeMessage struct {
 	Data     map[string]any                `json:"data"`
 	Delay    JourneySendNodeMessageDelay   `json:"delay"`
 	Template string                        `json:"template"`
-	To       JourneySendNodeMessageTo      `json:"to"`
+	// Recipient override for this send. Provide exactly one of `email_override`,
+	// `phone_number_override`, `user_id_override`, `slack`, or `ms_teams` — not a
+	// combination.
+	To JourneySendNodeMessageTo `json:"to"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Context     respjson.Field
@@ -3023,14 +3026,31 @@ func (r *JourneySendNodeMessageDelay) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Recipient override for this send. Provide exactly one of `email_override`,
+// `phone_number_override`, `user_id_override`, `slack`, or `ms_teams` — not a
+// combination.
 type JourneySendNodeMessageTo struct {
-	EmailOverride       string `json:"email_override"`
-	PhoneNumberOverride string `json:"phone_number_override"`
-	UserIDOverride      string `json:"user_id_override"`
+	EmailOverride string `json:"email_override"`
+	// Send to a Microsoft Teams address directly, bypassing the recipient's stored
+	// profile. Requires exactly one target: `channel_id`, `channel_name` (with
+	// `team_id`), `user_id`, or `email`. `channel_name`, `user_id`, and `email` also
+	// need at least one of `service_url` or `tenant_id` — if you provide both, they
+	// must agree. `channel_id` doesn't require tenant context to publish, but provide
+	// `service_url` or `tenant_id` anyway: sends without either have failed at
+	// delivery in testing. `conversation_id` and `reply_to_activity_id`, available on
+	// the send API's `MsTeams` profile, aren't supported here yet.
+	MsTeams             JourneySendNodeToMsTeams `json:"ms_teams"`
+	PhoneNumberOverride string                   `json:"phone_number_override"`
+	// Send to a Slack address directly, bypassing the recipient's stored profile.
+	// Requires exactly one of `channel`, `user_id`, or `email`.
+	Slack          JourneySendNodeToSlackUnion `json:"slack"`
+	UserIDOverride string                      `json:"user_id_override"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		EmailOverride       respjson.Field
+		MsTeams             respjson.Field
 		PhoneNumberOverride respjson.Field
+		Slack               respjson.Field
 		UserIDOverride      respjson.Field
 		ExtraFields         map[string]respjson.Field
 		raw                 string
@@ -3087,7 +3107,10 @@ type JourneySendNodeMessageParam struct {
 	Context JourneySendNodeMessageContextParam `json:"context,omitzero"`
 	Data    map[string]any                     `json:"data,omitzero"`
 	Delay   JourneySendNodeMessageDelayParam   `json:"delay,omitzero"`
-	To      JourneySendNodeMessageToParam      `json:"to,omitzero"`
+	// Recipient override for this send. Provide exactly one of `email_override`,
+	// `phone_number_override`, `user_id_override`, `slack`, or `ms_teams` — not a
+	// combination.
+	To JourneySendNodeMessageToParam `json:"to,omitzero"`
 	paramObj
 }
 
@@ -3142,10 +3165,25 @@ func (r *JourneySendNodeMessageDelayParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Recipient override for this send. Provide exactly one of `email_override`,
+// `phone_number_override`, `user_id_override`, `slack`, or `ms_teams` — not a
+// combination.
 type JourneySendNodeMessageToParam struct {
 	EmailOverride       param.Opt[string] `json:"email_override,omitzero"`
 	PhoneNumberOverride param.Opt[string] `json:"phone_number_override,omitzero"`
 	UserIDOverride      param.Opt[string] `json:"user_id_override,omitzero"`
+	// Send to a Microsoft Teams address directly, bypassing the recipient's stored
+	// profile. Requires exactly one target: `channel_id`, `channel_name` (with
+	// `team_id`), `user_id`, or `email`. `channel_name`, `user_id`, and `email` also
+	// need at least one of `service_url` or `tenant_id` — if you provide both, they
+	// must agree. `channel_id` doesn't require tenant context to publish, but provide
+	// `service_url` or `tenant_id` anyway: sends without either have failed at
+	// delivery in testing. `conversation_id` and `reply_to_activity_id`, available on
+	// the send API's `MsTeams` profile, aren't supported here yet.
+	MsTeams JourneySendNodeToMsTeamsParam `json:"ms_teams,omitzero"`
+	// Send to a Slack address directly, bypassing the recipient's stored profile.
+	// Requires exactly one of `channel`, `user_id`, or `email`.
+	Slack JourneySendNodeToSlackUnionParam `json:"slack,omitzero"`
 	paramObj
 }
 
@@ -3154,6 +3192,394 @@ func (r JourneySendNodeMessageToParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *JourneySendNodeMessageToParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Send to a Microsoft Teams address directly, bypassing the recipient's stored
+// profile. Requires exactly one target: `channel_id`, `channel_name` (with
+// `team_id`), `user_id`, or `email`. `channel_name`, `user_id`, and `email` also
+// need at least one of `service_url` or `tenant_id` — if you provide both, they
+// must agree. `channel_id` doesn't require tenant context to publish, but provide
+// `service_url` or `tenant_id` anyway: sends without either have failed at
+// delivery in testing. `conversation_id` and `reply_to_activity_id`, available on
+// the send API's `MsTeams` profile, aren't supported here yet.
+type JourneySendNodeToMsTeams struct {
+	// Bot Framework channel ID to send to.
+	ChannelID string `json:"channel_id"`
+	// Teams channel name to send to. Requires `team_id`.
+	ChannelName string `json:"channel_name"`
+	// Email address of the Teams user to send to.
+	Email string `json:"email"`
+	// The regional Bot Framework host for this conversation, e.g.
+	// `https://smba.trafficmanager.net/amer`. A path segment naming the Microsoft
+	// tenant may follow it and is used to derive `tenant_id` when it is not supplied
+	// directly.
+	ServiceURL string `json:"service_url"`
+	// Microsoft Teams team ID. Required alongside `channel_name`.
+	TeamID string `json:"team_id"`
+	// The Microsoft (Azure AD) tenant this send targets or authenticates against.
+	// Unrelated to `message.context.tenant_id`, which is the Courier customer's own
+	// multi-tenant context.
+	TenantID string `json:"tenant_id"`
+	// Microsoft Teams user ID to send to.
+	UserID string `json:"user_id"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ChannelID   respjson.Field
+		ChannelName respjson.Field
+		Email       respjson.Field
+		ServiceURL  respjson.Field
+		TeamID      respjson.Field
+		TenantID    respjson.Field
+		UserID      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r JourneySendNodeToMsTeams) RawJSON() string { return r.JSON.raw }
+func (r *JourneySendNodeToMsTeams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this JourneySendNodeToMsTeams to a
+// JourneySendNodeToMsTeamsParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// JourneySendNodeToMsTeamsParam.Overrides()
+func (r JourneySendNodeToMsTeams) ToParam() JourneySendNodeToMsTeamsParam {
+	return param.Override[JourneySendNodeToMsTeamsParam](json.RawMessage(r.RawJSON()))
+}
+
+// Send to a Microsoft Teams address directly, bypassing the recipient's stored
+// profile. Requires exactly one target: `channel_id`, `channel_name` (with
+// `team_id`), `user_id`, or `email`. `channel_name`, `user_id`, and `email` also
+// need at least one of `service_url` or `tenant_id` — if you provide both, they
+// must agree. `channel_id` doesn't require tenant context to publish, but provide
+// `service_url` or `tenant_id` anyway: sends without either have failed at
+// delivery in testing. `conversation_id` and `reply_to_activity_id`, available on
+// the send API's `MsTeams` profile, aren't supported here yet.
+type JourneySendNodeToMsTeamsParam struct {
+	// Bot Framework channel ID to send to.
+	ChannelID param.Opt[string] `json:"channel_id,omitzero"`
+	// Teams channel name to send to. Requires `team_id`.
+	ChannelName param.Opt[string] `json:"channel_name,omitzero"`
+	// Email address of the Teams user to send to.
+	Email param.Opt[string] `json:"email,omitzero"`
+	// The regional Bot Framework host for this conversation, e.g.
+	// `https://smba.trafficmanager.net/amer`. A path segment naming the Microsoft
+	// tenant may follow it and is used to derive `tenant_id` when it is not supplied
+	// directly.
+	ServiceURL param.Opt[string] `json:"service_url,omitzero"`
+	// Microsoft Teams team ID. Required alongside `channel_name`.
+	TeamID param.Opt[string] `json:"team_id,omitzero"`
+	// The Microsoft (Azure AD) tenant this send targets or authenticates against.
+	// Unrelated to `message.context.tenant_id`, which is the Courier customer's own
+	// multi-tenant context.
+	TenantID param.Opt[string] `json:"tenant_id,omitzero"`
+	// Microsoft Teams user ID to send to.
+	UserID param.Opt[string] `json:"user_id,omitzero"`
+	paramObj
+}
+
+func (r JourneySendNodeToMsTeamsParam) MarshalJSON() (data []byte, err error) {
+	type shadow JourneySendNodeToMsTeamsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *JourneySendNodeToMsTeamsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// JourneySendNodeToSlackUnion contains all possible properties and values from
+// [JourneySendNodeToSlackChannel], [JourneySendNodeToSlackUserID],
+// [JourneySendNodeToSlackEmail].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type JourneySendNodeToSlackUnion struct {
+	// This field is from variant [JourneySendNodeToSlackChannel].
+	Channel     string `json:"channel"`
+	AccessToken string `json:"access_token"`
+	// This field is from variant [JourneySendNodeToSlackUserID].
+	UserID string `json:"user_id"`
+	// This field is from variant [JourneySendNodeToSlackEmail].
+	Email string `json:"email"`
+	JSON  struct {
+		Channel     respjson.Field
+		AccessToken respjson.Field
+		UserID      respjson.Field
+		Email       respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+func (u JourneySendNodeToSlackUnion) AsJourneySendNodeToSlackChannel() (v JourneySendNodeToSlackChannel) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u JourneySendNodeToSlackUnion) AsJourneySendNodeToSlackUserID() (v JourneySendNodeToSlackUserID) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u JourneySendNodeToSlackUnion) AsJourneySendNodeToSlackEmail() (v JourneySendNodeToSlackEmail) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u JourneySendNodeToSlackUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *JourneySendNodeToSlackUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this JourneySendNodeToSlackUnion to a
+// JourneySendNodeToSlackUnionParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// JourneySendNodeToSlackUnionParam.Overrides()
+func (r JourneySendNodeToSlackUnion) ToParam() JourneySendNodeToSlackUnionParam {
+	return param.Override[JourneySendNodeToSlackUnionParam](json.RawMessage(r.RawJSON()))
+}
+
+func JourneySendNodeToSlackParamOfJourneySendNodeToSlackChannel(channel string) JourneySendNodeToSlackUnionParam {
+	var variant JourneySendNodeToSlackChannelParam
+	variant.Channel = channel
+	return JourneySendNodeToSlackUnionParam{OfJourneySendNodeToSlackChannel: &variant}
+}
+
+func JourneySendNodeToSlackParamOfJourneySendNodeToSlackUserID(userID string) JourneySendNodeToSlackUnionParam {
+	var variant JourneySendNodeToSlackUserIDParam
+	variant.UserID = userID
+	return JourneySendNodeToSlackUnionParam{OfJourneySendNodeToSlackUserID: &variant}
+}
+
+func JourneySendNodeToSlackParamOfJourneySendNodeToSlackEmail(email string) JourneySendNodeToSlackUnionParam {
+	var variant JourneySendNodeToSlackEmailParam
+	variant.Email = email
+	return JourneySendNodeToSlackUnionParam{OfJourneySendNodeToSlackEmail: &variant}
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type JourneySendNodeToSlackUnionParam struct {
+	OfJourneySendNodeToSlackChannel *JourneySendNodeToSlackChannelParam `json:",omitzero,inline"`
+	OfJourneySendNodeToSlackUserID  *JourneySendNodeToSlackUserIDParam  `json:",omitzero,inline"`
+	OfJourneySendNodeToSlackEmail   *JourneySendNodeToSlackEmailParam   `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u JourneySendNodeToSlackUnionParam) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfJourneySendNodeToSlackChannel, u.OfJourneySendNodeToSlackUserID, u.OfJourneySendNodeToSlackEmail)
+}
+func (u *JourneySendNodeToSlackUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *JourneySendNodeToSlackUnionParam) asAny() any {
+	if !param.IsOmitted(u.OfJourneySendNodeToSlackChannel) {
+		return u.OfJourneySendNodeToSlackChannel
+	} else if !param.IsOmitted(u.OfJourneySendNodeToSlackUserID) {
+		return u.OfJourneySendNodeToSlackUserID
+	} else if !param.IsOmitted(u.OfJourneySendNodeToSlackEmail) {
+		return u.OfJourneySendNodeToSlackEmail
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u JourneySendNodeToSlackUnionParam) GetChannel() *string {
+	if vt := u.OfJourneySendNodeToSlackChannel; vt != nil {
+		return &vt.Channel
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u JourneySendNodeToSlackUnionParam) GetUserID() *string {
+	if vt := u.OfJourneySendNodeToSlackUserID; vt != nil {
+		return &vt.UserID
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u JourneySendNodeToSlackUnionParam) GetEmail() *string {
+	if vt := u.OfJourneySendNodeToSlackEmail; vt != nil {
+		return &vt.Email
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u JourneySendNodeToSlackUnionParam) GetAccessToken() *string {
+	if vt := u.OfJourneySendNodeToSlackChannel; vt != nil && vt.AccessToken.Valid() {
+		return &vt.AccessToken.Value
+	} else if vt := u.OfJourneySendNodeToSlackUserID; vt != nil && vt.AccessToken.Valid() {
+		return &vt.AccessToken.Value
+	} else if vt := u.OfJourneySendNodeToSlackEmail; vt != nil && vt.AccessToken.Valid() {
+		return &vt.AccessToken.Value
+	}
+	return nil
+}
+
+type JourneySendNodeToSlackChannel struct {
+	// Slack channel to send to, by name or ID.
+	Channel string `json:"channel" api:"required"`
+	// A runtime reference to a Slack access token, such as `{{data.slack_token}}`.
+	// Literal values are rejected — they'd be stored permanently with no way to rotate
+	// them. Omit to use the token on the recipient's stored Slack profile.
+	AccessToken string `json:"access_token"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Channel     respjson.Field
+		AccessToken respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r JourneySendNodeToSlackChannel) RawJSON() string { return r.JSON.raw }
+func (r *JourneySendNodeToSlackChannel) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this JourneySendNodeToSlackChannel to a
+// JourneySendNodeToSlackChannelParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// JourneySendNodeToSlackChannelParam.Overrides()
+func (r JourneySendNodeToSlackChannel) ToParam() JourneySendNodeToSlackChannelParam {
+	return param.Override[JourneySendNodeToSlackChannelParam](json.RawMessage(r.RawJSON()))
+}
+
+// The property Channel is required.
+type JourneySendNodeToSlackChannelParam struct {
+	// Slack channel to send to, by name or ID.
+	Channel string `json:"channel" api:"required"`
+	// A runtime reference to a Slack access token, such as `{{data.slack_token}}`.
+	// Literal values are rejected — they'd be stored permanently with no way to rotate
+	// them. Omit to use the token on the recipient's stored Slack profile.
+	AccessToken param.Opt[string] `json:"access_token,omitzero"`
+	paramObj
+}
+
+func (r JourneySendNodeToSlackChannelParam) MarshalJSON() (data []byte, err error) {
+	type shadow JourneySendNodeToSlackChannelParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *JourneySendNodeToSlackChannelParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type JourneySendNodeToSlackEmail struct {
+	// Email address of the Slack user to send to, resolved via the workspace
+	// directory.
+	Email string `json:"email" api:"required"`
+	// A runtime reference to a Slack access token, such as `{{data.slack_token}}`.
+	// Literal values are rejected — they'd be stored permanently with no way to rotate
+	// them. Omit to use the token on the recipient's stored Slack profile.
+	AccessToken string `json:"access_token"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Email       respjson.Field
+		AccessToken respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r JourneySendNodeToSlackEmail) RawJSON() string { return r.JSON.raw }
+func (r *JourneySendNodeToSlackEmail) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this JourneySendNodeToSlackEmail to a
+// JourneySendNodeToSlackEmailParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// JourneySendNodeToSlackEmailParam.Overrides()
+func (r JourneySendNodeToSlackEmail) ToParam() JourneySendNodeToSlackEmailParam {
+	return param.Override[JourneySendNodeToSlackEmailParam](json.RawMessage(r.RawJSON()))
+}
+
+// The property Email is required.
+type JourneySendNodeToSlackEmailParam struct {
+	// Email address of the Slack user to send to, resolved via the workspace
+	// directory.
+	Email string `json:"email" api:"required"`
+	// A runtime reference to a Slack access token, such as `{{data.slack_token}}`.
+	// Literal values are rejected — they'd be stored permanently with no way to rotate
+	// them. Omit to use the token on the recipient's stored Slack profile.
+	AccessToken param.Opt[string] `json:"access_token,omitzero"`
+	paramObj
+}
+
+func (r JourneySendNodeToSlackEmailParam) MarshalJSON() (data []byte, err error) {
+	type shadow JourneySendNodeToSlackEmailParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *JourneySendNodeToSlackEmailParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type JourneySendNodeToSlackUserID struct {
+	// Slack user ID to send to.
+	UserID string `json:"user_id" api:"required"`
+	// A runtime reference to a Slack access token, such as `{{data.slack_token}}`.
+	// Literal values are rejected — they'd be stored permanently with no way to rotate
+	// them. Omit to use the token on the recipient's stored Slack profile.
+	AccessToken string `json:"access_token"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		UserID      respjson.Field
+		AccessToken respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r JourneySendNodeToSlackUserID) RawJSON() string { return r.JSON.raw }
+func (r *JourneySendNodeToSlackUserID) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this JourneySendNodeToSlackUserID to a
+// JourneySendNodeToSlackUserIDParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// JourneySendNodeToSlackUserIDParam.Overrides()
+func (r JourneySendNodeToSlackUserID) ToParam() JourneySendNodeToSlackUserIDParam {
+	return param.Override[JourneySendNodeToSlackUserIDParam](json.RawMessage(r.RawJSON()))
+}
+
+// The property UserID is required.
+type JourneySendNodeToSlackUserIDParam struct {
+	// Slack user ID to send to.
+	UserID string `json:"user_id" api:"required"`
+	// A runtime reference to a Slack access token, such as `{{data.slack_token}}`.
+	// Literal values are rejected — they'd be stored permanently with no way to rotate
+	// them. Omit to use the token on the recipient's stored Slack profile.
+	AccessToken param.Opt[string] `json:"access_token,omitzero"`
+	paramObj
+}
+
+func (r JourneySendNodeToSlackUserIDParam) MarshalJSON() (data []byte, err error) {
+	type shadow JourneySendNodeToSlackUserIDParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *JourneySendNodeToSlackUserIDParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

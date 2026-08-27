@@ -56,9 +56,24 @@ func TestJourneyNewWithOptionalParams(t *testing.T) {
 						},
 						Template: courier.String("nt_01kx4h2jdafq8bk9aftxak4b40"),
 						To: courier.JourneySendNodeMessageToParam{
-							EmailOverride:       courier.String("x"),
+							EmailOverride: courier.String("x"),
+							MsTeams: courier.JourneySendNodeToMsTeamsParam{
+								ChannelID:   courier.String("x"),
+								ChannelName: courier.String("x"),
+								Email:       courier.String("x"),
+								ServiceURL:  courier.String("x"),
+								TeamID:      courier.String("x"),
+								TenantID:    courier.String("x"),
+								UserID:      courier.String("x"),
+							},
 							PhoneNumberOverride: courier.String("x"),
-							UserIDOverride:      courier.String("x"),
+							Slack: courier.JourneySendNodeToSlackUnionParam{
+								OfJourneySendNodeToSlackChannel: &courier.JourneySendNodeToSlackChannelParam{
+									Channel:     "x",
+									AccessToken: courier.String("x"),
+								},
+							},
+							UserIDOverride: courier.String("x"),
 						},
 					},
 					Type: courier.JourneySendNodeTypeSend,

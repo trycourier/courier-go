@@ -235,6 +235,11 @@ Params Types:
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneyPublishRequestParam">JourneyPublishRequestParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneySegmentTriggerNodeParam">JourneySegmentTriggerNodeParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneySendNodeParam">JourneySendNodeParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneySendNodeToMsTeamsParam">JourneySendNodeToMsTeamsParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneySendNodeToSlackUnionParam">JourneySendNodeToSlackUnionParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneySendNodeToSlackChannelParam">JourneySendNodeToSlackChannelParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneySendNodeToSlackEmailParam">JourneySendNodeToSlackEmailParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneySendNodeToSlackUserIDParam">JourneySendNodeToSlackUserIDParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneyState">JourneyState</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneyTemplateCreateRequestParam">JourneyTemplateCreateRequestParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneyTemplatePublishRequestParam">JourneyTemplatePublishRequestParam</a>
@@ -273,6 +278,11 @@ Response Types:
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneyRunStepsResponse">JourneyRunStepsResponse</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneySegmentTriggerNode">JourneySegmentTriggerNode</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneySendNode">JourneySendNode</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneySendNodeToMsTeams">JourneySendNodeToMsTeams</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneySendNodeToSlackUnion">JourneySendNodeToSlackUnion</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneySendNodeToSlackChannel">JourneySendNodeToSlackChannel</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneySendNodeToSlackEmail">JourneySendNodeToSlackEmail</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneySendNodeToSlackUserID">JourneySendNodeToSlackUserID</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneyState">JourneyState</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneyTemplateGetResponse">JourneyTemplateGetResponse</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#JourneyTemplateListResponse">JourneyTemplateListResponse</a>

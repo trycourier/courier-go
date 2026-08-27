@@ -366,6 +366,9 @@ type Metadata = shared.Metadata
 // This is an alias to an internal type.
 type MetadataParam = shared.MetadataParam
 
+// Provide at least one of `tenant_id` or `service_url`. If you provide both, they
+// must agree.
+//
 // This is an alias to an internal type.
 type MsTeamsUnionParam = shared.MsTeamsUnionParam
 
@@ -433,18 +436,31 @@ type Rule = shared.Rule
 // This is an alias to an internal type.
 type RuleParam = shared.RuleParam
 
+// Sends directly to a Microsoft Teams channel by its Bot Framework ID. Still
+// provide at least one of `tenant_id` or `service_url` — sends without either have
+// failed Bot Framework authentication in testing.
+//
 // This is an alias to an internal type.
 type SendToMsTeamsChannelIDParam = shared.SendToMsTeamsChannelIDParam
 
+// `team_id` is required alongside `channel_name`. Also provide at least one of
+// `tenant_id` or `service_url`; if you provide both, they must agree.
+//
 // This is an alias to an internal type.
 type SendToMsTeamsChannelNameParam = shared.SendToMsTeamsChannelNameParam
 
 // This is an alias to an internal type.
 type SendToMsTeamsConversationIDParam = shared.SendToMsTeamsConversationIDParam
 
+// Provide at least one of `tenant_id` or `service_url`. If you provide both, they
+// must agree.
+//
 // This is an alias to an internal type.
 type SendToMsTeamsEmailParam = shared.SendToMsTeamsEmailParam
 
+// Provide at least one of `tenant_id` or `service_url`. If you provide both, they
+// must agree.
+//
 // This is an alias to an internal type.
 type SendToMsTeamsUserIDParam = shared.SendToMsTeamsUserIDParam
 
