@@ -1614,27 +1614,21 @@ func (r *MetadataParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func MsTeamsParamOfSendToMsTeamsUserID(serviceURL string, tenantID string, userID string) MsTeamsUnionParam {
+func MsTeamsParamOfSendToMsTeamsUserID(userID string) MsTeamsUnionParam {
 	var variant SendToMsTeamsUserIDParam
-	variant.ServiceURL = serviceURL
-	variant.TenantID = tenantID
 	variant.UserID = userID
 	return MsTeamsUnionParam{OfSendToMsTeamsUserID: &variant}
 }
 
-func MsTeamsParamOfSendToMsTeamsEmail(email string, serviceURL string, tenantID string) MsTeamsUnionParam {
+func MsTeamsParamOfSendToMsTeamsEmail(email string) MsTeamsUnionParam {
 	var variant SendToMsTeamsEmailParam
 	variant.Email = email
-	variant.ServiceURL = serviceURL
-	variant.TenantID = tenantID
 	return MsTeamsUnionParam{OfSendToMsTeamsEmail: &variant}
 }
 
-func MsTeamsParamOfSendToMsTeamsChannelID(channelID string, serviceURL string, tenantID string) MsTeamsUnionParam {
+func MsTeamsParamOfSendToMsTeamsChannelID(channelID string) MsTeamsUnionParam {
 	var variant SendToMsTeamsChannelIDParam
 	variant.ChannelID = channelID
-	variant.ServiceURL = serviceURL
-	variant.TenantID = tenantID
 	return MsTeamsUnionParam{OfSendToMsTeamsChannelID: &variant}
 }
 
@@ -1644,6 +1638,13 @@ func MsTeamsParamOfSendToMsTeamsConversationID(conversationID string, serviceURL
 	variant.ServiceURL = serviceURL
 	variant.TenantID = tenantID
 	return MsTeamsUnionParam{OfSendToMsTeamsConversationID: &variant}
+}
+
+func MsTeamsParamOfSendToMsTeamsChannelName(channelName string, teamID string) MsTeamsUnionParam {
+	var variant SendToMsTeamsChannelNameParam
+	variant.ChannelName = channelName
+	variant.TeamID = teamID
+	return MsTeamsUnionParam{OfSendToMsTeamsChannelName: &variant}
 }
 
 // Only one field can be non-zero.
@@ -1734,32 +1735,32 @@ func (u MsTeamsUnionParam) GetTeamID() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u MsTeamsUnionParam) GetServiceURL() *string {
-	if vt := u.OfSendToMsTeamsUserID; vt != nil {
-		return (*string)(&vt.ServiceURL)
-	} else if vt := u.OfSendToMsTeamsEmail; vt != nil {
-		return (*string)(&vt.ServiceURL)
-	} else if vt := u.OfSendToMsTeamsChannelID; vt != nil {
-		return (*string)(&vt.ServiceURL)
+	if vt := u.OfSendToMsTeamsUserID; vt != nil && vt.ServiceURL.Valid() {
+		return &vt.ServiceURL.Value
+	} else if vt := u.OfSendToMsTeamsEmail; vt != nil && vt.ServiceURL.Valid() {
+		return &vt.ServiceURL.Value
+	} else if vt := u.OfSendToMsTeamsChannelID; vt != nil && vt.ServiceURL.Valid() {
+		return &vt.ServiceURL.Value
 	} else if vt := u.OfSendToMsTeamsConversationID; vt != nil {
 		return (*string)(&vt.ServiceURL)
-	} else if vt := u.OfSendToMsTeamsChannelName; vt != nil {
-		return (*string)(&vt.ServiceURL)
+	} else if vt := u.OfSendToMsTeamsChannelName; vt != nil && vt.ServiceURL.Valid() {
+		return &vt.ServiceURL.Value
 	}
 	return nil
 }
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u MsTeamsUnionParam) GetTenantID() *string {
-	if vt := u.OfSendToMsTeamsUserID; vt != nil {
-		return (*string)(&vt.TenantID)
-	} else if vt := u.OfSendToMsTeamsEmail; vt != nil {
-		return (*string)(&vt.TenantID)
-	} else if vt := u.OfSendToMsTeamsChannelID; vt != nil {
-		return (*string)(&vt.TenantID)
+	if vt := u.OfSendToMsTeamsUserID; vt != nil && vt.TenantID.Valid() {
+		return &vt.TenantID.Value
+	} else if vt := u.OfSendToMsTeamsEmail; vt != nil && vt.TenantID.Valid() {
+		return &vt.TenantID.Value
+	} else if vt := u.OfSendToMsTeamsChannelID; vt != nil && vt.TenantID.Valid() {
+		return &vt.TenantID.Value
 	} else if vt := u.OfSendToMsTeamsConversationID; vt != nil {
 		return (*string)(&vt.TenantID)
-	} else if vt := u.OfSendToMsTeamsChannelName; vt != nil {
-		return (*string)(&vt.TenantID)
+	} else if vt := u.OfSendToMsTeamsChannelName; vt != nil && vt.TenantID.Valid() {
+		return &vt.TenantID.Value
 	}
 	return nil
 }
@@ -1768,6 +1769,8 @@ func (u MsTeamsUnionParam) GetTenantID() *string {
 //
 // The property MsTeams is required.
 type MsTeamsRecipientParam struct {
+	// Provide at least one of `tenant_id` or `service_url`. If you provide both, they
+	// must agree.
 	MsTeams MsTeamsUnionParam `json:"ms_teams,omitzero" api:"required"`
 	paramObj
 }
@@ -2029,11 +2032,15 @@ func (r *RuleParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The properties ChannelID, ServiceURL, TenantID are required.
+// Sends directly to a Microsoft Teams channel by its Bot Framework ID. Still
+// provide at least one of `tenant_id` or `service_url` — sends without either have
+// failed Bot Framework authentication in testing.
+//
+// The property ChannelID is required.
 type SendToMsTeamsChannelIDParam struct {
-	ChannelID  string `json:"channel_id" api:"required"`
-	ServiceURL string `json:"service_url" api:"required"`
-	TenantID   string `json:"tenant_id" api:"required"`
+	ChannelID  string            `json:"channel_id" api:"required"`
+	ServiceURL param.Opt[string] `json:"service_url,omitzero"`
+	TenantID   param.Opt[string] `json:"tenant_id,omitzero"`
 	paramObj
 }
 
@@ -2045,12 +2052,15 @@ func (r *SendToMsTeamsChannelIDParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The properties ChannelName, ServiceURL, TeamID, TenantID are required.
+// `team_id` is required alongside `channel_name`. Also provide at least one of
+// `tenant_id` or `service_url`; if you provide both, they must agree.
+//
+// The properties ChannelName, TeamID are required.
 type SendToMsTeamsChannelNameParam struct {
-	ChannelName string `json:"channel_name" api:"required"`
-	ServiceURL  string `json:"service_url" api:"required"`
-	TeamID      string `json:"team_id" api:"required"`
-	TenantID    string `json:"tenant_id" api:"required"`
+	ChannelName string            `json:"channel_name" api:"required"`
+	TeamID      string            `json:"team_id" api:"required"`
+	ServiceURL  param.Opt[string] `json:"service_url,omitzero"`
+	TenantID    param.Opt[string] `json:"tenant_id,omitzero"`
 	paramObj
 }
 
@@ -2078,11 +2088,14 @@ func (r *SendToMsTeamsConversationIDParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The properties Email, ServiceURL, TenantID are required.
+// Provide at least one of `tenant_id` or `service_url`. If you provide both, they
+// must agree.
+//
+// The property Email is required.
 type SendToMsTeamsEmailParam struct {
-	Email      string `json:"email" api:"required"`
-	ServiceURL string `json:"service_url" api:"required"`
-	TenantID   string `json:"tenant_id" api:"required"`
+	Email      string            `json:"email" api:"required"`
+	ServiceURL param.Opt[string] `json:"service_url,omitzero"`
+	TenantID   param.Opt[string] `json:"tenant_id,omitzero"`
 	paramObj
 }
 
@@ -2094,11 +2107,14 @@ func (r *SendToMsTeamsEmailParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The properties ServiceURL, TenantID, UserID are required.
+// Provide at least one of `tenant_id` or `service_url`. If you provide both, they
+// must agree.
+//
+// The property UserID is required.
 type SendToMsTeamsUserIDParam struct {
-	ServiceURL string `json:"service_url" api:"required"`
-	TenantID   string `json:"tenant_id" api:"required"`
-	UserID     string `json:"user_id" api:"required"`
+	UserID     string            `json:"user_id" api:"required"`
+	ServiceURL param.Opt[string] `json:"service_url,omitzero"`
+	TenantID   param.Opt[string] `json:"tenant_id,omitzero"`
 	paramObj
 }
 
