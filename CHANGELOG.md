@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.30.1](https://github.com/trycourier/courier-go/compare/v4.30.0...v4.30.1) (2026-08-28)
+
+
+### Bug Fixes
+
+* **api:** give Elemental nodes their properties in every SDK ([#168](https://github.com/trycourier/courier-go/issues/168)) ([cfd158e](https://github.com/trycourier/courier-go/commit/cfd158e46cbd8740c10d70aa5921659a70372af5))
+
 ## [4.30.0](https://github.com/trycourier/courier-go/compare/v4.29.0...v4.30.0) (2026-08-28)
 
 
