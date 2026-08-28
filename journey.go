@@ -1488,6 +1488,8 @@ type JourneyNodeUnion struct {
 	// This field is from variant [JourneySendNode].
 	Message JourneySendNodeMessage `json:"message"`
 	// This field is from variant [JourneySendNode].
+	Channel JourneySendNodeChannel `json:"channel"`
+	// This field is from variant [JourneySendNode].
 	Experiment JourneyExperiment `json:"experiment"`
 	// This field is from variant [JourneyDelayDurationNode].
 	Duration string `json:"duration"`
@@ -1543,6 +1545,7 @@ type JourneyNodeUnion struct {
 		AudienceID          respjson.Field
 		EventSource         respjson.Field
 		Message             respjson.Field
+		Channel             respjson.Field
 		Experiment          respjson.Field
 		Duration            respjson.Field
 		Mode                respjson.Field
@@ -2042,6 +2045,14 @@ func (u JourneyNodeUnionParam) GetEventSource() *string {
 func (u JourneyNodeUnionParam) GetMessage() *JourneySendNodeMessageParam {
 	if vt := u.OfSend; vt != nil {
 		return &vt.Message
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u JourneyNodeUnionParam) GetChannel() *string {
+	if vt := u.OfSend; vt != nil {
+		return (*string)(&vt.Channel)
 	}
 	return nil
 }
@@ -2915,6 +2926,13 @@ type JourneySendNode struct {
 	// Any of "send".
 	Type JourneySendNodeType `json:"type" api:"required"`
 	ID   string              `json:"id"`
+	// The channel this node sends through. Optional — when omitted, the field is
+	// absent from the node, including on `GET`; nodes created before this field
+	// existed have it unset. Setting it makes the node's channel explicit to any
+	// client reading the journey.
+	//
+	// Any of "email", "sms", "push", "inbox", "slack", "msteams".
+	Channel JourneySendNodeChannel `json:"channel"`
 	// Condition spec for a journey node. Accepts a single condition atom, an AND/OR
 	// group, or an AND/OR nested group. Omit the `conditions` property entirely to
 	// express "no conditions".
@@ -2928,6 +2946,7 @@ type JourneySendNode struct {
 		Message     respjson.Field
 		Type        respjson.Field
 		ID          respjson.Field
+		Channel     respjson.Field
 		Conditions  respjson.Field
 		Experiment  respjson.Field
 		ExtraFields map[string]respjson.Field
@@ -3069,6 +3088,21 @@ const (
 	JourneySendNodeTypeSend JourneySendNodeType = "send"
 )
 
+// The channel this node sends through. Optional — when omitted, the field is
+// absent from the node, including on `GET`; nodes created before this field
+// existed have it unset. Setting it makes the node's channel explicit to any
+// client reading the journey.
+type JourneySendNodeChannel string
+
+const (
+	JourneySendNodeChannelEmail   JourneySendNodeChannel = "email"
+	JourneySendNodeChannelSMS     JourneySendNodeChannel = "sms"
+	JourneySendNodeChannelPush    JourneySendNodeChannel = "push"
+	JourneySendNodeChannelInbox   JourneySendNodeChannel = "inbox"
+	JourneySendNodeChannelSlack   JourneySendNodeChannel = "slack"
+	JourneySendNodeChannelMsteams JourneySendNodeChannel = "msteams"
+)
+
 // Send to the recipient. A send node sources its content from EXACTLY ONE of
 // `message.template` (a single notification template) or `experiment` (an A/B
 // split across weighted template variants) — supplying both, or neither, is
@@ -3081,6 +3115,13 @@ type JourneySendNodeParam struct {
 	// Any of "send".
 	Type JourneySendNodeType `json:"type,omitzero" api:"required"`
 	ID   param.Opt[string]   `json:"id,omitzero"`
+	// The channel this node sends through. Optional — when omitted, the field is
+	// absent from the node, including on `GET`; nodes created before this field
+	// existed have it unset. Setting it makes the node's channel explicit to any
+	// client reading the journey.
+	//
+	// Any of "email", "sms", "push", "inbox", "slack", "msteams".
+	Channel JourneySendNodeChannel `json:"channel,omitzero"`
 	// Condition spec for a journey node. Accepts a single condition atom, an AND/OR
 	// group, or an AND/OR nested group. Omit the `conditions` property entirely to
 	// express "no conditions".
