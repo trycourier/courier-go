@@ -126,9 +126,23 @@ type ChannelPreference = shared.ChannelPreference
 // This is an alias to an internal type.
 type ChannelPreferenceParam = shared.ChannelPreferenceParam
 
+// Allows the user to execute an action. Can be a button or a link.
+//
+// This is an alias to an internal type.
+type ElementalActionNode = shared.ElementalActionNode
+
+// Allows the user to execute an action. Can be a button or a link.
+//
+// This is an alias to an internal type.
+type ElementalActionNodeParam = shared.ElementalActionNodeParam
+
+// Allows the user to execute an action. Can be a button or a link.
+//
 // This is an alias to an internal type.
 type ElementalActionNodeWithType = shared.ElementalActionNodeWithType
 
+// Allows the user to execute an action. Can be a button or a link.
+//
 // This is an alias to an internal type.
 type ElementalActionNodeWithTypeParam = shared.ElementalActionNodeWithTypeParam
 
@@ -210,67 +224,149 @@ type ElementalContentSugar = shared.ElementalContentSugar
 // This is an alias to an internal type.
 type ElementalContentSugarParam = shared.ElementalContentSugarParam
 
+// Renders a dividing line between elements.
+//
+// This is an alias to an internal type.
+type ElementalDividerNode = shared.ElementalDividerNode
+
+// Renders a dividing line between elements.
+//
+// This is an alias to an internal type.
+type ElementalDividerNodeParam = shared.ElementalDividerNodeParam
+
+// Renders a dividing line between elements.
+//
 // This is an alias to an internal type.
 type ElementalDividerNodeWithType = shared.ElementalDividerNodeWithType
 
+// Renders a dividing line between elements.
+//
 // This is an alias to an internal type.
 type ElementalDividerNodeWithTypeParam = shared.ElementalDividerNodeWithTypeParam
 
+// Raw HTML string inside an Elemental document. When rendering a message, this
+// node is turned into output only for the email channel; for other channels it
+// produces no blocks.
+//
+// This is an alias to an internal type.
+type ElementalHTMLNode = shared.ElementalHTMLNode
+
+// Raw HTML string inside an Elemental document. When rendering a message, this
+// node is turned into output only for the email channel; for other channels it
+// produces no blocks.
+//
+// This is an alias to an internal type.
+type ElementalHTMLNodeParam = shared.ElementalHTMLNodeParam
+
+// Raw HTML string inside an Elemental document. When rendering a message, this
+// node is turned into output only for the email channel; for other channels it
+// produces no blocks.
+//
 // This is an alias to an internal type.
 type ElementalHTMLNodeWithType = shared.ElementalHTMLNodeWithType
 
+// Raw HTML string inside an Elemental document. When rendering a message, this
+// node is turned into output only for the email channel; for other channels it
+// produces no blocks.
+//
 // This is an alias to an internal type.
 type ElementalHTMLNodeWithTypeParam = shared.ElementalHTMLNodeWithTypeParam
 
+// Used to embed an image into the notification.
+//
+// This is an alias to an internal type.
+type ElementalImageNode = shared.ElementalImageNode
+
+// Used to embed an image into the notification.
+//
+// This is an alias to an internal type.
+type ElementalImageNodeParam = shared.ElementalImageNodeParam
+
+// Used to embed an image into the notification.
+//
 // This is an alias to an internal type.
 type ElementalImageNodeWithType = shared.ElementalImageNodeWithType
 
+// Used to embed an image into the notification.
+//
 // This is an alias to an internal type.
 type ElementalImageNodeWithTypeParam = shared.ElementalImageNodeWithTypeParam
 
+// The meta element contains information describing the notification that may be
+// used by a particular channel or provider. One important field is the title field
+// which will be used as the title for channels that support it.
+//
+// This is an alias to an internal type.
+type ElementalMetaNode = shared.ElementalMetaNode
+
+// The meta element contains information describing the notification that may be
+// used by a particular channel or provider. One important field is the title field
+// which will be used as the title for channels that support it.
+//
+// This is an alias to an internal type.
+type ElementalMetaNodeParam = shared.ElementalMetaNodeParam
+
+// The meta element contains information describing the notification that may be
+// used by a particular channel or provider. One important field is the title field
+// which will be used as the title for channels that support it.
+//
 // This is an alias to an internal type.
 type ElementalMetaNodeWithType = shared.ElementalMetaNodeWithType
 
+// The meta element contains information describing the notification that may be
+// used by a particular channel or provider. One important field is the title field
+// which will be used as the title for channels that support it.
+//
 // This is an alias to an internal type.
 type ElementalMetaNodeWithTypeParam = shared.ElementalMetaNodeWithTypeParam
 
-// The channel element allows a notification to be customized based on which
-// channel it is sent through. For example, you may want to display a detailed
-// message when the notification is sent through email, and a more concise message
-// in a push notification. Channel elements are only valid as top-level elements;
-// you cannot nest channel elements. If there is a channel element specified at the
-// top-level of the document, all sibling elements must be channel elements. Note:
-// As an alternative, most elements support a `channel` property. Which allows you
-// to selectively display an individual element on a per channel basis. See the
-// [control flow docs](https://www.courier.com/docs/platform/content/elemental/control-flow/)
-// for more details.
+// Represents a body of text to be rendered inside of the notification.
 //
 // This is an alias to an internal type.
 type ElementalNodeUnion = shared.ElementalNodeUnion
 
-// The channel element allows a notification to be customized based on which
-// channel it is sent through. For example, you may want to display a detailed
-// message when the notification is sent through email, and a more concise message
-// in a push notification. Channel elements are only valid as top-level elements;
-// you cannot nest channel elements. If there is a channel element specified at the
-// top-level of the document, all sibling elements must be channel elements. Note:
-// As an alternative, most elements support a `channel` property. Which allows you
-// to selectively display an individual element on a per channel basis. See the
-// [control flow docs](https://www.courier.com/docs/platform/content/elemental/control-flow/)
-// for more details.
+// Represents a body of text to be rendered inside of the notification.
 //
 // This is an alias to an internal type.
 type ElementalNodeUnionParam = shared.ElementalNodeUnionParam
 
+// Renders a quote block.
+//
+// This is an alias to an internal type.
+type ElementalQuoteNode = shared.ElementalQuoteNode
+
+// Renders a quote block.
+//
+// This is an alias to an internal type.
+type ElementalQuoteNodeParam = shared.ElementalQuoteNodeParam
+
+// Renders a quote block.
+//
 // This is an alias to an internal type.
 type ElementalQuoteNodeWithType = shared.ElementalQuoteNodeWithType
 
+// Renders a quote block.
+//
 // This is an alias to an internal type.
 type ElementalQuoteNodeWithTypeParam = shared.ElementalQuoteNodeWithTypeParam
 
+// Represents a body of text to be rendered inside of the notification.
+//
+// This is an alias to an internal type.
+type ElementalTextNode = shared.ElementalTextNode
+
+// Represents a body of text to be rendered inside of the notification.
+//
+// This is an alias to an internal type.
+type ElementalTextNodeParam = shared.ElementalTextNodeParam
+
+// Represents a body of text to be rendered inside of the notification.
+//
 // This is an alias to an internal type.
 type ElementalTextNodeWithType = shared.ElementalTextNodeWithType
 
+// Represents a body of text to be rendered inside of the notification.
+//
 // This is an alias to an internal type.
 type ElementalTextNodeWithTypeParam = shared.ElementalTextNodeWithTypeParam
 
@@ -314,6 +410,26 @@ type ListPatternRecipientParam = shared.ListPatternRecipientParam
 //
 // This is an alias to an internal type.
 type ListRecipientParam = shared.ListRecipientParam
+
+// Region specific content. See
+// [locales docs](https://www.courier.com/docs/platform/content/elemental/locales/)
+// for more details.
+//
+// This is an alias to an internal type.
+type Locales = shared.Locales
+
+// This is an alias to an internal type.
+type Locale = shared.Locale
+
+// Region specific content. See
+// [locales docs](https://www.courier.com/docs/platform/content/elemental/locales/)
+// for more details.
+//
+// This is an alias to an internal type.
+type LocalesParam = shared.LocalesParam
+
+// This is an alias to an internal type.
+type LocaleParam = shared.LocaleParam
 
 // This is an alias to an internal type.
 type MessageChannels = shared.MessageChannels

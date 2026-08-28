@@ -40,11 +40,8 @@ func TestJourneyTemplateNewWithOptionalParams(t *testing.T) {
 					Content: courier.JourneyTemplateCreateRequestNotificationContentParam{
 						Elements: []shared.ElementalNodeUnionParam{{
 							OfElementalTextNodeWithType: &shared.ElementalTextNodeWithTypeParam{
-								ElementalBaseNodeParam: shared.ElementalBaseNodeParam{
-									Channels: []string{"string"},
-									If:       courier.String("if"),
-									Loop:     courier.String("loop"),
-									Ref:      courier.String("ref"),
+								ElementalTextNodeParam: shared.ElementalTextNodeParam{
+									ElementalBaseNodeParam: shared.ElementalBaseNodeParam{},
 								},
 								Type: "text",
 							},
@@ -332,11 +329,8 @@ func TestJourneyTemplateReplaceWithOptionalParams(t *testing.T) {
 					Content: courier.JourneyTemplateReplaceRequestNotificationContentParam{
 						Elements: []shared.ElementalNodeUnionParam{{
 							OfElementalTextNodeWithType: &shared.ElementalTextNodeWithTypeParam{
-								ElementalBaseNodeParam: shared.ElementalBaseNodeParam{
-									Channels: []string{"string"},
-									If:       courier.String("if"),
-									Loop:     courier.String("loop"),
-									Ref:      courier.String("ref"),
+								ElementalTextNodeParam: shared.ElementalTextNodeParam{
+									ElementalBaseNodeParam: shared.ElementalBaseNodeParam{},
 								},
 								Type: "text",
 							},

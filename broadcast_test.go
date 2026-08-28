@@ -212,21 +212,15 @@ func TestBroadcastPutContentWithOptionalParams(t *testing.T) {
 				Content: courier.NotificationContentPutRequestContentParam{
 					Elements: []shared.ElementalNodeUnionParam{{
 						OfElementalMetaNodeWithType: &shared.ElementalMetaNodeWithTypeParam{
-							ElementalBaseNodeParam: shared.ElementalBaseNodeParam{
-								Channels: []string{"string"},
-								If:       courier.String("if"),
-								Loop:     courier.String("loop"),
-								Ref:      courier.String("ref"),
+							ElementalMetaNodeParam: shared.ElementalMetaNodeParam{
+								ElementalBaseNodeParam: shared.ElementalBaseNodeParam{},
 							},
 							Type: "meta",
 						},
 					}, {
 						OfElementalTextNodeWithType: &shared.ElementalTextNodeWithTypeParam{
-							ElementalBaseNodeParam: shared.ElementalBaseNodeParam{
-								Channels: []string{"string"},
-								If:       courier.String("if"),
-								Loop:     courier.String("loop"),
-								Ref:      courier.String("ref"),
+							ElementalTextNodeParam: shared.ElementalTextNodeParam{
+								ElementalBaseNodeParam: shared.ElementalBaseNodeParam{},
 							},
 							Type: "text",
 						},

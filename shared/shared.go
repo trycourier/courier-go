@@ -313,6 +313,115 @@ func (r *ChannelPreferenceParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Allows the user to execute an action. Can be a button or a link.
+type ElementalActionNode struct {
+	// The text content of the action shown to the user.
+	Content string `json:"content" api:"required"`
+	// The target URL of the action.
+	Href string `json:"href" api:"required"`
+	// A unique id used to identify the action when it is executed.
+	ActionID string `json:"action_id" api:"nullable"`
+	// The alignment of the action button. Defaults to "center".
+	//
+	// Any of "center", "left", "right", "full".
+	Align Alignment `json:"align" api:"nullable"`
+	// The background color of the action button.
+	BackgroundColor string `json:"background_color" api:"nullable"`
+	// CSS border-radius applied to the action button. For example, `4px`
+	BorderRadius string `json:"border_radius" api:"nullable"`
+	// CSS border width applied to the action button. For example, `1px`
+	BorderSize string `json:"border_size" api:"nullable"`
+	// When true, the action's href is not rewritten for click-through tracking, even
+	// when click-through tracking is enabled for the workspace.
+	DisableTracking bool `json:"disable_tracking" api:"nullable"`
+	// CSS font-size applied to the action button label. For example, `14px`
+	FontSize string `json:"font_size" api:"nullable"`
+	// Region specific content. See
+	// [locales docs](https://www.courier.com/docs/platform/content/elemental/locales/)
+	// for more details.
+	Locales Locales `json:"locales" api:"nullable"`
+	// CSS padding applied to the action button. For example, `8px 16px`
+	Padding string `json:"padding" api:"nullable"`
+	// Defaults to `button`.
+	//
+	// Any of "button", "link".
+	Style string `json:"style" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Content         respjson.Field
+		Href            respjson.Field
+		ActionID        respjson.Field
+		Align           respjson.Field
+		BackgroundColor respjson.Field
+		BorderRadius    respjson.Field
+		BorderSize      respjson.Field
+		DisableTracking respjson.Field
+		FontSize        respjson.Field
+		Locales         respjson.Field
+		Padding         respjson.Field
+		Style           respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+	ElementalBaseNode
+}
+
+// Returns the unmodified JSON received from the API
+func (r ElementalActionNode) RawJSON() string { return r.JSON.raw }
+func (r *ElementalActionNode) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this ElementalActionNode to a ElementalActionNodeParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// ElementalActionNodeParam.Overrides()
+func (r ElementalActionNode) ToParam() ElementalActionNodeParam {
+	return param.Override[ElementalActionNodeParam](json.RawMessage(r.RawJSON()))
+}
+
+// Allows the user to execute an action. Can be a button or a link.
+type ElementalActionNodeParam struct {
+	// The text content of the action shown to the user.
+	Content string `json:"content" api:"required"`
+	// The target URL of the action.
+	Href string `json:"href" api:"required"`
+	// A unique id used to identify the action when it is executed.
+	ActionID param.Opt[string] `json:"action_id,omitzero"`
+	// The alignment of the action button. Defaults to "center".
+	Align Alignment `json:"align,omitzero"`
+	// The background color of the action button.
+	BackgroundColor param.Opt[string] `json:"background_color,omitzero"`
+	// CSS border-radius applied to the action button. For example, `4px`
+	BorderRadius param.Opt[string] `json:"border_radius,omitzero"`
+	// CSS border width applied to the action button. For example, `1px`
+	BorderSize param.Opt[string] `json:"border_size,omitzero"`
+	// When true, the action's href is not rewritten for click-through tracking, even
+	// when click-through tracking is enabled for the workspace.
+	DisableTracking param.Opt[bool] `json:"disable_tracking,omitzero"`
+	// CSS font-size applied to the action button label. For example, `14px`
+	FontSize param.Opt[string] `json:"font_size,omitzero"`
+	// Region specific content. See
+	// [locales docs](https://www.courier.com/docs/platform/content/elemental/locales/)
+	// for more details.
+	Locales LocalesParam `json:"locales,omitzero"`
+	// CSS padding applied to the action button. For example, `8px 16px`
+	Padding param.Opt[string] `json:"padding,omitzero"`
+	// Defaults to `button`.
+	Style string `json:"style,omitzero"`
+	ElementalBaseNodeParam
+}
+
+func (r ElementalActionNodeParam) MarshalJSON() (data []byte, err error) {
+	type shadow struct {
+		*ElementalActionNodeParam
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
+}
+
+// Allows the user to execute an action. Can be a button or a link.
 type ElementalActionNodeWithType struct {
 	// Any of "action".
 	Type string `json:"type"`
@@ -322,7 +431,7 @@ type ElementalActionNodeWithType struct {
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	ElementalBaseNode
+	ElementalActionNode
 }
 
 // Returns the unmodified JSON received from the API
@@ -341,9 +450,10 @@ func (r ElementalActionNodeWithType) ToParam() ElementalActionNodeWithTypeParam 
 	return param.Override[ElementalActionNodeWithTypeParam](json.RawMessage(r.RawJSON()))
 }
 
+// Allows the user to execute an action. Can be a button or a link.
 type ElementalActionNodeWithTypeParam struct {
 	Type string `json:"type,omitzero"`
-	ElementalBaseNodeParam
+	ElementalActionNodeParam
 }
 
 func (r ElementalActionNodeWithTypeParam) MarshalJSON() (data []byte, err error) {
@@ -648,6 +758,50 @@ func (r *ElementalContentSugarParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Renders a dividing line between elements.
+type ElementalDividerNode struct {
+	// The CSS color to render the line with. For example, `#fff`
+	Color string `json:"color" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Color       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+	ElementalBaseNode
+}
+
+// Returns the unmodified JSON received from the API
+func (r ElementalDividerNode) RawJSON() string { return r.JSON.raw }
+func (r *ElementalDividerNode) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this ElementalDividerNode to a ElementalDividerNodeParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// ElementalDividerNodeParam.Overrides()
+func (r ElementalDividerNode) ToParam() ElementalDividerNodeParam {
+	return param.Override[ElementalDividerNodeParam](json.RawMessage(r.RawJSON()))
+}
+
+// Renders a dividing line between elements.
+type ElementalDividerNodeParam struct {
+	// The CSS color to render the line with. For example, `#fff`
+	Color param.Opt[string] `json:"color,omitzero"`
+	ElementalBaseNodeParam
+}
+
+func (r ElementalDividerNodeParam) MarshalJSON() (data []byte, err error) {
+	type shadow struct {
+		*ElementalDividerNodeParam
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
+}
+
+// Renders a dividing line between elements.
 type ElementalDividerNodeWithType struct {
 	// Any of "divider".
 	Type string `json:"type"`
@@ -657,7 +811,7 @@ type ElementalDividerNodeWithType struct {
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	ElementalBaseNode
+	ElementalDividerNode
 }
 
 // Returns the unmodified JSON received from the API
@@ -676,9 +830,10 @@ func (r ElementalDividerNodeWithType) ToParam() ElementalDividerNodeWithTypePara
 	return param.Override[ElementalDividerNodeWithTypeParam](json.RawMessage(r.RawJSON()))
 }
 
+// Renders a dividing line between elements.
 type ElementalDividerNodeWithTypeParam struct {
 	Type string `json:"type,omitzero"`
-	ElementalBaseNodeParam
+	ElementalDividerNodeParam
 }
 
 func (r ElementalDividerNodeWithTypeParam) MarshalJSON() (data []byte, err error) {
@@ -689,6 +844,65 @@ func (r ElementalDividerNodeWithTypeParam) MarshalJSON() (data []byte, err error
 	return param.MarshalObject(r, shadow{&r, false})
 }
 
+// Raw HTML string inside an Elemental document. When rendering a message, this
+// node is turned into output only for the email channel; for other channels it
+// produces no blocks.
+type ElementalHTMLNode struct {
+	// Raw HTML string to render inside the notification.
+	Content string `json:"content" api:"required"`
+	// Region specific content. See
+	// [locales docs](https://www.courier.com/docs/platform/content/elemental/locales/)
+	// for more details.
+	Locales Locales `json:"locales" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Content     respjson.Field
+		Locales     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+	ElementalBaseNode
+}
+
+// Returns the unmodified JSON received from the API
+func (r ElementalHTMLNode) RawJSON() string { return r.JSON.raw }
+func (r *ElementalHTMLNode) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this ElementalHTMLNode to a ElementalHTMLNodeParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// ElementalHTMLNodeParam.Overrides()
+func (r ElementalHTMLNode) ToParam() ElementalHTMLNodeParam {
+	return param.Override[ElementalHTMLNodeParam](json.RawMessage(r.RawJSON()))
+}
+
+// Raw HTML string inside an Elemental document. When rendering a message, this
+// node is turned into output only for the email channel; for other channels it
+// produces no blocks.
+type ElementalHTMLNodeParam struct {
+	// Raw HTML string to render inside the notification.
+	Content string `json:"content" api:"required"`
+	// Region specific content. See
+	// [locales docs](https://www.courier.com/docs/platform/content/elemental/locales/)
+	// for more details.
+	Locales LocalesParam `json:"locales,omitzero"`
+	ElementalBaseNodeParam
+}
+
+func (r ElementalHTMLNodeParam) MarshalJSON() (data []byte, err error) {
+	type shadow struct {
+		*ElementalHTMLNodeParam
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
+}
+
+// Raw HTML string inside an Elemental document. When rendering a message, this
+// node is turned into output only for the email channel; for other channels it
+// produces no blocks.
 type ElementalHTMLNodeWithType struct {
 	// Any of "html".
 	Type string `json:"type"`
@@ -698,7 +912,7 @@ type ElementalHTMLNodeWithType struct {
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	ElementalBaseNode
+	ElementalHTMLNode
 }
 
 // Returns the unmodified JSON received from the API
@@ -717,9 +931,12 @@ func (r ElementalHTMLNodeWithType) ToParam() ElementalHTMLNodeWithTypeParam {
 	return param.Override[ElementalHTMLNodeWithTypeParam](json.RawMessage(r.RawJSON()))
 }
 
+// Raw HTML string inside an Elemental document. When rendering a message, this
+// node is turned into output only for the email channel; for other channels it
+// produces no blocks.
 type ElementalHTMLNodeWithTypeParam struct {
 	Type string `json:"type,omitzero"`
-	ElementalBaseNodeParam
+	ElementalHTMLNodeParam
 }
 
 func (r ElementalHTMLNodeWithTypeParam) MarshalJSON() (data []byte, err error) {
@@ -730,6 +947,87 @@ func (r ElementalHTMLNodeWithTypeParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, shadow{&r, false})
 }
 
+// Used to embed an image into the notification.
+type ElementalImageNode struct {
+	// The source of the image.
+	Src string `json:"src" api:"required"`
+	// The alignment of the image.
+	//
+	// Any of "center", "left", "right", "full".
+	Align Alignment `json:"align" api:"nullable"`
+	// Alternate text for the image.
+	AltText string `json:"altText" api:"nullable"`
+	// CSS border color applied to the image. For example, `#ccc`
+	BorderColor string `json:"border_color" api:"nullable"`
+	// CSS border width applied to the image. For example, `1px`
+	BorderSize string `json:"border_size" api:"nullable"`
+	// A URL to link to when the image is clicked.
+	Href string `json:"href" api:"nullable"`
+	// CSS padding applied around the image. For example, `10px`
+	Padding string `json:"padding" api:"nullable"`
+	// CSS width properties to apply to the image. For example, 50px
+	Width string `json:"width" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Src         respjson.Field
+		Align       respjson.Field
+		AltText     respjson.Field
+		BorderColor respjson.Field
+		BorderSize  respjson.Field
+		Href        respjson.Field
+		Padding     respjson.Field
+		Width       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+	ElementalBaseNode
+}
+
+// Returns the unmodified JSON received from the API
+func (r ElementalImageNode) RawJSON() string { return r.JSON.raw }
+func (r *ElementalImageNode) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this ElementalImageNode to a ElementalImageNodeParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// ElementalImageNodeParam.Overrides()
+func (r ElementalImageNode) ToParam() ElementalImageNodeParam {
+	return param.Override[ElementalImageNodeParam](json.RawMessage(r.RawJSON()))
+}
+
+// Used to embed an image into the notification.
+type ElementalImageNodeParam struct {
+	// The source of the image.
+	Src string `json:"src" api:"required"`
+	// The alignment of the image.
+	Align Alignment `json:"align,omitzero"`
+	// Alternate text for the image.
+	AltText param.Opt[string] `json:"altText,omitzero"`
+	// CSS border color applied to the image. For example, `#ccc`
+	BorderColor param.Opt[string] `json:"border_color,omitzero"`
+	// CSS border width applied to the image. For example, `1px`
+	BorderSize param.Opt[string] `json:"border_size,omitzero"`
+	// A URL to link to when the image is clicked.
+	Href param.Opt[string] `json:"href,omitzero"`
+	// CSS padding applied around the image. For example, `10px`
+	Padding param.Opt[string] `json:"padding,omitzero"`
+	// CSS width properties to apply to the image. For example, 50px
+	Width param.Opt[string] `json:"width,omitzero"`
+	ElementalBaseNodeParam
+}
+
+func (r ElementalImageNodeParam) MarshalJSON() (data []byte, err error) {
+	type shadow struct {
+		*ElementalImageNodeParam
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
+}
+
+// Used to embed an image into the notification.
 type ElementalImageNodeWithType struct {
 	// Any of "image".
 	Type string `json:"type"`
@@ -739,7 +1037,7 @@ type ElementalImageNodeWithType struct {
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	ElementalBaseNode
+	ElementalImageNode
 }
 
 // Returns the unmodified JSON received from the API
@@ -758,9 +1056,10 @@ func (r ElementalImageNodeWithType) ToParam() ElementalImageNodeWithTypeParam {
 	return param.Override[ElementalImageNodeWithTypeParam](json.RawMessage(r.RawJSON()))
 }
 
+// Used to embed an image into the notification.
 type ElementalImageNodeWithTypeParam struct {
 	Type string `json:"type,omitzero"`
-	ElementalBaseNodeParam
+	ElementalImageNodeParam
 }
 
 func (r ElementalImageNodeWithTypeParam) MarshalJSON() (data []byte, err error) {
@@ -771,6 +1070,56 @@ func (r ElementalImageNodeWithTypeParam) MarshalJSON() (data []byte, err error) 
 	return param.MarshalObject(r, shadow{&r, false})
 }
 
+// The meta element contains information describing the notification that may be
+// used by a particular channel or provider. One important field is the title field
+// which will be used as the title for channels that support it.
+type ElementalMetaNode struct {
+	// The title to be displayed by supported channels. For example, the email subject.
+	Title string `json:"title" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Title       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+	ElementalBaseNode
+}
+
+// Returns the unmodified JSON received from the API
+func (r ElementalMetaNode) RawJSON() string { return r.JSON.raw }
+func (r *ElementalMetaNode) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this ElementalMetaNode to a ElementalMetaNodeParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// ElementalMetaNodeParam.Overrides()
+func (r ElementalMetaNode) ToParam() ElementalMetaNodeParam {
+	return param.Override[ElementalMetaNodeParam](json.RawMessage(r.RawJSON()))
+}
+
+// The meta element contains information describing the notification that may be
+// used by a particular channel or provider. One important field is the title field
+// which will be used as the title for channels that support it.
+type ElementalMetaNodeParam struct {
+	// The title to be displayed by supported channels. For example, the email subject.
+	Title param.Opt[string] `json:"title,omitzero"`
+	ElementalBaseNodeParam
+}
+
+func (r ElementalMetaNodeParam) MarshalJSON() (data []byte, err error) {
+	type shadow struct {
+		*ElementalMetaNodeParam
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
+}
+
+// The meta element contains information describing the notification that may be
+// used by a particular channel or provider. One important field is the title field
+// which will be used as the title for channels that support it.
 type ElementalMetaNodeWithType struct {
 	// Any of "meta".
 	Type string `json:"type"`
@@ -780,7 +1129,7 @@ type ElementalMetaNodeWithType struct {
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	ElementalBaseNode
+	ElementalMetaNode
 }
 
 // Returns the unmodified JSON received from the API
@@ -799,9 +1148,12 @@ func (r ElementalMetaNodeWithType) ToParam() ElementalMetaNodeWithTypeParam {
 	return param.Override[ElementalMetaNodeWithTypeParam](json.RawMessage(r.RawJSON()))
 }
 
+// The meta element contains information describing the notification that may be
+// used by a particular channel or provider. One important field is the title field
+// which will be used as the title for channels that support it.
 type ElementalMetaNodeWithTypeParam struct {
 	Type string `json:"type,omitzero"`
-	ElementalBaseNodeParam
+	ElementalMetaNodeParam
 }
 
 func (r ElementalMetaNodeWithTypeParam) MarshalJSON() (data []byte, err error) {
@@ -843,30 +1195,87 @@ type ElementalNodeUnion struct {
 	// [ElementalImageNodeWithType], [ElementalActionNodeWithType],
 	// [ElementalDividerNodeWithType], [ElementalQuoteNodeWithType],
 	// [ElementalHTMLNodeWithType].
-	Ref  string `json:"ref"`
-	Type string `json:"type"`
+	Ref     string `json:"ref"`
+	Content string `json:"content"`
+	Align   string `json:"align"`
+	// This field is from variant [ElementalTextNodeWithType].
+	Bold     string `json:"bold"`
+	Color    string `json:"color"`
+	FontSize string `json:"font_size"`
+	// This field is from variant [ElementalTextNodeWithType].
+	Format string `json:"format"`
+	// This field is from variant [ElementalTextNodeWithType].
+	Italic     string `json:"italic"`
+	LineHeight string `json:"line_height"`
+	// This field is from variant [ElementalTextNodeWithType].
+	Locales Locales `json:"locales"`
+	// This field is from variant [ElementalTextNodeWithType].
+	Strikethrough string `json:"strikethrough"`
+	// This field is from variant [ElementalTextNodeWithType].
+	TextStyle TextStyle `json:"text_style"`
+	// This field is from variant [ElementalTextNodeWithType].
+	Underline string `json:"underline"`
+	Type      string `json:"type"`
+	// This field is from variant [ElementalMetaNodeWithType].
+	Title string `json:"title"`
 	// This field is from variant [ElementalChannelNodeWithType].
 	Channel string `json:"channel"`
-	// This field is from variant [ElementalChannelNodeWithType].
-	FontSize string `json:"font_size"`
-	// This field is from variant [ElementalChannelNodeWithType].
-	LineHeight string `json:"line_height"`
-	// This field is from variant [ElementalChannelNodeWithType].
 	Padding string `json:"padding"`
 	// This field is from variant [ElementalChannelNodeWithType].
-	Raw  map[string]any `json:"raw"`
-	JSON struct {
-		Channels   respjson.Field
-		If         respjson.Field
-		Loop       respjson.Field
-		Ref        respjson.Field
-		Type       respjson.Field
-		Channel    respjson.Field
-		FontSize   respjson.Field
-		LineHeight respjson.Field
-		Padding    respjson.Field
-		Raw        respjson.Field
-		raw        string
+	Raw map[string]any `json:"raw"`
+	// This field is from variant [ElementalImageNodeWithType].
+	Src string `json:"src"`
+	// This field is from variant [ElementalImageNodeWithType].
+	AltText     string `json:"altText"`
+	BorderColor string `json:"border_color"`
+	BorderSize  string `json:"border_size"`
+	Href        string `json:"href"`
+	// This field is from variant [ElementalImageNodeWithType].
+	Width string `json:"width"`
+	// This field is from variant [ElementalActionNodeWithType].
+	ActionID string `json:"action_id"`
+	// This field is from variant [ElementalActionNodeWithType].
+	BackgroundColor string `json:"background_color"`
+	// This field is from variant [ElementalActionNodeWithType].
+	BorderRadius string `json:"border_radius"`
+	// This field is from variant [ElementalActionNodeWithType].
+	DisableTracking bool `json:"disable_tracking"`
+	// This field is from variant [ElementalActionNodeWithType].
+	Style string `json:"style"`
+	JSON  struct {
+		Channels        respjson.Field
+		If              respjson.Field
+		Loop            respjson.Field
+		Ref             respjson.Field
+		Content         respjson.Field
+		Align           respjson.Field
+		Bold            respjson.Field
+		Color           respjson.Field
+		FontSize        respjson.Field
+		Format          respjson.Field
+		Italic          respjson.Field
+		LineHeight      respjson.Field
+		Locales         respjson.Field
+		Strikethrough   respjson.Field
+		TextStyle       respjson.Field
+		Underline       respjson.Field
+		Type            respjson.Field
+		Title           respjson.Field
+		Channel         respjson.Field
+		Padding         respjson.Field
+		Raw             respjson.Field
+		Src             respjson.Field
+		AltText         respjson.Field
+		BorderColor     respjson.Field
+		BorderSize      respjson.Field
+		Href            respjson.Field
+		Width           respjson.Field
+		ActionID        respjson.Field
+		BackgroundColor respjson.Field
+		BorderRadius    respjson.Field
+		DisableTracking respjson.Field
+		Style           respjson.Field
+		raw             string
 	} `json:"-"`
 }
 
@@ -926,6 +1335,37 @@ func (r ElementalNodeUnion) ToParam() ElementalNodeUnionParam {
 	return param.Override[ElementalNodeUnionParam](json.RawMessage(r.RawJSON()))
 }
 
+func ElementalNodeParamOfElementalTextNodeWithType(content string) ElementalNodeUnionParam {
+	var variant ElementalTextNodeWithTypeParam
+	variant.Content = content
+	return ElementalNodeUnionParam{OfElementalTextNodeWithType: &variant}
+}
+
+func ElementalNodeParamOfElementalImageNodeWithType(src string) ElementalNodeUnionParam {
+	var variant ElementalImageNodeWithTypeParam
+	variant.Src = src
+	return ElementalNodeUnionParam{OfElementalImageNodeWithType: &variant}
+}
+
+func ElementalNodeParamOfElementalActionNodeWithType(content string, href string) ElementalNodeUnionParam {
+	var variant ElementalActionNodeWithTypeParam
+	variant.Content = content
+	variant.Href = href
+	return ElementalNodeUnionParam{OfElementalActionNodeWithType: &variant}
+}
+
+func ElementalNodeParamOfElementalQuoteNodeWithType(content string) ElementalNodeUnionParam {
+	var variant ElementalQuoteNodeWithTypeParam
+	variant.Content = content
+	return ElementalNodeUnionParam{OfElementalQuoteNodeWithType: &variant}
+}
+
+func ElementalNodeParamOfElementalHTMLNodeWithType(content string) ElementalNodeUnionParam {
+	var variant ElementalHTMLNodeWithTypeParam
+	variant.Content = content
+	return ElementalNodeUnionParam{OfElementalHTMLNodeWithType: &variant}
+}
+
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
@@ -977,6 +1417,54 @@ func (u *ElementalNodeUnionParam) asAny() any {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetBold() *string {
+	if vt := u.OfElementalTextNodeWithType; vt != nil && vt.Bold.Valid() {
+		return &vt.Bold.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetFormat() *string {
+	if vt := u.OfElementalTextNodeWithType; vt != nil {
+		return &vt.Format
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetItalic() *string {
+	if vt := u.OfElementalTextNodeWithType; vt != nil && vt.Italic.Valid() {
+		return &vt.Italic.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetStrikethrough() *string {
+	if vt := u.OfElementalTextNodeWithType; vt != nil && vt.Strikethrough.Valid() {
+		return &vt.Strikethrough.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetUnderline() *string {
+	if vt := u.OfElementalTextNodeWithType; vt != nil && vt.Underline.Valid() {
+		return &vt.Underline.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetTitle() *string {
+	if vt := u.OfElementalMetaNodeWithType; vt != nil && vt.Title.Valid() {
+		return &vt.Title.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u ElementalNodeUnionParam) GetChannel() *string {
 	if vt := u.OfElementalChannelNodeWithType; vt != nil && vt.Channel.Valid() {
 		return &vt.Channel.Value
@@ -985,33 +1473,73 @@ func (u ElementalNodeUnionParam) GetChannel() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetFontSize() *string {
-	if vt := u.OfElementalChannelNodeWithType; vt != nil && vt.FontSize.Valid() {
-		return &vt.FontSize.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetLineHeight() *string {
-	if vt := u.OfElementalChannelNodeWithType; vt != nil && vt.LineHeight.Valid() {
-		return &vt.LineHeight.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetPadding() *string {
-	if vt := u.OfElementalChannelNodeWithType; vt != nil && vt.Padding.Valid() {
-		return &vt.Padding.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
 func (u ElementalNodeUnionParam) GetRaw() map[string]any {
 	if vt := u.OfElementalChannelNodeWithType; vt != nil {
 		return vt.Raw
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetSrc() *string {
+	if vt := u.OfElementalImageNodeWithType; vt != nil {
+		return &vt.Src
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetAltText() *string {
+	if vt := u.OfElementalImageNodeWithType; vt != nil && vt.AltText.Valid() {
+		return &vt.AltText.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetWidth() *string {
+	if vt := u.OfElementalImageNodeWithType; vt != nil && vt.Width.Valid() {
+		return &vt.Width.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetActionID() *string {
+	if vt := u.OfElementalActionNodeWithType; vt != nil && vt.ActionID.Valid() {
+		return &vt.ActionID.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetBackgroundColor() *string {
+	if vt := u.OfElementalActionNodeWithType; vt != nil && vt.BackgroundColor.Valid() {
+		return &vt.BackgroundColor.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetBorderRadius() *string {
+	if vt := u.OfElementalActionNodeWithType; vt != nil && vt.BorderRadius.Valid() {
+		return &vt.BorderRadius.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetDisableTracking() *bool {
+	if vt := u.OfElementalActionNodeWithType; vt != nil && vt.DisableTracking.Valid() {
+		return &vt.DisableTracking.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetStyle() *string {
+	if vt := u.OfElementalActionNodeWithType; vt != nil {
+		return &vt.Style
 	}
 	return nil
 }
@@ -1083,6 +1611,80 @@ func (u ElementalNodeUnionParam) GetRef() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetContent() *string {
+	if vt := u.OfElementalTextNodeWithType; vt != nil {
+		return (*string)(&vt.Content)
+	} else if vt := u.OfElementalActionNodeWithType; vt != nil {
+		return (*string)(&vt.Content)
+	} else if vt := u.OfElementalQuoteNodeWithType; vt != nil {
+		return (*string)(&vt.Content)
+	} else if vt := u.OfElementalHTMLNodeWithType; vt != nil {
+		return (*string)(&vt.Content)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetAlign() *string {
+	if vt := u.OfElementalTextNodeWithType; vt != nil {
+		return (*string)(&vt.Align)
+	} else if vt := u.OfElementalImageNodeWithType; vt != nil {
+		return (*string)(&vt.Align)
+	} else if vt := u.OfElementalActionNodeWithType; vt != nil {
+		return (*string)(&vt.Align)
+	} else if vt := u.OfElementalQuoteNodeWithType; vt != nil {
+		return (*string)(&vt.Align)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetColor() *string {
+	if vt := u.OfElementalTextNodeWithType; vt != nil && vt.Color.Valid() {
+		return &vt.Color.Value
+	} else if vt := u.OfElementalDividerNodeWithType; vt != nil && vt.Color.Valid() {
+		return &vt.Color.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetFontSize() *string {
+	if vt := u.OfElementalTextNodeWithType; vt != nil && vt.FontSize.Valid() {
+		return &vt.FontSize.Value
+	} else if vt := u.OfElementalChannelNodeWithType; vt != nil && vt.FontSize.Valid() {
+		return &vt.FontSize.Value
+	} else if vt := u.OfElementalActionNodeWithType; vt != nil && vt.FontSize.Valid() {
+		return &vt.FontSize.Value
+	} else if vt := u.OfElementalQuoteNodeWithType; vt != nil && vt.FontSize.Valid() {
+		return &vt.FontSize.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetLineHeight() *string {
+	if vt := u.OfElementalTextNodeWithType; vt != nil && vt.LineHeight.Valid() {
+		return &vt.LineHeight.Value
+	} else if vt := u.OfElementalChannelNodeWithType; vt != nil && vt.LineHeight.Valid() {
+		return &vt.LineHeight.Value
+	} else if vt := u.OfElementalQuoteNodeWithType; vt != nil && vt.LineHeight.Valid() {
+		return &vt.LineHeight.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetTextStyle() *string {
+	if vt := u.OfElementalTextNodeWithType; vt != nil {
+		return (*string)(&vt.TextStyle)
+	} else if vt := u.OfElementalQuoteNodeWithType; vt != nil {
+		return (*string)(&vt.TextStyle)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u ElementalNodeUnionParam) GetType() *string {
 	if vt := u.OfElementalTextNodeWithType; vt != nil {
 		return (*string)(&vt.Type)
@@ -1100,6 +1702,48 @@ func (u ElementalNodeUnionParam) GetType() *string {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfElementalHTMLNodeWithType; vt != nil {
 		return (*string)(&vt.Type)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetPadding() *string {
+	if vt := u.OfElementalChannelNodeWithType; vt != nil && vt.Padding.Valid() {
+		return &vt.Padding.Value
+	} else if vt := u.OfElementalImageNodeWithType; vt != nil && vt.Padding.Valid() {
+		return &vt.Padding.Value
+	} else if vt := u.OfElementalActionNodeWithType; vt != nil && vt.Padding.Valid() {
+		return &vt.Padding.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetBorderColor() *string {
+	if vt := u.OfElementalImageNodeWithType; vt != nil && vt.BorderColor.Valid() {
+		return &vt.BorderColor.Value
+	} else if vt := u.OfElementalQuoteNodeWithType; vt != nil && vt.BorderColor.Valid() {
+		return &vt.BorderColor.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetBorderSize() *string {
+	if vt := u.OfElementalImageNodeWithType; vt != nil && vt.BorderSize.Valid() {
+		return &vt.BorderSize.Value
+	} else if vt := u.OfElementalActionNodeWithType; vt != nil && vt.BorderSize.Valid() {
+		return &vt.BorderSize.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetHref() *string {
+	if vt := u.OfElementalImageNodeWithType; vt != nil && vt.Href.Valid() {
+		return &vt.Href.Value
+	} else if vt := u.OfElementalActionNodeWithType; vt != nil {
+		return (*string)(&vt.Href)
 	}
 	return nil
 }
@@ -1126,6 +1770,103 @@ func (u ElementalNodeUnionParam) GetChannels() []string {
 	return nil
 }
 
+// Returns a pointer to the underlying variant's Locales property, if present.
+func (u ElementalNodeUnionParam) GetLocales() LocalesParam {
+	if vt := u.OfElementalTextNodeWithType; vt != nil {
+		return vt.Locales
+	} else if vt := u.OfElementalActionNodeWithType; vt != nil {
+		return vt.Locales
+	} else if vt := u.OfElementalQuoteNodeWithType; vt != nil {
+		return vt.Locales
+	} else if vt := u.OfElementalHTMLNodeWithType; vt != nil {
+		return vt.Locales
+	}
+	return nil
+}
+
+// Renders a quote block.
+type ElementalQuoteNode struct {
+	// The text value of the quote.
+	Content string `json:"content" api:"required"`
+	// Alignment of the quote.
+	//
+	// Any of "center", "left", "right", "full".
+	Align Alignment `json:"align" api:"nullable"`
+	// CSS border color property. For example, `#fff`
+	BorderColor string `json:"borderColor" api:"nullable"`
+	// CSS px font size for this quote block, e.g. `16px`. Overrides the size of the
+	// `text_style` preset. Email only.
+	FontSize string `json:"font_size" api:"nullable"`
+	// CSS line height for this quote block, as a px value or a unitless multiplier,
+	// e.g. `24px` or `1.5`. Email only.
+	LineHeight string `json:"line_height" api:"nullable"`
+	// Region specific content. See
+	// [locales docs](https://www.courier.com/docs/platform/content/elemental/locales/)
+	// for more details.
+	Locales Locales `json:"locales" api:"nullable"`
+	// Any of "text", "h1", "h2", "subtext".
+	TextStyle TextStyle `json:"text_style"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Content     respjson.Field
+		Align       respjson.Field
+		BorderColor respjson.Field
+		FontSize    respjson.Field
+		LineHeight  respjson.Field
+		Locales     respjson.Field
+		TextStyle   respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+	ElementalBaseNode
+}
+
+// Returns the unmodified JSON received from the API
+func (r ElementalQuoteNode) RawJSON() string { return r.JSON.raw }
+func (r *ElementalQuoteNode) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this ElementalQuoteNode to a ElementalQuoteNodeParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// ElementalQuoteNodeParam.Overrides()
+func (r ElementalQuoteNode) ToParam() ElementalQuoteNodeParam {
+	return param.Override[ElementalQuoteNodeParam](json.RawMessage(r.RawJSON()))
+}
+
+// Renders a quote block.
+type ElementalQuoteNodeParam struct {
+	// The text value of the quote.
+	Content string `json:"content" api:"required"`
+	// Alignment of the quote.
+	Align Alignment `json:"align,omitzero"`
+	// CSS border color property. For example, `#fff`
+	BorderColor param.Opt[string] `json:"borderColor,omitzero"`
+	// CSS px font size for this quote block, e.g. `16px`. Overrides the size of the
+	// `text_style` preset. Email only.
+	FontSize param.Opt[string] `json:"font_size,omitzero"`
+	// CSS line height for this quote block, as a px value or a unitless multiplier,
+	// e.g. `24px` or `1.5`. Email only.
+	LineHeight param.Opt[string] `json:"line_height,omitzero"`
+	// Region specific content. See
+	// [locales docs](https://www.courier.com/docs/platform/content/elemental/locales/)
+	// for more details.
+	Locales   LocalesParam `json:"locales,omitzero"`
+	TextStyle TextStyle    `json:"text_style,omitzero"`
+	ElementalBaseNodeParam
+}
+
+func (r ElementalQuoteNodeParam) MarshalJSON() (data []byte, err error) {
+	type shadow struct {
+		*ElementalQuoteNodeParam
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
+}
+
+// Renders a quote block.
 type ElementalQuoteNodeWithType struct {
 	// Any of "quote".
 	Type string `json:"type"`
@@ -1135,7 +1876,7 @@ type ElementalQuoteNodeWithType struct {
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	ElementalBaseNode
+	ElementalQuoteNode
 }
 
 // Returns the unmodified JSON received from the API
@@ -1154,9 +1895,10 @@ func (r ElementalQuoteNodeWithType) ToParam() ElementalQuoteNodeWithTypeParam {
 	return param.Override[ElementalQuoteNodeWithTypeParam](json.RawMessage(r.RawJSON()))
 }
 
+// Renders a quote block.
 type ElementalQuoteNodeWithTypeParam struct {
 	Type string `json:"type,omitzero"`
-	ElementalBaseNodeParam
+	ElementalQuoteNodeParam
 }
 
 func (r ElementalQuoteNodeWithTypeParam) MarshalJSON() (data []byte, err error) {
@@ -1167,6 +1909,118 @@ func (r ElementalQuoteNodeWithTypeParam) MarshalJSON() (data []byte, err error) 
 	return param.MarshalObject(r, shadow{&r, false})
 }
 
+// Represents a body of text to be rendered inside of the notification.
+type ElementalTextNode struct {
+	// The text content displayed in the notification. Either this field must be
+	// specified, or the elements field
+	Content string `json:"content" api:"required"`
+	// Text alignment.
+	//
+	// Any of "left", "center", "right".
+	Align string `json:"align"`
+	// Apply bold to the text
+	Bold string `json:"bold" api:"nullable"`
+	// Specifies the color of text. Can be any valid css color value
+	Color string `json:"color" api:"nullable"`
+	// CSS px font size for this text block, e.g. `16px`. Overrides the size of the
+	// `text_style` preset. Email only.
+	FontSize string `json:"font_size" api:"nullable"`
+	// Any of "markdown".
+	Format string `json:"format" api:"nullable"`
+	// Apply italics to the text
+	Italic string `json:"italic" api:"nullable"`
+	// CSS line height for this text block, as a px value or a unitless multiplier,
+	// e.g. `24px` or `1.5`. Email only.
+	LineHeight string `json:"line_height" api:"nullable"`
+	// Region specific content. See
+	// [locales docs](https://www.courier.com/docs/platform/content/elemental/locales/)
+	// for more details.
+	Locales Locales `json:"locales" api:"nullable"`
+	// Apply a strike through the text
+	Strikethrough string `json:"strikethrough" api:"nullable"`
+	// Allows the text to be rendered as a heading level.
+	//
+	// Any of "text", "h1", "h2", "subtext".
+	TextStyle TextStyle `json:"text_style" api:"nullable"`
+	// Apply an underline to the text
+	Underline string `json:"underline" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Content       respjson.Field
+		Align         respjson.Field
+		Bold          respjson.Field
+		Color         respjson.Field
+		FontSize      respjson.Field
+		Format        respjson.Field
+		Italic        respjson.Field
+		LineHeight    respjson.Field
+		Locales       respjson.Field
+		Strikethrough respjson.Field
+		TextStyle     respjson.Field
+		Underline     respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
+	} `json:"-"`
+	ElementalBaseNode
+}
+
+// Returns the unmodified JSON received from the API
+func (r ElementalTextNode) RawJSON() string { return r.JSON.raw }
+func (r *ElementalTextNode) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this ElementalTextNode to a ElementalTextNodeParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// ElementalTextNodeParam.Overrides()
+func (r ElementalTextNode) ToParam() ElementalTextNodeParam {
+	return param.Override[ElementalTextNodeParam](json.RawMessage(r.RawJSON()))
+}
+
+// Represents a body of text to be rendered inside of the notification.
+type ElementalTextNodeParam struct {
+	// The text content displayed in the notification. Either this field must be
+	// specified, or the elements field
+	Content string `json:"content" api:"required"`
+	// Text alignment.
+	Align string `json:"align,omitzero"`
+	// Apply bold to the text
+	Bold param.Opt[string] `json:"bold,omitzero"`
+	// Specifies the color of text. Can be any valid css color value
+	Color param.Opt[string] `json:"color,omitzero"`
+	// CSS px font size for this text block, e.g. `16px`. Overrides the size of the
+	// `text_style` preset. Email only.
+	FontSize param.Opt[string] `json:"font_size,omitzero"`
+	Format   string            `json:"format,omitzero"`
+	// Apply italics to the text
+	Italic param.Opt[string] `json:"italic,omitzero"`
+	// CSS line height for this text block, as a px value or a unitless multiplier,
+	// e.g. `24px` or `1.5`. Email only.
+	LineHeight param.Opt[string] `json:"line_height,omitzero"`
+	// Region specific content. See
+	// [locales docs](https://www.courier.com/docs/platform/content/elemental/locales/)
+	// for more details.
+	Locales LocalesParam `json:"locales,omitzero"`
+	// Apply a strike through the text
+	Strikethrough param.Opt[string] `json:"strikethrough,omitzero"`
+	// Allows the text to be rendered as a heading level.
+	TextStyle TextStyle `json:"text_style,omitzero"`
+	// Apply an underline to the text
+	Underline param.Opt[string] `json:"underline,omitzero"`
+	ElementalBaseNodeParam
+}
+
+func (r ElementalTextNodeParam) MarshalJSON() (data []byte, err error) {
+	type shadow struct {
+		*ElementalTextNodeParam
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
+}
+
+// Represents a body of text to be rendered inside of the notification.
 type ElementalTextNodeWithType struct {
 	// Any of "text".
 	Type string `json:"type"`
@@ -1176,7 +2030,7 @@ type ElementalTextNodeWithType struct {
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	ElementalBaseNode
+	ElementalTextNode
 }
 
 // Returns the unmodified JSON received from the API
@@ -1195,9 +2049,10 @@ func (r ElementalTextNodeWithType) ToParam() ElementalTextNodeWithTypeParam {
 	return param.Override[ElementalTextNodeWithTypeParam](json.RawMessage(r.RawJSON()))
 }
 
+// Represents a body of text to be rendered inside of the notification.
 type ElementalTextNodeWithTypeParam struct {
 	Type string `json:"type,omitzero"`
-	ElementalBaseNodeParam
+	ElementalTextNodeParam
 }
 
 func (r ElementalTextNodeWithTypeParam) MarshalJSON() (data []byte, err error) {
@@ -1342,6 +2197,40 @@ func (r ListRecipientParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *ListRecipientParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type Locales map[string]Locale
+
+type Locale struct {
+	Content string `json:"content" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Content     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r Locale) RawJSON() string { return r.JSON.raw }
+func (r *Locale) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type LocalesParam map[string]LocaleParam
+
+// The property Content is required.
+type LocaleParam struct {
+	Content string `json:"content" api:"required"`
+	paramObj
+}
+
+func (r LocaleParam) MarshalJSON() (data []byte, err error) {
+	type shadow LocaleParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *LocaleParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
