@@ -157,11 +157,8 @@ func TestTenantTemplateReplaceWithOptionalParams(t *testing.T) {
 					Content: shared.ElementalContentParam{
 						Elements: []shared.ElementalNodeUnionParam{{
 							OfElementalTextNodeWithType: &shared.ElementalTextNodeWithTypeParam{
-								ElementalBaseNodeParam: shared.ElementalBaseNodeParam{
-									Channels: []string{"string"},
-									If:       courier.String("if"),
-									Loop:     courier.String("loop"),
-									Ref:      courier.String("ref"),
+								ElementalTextNodeParam: shared.ElementalTextNodeParam{
+									ElementalBaseNodeParam: shared.ElementalBaseNodeParam{},
 								},
 								Type: "text",
 							},
