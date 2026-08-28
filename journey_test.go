@@ -76,8 +76,9 @@ func TestJourneyNewWithOptionalParams(t *testing.T) {
 							UserIDOverride: courier.String("x"),
 						},
 					},
-					Type: courier.JourneySendNodeTypeSend,
-					ID:   courier.String("send-1"),
+					Type:    courier.JourneySendNodeTypeSend,
+					ID:      courier.String("send-1"),
+					Channel: courier.JourneySendNodeChannelEmail,
 					Conditions: courier.JourneyConditionsFieldUnionParam{
 						OfSingleCondition: courier.JourneyConditionAtom{"string", "string"},
 					},
