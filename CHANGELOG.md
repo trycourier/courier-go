@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.30.0](https://github.com/trycourier/courier-go/compare/v4.29.0...v4.30.0) (2026-08-28)
+
+
+### Features
+
+* **api:** document channel on journey send nodes [C-20309] ([#166](https://github.com/trycourier/courier-go/issues/166)) ([aafe92d](https://github.com/trycourier/courier-go/commit/aafe92d2ecc2aee850e42a4d91ac4177d45dbc78))
+
 ## [4.29.0](https://github.com/trycourier/courier-go/compare/v4.28.0...v4.29.0) (2026-08-27)
 
 
