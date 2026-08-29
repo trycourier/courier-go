@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.30.2](https://github.com/trycourier/courier-go/compare/v4.30.1...v4.30.2) (2026-08-29)
+
+
+### Bug Fixes
+
+* **api:** correct two Elemental field names the REST API rejects ([#170](https://github.com/trycourier/courier-go/issues/170)) ([c56a5b8](https://github.com/trycourier/courier-go/commit/c56a5b8d0eb03383454173a84f4bc6edb930a985))
+
 ## [4.30.1](https://github.com/trycourier/courier-go/compare/v4.30.0...v4.30.1) (2026-08-28)
 
 
