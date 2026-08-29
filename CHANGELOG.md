@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.30.3](https://github.com/trycourier/courier-go/compare/v4.30.2...v4.30.3) (2026-08-29)
+
+
+### Bug Fixes
+
+* **api:** text content is not required ([#172](https://github.com/trycourier/courier-go/issues/172)) ([a334888](https://github.com/trycourier/courier-go/commit/a334888014bf8435df0665c7676fa4ecddd13fa8))
+
 ## [4.30.2](https://github.com/trycourier/courier-go/compare/v4.30.1...v4.30.2) (2026-08-29)
 
 
