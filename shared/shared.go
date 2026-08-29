@@ -1195,12 +1195,12 @@ type ElementalNodeUnion struct {
 	// [ElementalImageNodeWithType], [ElementalActionNodeWithType],
 	// [ElementalDividerNodeWithType], [ElementalQuoteNodeWithType],
 	// [ElementalHTMLNodeWithType].
-	Ref     string `json:"ref"`
-	Content string `json:"content"`
-	Align   string `json:"align"`
+	Ref   string `json:"ref"`
+	Align string `json:"align"`
 	// This field is from variant [ElementalTextNodeWithType].
 	Bold     string `json:"bold"`
 	Color    string `json:"color"`
+	Content  string `json:"content"`
 	FontSize string `json:"font_size"`
 	// This field is from variant [ElementalTextNodeWithType].
 	Format string `json:"format"`
@@ -1247,10 +1247,10 @@ type ElementalNodeUnion struct {
 		If              respjson.Field
 		Loop            respjson.Field
 		Ref             respjson.Field
-		Content         respjson.Field
 		Align           respjson.Field
 		Bold            respjson.Field
 		Color           respjson.Field
+		Content         respjson.Field
 		FontSize        respjson.Field
 		Format          respjson.Field
 		Italic          respjson.Field
@@ -1333,12 +1333,6 @@ func (r *ElementalNodeUnion) UnmarshalJSON(data []byte) error {
 // ElementalNodeUnionParam.Overrides()
 func (r ElementalNodeUnion) ToParam() ElementalNodeUnionParam {
 	return param.Override[ElementalNodeUnionParam](json.RawMessage(r.RawJSON()))
-}
-
-func ElementalNodeParamOfElementalTextNodeWithType(content string) ElementalNodeUnionParam {
-	var variant ElementalTextNodeWithTypeParam
-	variant.Content = content
-	return ElementalNodeUnionParam{OfElementalTextNodeWithType: &variant}
 }
 
 func ElementalNodeParamOfElementalImageNodeWithType(src string) ElementalNodeUnionParam {
@@ -1611,20 +1605,6 @@ func (u ElementalNodeUnionParam) GetRef() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ElementalNodeUnionParam) GetContent() *string {
-	if vt := u.OfElementalTextNodeWithType; vt != nil {
-		return (*string)(&vt.Content)
-	} else if vt := u.OfElementalActionNodeWithType; vt != nil {
-		return (*string)(&vt.Content)
-	} else if vt := u.OfElementalQuoteNodeWithType; vt != nil {
-		return (*string)(&vt.Content)
-	} else if vt := u.OfElementalHTMLNodeWithType; vt != nil {
-		return (*string)(&vt.Content)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
 func (u ElementalNodeUnionParam) GetAlign() *string {
 	if vt := u.OfElementalTextNodeWithType; vt != nil {
 		return (*string)(&vt.Align)
@@ -1644,6 +1624,20 @@ func (u ElementalNodeUnionParam) GetColor() *string {
 		return &vt.Color.Value
 	} else if vt := u.OfElementalDividerNodeWithType; vt != nil && vt.Color.Valid() {
 		return &vt.Color.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetContent() *string {
+	if vt := u.OfElementalTextNodeWithType; vt != nil && vt.Content.Valid() {
+		return &vt.Content.Value
+	} else if vt := u.OfElementalActionNodeWithType; vt != nil {
+		return (*string)(&vt.Content)
+	} else if vt := u.OfElementalQuoteNodeWithType; vt != nil {
+		return (*string)(&vt.Content)
+	} else if vt := u.OfElementalHTMLNodeWithType; vt != nil {
+		return (*string)(&vt.Content)
 	}
 	return nil
 }
@@ -1911,9 +1905,6 @@ func (r ElementalQuoteNodeWithTypeParam) MarshalJSON() (data []byte, err error) 
 
 // Represents a body of text to be rendered inside of the notification.
 type ElementalTextNode struct {
-	// The text content displayed in the notification. Either this field must be
-	// specified, or the elements field
-	Content string `json:"content" api:"required"`
 	// Text alignment.
 	//
 	// Any of "left", "center", "right".
@@ -1922,6 +1913,9 @@ type ElementalTextNode struct {
 	Bold string `json:"bold" api:"nullable"`
 	// Specifies the color of text. Can be any valid css color value
 	Color string `json:"color" api:"nullable"`
+	// The text content displayed in the notification. Either this field must be
+	// specified, or the elements field
+	Content string `json:"content"`
 	// CSS px font size for this text block, e.g. `16px`. Overrides the size of the
 	// `text_style` preset. Email only.
 	FontSize string `json:"font_size" api:"nullable"`
@@ -1946,10 +1940,10 @@ type ElementalTextNode struct {
 	Underline string `json:"underline" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Content       respjson.Field
 		Align         respjson.Field
 		Bold          respjson.Field
 		Color         respjson.Field
+		Content       respjson.Field
 		FontSize      respjson.Field
 		Format        respjson.Field
 		Italic        respjson.Field
@@ -1981,15 +1975,15 @@ func (r ElementalTextNode) ToParam() ElementalTextNodeParam {
 
 // Represents a body of text to be rendered inside of the notification.
 type ElementalTextNodeParam struct {
-	// The text content displayed in the notification. Either this field must be
-	// specified, or the elements field
-	Content string `json:"content" api:"required"`
 	// Text alignment.
 	Align string `json:"align,omitzero"`
 	// Apply bold to the text
 	Bold param.Opt[string] `json:"bold,omitzero"`
 	// Specifies the color of text. Can be any valid css color value
 	Color param.Opt[string] `json:"color,omitzero"`
+	// The text content displayed in the notification. Either this field must be
+	// specified, or the elements field
+	Content param.Opt[string] `json:"content,omitzero"`
 	// CSS px font size for this text block, e.g. `16px`. Overrides the size of the
 	// `text_style` preset. Email only.
 	FontSize param.Opt[string] `json:"font_size,omitzero"`
