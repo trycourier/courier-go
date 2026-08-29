@@ -956,7 +956,7 @@ type ElementalImageNode struct {
 	// Any of "center", "left", "right", "full".
 	Align Alignment `json:"align" api:"nullable"`
 	// Alternate text for the image.
-	AltText string `json:"altText" api:"nullable"`
+	AltText string `json:"alt_text" api:"nullable"`
 	// CSS border color applied to the image. For example, `#ccc`
 	BorderColor string `json:"border_color" api:"nullable"`
 	// CSS border width applied to the image. For example, `1px`
@@ -1005,7 +1005,7 @@ type ElementalImageNodeParam struct {
 	// The alignment of the image.
 	Align Alignment `json:"align,omitzero"`
 	// Alternate text for the image.
-	AltText param.Opt[string] `json:"altText,omitzero"`
+	AltText param.Opt[string] `json:"alt_text,omitzero"`
 	// CSS border color applied to the image. For example, `#ccc`
 	BorderColor param.Opt[string] `json:"border_color,omitzero"`
 	// CSS border width applied to the image. For example, `1px`
@@ -1226,7 +1226,7 @@ type ElementalNodeUnion struct {
 	// This field is from variant [ElementalImageNodeWithType].
 	Src string `json:"src"`
 	// This field is from variant [ElementalImageNodeWithType].
-	AltText     string `json:"altText"`
+	AltText     string `json:"alt_text"`
 	BorderColor string `json:"border_color"`
 	BorderSize  string `json:"border_size"`
 	Href        string `json:"href"`
@@ -1793,7 +1793,7 @@ type ElementalQuoteNode struct {
 	// Any of "center", "left", "right", "full".
 	Align Alignment `json:"align" api:"nullable"`
 	// CSS border color property. For example, `#fff`
-	BorderColor string `json:"borderColor" api:"nullable"`
+	BorderColor string `json:"border_color" api:"nullable"`
 	// CSS px font size for this quote block, e.g. `16px`. Overrides the size of the
 	// `text_style` preset. Email only.
 	FontSize string `json:"font_size" api:"nullable"`
@@ -1843,7 +1843,7 @@ type ElementalQuoteNodeParam struct {
 	// Alignment of the quote.
 	Align Alignment `json:"align,omitzero"`
 	// CSS border color property. For example, `#fff`
-	BorderColor param.Opt[string] `json:"borderColor,omitzero"`
+	BorderColor param.Opt[string] `json:"border_color,omitzero"`
 	// CSS px font size for this quote block, e.g. `16px`. Overrides the size of the
 	// `text_style` preset. Email only.
 	FontSize param.Opt[string] `json:"font_size,omitzero"`
