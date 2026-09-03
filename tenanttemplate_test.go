@@ -156,11 +156,11 @@ func TestTenantTemplateReplaceWithOptionalParams(t *testing.T) {
 				Template: courier.TenantTemplateInputParam{
 					Content: shared.ElementalContentParam{
 						Elements: []shared.ElementalNodeUnionParam{{
-							OfElementalTextNodeWithType: &shared.ElementalTextNodeWithTypeParam{
-								ElementalTextNodeParam: shared.ElementalTextNodeParam{
+							OfElementalChannelNodeWithType: &shared.ElementalChannelNodeWithTypeParam{
+								ElementalChannelNodeParam: shared.ElementalChannelNodeParam{
 									ElementalBaseNodeParam: shared.ElementalBaseNodeParam{},
 								},
-								Type: "text",
+								Type: "channel",
 							},
 						}},
 						Version: "2022-01-01",

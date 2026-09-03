@@ -525,6 +525,10 @@ type ElementalChannelNode struct {
 	// The channel the contents of this element should be applied to. Can be `email`,
 	// `push`, `direct_message`, `sms` or a provider such as slack
 	Channel string `json:"channel"`
+	// An array of elements to apply to the channel. If `raw` has not been specified,
+	// `elements` is `required`. Channel elements cannot nest, so these are any node
+	// except another channel block.
+	Elements []ElementalNodeNonChannelUnion `json:"elements" api:"nullable"`
 	// Email only. Document-level base font size (CSS px, e.g. `16px`) for body content
 	// — text, quote, list and action button labels. Heading styles (`h1`/`h2`/`h3`)
 	// and `subtext` keep their preset sizes.
@@ -541,6 +545,7 @@ type ElementalChannelNode struct {
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Channel     respjson.Field
+		Elements    respjson.Field
 		FontSize    respjson.Field
 		LineHeight  respjson.Field
 		Padding     respjson.Field
@@ -580,6 +585,10 @@ type ElementalChannelNodeParam struct {
 	// The channel the contents of this element should be applied to. Can be `email`,
 	// `push`, `direct_message`, `sms` or a provider such as slack
 	Channel param.Opt[string] `json:"channel,omitzero"`
+	// An array of elements to apply to the channel. If `raw` has not been specified,
+	// `elements` is `required`. Channel elements cannot nest, so these are any node
+	// except another channel block.
+	Elements []ElementalNodeNonChannelUnionParam `json:"elements,omitzero"`
 	// Email only. Document-level base font size (CSS px, e.g. `16px`) for body content
 	// — text, quote, list and action button labels. Heading styles (`h1`/`h2`/`h3`)
 	// and `subtext` keep their preset sizes.
@@ -1220,7 +1229,9 @@ type ElementalNodeUnion struct {
 	Title string `json:"title"`
 	// This field is from variant [ElementalChannelNodeWithType].
 	Channel string `json:"channel"`
-	Padding string `json:"padding"`
+	// This field is from variant [ElementalChannelNodeWithType].
+	Elements []ElementalNodeNonChannelUnion `json:"elements"`
+	Padding  string                         `json:"padding"`
 	// This field is from variant [ElementalChannelNodeWithType].
 	Raw map[string]any `json:"raw"`
 	// This field is from variant [ElementalImageNodeWithType].
@@ -1262,6 +1273,7 @@ type ElementalNodeUnion struct {
 		Type            respjson.Field
 		Title           respjson.Field
 		Channel         respjson.Field
+		Elements        respjson.Field
 		Padding         respjson.Field
 		Raw             respjson.Field
 		Src             respjson.Field
@@ -1462,6 +1474,14 @@ func (u ElementalNodeUnionParam) GetTitle() *string {
 func (u ElementalNodeUnionParam) GetChannel() *string {
 	if vt := u.OfElementalChannelNodeWithType; vt != nil && vt.Channel.Valid() {
 		return &vt.Channel.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeUnionParam) GetElements() []ElementalNodeNonChannelUnionParam {
+	if vt := u.OfElementalChannelNodeWithType; vt != nil {
+		return vt.Elements
 	}
 	return nil
 }
@@ -1776,6 +1796,809 @@ func (u ElementalNodeUnionParam) GetLocales() LocalesParam {
 		return vt.Locales
 	}
 	return nil
+}
+
+// ElementalNodeNonChannelUnion contains all possible properties and values from
+// [ElementalNodeNonChannelObject], [ElementalNodeNonChannelObject2],
+// [ElementalNodeNonChannelObject3], [ElementalNodeNonChannelObject4],
+// [ElementalNodeNonChannelObject5], [ElementalNodeNonChannelObject6],
+// [ElementalNodeNonChannelObject7].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type ElementalNodeNonChannelUnion struct {
+	// This field is from variant [ElementalNodeNonChannelObject],
+	// [ElementalNodeNonChannelObject2], [ElementalNodeNonChannelObject3],
+	// [ElementalNodeNonChannelObject4], [ElementalNodeNonChannelObject5],
+	// [ElementalNodeNonChannelObject6], [ElementalNodeNonChannelObject7].
+	Channels []string `json:"channels"`
+	// This field is from variant [ElementalNodeNonChannelObject],
+	// [ElementalNodeNonChannelObject2], [ElementalNodeNonChannelObject3],
+	// [ElementalNodeNonChannelObject4], [ElementalNodeNonChannelObject5],
+	// [ElementalNodeNonChannelObject6], [ElementalNodeNonChannelObject7].
+	If string `json:"if"`
+	// This field is from variant [ElementalNodeNonChannelObject],
+	// [ElementalNodeNonChannelObject2], [ElementalNodeNonChannelObject3],
+	// [ElementalNodeNonChannelObject4], [ElementalNodeNonChannelObject5],
+	// [ElementalNodeNonChannelObject6], [ElementalNodeNonChannelObject7].
+	Loop string `json:"loop"`
+	// This field is from variant [ElementalNodeNonChannelObject],
+	// [ElementalNodeNonChannelObject2], [ElementalNodeNonChannelObject3],
+	// [ElementalNodeNonChannelObject4], [ElementalNodeNonChannelObject5],
+	// [ElementalNodeNonChannelObject6], [ElementalNodeNonChannelObject7].
+	Ref   string `json:"ref"`
+	Align string `json:"align"`
+	// This field is from variant [ElementalNodeNonChannelObject].
+	Bold     string `json:"bold"`
+	Color    string `json:"color"`
+	Content  string `json:"content"`
+	FontSize string `json:"font_size"`
+	// This field is from variant [ElementalNodeNonChannelObject].
+	Format string `json:"format"`
+	// This field is from variant [ElementalNodeNonChannelObject].
+	Italic     string `json:"italic"`
+	LineHeight string `json:"line_height"`
+	// This field is from variant [ElementalNodeNonChannelObject].
+	Locales Locales `json:"locales"`
+	// This field is from variant [ElementalNodeNonChannelObject].
+	Strikethrough string `json:"strikethrough"`
+	// This field is from variant [ElementalNodeNonChannelObject].
+	TextStyle TextStyle `json:"text_style"`
+	// This field is from variant [ElementalNodeNonChannelObject].
+	Underline string `json:"underline"`
+	Type      string `json:"type"`
+	// This field is from variant [ElementalNodeNonChannelObject2].
+	Title string `json:"title"`
+	// This field is from variant [ElementalNodeNonChannelObject3].
+	Src string `json:"src"`
+	// This field is from variant [ElementalNodeNonChannelObject3].
+	AltText     string `json:"alt_text"`
+	BorderColor string `json:"border_color"`
+	BorderSize  string `json:"border_size"`
+	Href        string `json:"href"`
+	Padding     string `json:"padding"`
+	// This field is from variant [ElementalNodeNonChannelObject3].
+	Width string `json:"width"`
+	// This field is from variant [ElementalNodeNonChannelObject4].
+	ActionID string `json:"action_id"`
+	// This field is from variant [ElementalNodeNonChannelObject4].
+	BackgroundColor string `json:"background_color"`
+	// This field is from variant [ElementalNodeNonChannelObject4].
+	BorderRadius string `json:"border_radius"`
+	// This field is from variant [ElementalNodeNonChannelObject4].
+	DisableTracking bool `json:"disable_tracking"`
+	// This field is from variant [ElementalNodeNonChannelObject4].
+	Style string `json:"style"`
+	JSON  struct {
+		Channels        respjson.Field
+		If              respjson.Field
+		Loop            respjson.Field
+		Ref             respjson.Field
+		Align           respjson.Field
+		Bold            respjson.Field
+		Color           respjson.Field
+		Content         respjson.Field
+		FontSize        respjson.Field
+		Format          respjson.Field
+		Italic          respjson.Field
+		LineHeight      respjson.Field
+		Locales         respjson.Field
+		Strikethrough   respjson.Field
+		TextStyle       respjson.Field
+		Underline       respjson.Field
+		Type            respjson.Field
+		Title           respjson.Field
+		Src             respjson.Field
+		AltText         respjson.Field
+		BorderColor     respjson.Field
+		BorderSize      respjson.Field
+		Href            respjson.Field
+		Padding         respjson.Field
+		Width           respjson.Field
+		ActionID        respjson.Field
+		BackgroundColor respjson.Field
+		BorderRadius    respjson.Field
+		DisableTracking respjson.Field
+		Style           respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+func (u ElementalNodeNonChannelUnion) AsElementalNodeNonChannelObject() (v ElementalNodeNonChannelObject) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ElementalNodeNonChannelUnion) AsElementalNodeNonChannelObject2() (v ElementalNodeNonChannelObject2) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ElementalNodeNonChannelUnion) AsElementalNodeNonChannelObject3() (v ElementalNodeNonChannelObject3) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ElementalNodeNonChannelUnion) AsElementalNodeNonChannelObject4() (v ElementalNodeNonChannelObject4) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ElementalNodeNonChannelUnion) AsElementalNodeNonChannelObject5() (v ElementalNodeNonChannelObject5) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ElementalNodeNonChannelUnion) AsElementalNodeNonChannelObject6() (v ElementalNodeNonChannelObject6) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ElementalNodeNonChannelUnion) AsElementalNodeNonChannelObject7() (v ElementalNodeNonChannelObject7) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ElementalNodeNonChannelUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *ElementalNodeNonChannelUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this ElementalNodeNonChannelUnion to a
+// ElementalNodeNonChannelUnionParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// ElementalNodeNonChannelUnionParam.Overrides()
+func (r ElementalNodeNonChannelUnion) ToParam() ElementalNodeNonChannelUnionParam {
+	return param.Override[ElementalNodeNonChannelUnionParam](json.RawMessage(r.RawJSON()))
+}
+
+// Represents a body of text to be rendered inside of the notification.
+type ElementalNodeNonChannelObject struct {
+	// Any of "text".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+	ElementalTextNode
+}
+
+// Returns the unmodified JSON received from the API
+func (r ElementalNodeNonChannelObject) RawJSON() string { return r.JSON.raw }
+func (r *ElementalNodeNonChannelObject) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The meta element contains information describing the notification that may be
+// used by a particular channel or provider. One important field is the title field
+// which will be used as the title for channels that support it.
+type ElementalNodeNonChannelObject2 struct {
+	// Any of "meta".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+	ElementalMetaNode
+}
+
+// Returns the unmodified JSON received from the API
+func (r ElementalNodeNonChannelObject2) RawJSON() string { return r.JSON.raw }
+func (r *ElementalNodeNonChannelObject2) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Used to embed an image into the notification.
+type ElementalNodeNonChannelObject3 struct {
+	// Any of "image".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+	ElementalImageNode
+}
+
+// Returns the unmodified JSON received from the API
+func (r ElementalNodeNonChannelObject3) RawJSON() string { return r.JSON.raw }
+func (r *ElementalNodeNonChannelObject3) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Allows the user to execute an action. Can be a button or a link.
+type ElementalNodeNonChannelObject4 struct {
+	// Any of "action".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+	ElementalActionNode
+}
+
+// Returns the unmodified JSON received from the API
+func (r ElementalNodeNonChannelObject4) RawJSON() string { return r.JSON.raw }
+func (r *ElementalNodeNonChannelObject4) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Renders a dividing line between elements.
+type ElementalNodeNonChannelObject5 struct {
+	// Any of "divider".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+	ElementalDividerNode
+}
+
+// Returns the unmodified JSON received from the API
+func (r ElementalNodeNonChannelObject5) RawJSON() string { return r.JSON.raw }
+func (r *ElementalNodeNonChannelObject5) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Renders a quote block.
+type ElementalNodeNonChannelObject6 struct {
+	// Any of "quote".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+	ElementalQuoteNode
+}
+
+// Returns the unmodified JSON received from the API
+func (r ElementalNodeNonChannelObject6) RawJSON() string { return r.JSON.raw }
+func (r *ElementalNodeNonChannelObject6) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Raw HTML string inside an Elemental document. When rendering a message, this
+// node is turned into output only for the email channel; for other channels it
+// produces no blocks.
+type ElementalNodeNonChannelObject7 struct {
+	// Any of "html".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+	ElementalHTMLNode
+}
+
+// Returns the unmodified JSON received from the API
+func (r ElementalNodeNonChannelObject7) RawJSON() string { return r.JSON.raw }
+func (r *ElementalNodeNonChannelObject7) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func ElementalNodeNonChannelParamOfElementalNodeNonChannelObject3(src string) ElementalNodeNonChannelUnionParam {
+	var variant ElementalNodeNonChannelObject3Param
+	variant.Src = src
+	return ElementalNodeNonChannelUnionParam{OfElementalNodeNonChannelObject3: &variant}
+}
+
+func ElementalNodeNonChannelParamOfElementalNodeNonChannelObject4(content string, href string) ElementalNodeNonChannelUnionParam {
+	var variant ElementalNodeNonChannelObject4Param
+	variant.Content = content
+	variant.Href = href
+	return ElementalNodeNonChannelUnionParam{OfElementalNodeNonChannelObject4: &variant}
+}
+
+func ElementalNodeNonChannelParamOfElementalNodeNonChannelObject6(content string) ElementalNodeNonChannelUnionParam {
+	var variant ElementalNodeNonChannelObject6Param
+	variant.Content = content
+	return ElementalNodeNonChannelUnionParam{OfElementalNodeNonChannelObject6: &variant}
+}
+
+func ElementalNodeNonChannelParamOfElementalNodeNonChannelObject7(content string) ElementalNodeNonChannelUnionParam {
+	var variant ElementalNodeNonChannelObject7Param
+	variant.Content = content
+	return ElementalNodeNonChannelUnionParam{OfElementalNodeNonChannelObject7: &variant}
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type ElementalNodeNonChannelUnionParam struct {
+	OfElementalNodeNonChannelObject  *ElementalNodeNonChannelObjectParam  `json:",omitzero,inline"`
+	OfElementalNodeNonChannelObject2 *ElementalNodeNonChannelObject2Param `json:",omitzero,inline"`
+	OfElementalNodeNonChannelObject3 *ElementalNodeNonChannelObject3Param `json:",omitzero,inline"`
+	OfElementalNodeNonChannelObject4 *ElementalNodeNonChannelObject4Param `json:",omitzero,inline"`
+	OfElementalNodeNonChannelObject5 *ElementalNodeNonChannelObject5Param `json:",omitzero,inline"`
+	OfElementalNodeNonChannelObject6 *ElementalNodeNonChannelObject6Param `json:",omitzero,inline"`
+	OfElementalNodeNonChannelObject7 *ElementalNodeNonChannelObject7Param `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u ElementalNodeNonChannelUnionParam) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfElementalNodeNonChannelObject,
+		u.OfElementalNodeNonChannelObject2,
+		u.OfElementalNodeNonChannelObject3,
+		u.OfElementalNodeNonChannelObject4,
+		u.OfElementalNodeNonChannelObject5,
+		u.OfElementalNodeNonChannelObject6,
+		u.OfElementalNodeNonChannelObject7)
+}
+func (u *ElementalNodeNonChannelUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *ElementalNodeNonChannelUnionParam) asAny() any {
+	if !param.IsOmitted(u.OfElementalNodeNonChannelObject) {
+		return u.OfElementalNodeNonChannelObject
+	} else if !param.IsOmitted(u.OfElementalNodeNonChannelObject2) {
+		return u.OfElementalNodeNonChannelObject2
+	} else if !param.IsOmitted(u.OfElementalNodeNonChannelObject3) {
+		return u.OfElementalNodeNonChannelObject3
+	} else if !param.IsOmitted(u.OfElementalNodeNonChannelObject4) {
+		return u.OfElementalNodeNonChannelObject4
+	} else if !param.IsOmitted(u.OfElementalNodeNonChannelObject5) {
+		return u.OfElementalNodeNonChannelObject5
+	} else if !param.IsOmitted(u.OfElementalNodeNonChannelObject6) {
+		return u.OfElementalNodeNonChannelObject6
+	} else if !param.IsOmitted(u.OfElementalNodeNonChannelObject7) {
+		return u.OfElementalNodeNonChannelObject7
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetBold() *string {
+	if vt := u.OfElementalNodeNonChannelObject; vt != nil && vt.Bold.Valid() {
+		return &vt.Bold.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetFormat() *string {
+	if vt := u.OfElementalNodeNonChannelObject; vt != nil {
+		return &vt.Format
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetItalic() *string {
+	if vt := u.OfElementalNodeNonChannelObject; vt != nil && vt.Italic.Valid() {
+		return &vt.Italic.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetStrikethrough() *string {
+	if vt := u.OfElementalNodeNonChannelObject; vt != nil && vt.Strikethrough.Valid() {
+		return &vt.Strikethrough.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetUnderline() *string {
+	if vt := u.OfElementalNodeNonChannelObject; vt != nil && vt.Underline.Valid() {
+		return &vt.Underline.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetTitle() *string {
+	if vt := u.OfElementalNodeNonChannelObject2; vt != nil && vt.Title.Valid() {
+		return &vt.Title.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetSrc() *string {
+	if vt := u.OfElementalNodeNonChannelObject3; vt != nil {
+		return &vt.Src
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetAltText() *string {
+	if vt := u.OfElementalNodeNonChannelObject3; vt != nil && vt.AltText.Valid() {
+		return &vt.AltText.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetWidth() *string {
+	if vt := u.OfElementalNodeNonChannelObject3; vt != nil && vt.Width.Valid() {
+		return &vt.Width.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetActionID() *string {
+	if vt := u.OfElementalNodeNonChannelObject4; vt != nil && vt.ActionID.Valid() {
+		return &vt.ActionID.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetBackgroundColor() *string {
+	if vt := u.OfElementalNodeNonChannelObject4; vt != nil && vt.BackgroundColor.Valid() {
+		return &vt.BackgroundColor.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetBorderRadius() *string {
+	if vt := u.OfElementalNodeNonChannelObject4; vt != nil && vt.BorderRadius.Valid() {
+		return &vt.BorderRadius.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetDisableTracking() *bool {
+	if vt := u.OfElementalNodeNonChannelObject4; vt != nil && vt.DisableTracking.Valid() {
+		return &vt.DisableTracking.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetStyle() *string {
+	if vt := u.OfElementalNodeNonChannelObject4; vt != nil {
+		return &vt.Style
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetIf() *string {
+	if vt := u.OfElementalNodeNonChannelObject; vt != nil && vt.If.Valid() {
+		return &vt.If.Value
+	} else if vt := u.OfElementalNodeNonChannelObject2; vt != nil && vt.If.Valid() {
+		return &vt.If.Value
+	} else if vt := u.OfElementalNodeNonChannelObject3; vt != nil && vt.If.Valid() {
+		return &vt.If.Value
+	} else if vt := u.OfElementalNodeNonChannelObject4; vt != nil && vt.If.Valid() {
+		return &vt.If.Value
+	} else if vt := u.OfElementalNodeNonChannelObject5; vt != nil && vt.If.Valid() {
+		return &vt.If.Value
+	} else if vt := u.OfElementalNodeNonChannelObject6; vt != nil && vt.If.Valid() {
+		return &vt.If.Value
+	} else if vt := u.OfElementalNodeNonChannelObject7; vt != nil && vt.If.Valid() {
+		return &vt.If.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetLoop() *string {
+	if vt := u.OfElementalNodeNonChannelObject; vt != nil && vt.Loop.Valid() {
+		return &vt.Loop.Value
+	} else if vt := u.OfElementalNodeNonChannelObject2; vt != nil && vt.Loop.Valid() {
+		return &vt.Loop.Value
+	} else if vt := u.OfElementalNodeNonChannelObject3; vt != nil && vt.Loop.Valid() {
+		return &vt.Loop.Value
+	} else if vt := u.OfElementalNodeNonChannelObject4; vt != nil && vt.Loop.Valid() {
+		return &vt.Loop.Value
+	} else if vt := u.OfElementalNodeNonChannelObject5; vt != nil && vt.Loop.Valid() {
+		return &vt.Loop.Value
+	} else if vt := u.OfElementalNodeNonChannelObject6; vt != nil && vt.Loop.Valid() {
+		return &vt.Loop.Value
+	} else if vt := u.OfElementalNodeNonChannelObject7; vt != nil && vt.Loop.Valid() {
+		return &vt.Loop.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetRef() *string {
+	if vt := u.OfElementalNodeNonChannelObject; vt != nil && vt.Ref.Valid() {
+		return &vt.Ref.Value
+	} else if vt := u.OfElementalNodeNonChannelObject2; vt != nil && vt.Ref.Valid() {
+		return &vt.Ref.Value
+	} else if vt := u.OfElementalNodeNonChannelObject3; vt != nil && vt.Ref.Valid() {
+		return &vt.Ref.Value
+	} else if vt := u.OfElementalNodeNonChannelObject4; vt != nil && vt.Ref.Valid() {
+		return &vt.Ref.Value
+	} else if vt := u.OfElementalNodeNonChannelObject5; vt != nil && vt.Ref.Valid() {
+		return &vt.Ref.Value
+	} else if vt := u.OfElementalNodeNonChannelObject6; vt != nil && vt.Ref.Valid() {
+		return &vt.Ref.Value
+	} else if vt := u.OfElementalNodeNonChannelObject7; vt != nil && vt.Ref.Valid() {
+		return &vt.Ref.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetAlign() *string {
+	if vt := u.OfElementalNodeNonChannelObject; vt != nil {
+		return (*string)(&vt.Align)
+	} else if vt := u.OfElementalNodeNonChannelObject3; vt != nil {
+		return (*string)(&vt.Align)
+	} else if vt := u.OfElementalNodeNonChannelObject4; vt != nil {
+		return (*string)(&vt.Align)
+	} else if vt := u.OfElementalNodeNonChannelObject6; vt != nil {
+		return (*string)(&vt.Align)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetColor() *string {
+	if vt := u.OfElementalNodeNonChannelObject; vt != nil && vt.Color.Valid() {
+		return &vt.Color.Value
+	} else if vt := u.OfElementalNodeNonChannelObject5; vt != nil && vt.Color.Valid() {
+		return &vt.Color.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetContent() *string {
+	if vt := u.OfElementalNodeNonChannelObject; vt != nil && vt.Content.Valid() {
+		return &vt.Content.Value
+	} else if vt := u.OfElementalNodeNonChannelObject4; vt != nil {
+		return (*string)(&vt.Content)
+	} else if vt := u.OfElementalNodeNonChannelObject6; vt != nil {
+		return (*string)(&vt.Content)
+	} else if vt := u.OfElementalNodeNonChannelObject7; vt != nil {
+		return (*string)(&vt.Content)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetFontSize() *string {
+	if vt := u.OfElementalNodeNonChannelObject; vt != nil && vt.FontSize.Valid() {
+		return &vt.FontSize.Value
+	} else if vt := u.OfElementalNodeNonChannelObject4; vt != nil && vt.FontSize.Valid() {
+		return &vt.FontSize.Value
+	} else if vt := u.OfElementalNodeNonChannelObject6; vt != nil && vt.FontSize.Valid() {
+		return &vt.FontSize.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetLineHeight() *string {
+	if vt := u.OfElementalNodeNonChannelObject; vt != nil && vt.LineHeight.Valid() {
+		return &vt.LineHeight.Value
+	} else if vt := u.OfElementalNodeNonChannelObject6; vt != nil && vt.LineHeight.Valid() {
+		return &vt.LineHeight.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetTextStyle() *string {
+	if vt := u.OfElementalNodeNonChannelObject; vt != nil {
+		return (*string)(&vt.TextStyle)
+	} else if vt := u.OfElementalNodeNonChannelObject6; vt != nil {
+		return (*string)(&vt.TextStyle)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetType() *string {
+	if vt := u.OfElementalNodeNonChannelObject; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfElementalNodeNonChannelObject2; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfElementalNodeNonChannelObject3; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfElementalNodeNonChannelObject4; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfElementalNodeNonChannelObject5; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfElementalNodeNonChannelObject6; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfElementalNodeNonChannelObject7; vt != nil {
+		return (*string)(&vt.Type)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetBorderColor() *string {
+	if vt := u.OfElementalNodeNonChannelObject3; vt != nil && vt.BorderColor.Valid() {
+		return &vt.BorderColor.Value
+	} else if vt := u.OfElementalNodeNonChannelObject6; vt != nil && vt.BorderColor.Valid() {
+		return &vt.BorderColor.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetBorderSize() *string {
+	if vt := u.OfElementalNodeNonChannelObject3; vt != nil && vt.BorderSize.Valid() {
+		return &vt.BorderSize.Value
+	} else if vt := u.OfElementalNodeNonChannelObject4; vt != nil && vt.BorderSize.Valid() {
+		return &vt.BorderSize.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetHref() *string {
+	if vt := u.OfElementalNodeNonChannelObject3; vt != nil && vt.Href.Valid() {
+		return &vt.Href.Value
+	} else if vt := u.OfElementalNodeNonChannelObject4; vt != nil {
+		return (*string)(&vt.Href)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetPadding() *string {
+	if vt := u.OfElementalNodeNonChannelObject3; vt != nil && vt.Padding.Valid() {
+		return &vt.Padding.Value
+	} else if vt := u.OfElementalNodeNonChannelObject4; vt != nil && vt.Padding.Valid() {
+		return &vt.Padding.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's Channels property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetChannels() []string {
+	if vt := u.OfElementalNodeNonChannelObject; vt != nil {
+		return vt.Channels
+	} else if vt := u.OfElementalNodeNonChannelObject2; vt != nil {
+		return vt.Channels
+	} else if vt := u.OfElementalNodeNonChannelObject3; vt != nil {
+		return vt.Channels
+	} else if vt := u.OfElementalNodeNonChannelObject4; vt != nil {
+		return vt.Channels
+	} else if vt := u.OfElementalNodeNonChannelObject5; vt != nil {
+		return vt.Channels
+	} else if vt := u.OfElementalNodeNonChannelObject6; vt != nil {
+		return vt.Channels
+	} else if vt := u.OfElementalNodeNonChannelObject7; vt != nil {
+		return vt.Channels
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's Locales property, if present.
+func (u ElementalNodeNonChannelUnionParam) GetLocales() LocalesParam {
+	if vt := u.OfElementalNodeNonChannelObject; vt != nil {
+		return vt.Locales
+	} else if vt := u.OfElementalNodeNonChannelObject4; vt != nil {
+		return vt.Locales
+	} else if vt := u.OfElementalNodeNonChannelObject6; vt != nil {
+		return vt.Locales
+	} else if vt := u.OfElementalNodeNonChannelObject7; vt != nil {
+		return vt.Locales
+	}
+	return nil
+}
+
+// Represents a body of text to be rendered inside of the notification.
+type ElementalNodeNonChannelObjectParam struct {
+	Type string `json:"type,omitzero"`
+	ElementalTextNodeParam
+}
+
+func (r ElementalNodeNonChannelObjectParam) MarshalJSON() (data []byte, err error) {
+	type shadow struct {
+		*ElementalNodeNonChannelObjectParam
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
+}
+
+// The meta element contains information describing the notification that may be
+// used by a particular channel or provider. One important field is the title field
+// which will be used as the title for channels that support it.
+type ElementalNodeNonChannelObject2Param struct {
+	Type string `json:"type,omitzero"`
+	ElementalMetaNodeParam
+}
+
+func (r ElementalNodeNonChannelObject2Param) MarshalJSON() (data []byte, err error) {
+	type shadow struct {
+		*ElementalNodeNonChannelObject2Param
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
+}
+
+// Used to embed an image into the notification.
+type ElementalNodeNonChannelObject3Param struct {
+	Type string `json:"type,omitzero"`
+	ElementalImageNodeParam
+}
+
+func (r ElementalNodeNonChannelObject3Param) MarshalJSON() (data []byte, err error) {
+	type shadow struct {
+		*ElementalNodeNonChannelObject3Param
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
+}
+
+// Allows the user to execute an action. Can be a button or a link.
+type ElementalNodeNonChannelObject4Param struct {
+	Type string `json:"type,omitzero"`
+	ElementalActionNodeParam
+}
+
+func (r ElementalNodeNonChannelObject4Param) MarshalJSON() (data []byte, err error) {
+	type shadow struct {
+		*ElementalNodeNonChannelObject4Param
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
+}
+
+// Renders a dividing line between elements.
+type ElementalNodeNonChannelObject5Param struct {
+	Type string `json:"type,omitzero"`
+	ElementalDividerNodeParam
+}
+
+func (r ElementalNodeNonChannelObject5Param) MarshalJSON() (data []byte, err error) {
+	type shadow struct {
+		*ElementalNodeNonChannelObject5Param
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
+}
+
+// Renders a quote block.
+type ElementalNodeNonChannelObject6Param struct {
+	Type string `json:"type,omitzero"`
+	ElementalQuoteNodeParam
+}
+
+func (r ElementalNodeNonChannelObject6Param) MarshalJSON() (data []byte, err error) {
+	type shadow struct {
+		*ElementalNodeNonChannelObject6Param
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
+}
+
+// Raw HTML string inside an Elemental document. When rendering a message, this
+// node is turned into output only for the email channel; for other channels it
+// produces no blocks.
+type ElementalNodeNonChannelObject7Param struct {
+	Type string `json:"type,omitzero"`
+	ElementalHTMLNodeParam
+}
+
+func (r ElementalNodeNonChannelObject7Param) MarshalJSON() (data []byte, err error) {
+	type shadow struct {
+		*ElementalNodeNonChannelObject7Param
+		MarshalJSON bool `json:"-"` // Prevent inheriting [json.Marshaler] from the embedded field
+	}
+	return param.MarshalObject(r, shadow{&r, false})
 }
 
 // Renders a quote block.

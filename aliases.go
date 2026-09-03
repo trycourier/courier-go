@@ -330,6 +330,100 @@ type ElementalNodeUnion = shared.ElementalNodeUnion
 // This is an alias to an internal type.
 type ElementalNodeUnionParam = shared.ElementalNodeUnionParam
 
+// Any Elemental node except a channel block. Channel elements are only valid as
+// top-level elements, so the `elements` nested inside one can never be another
+// channel. Keeping this union channel-free also keeps the schema acyclic; a
+// recursive `$ref` here breaks the generated Python models.
+//
+// This is an alias to an internal type.
+type ElementalNodeNonChannelUnion = shared.ElementalNodeNonChannelUnion
+
+// Represents a body of text to be rendered inside of the notification.
+//
+// This is an alias to an internal type.
+type ElementalNodeNonChannelObject = shared.ElementalNodeNonChannelObject
+
+// The meta element contains information describing the notification that may be
+// used by a particular channel or provider. One important field is the title field
+// which will be used as the title for channels that support it.
+//
+// This is an alias to an internal type.
+type ElementalNodeNonChannelObject2 = shared.ElementalNodeNonChannelObject2
+
+// Used to embed an image into the notification.
+//
+// This is an alias to an internal type.
+type ElementalNodeNonChannelObject3 = shared.ElementalNodeNonChannelObject3
+
+// Allows the user to execute an action. Can be a button or a link.
+//
+// This is an alias to an internal type.
+type ElementalNodeNonChannelObject4 = shared.ElementalNodeNonChannelObject4
+
+// Renders a dividing line between elements.
+//
+// This is an alias to an internal type.
+type ElementalNodeNonChannelObject5 = shared.ElementalNodeNonChannelObject5
+
+// Renders a quote block.
+//
+// This is an alias to an internal type.
+type ElementalNodeNonChannelObject6 = shared.ElementalNodeNonChannelObject6
+
+// Raw HTML string inside an Elemental document. When rendering a message, this
+// node is turned into output only for the email channel; for other channels it
+// produces no blocks.
+//
+// This is an alias to an internal type.
+type ElementalNodeNonChannelObject7 = shared.ElementalNodeNonChannelObject7
+
+// Any Elemental node except a channel block. Channel elements are only valid as
+// top-level elements, so the `elements` nested inside one can never be another
+// channel. Keeping this union channel-free also keeps the schema acyclic; a
+// recursive `$ref` here breaks the generated Python models.
+//
+// This is an alias to an internal type.
+type ElementalNodeNonChannelUnionParam = shared.ElementalNodeNonChannelUnionParam
+
+// Represents a body of text to be rendered inside of the notification.
+//
+// This is an alias to an internal type.
+type ElementalNodeNonChannelObjectParam = shared.ElementalNodeNonChannelObjectParam
+
+// The meta element contains information describing the notification that may be
+// used by a particular channel or provider. One important field is the title field
+// which will be used as the title for channels that support it.
+//
+// This is an alias to an internal type.
+type ElementalNodeNonChannelObject2Param = shared.ElementalNodeNonChannelObject2Param
+
+// Used to embed an image into the notification.
+//
+// This is an alias to an internal type.
+type ElementalNodeNonChannelObject3Param = shared.ElementalNodeNonChannelObject3Param
+
+// Allows the user to execute an action. Can be a button or a link.
+//
+// This is an alias to an internal type.
+type ElementalNodeNonChannelObject4Param = shared.ElementalNodeNonChannelObject4Param
+
+// Renders a dividing line between elements.
+//
+// This is an alias to an internal type.
+type ElementalNodeNonChannelObject5Param = shared.ElementalNodeNonChannelObject5Param
+
+// Renders a quote block.
+//
+// This is an alias to an internal type.
+type ElementalNodeNonChannelObject6Param = shared.ElementalNodeNonChannelObject6Param
+
+// Raw HTML string inside an Elemental document. When rendering a message, this
+// node is turned into output only for the email channel; for other channels it
+// produces no blocks.
+//
+// This is an alias to an internal type.
+type ElementalNodeNonChannelObject7Param = shared.ElementalNodeNonChannelObject7Param
+
 // Renders a quote block.
 //
 // This is an alias to an internal type.
