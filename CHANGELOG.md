@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.30.4](https://github.com/trycourier/courier-go/compare/v4.30.3...v4.30.4) (2026-09-03)
+
+
+### Documentation
+
+* **api:** document the channel-block requirement on template creation ([#174](https://github.com/trycourier/courier-go/issues/174)) ([4548e68](https://github.com/trycourier/courier-go/commit/4548e68e0c5ea02a19eb4cf0595e967016b50984))
+
 ## [4.30.3](https://github.com/trycourier/courier-go/compare/v4.30.2...v4.30.3) (2026-08-29)
 
 
