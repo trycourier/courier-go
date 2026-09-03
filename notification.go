@@ -50,6 +50,16 @@ func NewNotificationService(opts ...option.RequestOption) (r NotificationService
 
 // Create a notification template. Requires all fields in the notification object.
 // Templates are created in draft state by default.
+//
+// Content must place its elements inside a channel block —
+// `{ "type": "channel", "channel": "email", "elements": [...] }` — or the request
+// returns `400`. The template designer renders only the channel block matching the
+// tab it draws, so content stored without one cannot be opened. An empty
+// `elements` array is accepted, and the requirement applies to creation only:
+// `PUT /notifications/{id}` still accepts unwrapped content. Note this endpoint
+// takes versioned content only — the `{ title, body }` shorthand accepted by
+// `/send` is rejected here with an `invalid_request_error` on
+// `notification.content.version`.
 func (r *NotificationService) New(ctx context.Context, params NotificationNewParams, opts ...option.RequestOption) (res *NotificationTemplateResponse, err error) {
 	if !param.IsOmitted(params.IdempotencyKey) {
 		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
@@ -1234,9 +1244,12 @@ const (
 	NotificationTemplateSummaryStatePublished NotificationTemplateSummaryState = "PUBLISHED"
 )
 
-// Request body for replacing a notification template. Same shape as create. All
-// fields required (PUT = full replacement), except `alias`, whose omission means
-// "leave the existing aliases alone".
+// Request body for replacing a notification template. All fields are required,
+// since `PUT` is a full replacement, except `alias`, whose omission leaves the
+// existing aliases in place. Unlike `NotificationTemplateCreateRequest`,
+// `notification.content` is not required to place its elements inside a channel
+// block: the requirement applies to creation only, so templates already stored
+// without one stay editable.
 //
 // The property Notification is required.
 type NotificationTemplateUpdateRequestParam struct {
@@ -1736,9 +1749,12 @@ func (r *NotificationPutLocaleParams) UnmarshalJSON(data []byte) error {
 }
 
 type NotificationReplaceParams struct {
-	// Request body for replacing a notification template. Same shape as create. All
-	// fields required (PUT = full replacement), except `alias`, whose omission means
-	// "leave the existing aliases alone".
+	// Request body for replacing a notification template. All fields are required,
+	// since `PUT` is a full replacement, except `alias`, whose omission leaves the
+	// existing aliases in place. Unlike `NotificationTemplateCreateRequest`,
+	// `notification.content` is not required to place its elements inside a channel
+	// block: the requirement applies to creation only, so templates already stored
+	// without one stay editable.
 	NotificationTemplateUpdateRequest NotificationTemplateUpdateRequestParam
 	paramObj
 }

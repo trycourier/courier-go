@@ -42,6 +42,13 @@ func NewJourneyTemplateService(opts ...option.RequestOption) (r JourneyTemplateS
 
 // Create a notification template scoped to this journey. Defaults to `DRAFT`
 // state; pass `state: "PUBLISHED"` to publish on create.
+//
+// The content tree must contain exactly one channel block whose `channel` matches
+// the `channel` on the request — a journey-scoped template carries a single
+// channel. Top-level elements, or a block for a different channel, return `400`.
+// The template designer renders only the channel block matching the tab it draws,
+// so content stored without one cannot be opened. An empty `elements` array is
+// accepted.
 func (r *JourneyTemplateService) New(ctx context.Context, templateID string, params JourneyTemplateNewParams, opts ...option.RequestOption) (res *JourneyTemplateGetResponse, err error) {
 	if !param.IsOmitted(params.IdempotencyKey) {
 		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
