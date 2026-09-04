@@ -144,8 +144,12 @@ type UserToken struct {
 	ProviderKey UserTokenProviderKey `json:"provider_key" api:"required"`
 	// Information about the device the token came from.
 	Device UserTokenDevice `json:"device" api:"nullable"`
-	// ISO 8601 formatted date the token expires. Defaults to 2 months. Set to false to
-	// disable expiration.
+	// When the token expires. Accepts a date, or the boolean `false` to disable
+	// expiration entirely. ISO 8601 is recommended (for example
+	// `2026-10-25T00:00:00.000Z`). A value that cannot be parsed as a date is
+	// rejected; it is not treated as "no expiration" and does not fall back to the
+	// default. `true` is not a supported value. Omit the field to use the default,
+	// which expires a token that has not been re-registered for 60 days.
 	ExpiryDate UserTokenExpiryDateUnion `json:"expiry_date" api:"nullable"`
 	// Properties about the token.
 	Properties any `json:"properties"`
@@ -338,8 +342,10 @@ type UserTokenUpdateParamsPatch struct {
 	Op string `json:"op" api:"required"`
 	// The JSON path specifying the part of the profile to operate on.
 	Path string `json:"path" api:"required"`
-	// The value for the operation.
-	Value param.Opt[string] `json:"value,omitzero"`
+	// The value for the operation. A string for most fields; boolean `false` when
+	// disabling token expiration via `expiry_date`, which cannot be expressed as a
+	// string.
+	Value UserTokenUpdateParamsPatchValueUnion `json:"value,omitzero"`
 	paramObj
 }
 
@@ -349,6 +355,34 @@ func (r UserTokenUpdateParamsPatch) MarshalJSON() (data []byte, err error) {
 }
 func (r *UserTokenUpdateParamsPatch) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type UserTokenUpdateParamsPatchValueUnion struct {
+	OfString param.Opt[string] `json:",omitzero,inline"`
+	OfBool   param.Opt[bool]   `json:",omitzero,inline"`
+	OfAnyMap map[string]any    `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u UserTokenUpdateParamsPatchValueUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfString, u.OfBool, u.OfAnyMap)
+}
+func (u *UserTokenUpdateParamsPatchValueUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *UserTokenUpdateParamsPatchValueUnion) asAny() any {
+	if !param.IsOmitted(u.OfString) {
+		return &u.OfString.Value
+	} else if !param.IsOmitted(u.OfBool) {
+		return &u.OfBool.Value
+	} else if !param.IsOmitted(u.OfAnyMap) {
+		return &u.OfAnyMap
+	}
+	return nil
 }
 
 type UserTokenDeleteParams struct {
@@ -362,8 +396,12 @@ type UserTokenAddSingleParams struct {
 	ProviderKey UserTokenAddSingleParamsProviderKey `json:"provider_key,omitzero" api:"required"`
 	// Information about the device the token came from.
 	Device UserTokenAddSingleParamsDevice `json:"device,omitzero"`
-	// ISO 8601 formatted date the token expires. Defaults to 2 months. Set to false to
-	// disable expiration.
+	// When the token expires. Accepts a date, or the boolean `false` to disable
+	// expiration entirely. ISO 8601 is recommended (for example
+	// `2026-10-25T00:00:00.000Z`). A value that cannot be parsed as a date is
+	// rejected; it is not treated as "no expiration" and does not fall back to the
+	// default. `true` is not a supported value. Omit the field to use the default,
+	// which expires a token that has not been re-registered for 60 days.
 	ExpiryDate UserTokenAddSingleParamsExpiryDateUnion `json:"expiry_date,omitzero"`
 	// Tracking information about the device the token came from.
 	Tracking UserTokenAddSingleParamsTracking `json:"tracking,omitzero"`
