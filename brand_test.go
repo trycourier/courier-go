@@ -35,8 +35,25 @@ func TestBrandNewWithOptionalParams(t *testing.T) {
 			},
 			Email: courier.BrandSettingsEmailParam{
 				Footer: courier.EmailFooterParam{
-					Content:        courier.String("content"),
 					InheritDefault: courier.Bool(true),
+					Markdown:       courier.String("markdown"),
+					Social: courier.EmailFooterSocialParam{
+						Facebook: courier.EmailFooterSocialFacebookParam{
+							URL: courier.String("url"),
+						},
+						Instagram: courier.EmailFooterSocialInstagramParam{
+							URL: courier.String("url"),
+						},
+						Linkedin: courier.EmailFooterSocialLinkedinParam{
+							URL: courier.String("url"),
+						},
+						Medium: courier.EmailFooterSocialMediumParam{
+							URL: courier.String("url"),
+						},
+						Twitter: courier.EmailFooterSocialTwitterParam{
+							URL: courier.String("url"),
+						},
+					},
 				},
 				Head: courier.EmailHeadParam{
 					InheritDefault: true,
@@ -159,8 +176,25 @@ func TestBrandUpdateWithOptionalParams(t *testing.T) {
 				},
 				Email: courier.BrandSettingsEmailParam{
 					Footer: courier.EmailFooterParam{
-						Content:        courier.String("content"),
 						InheritDefault: courier.Bool(true),
+						Markdown:       courier.String("markdown"),
+						Social: courier.EmailFooterSocialParam{
+							Facebook: courier.EmailFooterSocialFacebookParam{
+								URL: courier.String("url"),
+							},
+							Instagram: courier.EmailFooterSocialInstagramParam{
+								URL: courier.String("url"),
+							},
+							Linkedin: courier.EmailFooterSocialLinkedinParam{
+								URL: courier.String("url"),
+							},
+							Medium: courier.EmailFooterSocialMediumParam{
+								URL: courier.String("url"),
+							},
+							Twitter: courier.EmailFooterSocialTwitterParam{
+								URL: courier.String("url"),
+							},
+						},
 					},
 					Head: courier.EmailHeadParam{
 						InheritDefault: true,

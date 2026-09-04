@@ -512,12 +512,18 @@ func (r *BrandTemplateParam) UnmarshalJSON(data []byte) error {
 }
 
 type EmailFooter struct {
-	Content        string `json:"content" api:"nullable"`
-	InheritDefault bool   `json:"inheritDefault" api:"nullable"`
+	InheritDefault bool `json:"inheritDefault" api:"nullable"`
+	// The footer body, as markdown. This is the field the API returns and accepts; it
+	// is omitted entirely when no footer body is set. Sending null is accepted and
+	// treated as no footer body.
+	Markdown string `json:"markdown" api:"nullable"`
+	// Social links rendered in the email footer.
+	Social EmailFooterSocial `json:"social" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Content        respjson.Field
 		InheritDefault respjson.Field
+		Markdown       respjson.Field
+		Social         respjson.Field
 		ExtraFields    map[string]respjson.Field
 		raw            string
 	} `json:"-"`
@@ -538,9 +544,119 @@ func (r EmailFooter) ToParam() EmailFooterParam {
 	return param.Override[EmailFooterParam](json.RawMessage(r.RawJSON()))
 }
 
+// Social links rendered in the email footer.
+type EmailFooterSocial struct {
+	Facebook  EmailFooterSocialFacebook  `json:"facebook" api:"nullable"`
+	Instagram EmailFooterSocialInstagram `json:"instagram" api:"nullable"`
+	Linkedin  EmailFooterSocialLinkedin  `json:"linkedin" api:"nullable"`
+	Medium    EmailFooterSocialMedium    `json:"medium" api:"nullable"`
+	Twitter   EmailFooterSocialTwitter   `json:"twitter" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Facebook    respjson.Field
+		Instagram   respjson.Field
+		Linkedin    respjson.Field
+		Medium      respjson.Field
+		Twitter     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r EmailFooterSocial) RawJSON() string { return r.JSON.raw }
+func (r *EmailFooterSocial) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type EmailFooterSocialFacebook struct {
+	URL string `json:"url" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		URL         respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r EmailFooterSocialFacebook) RawJSON() string { return r.JSON.raw }
+func (r *EmailFooterSocialFacebook) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type EmailFooterSocialInstagram struct {
+	URL string `json:"url" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		URL         respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r EmailFooterSocialInstagram) RawJSON() string { return r.JSON.raw }
+func (r *EmailFooterSocialInstagram) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type EmailFooterSocialLinkedin struct {
+	URL string `json:"url" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		URL         respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r EmailFooterSocialLinkedin) RawJSON() string { return r.JSON.raw }
+func (r *EmailFooterSocialLinkedin) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type EmailFooterSocialMedium struct {
+	URL string `json:"url" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		URL         respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r EmailFooterSocialMedium) RawJSON() string { return r.JSON.raw }
+func (r *EmailFooterSocialMedium) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type EmailFooterSocialTwitter struct {
+	URL string `json:"url" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		URL         respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r EmailFooterSocialTwitter) RawJSON() string { return r.JSON.raw }
+func (r *EmailFooterSocialTwitter) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type EmailFooterParam struct {
-	Content        param.Opt[string] `json:"content,omitzero"`
-	InheritDefault param.Opt[bool]   `json:"inheritDefault,omitzero"`
+	InheritDefault param.Opt[bool] `json:"inheritDefault,omitzero"`
+	// The footer body, as markdown. This is the field the API returns and accepts; it
+	// is omitted entirely when no footer body is set. Sending null is accepted and
+	// treated as no footer body.
+	Markdown param.Opt[string] `json:"markdown,omitzero"`
+	// Social links rendered in the email footer.
+	Social EmailFooterSocialParam `json:"social,omitzero"`
 	paramObj
 }
 
@@ -549,6 +665,89 @@ func (r EmailFooterParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *EmailFooterParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Social links rendered in the email footer.
+type EmailFooterSocialParam struct {
+	Facebook  EmailFooterSocialFacebookParam  `json:"facebook,omitzero"`
+	Instagram EmailFooterSocialInstagramParam `json:"instagram,omitzero"`
+	Linkedin  EmailFooterSocialLinkedinParam  `json:"linkedin,omitzero"`
+	Medium    EmailFooterSocialMediumParam    `json:"medium,omitzero"`
+	Twitter   EmailFooterSocialTwitterParam   `json:"twitter,omitzero"`
+	paramObj
+}
+
+func (r EmailFooterSocialParam) MarshalJSON() (data []byte, err error) {
+	type shadow EmailFooterSocialParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailFooterSocialParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type EmailFooterSocialFacebookParam struct {
+	URL param.Opt[string] `json:"url,omitzero"`
+	paramObj
+}
+
+func (r EmailFooterSocialFacebookParam) MarshalJSON() (data []byte, err error) {
+	type shadow EmailFooterSocialFacebookParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailFooterSocialFacebookParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type EmailFooterSocialInstagramParam struct {
+	URL param.Opt[string] `json:"url,omitzero"`
+	paramObj
+}
+
+func (r EmailFooterSocialInstagramParam) MarshalJSON() (data []byte, err error) {
+	type shadow EmailFooterSocialInstagramParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailFooterSocialInstagramParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type EmailFooterSocialLinkedinParam struct {
+	URL param.Opt[string] `json:"url,omitzero"`
+	paramObj
+}
+
+func (r EmailFooterSocialLinkedinParam) MarshalJSON() (data []byte, err error) {
+	type shadow EmailFooterSocialLinkedinParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailFooterSocialLinkedinParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type EmailFooterSocialMediumParam struct {
+	URL param.Opt[string] `json:"url,omitzero"`
+	paramObj
+}
+
+func (r EmailFooterSocialMediumParam) MarshalJSON() (data []byte, err error) {
+	type shadow EmailFooterSocialMediumParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailFooterSocialMediumParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type EmailFooterSocialTwitterParam struct {
+	URL param.Opt[string] `json:"url,omitzero"`
+	paramObj
+}
+
+func (r EmailFooterSocialTwitterParam) MarshalJSON() (data []byte, err error) {
+	type shadow EmailFooterSocialTwitterParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailFooterSocialTwitterParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
