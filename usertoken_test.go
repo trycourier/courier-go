@@ -61,9 +61,11 @@ func TestUserTokenUpdate(t *testing.T) {
 		courier.UserTokenUpdateParams{
 			UserID: "user_id",
 			Patch: []courier.UserTokenUpdateParamsPatch{{
-				Op:    "replace",
-				Path:  "/expiry_date",
-				Value: courier.String("2024-12-31T00:00:00.000Z"),
+				Op:   "replace",
+				Path: "/expiry_date",
+				Value: courier.UserTokenUpdateParamsPatchValueUnion{
+					OfString: courier.String("2024-12-31T00:00:00.000Z"),
+				},
 			}},
 		},
 	)
