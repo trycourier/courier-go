@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.31.0](https://github.com/trycourier/courier-go/compare/v4.30.4...v4.31.0) (2026-09-04)
+
+
+### Features
+
+* **api:** document the expiry_date contract and allow boolean patch values ([#177](https://github.com/trycourier/courier-go/issues/177)) ([83fe6a0](https://github.com/trycourier/courier-go/commit/83fe6a0fd6633db92c264eab38d914e1da35c53d))
+
 ## [4.30.4](https://github.com/trycourier/courier-go/compare/v4.30.3...v4.30.4) (2026-09-03)
 
 
