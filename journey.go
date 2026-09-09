@@ -1467,7 +1467,7 @@ const (
 // [JourneyDelayDurationNode], [JourneyDelayUntilNode],
 // [JourneyFetchGetDeleteNode], [JourneyFetchPostPutNode], [JourneyAINode],
 // [JourneyThrottleStaticNode], [JourneyThrottleDynamicNode], [JourneyNodeBatch],
-// [JourneyNodeAddToDigest], [JourneyExitNode], [JourneyNodeJourneyBranchNode].
+// [JourneyNodeSendToDigest], [JourneyExitNode], [JourneyNodeJourneyBranchNode].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type JourneyNodeUnion struct {
@@ -1528,7 +1528,7 @@ type JourneyNodeUnion struct {
 	CategoryKey string `json:"category_key"`
 	// This field is from variant [JourneyNodeBatch].
 	MaxItems int64 `json:"max_items"`
-	// This field is from variant [JourneyNodeAddToDigest].
+	// This field is from variant [JourneyNodeSendToDigest].
 	SubscriptionTopicID string `json:"subscription_topic_id"`
 	// This field is from variant [JourneyNodeJourneyBranchNode].
 	Default JourneyNodeJourneyBranchNodeDefault `json:"default"`
@@ -1642,7 +1642,7 @@ func (u JourneyNodeUnion) AsBatch() (v JourneyNodeBatch) {
 	return
 }
 
-func (u JourneyNodeUnion) AsAddToDigest() (v JourneyNodeAddToDigest) {
+func (u JourneyNodeUnion) AsSendToDigest() (v JourneyNodeSendToDigest) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -1751,7 +1751,8 @@ func (r *JourneyNodeBatchRetain) UnmarshalJSON(data []byte) error {
 
 // Add the current event to a digest keyed by the given subscription topic. The
 // digest accumulates events and releases them on the schedule configured for the
-// topic, using the notification template configured on that topic.
+// topic, using the notification template configured on that topic. This node's
+// `type` value is `add-to-digest`.
 //
 // **The topic must have a template configured.** If the topic has no template when
 // the first event reaches this node, the journey run fails immediately: the run is
@@ -1762,7 +1763,7 @@ func (r *JourneyNodeBatchRetain) UnmarshalJSON(data []byte) error {
 // If the journey run is scoped to a tenant, digests are kept separate per tenant:
 // two runs for the same user under different tenants accumulate and release as
 // separate digests, even on the same topic.
-type JourneyNodeAddToDigest struct {
+type JourneyNodeSendToDigest struct {
 	// The subscription topic that owns the digest the event is added to.
 	SubscriptionTopicID string `json:"subscription_topic_id" api:"required"`
 	// Any of "add-to-digest".
@@ -1784,8 +1785,8 @@ type JourneyNodeAddToDigest struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r JourneyNodeAddToDigest) RawJSON() string { return r.JSON.raw }
-func (r *JourneyNodeAddToDigest) UnmarshalJSON(data []byte) error {
+func (r JourneyNodeSendToDigest) RawJSON() string { return r.JSON.raw }
+func (r *JourneyNodeSendToDigest) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1916,11 +1917,11 @@ func JourneyNodeParamOfAI(outputSchema map[string]any, type_ JourneyAINodeType) 
 	return JourneyNodeUnionParam{OfAI: &variant}
 }
 
-func JourneyNodeParamOfAddToDigest(subscriptionTopicID string, type_ string) JourneyNodeUnionParam {
-	var variant JourneyNodeAddToDigestParam
+func JourneyNodeParamOfSendToDigest(subscriptionTopicID string, type_ string) JourneyNodeUnionParam {
+	var variant JourneyNodeSendToDigestParam
 	variant.SubscriptionTopicID = subscriptionTopicID
 	variant.Type = type_
-	return JourneyNodeUnionParam{OfAddToDigest: &variant}
+	return JourneyNodeUnionParam{OfSendToDigest: &variant}
 }
 
 func JourneyNodeParamOfExit(type_ JourneyExitNodeType) JourneyNodeUnionParam {
@@ -1954,7 +1955,7 @@ type JourneyNodeUnionParam struct {
 	OfThrottleStatic    *JourneyThrottleStaticNodeParam    `json:",omitzero,inline"`
 	OfThrottleDynamic   *JourneyThrottleDynamicNodeParam   `json:",omitzero,inline"`
 	OfBatch             *JourneyNodeBatchParam             `json:",omitzero,inline"`
-	OfAddToDigest       *JourneyNodeAddToDigestParam       `json:",omitzero,inline"`
+	OfSendToDigest      *JourneyNodeSendToDigestParam      `json:",omitzero,inline"`
 	OfExit              *JourneyExitNodeParam              `json:",omitzero,inline"`
 	OfJourneyBranchNode *JourneyNodeJourneyBranchNodeParam `json:",omitzero,inline"`
 	paramUnion
@@ -1974,7 +1975,7 @@ func (u JourneyNodeUnionParam) MarshalJSON() ([]byte, error) {
 		u.OfThrottleStatic,
 		u.OfThrottleDynamic,
 		u.OfBatch,
-		u.OfAddToDigest,
+		u.OfSendToDigest,
 		u.OfExit,
 		u.OfJourneyBranchNode)
 }
@@ -2009,8 +2010,8 @@ func (u *JourneyNodeUnionParam) asAny() any {
 		return u.OfThrottleDynamic
 	} else if !param.IsOmitted(u.OfBatch) {
 		return u.OfBatch
-	} else if !param.IsOmitted(u.OfAddToDigest) {
-		return u.OfAddToDigest
+	} else if !param.IsOmitted(u.OfSendToDigest) {
+		return u.OfSendToDigest
 	} else if !param.IsOmitted(u.OfExit) {
 		return u.OfExit
 	} else if !param.IsOmitted(u.OfJourneyBranchNode) {
@@ -2181,7 +2182,7 @@ func (u JourneyNodeUnionParam) GetMaxItems() *int64 {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u JourneyNodeUnionParam) GetSubscriptionTopicID() *string {
-	if vt := u.OfAddToDigest; vt != nil {
+	if vt := u.OfSendToDigest; vt != nil {
 		return &vt.SubscriptionTopicID
 	}
 	return nil
@@ -2245,7 +2246,7 @@ func (u JourneyNodeUnionParam) GetType() *string {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfBatch; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfAddToDigest; vt != nil {
+	} else if vt := u.OfSendToDigest; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfExit; vt != nil {
 		return (*string)(&vt.Type)
@@ -2283,7 +2284,7 @@ func (u JourneyNodeUnionParam) GetID() *string {
 		return &vt.ID.Value
 	} else if vt := u.OfBatch; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
-	} else if vt := u.OfAddToDigest; vt != nil && vt.ID.Valid() {
+	} else if vt := u.OfSendToDigest; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
 	} else if vt := u.OfExit; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
@@ -2403,7 +2404,7 @@ func (u JourneyNodeUnionParam) GetConditions() *JourneyConditionsFieldUnionParam
 		return &vt.Conditions
 	} else if vt := u.OfBatch; vt != nil {
 		return &vt.Conditions
-	} else if vt := u.OfAddToDigest; vt != nil {
+	} else if vt := u.OfSendToDigest; vt != nil {
 		return &vt.Conditions
 	}
 	return nil
@@ -2521,7 +2522,8 @@ func init() {
 
 // Add the current event to a digest keyed by the given subscription topic. The
 // digest accumulates events and releases them on the schedule configured for the
-// topic, using the notification template configured on that topic.
+// topic, using the notification template configured on that topic. This node's
+// `type` value is `add-to-digest`.
 //
 // **The topic must have a template configured.** If the topic has no template when
 // the first event reaches this node, the journey run fails immediately: the run is
@@ -2534,7 +2536,7 @@ func init() {
 // separate digests, even on the same topic.
 //
 // The properties SubscriptionTopicID, Type are required.
-type JourneyNodeAddToDigestParam struct {
+type JourneyNodeSendToDigestParam struct {
 	// The subscription topic that owns the digest the event is added to.
 	SubscriptionTopicID string `json:"subscription_topic_id" api:"required"`
 	// Any of "add-to-digest".
@@ -2547,16 +2549,16 @@ type JourneyNodeAddToDigestParam struct {
 	paramObj
 }
 
-func (r JourneyNodeAddToDigestParam) MarshalJSON() (data []byte, err error) {
-	type shadow JourneyNodeAddToDigestParam
+func (r JourneyNodeSendToDigestParam) MarshalJSON() (data []byte, err error) {
+	type shadow JourneyNodeSendToDigestParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *JourneyNodeAddToDigestParam) UnmarshalJSON(data []byte) error {
+func (r *JourneyNodeSendToDigestParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[JourneyNodeAddToDigestParam](
+	apijson.RegisterFieldValidator[JourneyNodeSendToDigestParam](
 		"type", "add-to-digest",
 	)
 }
