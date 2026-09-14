@@ -287,7 +287,7 @@ func TestBroadcastScheduleWithOptionalParams(t *testing.T) {
 		"broadcastId",
 		courier.BroadcastScheduleParams{
 			ScheduleBroadcastRequest: courier.ScheduleBroadcastRequestParam{
-				RecipientID:   "aud_01kx4h2jdafq8bk9amzvy6hbv0",
+				RecipientID:   "active-business-users",
 				RecipientType: courier.ScheduleBroadcastRequestRecipientTypeAudience,
 				ScheduledTo:   "2026-08-01T15:00:00",
 				Timezone:      courier.String("America/New_York"),
