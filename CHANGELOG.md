@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.32.0](https://github.com/trycourier/courier-go/compare/v4.31.0...v4.32.0) (2026-09-15)
+
+
+### Features
+
+* **api:** digest configuration, per-recipient schedules, and release ([#183](https://github.com/trycourier/courier-go/issues/183)) ([2488cd6](https://github.com/trycourier/courier-go/commit/2488cd6f3f02fa8a500d581c7594659aa2a7046d))
+
+
+### Documentation
+
+* **api:** group the topic digest endpoints under Digests, and match the docs voice ([#184](https://github.com/trycourier/courier-go/issues/184)) ([c00e163](https://github.com/trycourier/courier-go/commit/c00e16386894bde8558763d8c3769d32315f90b9))
+* **api:** stop teaching an aud_ prefix that Courier does not issue ([#181](https://github.com/trycourier/courier-go/issues/181)) ([0217cc5](https://github.com/trycourier/courier-go/commit/0217cc52d8d730d089dbc91914013a2c58c77ef7))
+
 ## [4.31.0](https://github.com/trycourier/courier-go/compare/v4.30.4...v4.31.0) (2026-09-04)
 
 
