@@ -194,7 +194,7 @@ type TopicPreference struct {
 	// has_custom_routing is true. One or more of: direct_message, email, push, sms,
 	// webhook, inbox.
 	CustomRouting []shared.ChannelClassification `json:"custom_routing" api:"nullable"`
-	// The digest schedule this recipient is on for the topic. Omitted -- not null --
+	// The digest schedule this recipient is on for the topic. Omitted rather than null
 	// when they have not chosen one, in which case the topic's default schedule
 	// applies. Ids come from the topic's digest configuration or from
 	// `GET /digests/schedules`.
@@ -539,7 +539,7 @@ type UserPreferenceUpdateOrNewTopicParamsTopic struct {
 	Status shared.PreferenceStatus `json:"status,omitzero" api:"required"`
 	// Put this recipient on one of the topic's digest schedules. Send `null` to clear
 	// the choice and return them to the topic's default. Omit to leave an existing
-	// choice alone -- unlike the routing fields, which this endpoint replaces. An id
+	// choice alone, unlike the routing fields, which this endpoint replaces. An id
 	// that is not an active schedule on the topic is rejected with a `400` before
 	// anything is written.
 	DigestScheduleID param.Opt[string] `json:"digest_schedule_id,omitzero"`
