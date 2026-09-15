@@ -4,6 +4,7 @@ package courier
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -29,9 +30,7 @@ import (
 // the [NewWorkspacePreferenceService] method instead.
 type WorkspacePreferenceService struct {
 	Options []option.RequestOption
-	// Manage the workspace catalog of subscription topics, the sections that group
-	// them, and publishing the preference page.
-	Topics WorkspacePreferenceTopicService
+	Topics  WorkspacePreferenceTopicService
 }
 
 // NewWorkspacePreferenceService generates a new service that applies the given
@@ -175,6 +174,240 @@ func (r *PublishPreferencesResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// How events collected under a category key are retained when a digest holds more
+// than it will render.
+type TopicDigestCategory struct {
+	// The key that identifies the category within the digest.
+	CategoryKey string `json:"category_key" api:"required"`
+	// How many collected events are carried into the rendered digest. Defaults to 10.
+	//
+	// Events beyond the limit are discarded, not held back for the next digest: the
+	// release consumes everything collected so far and only `limit` of them appear.
+	// `retain` decides which ones those are.
+	Limit int64 `json:"limit"`
+	// Which collected events survive the `limit`. `FIRST` and `LOWEST` keep the
+	// earliest or smallest; `LAST` and `HIGHEST` keep the latest or largest. Accepted
+	// case-insensitively, returned uppercase.
+	//
+	// Any of "FIRST", "LAST", "HIGHEST", "LOWEST", "NONE".
+	Retain TopicDigestCategoryRetain `json:"retain"`
+	// The data key used to rank events. Required when `retain` is `HIGHEST` or
+	// `LOWEST`.
+	SortKey string `json:"sort_key"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CategoryKey respjson.Field
+		Limit       respjson.Field
+		Retain      respjson.Field
+		SortKey     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TopicDigestCategory) RawJSON() string { return r.JSON.raw }
+func (r *TopicDigestCategory) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this TopicDigestCategory to a TopicDigestCategoryParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// TopicDigestCategoryParam.Overrides()
+func (r TopicDigestCategory) ToParam() TopicDigestCategoryParam {
+	return param.Override[TopicDigestCategoryParam](json.RawMessage(r.RawJSON()))
+}
+
+// Which collected events survive the `limit`. `FIRST` and `LOWEST` keep the
+// earliest or smallest; `LAST` and `HIGHEST` keep the latest or largest. Accepted
+// case-insensitively, returned uppercase.
+type TopicDigestCategoryRetain string
+
+const (
+	TopicDigestCategoryRetainFirst   TopicDigestCategoryRetain = "FIRST"
+	TopicDigestCategoryRetainLast    TopicDigestCategoryRetain = "LAST"
+	TopicDigestCategoryRetainHighest TopicDigestCategoryRetain = "HIGHEST"
+	TopicDigestCategoryRetainLowest  TopicDigestCategoryRetain = "LOWEST"
+	TopicDigestCategoryRetainNone    TopicDigestCategoryRetain = "NONE"
+)
+
+// How events collected under a category key are retained when a digest holds more
+// than it will render.
+//
+// The property CategoryKey is required.
+type TopicDigestCategoryParam struct {
+	// The key that identifies the category within the digest.
+	CategoryKey string `json:"category_key" api:"required"`
+	// How many collected events are carried into the rendered digest. Defaults to 10.
+	//
+	// Events beyond the limit are discarded, not held back for the next digest: the
+	// release consumes everything collected so far and only `limit` of them appear.
+	// `retain` decides which ones those are.
+	Limit param.Opt[int64] `json:"limit,omitzero"`
+	// The data key used to rank events. Required when `retain` is `HIGHEST` or
+	// `LOWEST`.
+	SortKey param.Opt[string] `json:"sort_key,omitzero"`
+	// Which collected events survive the `limit`. `FIRST` and `LOWEST` keep the
+	// earliest or smallest; `LAST` and `HIGHEST` keep the latest or largest. Accepted
+	// case-insensitively, returned uppercase.
+	//
+	// Any of "FIRST", "LAST", "HIGHEST", "LOWEST", "NONE".
+	Retain TopicDigestCategoryRetain `json:"retain,omitzero"`
+	paramObj
+}
+
+func (r TopicDigestCategoryParam) MarshalJSON() (data []byte, err error) {
+	type shadow TopicDigestCategoryParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *TopicDigestCategoryParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Which recipient's held digest to release.
+//
+// The property UserID is required.
+type TopicDigestReleaseRequestParam struct {
+	// The recipient whose digest to release. Required: there is no "release everyone
+	// on this topic" form, because a whole-schedule flush already has its own endpoint
+	// and a body-shaped difference between one recipient and all of them is too easy
+	// to get wrong.
+	UserID string `json:"user_id" api:"required"`
+	// The recipient's tenant, when they were sent to as part of one -- the same value
+	// returned as `tenant_id` on a digest instance and sent as
+	// `message.context.tenant_id`. It is part of the held digest's key, so a tenanted
+	// recipient cannot be found without it. Omit for an ordinary recipient.
+	TenantID param.Opt[string] `json:"tenant_id,omitzero"`
+	paramObj
+}
+
+func (r TopicDigestReleaseRequestParam) MarshalJSON() (data []byte, err error) {
+	type shadow TopicDigestReleaseRequestParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *TopicDigestReleaseRequestParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A topic's digest configuration: the template that renders it, the cadences it
+// delivers on, and how collected events are retained.
+//
+// Send `null` for the whole object to turn a digest off, which unlinks the
+// template and removes its schedules. There is no `enabled` flag, and
+// `schedules: []` is rejected -- both states are un-deliverable rather than merely
+// off.
+//
+// The properties Schedules, TemplateID are required.
+type TopicDigestRequestParam struct {
+	// The cadences this digest delivers on. At least one is required: a digest with no
+	// schedule collects events into an instance that can never fire. Omitting the key
+	// on a replace leaves stored schedules untouched; sending `[]` is a `400`.
+	Schedules []TopicDigestScheduleRequestParam `json:"schedules,omitzero" api:"required"`
+	// The notification template that renders the digest. A digest with no template
+	// collects nothing, so this is required.
+	TemplateID string `json:"template_id" api:"required"`
+	// Optional audience the digest is scoped to.
+	AudienceID param.Opt[string] `json:"audience_id,omitzero"`
+	// Whether to deliver the digest even when nothing was collected.
+	TriggerEmpty param.Opt[bool] `json:"trigger_empty,omitzero"`
+	// Retention rules per category key. Defaults to a single `digest` category
+	// retaining `FIRST`.
+	Categories []TopicDigestCategoryParam `json:"categories,omitzero"`
+	paramObj
+}
+
+func (r TopicDigestRequestParam) MarshalJSON() (data []byte, err error) {
+	type shadow TopicDigestRequestParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *TopicDigestRequestParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A topic's digest configuration.
+type TopicDigestResponse struct {
+	// Retention rules per category key.
+	Categories []TopicDigestCategory `json:"categories" api:"required"`
+	// The digest's delivery cadences, each with its server-assigned `schedule_id`.
+	Schedules []TopicDigestScheduleResponse `json:"schedules" api:"required"`
+	// The notification template that renders the digest.
+	TemplateID string `json:"template_id" api:"required"`
+	// The audience the digest is scoped to, when set.
+	AudienceID string `json:"audience_id"`
+	// ISO-8601 timestamp of when the digest was configured.
+	Created string `json:"created"`
+	// Whether the digest is delivered even when nothing was collected.
+	TriggerEmpty bool `json:"trigger_empty"`
+	// ISO-8601 timestamp of the last update.
+	Updated string `json:"updated"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Categories   respjson.Field
+		Schedules    respjson.Field
+		TemplateID   respjson.Field
+		AudienceID   respjson.Field
+		Created      respjson.Field
+		TriggerEmpty respjson.Field
+		Updated      respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TopicDigestResponse) RawJSON() string { return r.JSON.raw }
+func (r *TopicDigestResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// One delivery cadence for a topic's digest. Supply `schedule_id` to update an
+// existing schedule in place; omit it and one is assigned and returned. The
+// `schedules` array is a full replacement, so a stored schedule absent from it is
+// deleted along with its delivery rule.
+//
+// The property Frequency is required.
+type TopicDigestScheduleRequestParam struct {
+	// How often a digest is delivered. `instant` delivers immediately without
+	// batching, and is the one value that takes no `time`.
+	//
+	// Any of "instant", "daily", "weekdays", "weekly", "custom_days", "monthly".
+	Frequency DigestFrequency `json:"frequency,omitzero" api:"required"`
+	// Required when `frequency` is `monthly`.
+	DayOfMonth param.Opt[int64] `json:"day_of_month,omitzero"`
+	// Whether the schedule is disabled.
+	Disabled param.Opt[bool] `json:"disabled,omitzero"`
+	// The schedule recipients are placed on when they have not chosen one. Set this
+	// explicitly rather than relying on array position.
+	IsDefault param.Opt[bool] `json:"is_default,omitzero"`
+	// Identifier of an existing schedule to update. Omit when creating a new one.
+	ScheduleID param.Opt[string] `json:"schedule_id,omitzero"`
+	// 24-hour local delivery time, `HH:MM`. Required for every frequency except
+	// `instant`.
+	Time param.Opt[string] `json:"time,omitzero"`
+	// IANA timezone the `time` and day fields are expressed in, e.g.
+	// `America/New_York`. Absent means UTC. Delivery follows the same local wall-clock
+	// across daylight-saving changes.
+	Timezone param.Opt[string] `json:"timezone,omitzero"`
+	// Required when `frequency` is `weekly`.
+	//
+	// Any of "sunday", "monday", "tuesday", "wednesday", "thursday", "friday",
+	// "saturday".
+	DayOfWeek DigestDayOfWeek `json:"day_of_week,omitzero"`
+	// Required when `frequency` is `custom_days`.
+	DaysOfWeek []DigestDayOfWeek `json:"days_of_week,omitzero"`
+	paramObj
+}
+
+func (r TopicDigestScheduleRequestParam) MarshalJSON() (data []byte, err error) {
+	type shadow TopicDigestScheduleRequestParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *TopicDigestScheduleRequestParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Request body for creating a workspace preference.
 //
 // The property Name is required.
@@ -308,6 +541,14 @@ type WorkspacePreferenceTopicCreateRequestParam struct {
 	RoutingOptions []shared.ChannelClassification `json:"routing_options,omitzero"`
 	// Arbitrary metadata associated with the topic.
 	TopicData map[string]any `json:"topic_data,omitzero"`
+	// A topic's digest configuration: the template that renders it, the cadences it
+	// delivers on, and how collected events are retained.
+	//
+	// Send `null` for the whole object to turn a digest off, which unlinks the
+	// template and removes its schedules. There is no `enabled` flag, and
+	// `schedules: []` is rejected -- both states are un-deliverable rather than merely
+	// off.
+	Digest TopicDigestRequestParam `json:"digest,omitzero"`
 	paramObj
 }
 
@@ -356,6 +597,8 @@ type WorkspacePreferenceTopicGetResponse struct {
 	Creator string `json:"creator" api:"nullable"`
 	// Optional description shown under the topic on the hosted preferences page.
 	Description string `json:"description" api:"nullable"`
+	// A topic's digest configuration.
+	Digest TopicDigestResponse `json:"digest" api:"nullable"`
 	// Id of the last updater.
 	Updater string `json:"updater" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -371,6 +614,7 @@ type WorkspacePreferenceTopicGetResponse struct {
 		Updated                  respjson.Field
 		Creator                  respjson.Field
 		Description              respjson.Field
+		Digest                   respjson.Field
 		Updater                  respjson.Field
 		ExtraFields              map[string]respjson.Field
 		raw                      string
@@ -433,6 +677,14 @@ type WorkspacePreferenceTopicReplaceRequestParam struct {
 	RoutingOptions []shared.ChannelClassification `json:"routing_options,omitzero"`
 	// Arbitrary metadata associated with the topic. Omit to clear.
 	TopicData map[string]any `json:"topic_data,omitzero"`
+	// A topic's digest configuration: the template that renders it, the cadences it
+	// delivers on, and how collected events are retained.
+	//
+	// Send `null` for the whole object to turn a digest off, which unlinks the
+	// template and removes its schedules. There is no `enabled` flag, and
+	// `schedules: []` is rejected -- both states are un-deliverable rather than merely
+	// off.
+	Digest TopicDigestRequestParam `json:"digest,omitzero"`
 	paramObj
 }
 

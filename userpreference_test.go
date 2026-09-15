@@ -201,6 +201,7 @@ func TestUserPreferenceUpdateOrNewTopicWithOptionalParams(t *testing.T) {
 			Topic: courier.UserPreferenceUpdateOrNewTopicParamsTopic{
 				Status:           shared.PreferenceStatusOptedIn,
 				CustomRouting:    []shared.ChannelClassification{shared.ChannelClassificationInbox, shared.ChannelClassificationEmail},
+				DigestScheduleID: courier.String("x"),
 				HasCustomRouting: courier.Bool(true),
 			},
 			TenantID: courier.String("tenant_id"),
