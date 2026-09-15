@@ -296,8 +296,8 @@ func (r *TopicDigestReleaseRequestParam) UnmarshalJSON(data []byte) error {
 //
 // Send `null` for the whole object to turn a digest off, which unlinks the
 // template and removes its schedules. There is no `enabled` flag, and
-// `schedules: []` is rejected -- both states are un-deliverable rather than merely
-// off.
+// `schedules: []` is rejected, because both states are un-deliverable rather than
+// merely off.
 //
 // The properties Schedules, TemplateID are required.
 type TopicDigestRequestParam struct {
@@ -546,8 +546,8 @@ type WorkspacePreferenceTopicCreateRequestParam struct {
 	//
 	// Send `null` for the whole object to turn a digest off, which unlinks the
 	// template and removes its schedules. There is no `enabled` flag, and
-	// `schedules: []` is rejected -- both states are un-deliverable rather than merely
-	// off.
+	// `schedules: []` is rejected, because both states are un-deliverable rather than
+	// merely off.
 	Digest TopicDigestRequestParam `json:"digest,omitzero"`
 	paramObj
 }
@@ -682,8 +682,8 @@ type WorkspacePreferenceTopicReplaceRequestParam struct {
 	//
 	// Send `null` for the whole object to turn a digest off, which unlinks the
 	// template and removes its schedules. There is no `enabled` flag, and
-	// `schedules: []` is rejected -- both states are un-deliverable rather than merely
-	// off.
+	// `schedules: []` is rejected, because both states are un-deliverable rather than
+	// merely off.
 	Digest TopicDigestRequestParam `json:"digest,omitzero"`
 	paramObj
 }
