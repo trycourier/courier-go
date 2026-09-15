@@ -446,11 +446,19 @@ Methods:
 
 # Digests
 
+Params Types:
+
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#DigestDayOfWeek">DigestDayOfWeek</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#DigestFrequency">DigestFrequency</a>
+
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#DigestCategory">DigestCategory</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#DigestDayOfWeek">DigestDayOfWeek</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#DigestFrequency">DigestFrequency</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#DigestInstance">DigestInstance</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#DigestInstanceListResponse">DigestInstanceListResponse</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#TopicDigestScheduleResponse">TopicDigestScheduleResponse</a>
 
 ## Schedules
 
@@ -618,6 +626,10 @@ Methods:
 Params Types:
 
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#PublishPreferencesRequestParam">PublishPreferencesRequestParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#TopicDigestCategoryParam">TopicDigestCategoryParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#TopicDigestReleaseRequestParam">TopicDigestReleaseRequestParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#TopicDigestRequestParam">TopicDigestRequestParam</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#TopicDigestScheduleRequestParam">TopicDigestScheduleRequestParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#WorkspacePreferenceCreateRequestParam">WorkspacePreferenceCreateRequestParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#WorkspacePreferenceReplaceRequestParam">WorkspacePreferenceReplaceRequestParam</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#WorkspacePreferenceTopicCreateRequestParam">WorkspacePreferenceTopicCreateRequestParam</a>
@@ -626,6 +638,8 @@ Params Types:
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#PublishPreferencesResponse">PublishPreferencesResponse</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#TopicDigestCategory">TopicDigestCategory</a>
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#TopicDigestResponse">TopicDigestResponse</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#WorkspacePreferenceGetResponse">WorkspacePreferenceGetResponse</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#WorkspacePreferenceListResponse">WorkspacePreferenceListResponse</a>
 - <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#WorkspacePreferenceTopicGetResponse">WorkspacePreferenceTopicGetResponse</a>
@@ -648,6 +662,8 @@ Methods:
 - <code title="get /preferences/sections/{section_id}/topics/{topic_id}">client.WorkspacePreferences.Topics.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#WorkspacePreferenceTopicService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, topicID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#WorkspacePreferenceTopicGetParams">WorkspacePreferenceTopicGetParams</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#WorkspacePreferenceTopicGetResponse">WorkspacePreferenceTopicGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /preferences/sections/{section_id}/topics">client.WorkspacePreferences.Topics.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#WorkspacePreferenceTopicService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, sectionID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#WorkspacePreferenceTopicListResponse">WorkspacePreferenceTopicListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="delete /preferences/sections/{section_id}/topics/{topic_id}">client.WorkspacePreferences.Topics.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#WorkspacePreferenceTopicService.Archive">Archive</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, topicID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#WorkspacePreferenceTopicArchiveParams">WorkspacePreferenceTopicArchiveParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
+- <code title="delete /preferences/sections/{section_id}/topics/{topic_id}/digest">client.WorkspacePreferences.Topics.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#WorkspacePreferenceTopicService.DeleteDigest">DeleteDigest</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, topicID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#WorkspacePreferenceTopicDeleteDigestParams">WorkspacePreferenceTopicDeleteDigestParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
+- <code title="post /preferences/sections/{section_id}/topics/{topic_id}/digest/release">client.WorkspacePreferences.Topics.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#WorkspacePreferenceTopicService.ReleaseDigest">ReleaseDigest</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, topicID <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#WorkspacePreferenceTopicReleaseDigestParams">WorkspacePreferenceTopicReleaseDigestParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 - <code title="put /preferences/sections/{section_id}/topics/{topic_id}">client.WorkspacePreferences.Topics.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#WorkspacePreferenceTopicService.Replace">Replace</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, topicID <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#WorkspacePreferenceTopicReplaceParams">WorkspacePreferenceTopicReplaceParams</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#WorkspacePreferenceTopicGetResponse">WorkspacePreferenceTopicGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Profiles

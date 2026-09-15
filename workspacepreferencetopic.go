@@ -16,9 +16,6 @@ import (
 	"github.com/trycourier/courier-go/v4/packages/param"
 )
 
-// Manage the workspace catalog of subscription topics, the sections that group
-// them, and publishing the preference page.
-//
 // WorkspacePreferenceTopicService contains methods and other services that help
 // with interacting with the Courier API.
 //
@@ -105,6 +102,48 @@ func (r *WorkspacePreferenceTopicService) Archive(ctx context.Context, topicID s
 	return err
 }
 
+// Turn off a topic's digest, leaving the topic itself in place. The template is
+// unlinked and the digest's schedules are removed along with their delivery rules.
+// Equivalent to sending `digest: null` on a topic replace.
+func (r *WorkspacePreferenceTopicService) DeleteDigest(ctx context.Context, topicID string, body WorkspacePreferenceTopicDeleteDigestParams, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if body.SectionID == "" {
+		err = errors.New("missing required section_id parameter")
+		return err
+	}
+	if topicID == "" {
+		err = errors.New("missing required topic_id parameter")
+		return err
+	}
+	path := fmt.Sprintf("preferences/sections/%s/topics/%s/digest", body.SectionID, topicID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
+	return err
+}
+
+// Send one recipient's held digest now, instead of waiting for its schedule. Use
+// it to preview what a digest will look like, or to let someone flush their own.
+//
+// Keyed on the topic because that is how a held digest is stored: one per
+// recipient per topic, with the schedule recorded on it rather than part of its
+// identity. To flush every recipient on a schedule instead, use
+// `POST /digests/schedules/{schedule_id}/trigger`.
+func (r *WorkspacePreferenceTopicService) ReleaseDigest(ctx context.Context, topicID string, params WorkspacePreferenceTopicReleaseDigestParams, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if params.SectionID == "" {
+		err = errors.New("missing required section_id parameter")
+		return err
+	}
+	if topicID == "" {
+		err = errors.New("missing required topic_id parameter")
+		return err
+	}
+	path := fmt.Sprintf("preferences/sections/%s/topics/%s/digest/release", params.SectionID, topicID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, nil, opts...)
+	return err
+}
+
 // Replace a topic within a workspace preference. Full document replacement;
 // missing optional fields are cleared. Same 404 rules as GET.
 func (r *WorkspacePreferenceTopicService) Replace(ctx context.Context, topicID string, params WorkspacePreferenceTopicReplaceParams, opts ...option.RequestOption) (res *WorkspacePreferenceTopicGetResponse, err error) {
@@ -145,6 +184,25 @@ type WorkspacePreferenceTopicGetParams struct {
 type WorkspacePreferenceTopicArchiveParams struct {
 	SectionID string `path:"section_id" api:"required" json:"-"`
 	paramObj
+}
+
+type WorkspacePreferenceTopicDeleteDigestParams struct {
+	SectionID string `path:"section_id" api:"required" json:"-"`
+	paramObj
+}
+
+type WorkspacePreferenceTopicReleaseDigestParams struct {
+	SectionID string `path:"section_id" api:"required" json:"-"`
+	// Which recipient's held digest to release.
+	TopicDigestReleaseRequest TopicDigestReleaseRequestParam
+	paramObj
+}
+
+func (r WorkspacePreferenceTopicReleaseDigestParams) MarshalJSON() (data []byte, err error) {
+	return shimjson.Marshal(r.TopicDigestReleaseRequest)
+}
+func (r *WorkspacePreferenceTopicReleaseDigestParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type WorkspacePreferenceTopicReplaceParams struct {

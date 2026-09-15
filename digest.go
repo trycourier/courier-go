@@ -69,6 +69,32 @@ const (
 	DigestCategoryRetainNone    DigestCategoryRetain = "none"
 )
 
+// A day of the week. Accepted case-insensitively, returned lowercase.
+type DigestDayOfWeek string
+
+const (
+	DigestDayOfWeekSunday    DigestDayOfWeek = "sunday"
+	DigestDayOfWeekMonday    DigestDayOfWeek = "monday"
+	DigestDayOfWeekTuesday   DigestDayOfWeek = "tuesday"
+	DigestDayOfWeekWednesday DigestDayOfWeek = "wednesday"
+	DigestDayOfWeekThursday  DigestDayOfWeek = "thursday"
+	DigestDayOfWeekFriday    DigestDayOfWeek = "friday"
+	DigestDayOfWeekSaturday  DigestDayOfWeek = "saturday"
+)
+
+// How often a digest is delivered. `instant` delivers immediately without
+// batching, and is the one value that takes no `time`.
+type DigestFrequency string
+
+const (
+	DigestFrequencyInstant    DigestFrequency = "instant"
+	DigestFrequencyDaily      DigestFrequency = "daily"
+	DigestFrequencyWeekdays   DigestFrequency = "weekdays"
+	DigestFrequencyWeekly     DigestFrequency = "weekly"
+	DigestFrequencyCustomDays DigestFrequency = "custom_days"
+	DigestFrequencyMonthly    DigestFrequency = "monthly"
+)
+
 type DigestInstance struct {
 	// A unique identifier for the digest instance.
 	DigestInstanceID string `json:"digest_instance_id" api:"required"`
@@ -163,3 +189,58 @@ type DigestInstanceListResponseType string
 const (
 	DigestInstanceListResponseTypeList DigestInstanceListResponseType = "list"
 )
+
+// A delivery cadence for a topic's digest, with its assigned id.
+type TopicDigestScheduleResponse struct {
+	// The schedule's identifier, assigned by the server. This is the value the
+	// `/digests/schedules/{schedule_id}` endpoints are keyed by.
+	ScheduleID string `json:"schedule_id" api:"required"`
+	// ISO-8601 timestamp of when the schedule was created.
+	Created string `json:"created"`
+	// Day of the month, 1-31.
+	DayOfMonth int64 `json:"day_of_month"`
+	// A day of the week. Accepted case-insensitively, returned lowercase.
+	//
+	// Any of "sunday", "monday", "tuesday", "wednesday", "thursday", "friday",
+	// "saturday".
+	DayOfWeek  DigestDayOfWeek   `json:"day_of_week"`
+	DaysOfWeek []DigestDayOfWeek `json:"days_of_week"`
+	// Whether the schedule is disabled.
+	Disabled bool `json:"disabled"`
+	// Omitted for a stored schedule this enum cannot express. Those schedules never
+	// fire, but their `schedule_id` is still returned so the `/digests/*` endpoints
+	// remain reachable for them.
+	//
+	// Any of "instant", "daily", "weekdays", "weekly", "custom_days", "monthly".
+	Frequency DigestFrequency `json:"frequency"`
+	// Whether this is the schedule recipients are placed on by default.
+	IsDefault bool `json:"is_default"`
+	// 24-hour local delivery time, `HH:MM`.
+	Time string `json:"time"`
+	// IANA timezone the schedule is expressed in. Absent means UTC.
+	Timezone string `json:"timezone"`
+	// ISO-8601 timestamp of the last update.
+	Updated string `json:"updated"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ScheduleID  respjson.Field
+		Created     respjson.Field
+		DayOfMonth  respjson.Field
+		DayOfWeek   respjson.Field
+		DaysOfWeek  respjson.Field
+		Disabled    respjson.Field
+		Frequency   respjson.Field
+		IsDefault   respjson.Field
+		Time        respjson.Field
+		Timezone    respjson.Field
+		Updated     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TopicDigestScheduleResponse) RawJSON() string { return r.JSON.raw }
+func (r *TopicDigestScheduleResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
