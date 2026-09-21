@@ -299,12 +299,8 @@ func (r *TopicDigestReleaseRequestParam) UnmarshalJSON(data []byte) error {
 // `schedules: []` is rejected, because both states are un-deliverable rather than
 // merely off.
 //
-// The properties Schedules, TemplateID are required.
+// The property TemplateID is required.
 type TopicDigestRequestParam struct {
-	// The cadences this digest delivers on. At least one is required: a digest with no
-	// schedule collects events into an instance that can never fire. Omitting the key
-	// on a replace leaves stored schedules untouched; sending `[]` is a `400`.
-	Schedules []TopicDigestScheduleRequestParam `json:"schedules,omitzero" api:"required"`
 	// The notification template that renders the digest. A digest with no template
 	// collects nothing, so this is required.
 	TemplateID string `json:"template_id" api:"required"`
@@ -315,6 +311,22 @@ type TopicDigestRequestParam struct {
 	// Retention rules per category key. Defaults to a single `digest` category
 	// retaining `FIRST`.
 	Categories []TopicDigestCategoryParam `json:"categories,omitzero"`
+	// The cadences this digest delivers on.
+	//
+	// The array replaces the stored schedules wholesale, so a schedule you leave out
+	// of it is deleted along with its delivery rule. Omit the key entirely to leave
+	// the stored schedules untouched — useful for changing `template_id` or
+	// `categories` without restating every schedule.
+	//
+	// A digest must end up with at least one schedule, because one with none collects
+	// events into an instance that can never fire. So sending `[]` is always a `400`,
+	// and so is omitting the key on a topic that has no schedules stored yet.
+	//
+	// On **create** the key is required outright: a topic being created has nothing
+	// stored to leave alone, and the topic row is written before its digest, so
+	// rejecting it any later would leave the topic behind and let a retry duplicate
+	// it.
+	Schedules []TopicDigestScheduleRequestParam `json:"schedules,omitzero"`
 	paramObj
 }
 
@@ -366,6 +378,12 @@ func (r *TopicDigestResponse) UnmarshalJSON(data []byte) error {
 // existing schedule in place; omit it and one is assigned and returned. The
 // `schedules` array is a full replacement, so a stored schedule absent from it is
 // deleted along with its delivery rule.
+//
+// Updating by `schedule_id` replaces that schedule rather than merging into it:
+// any field you leave out is cleared. Two of those change delivery silently — an
+// omitted `timezone` reverts the schedule to UTC, and an omitted `is_default` can
+// leave the topic with no default schedule, which is what recipients who have not
+// chosen one fall back to. Restate every field you want to keep.
 //
 // The property Frequency is required.
 type TopicDigestScheduleRequestParam struct {
@@ -537,18 +555,23 @@ type WorkspacePreferenceTopicCreateRequestParam struct {
 	//
 	// Any of "snooze", "channel_preferences".
 	AllowedPreferences []string `json:"allowed_preferences,omitzero"`
-	// Default channels delivered for this topic. Defaults to empty if omitted.
-	RoutingOptions []shared.ChannelClassification `json:"routing_options,omitzero"`
-	// Arbitrary metadata associated with the topic.
-	TopicData map[string]any `json:"topic_data,omitzero"`
-	// A topic's digest configuration: the template that renders it, the cadences it
-	// delivers on, and how collected events are retained.
+	// A topic's digest, as supplied when the topic itself is created: the template
+	// that renders it, the cadences it delivers on, and how collected events are
+	// retained.
+	//
+	// Identical to `TopicDigestRequest`, which a replace uses, except that `schedules`
+	// is required — a topic being created has no stored schedules for an absent key to
+	// leave alone.
 	//
 	// Send `null` for the whole object to turn a digest off, which unlinks the
 	// template and removes its schedules. There is no `enabled` flag, and
 	// `schedules: []` is rejected, because both states are un-deliverable rather than
 	// merely off.
-	Digest TopicDigestRequestParam `json:"digest,omitzero"`
+	Digest WorkspacePreferenceTopicCreateRequestDigestParam `json:"digest,omitzero"`
+	// Default channels delivered for this topic. Defaults to empty if omitted.
+	RoutingOptions []shared.ChannelClassification `json:"routing_options,omitzero"`
+	// Arbitrary metadata associated with the topic.
+	TopicData map[string]any `json:"topic_data,omitzero"`
 	paramObj
 }
 
@@ -568,6 +591,58 @@ const (
 	WorkspacePreferenceTopicCreateRequestDefaultStatusOptedIn  WorkspacePreferenceTopicCreateRequestDefaultStatus = "OPTED_IN"
 	WorkspacePreferenceTopicCreateRequestDefaultStatusRequired WorkspacePreferenceTopicCreateRequestDefaultStatus = "REQUIRED"
 )
+
+// A topic's digest, as supplied when the topic itself is created: the template
+// that renders it, the cadences it delivers on, and how collected events are
+// retained.
+//
+// Identical to `TopicDigestRequest`, which a replace uses, except that `schedules`
+// is required — a topic being created has no stored schedules for an absent key to
+// leave alone.
+//
+// Send `null` for the whole object to turn a digest off, which unlinks the
+// template and removes its schedules. There is no `enabled` flag, and
+// `schedules: []` is rejected, because both states are un-deliverable rather than
+// merely off.
+//
+// The properties Schedules, TemplateID are required.
+type WorkspacePreferenceTopicCreateRequestDigestParam struct {
+	// The cadences this digest delivers on.
+	//
+	// The array replaces the stored schedules wholesale, so a schedule you leave out
+	// of it is deleted along with its delivery rule. Omit the key entirely to leave
+	// the stored schedules untouched — useful for changing `template_id` or
+	// `categories` without restating every schedule.
+	//
+	// A digest must end up with at least one schedule, because one with none collects
+	// events into an instance that can never fire. So sending `[]` is always a `400`,
+	// and so is omitting the key on a topic that has no schedules stored yet.
+	//
+	// On **create** the key is required outright: a topic being created has nothing
+	// stored to leave alone, and the topic row is written before its digest, so
+	// rejecting it any later would leave the topic behind and let a retry duplicate
+	// it.
+	Schedules []TopicDigestScheduleRequestParam `json:"schedules,omitzero" api:"required"`
+	// The notification template that renders the digest. A digest with no template
+	// collects nothing, so this is required.
+	TemplateID string `json:"template_id" api:"required"`
+	// Optional audience the digest is scoped to.
+	AudienceID param.Opt[string] `json:"audience_id,omitzero"`
+	// Whether to deliver the digest even when nothing was collected.
+	TriggerEmpty param.Opt[bool] `json:"trigger_empty,omitzero"`
+	// Retention rules per category key. Defaults to a single `digest` category
+	// retaining `FIRST`.
+	Categories []TopicDigestCategoryParam `json:"categories,omitzero"`
+	paramObj
+}
+
+func (r WorkspacePreferenceTopicCreateRequestDigestParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkspacePreferenceTopicCreateRequestDigestParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkspacePreferenceTopicCreateRequestDigestParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // A subscription preference topic in your workspace.
 type WorkspacePreferenceTopicGetResponse struct {

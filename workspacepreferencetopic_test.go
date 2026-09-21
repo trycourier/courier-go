@@ -36,7 +36,7 @@ func TestWorkspacePreferenceTopicNewWithOptionalParams(t *testing.T) {
 				Name:               "Marketing",
 				AllowedPreferences: []string{"snooze"},
 				Description:        courier.String("description"),
-				Digest: courier.TopicDigestRequestParam{
+				Digest: courier.WorkspacePreferenceTopicCreateRequestDigestParam{
 					Schedules: []courier.TopicDigestScheduleRequestParam{{
 						Frequency:  courier.DigestFrequencyInstant,
 						DayOfMonth: courier.Int(1),
@@ -244,6 +244,14 @@ func TestWorkspacePreferenceTopicReplaceWithOptionalParams(t *testing.T) {
 				AllowedPreferences: []string{"channel_preferences"},
 				Description:        courier.String("description"),
 				Digest: courier.TopicDigestRequestParam{
+					TemplateID: "template_id",
+					AudienceID: courier.String("audience_id"),
+					Categories: []courier.TopicDigestCategoryParam{{
+						CategoryKey: "category_key",
+						Limit:       courier.Int(1),
+						Retain:      courier.TopicDigestCategoryRetainFirst,
+						SortKey:     courier.String("sort_key"),
+					}},
 					Schedules: []courier.TopicDigestScheduleRequestParam{{
 						Frequency:  courier.DigestFrequencyInstant,
 						DayOfMonth: courier.Int(1),
@@ -254,14 +262,6 @@ func TestWorkspacePreferenceTopicReplaceWithOptionalParams(t *testing.T) {
 						ScheduleID: courier.String("schedule_id"),
 						Time:       courier.String("time"),
 						Timezone:   courier.String("timezone"),
-					}},
-					TemplateID: "template_id",
-					AudienceID: courier.String("audience_id"),
-					Categories: []courier.TopicDigestCategoryParam{{
-						CategoryKey: "category_key",
-						Limit:       courier.Int(1),
-						Retain:      courier.TopicDigestCategoryRetainFirst,
-						SortKey:     courier.String("sort_key"),
 					}},
 					TriggerEmpty: courier.Bool(true),
 				},
