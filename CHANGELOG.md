@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.33.0](https://github.com/trycourier/courier-go/compare/v4.32.0...v4.33.0) (2026-09-22)
+
+
+### Features
+
+* **api:** add cancelation_token to journey create, replace, and get ([#187](https://github.com/trycourier/courier-go/issues/187)) ([a1e3fb3](https://github.com/trycourier/courier-go/commit/a1e3fb383b4cbd8a949b497d6d7b55560e0774f1))
+
+
+### Documentation
+
+* **api:** correct the digest schedule contract, and make `schedules` optional ([#185](https://github.com/trycourier/courier-go/issues/185)) ([633b157](https://github.com/trycourier/courier-go/commit/633b15730e37cdebb6ac6f91370a5a30ba81e708))
+
 ## [4.32.0](https://github.com/trycourier/courier-go/compare/v4.31.0...v4.32.0) (2026-09-15)
 
 
