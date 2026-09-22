@@ -324,9 +324,15 @@ func (r *CancelJourneyResponseRunIDBranch) UnmarshalJSON(data []byte) error {
 //
 // The properties Name, Nodes are required.
 type CreateJourneyRequestParam struct {
-	Name    string                  `json:"name" api:"required"`
-	Nodes   []JourneyNodeUnionParam `json:"nodes,omitzero" api:"required"`
-	Enabled param.Opt[bool]         `json:"enabled,omitzero"`
+	Name  string                  `json:"name" api:"required"`
+	Nodes []JourneyNodeUnionParam `json:"nodes,omitzero" api:"required"`
+	// Cancelation token stored on the journey definition. It tags every run the
+	// journey creates so that `POST /journeys/cancel` can later cancel those runs by
+	// token. Accepts a templated string such as `order-{{data.order_id}}`, which is
+	// resolved per run when the journey is invoked. On a replace, omitting this field
+	// preserves any existing token and sending a value replaces it.
+	CancelationToken param.Opt[string] `json:"cancelation_token,omitzero"`
+	Enabled          param.Opt[bool]   `json:"enabled,omitzero"`
 	// Lifecycle state of a journey.
 	//
 	// Any of "DRAFT", "PUBLISHED".
@@ -2641,13 +2647,17 @@ func (r *JourneyPublishRequestParam) UnmarshalJSON(data []byte) error {
 
 // A journey, with its current draft or published nodes and metadata.
 type JourneyResponse struct {
-	ID        string             `json:"id" api:"required"`
-	Created   int64              `json:"created" api:"required"`
-	Creator   string             `json:"creator" api:"required"`
-	Enabled   bool               `json:"enabled" api:"required"`
-	Name      string             `json:"name" api:"required"`
-	Nodes     []JourneyNodeUnion `json:"nodes" api:"required"`
-	Published int64              `json:"published" api:"required"`
+	ID string `json:"id" api:"required"`
+	// The journey cancelation token, or null when none is set. A token authored in the
+	// dashboard is returned in its raw templated form, such as
+	// `order-{{data.order_id}}`, so it can be read back and asserted.
+	CancelationToken string             `json:"cancelation_token" api:"required"`
+	Created          int64              `json:"created" api:"required"`
+	Creator          string             `json:"creator" api:"required"`
+	Enabled          bool               `json:"enabled" api:"required"`
+	Name             string             `json:"name" api:"required"`
+	Nodes            []JourneyNodeUnion `json:"nodes" api:"required"`
+	Published        int64              `json:"published" api:"required"`
 	// Lifecycle state of a journey.
 	//
 	// Any of "DRAFT", "PUBLISHED".
@@ -2656,18 +2666,19 @@ type JourneyResponse struct {
 	Updater string       `json:"updater" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          respjson.Field
-		Created     respjson.Field
-		Creator     respjson.Field
-		Enabled     respjson.Field
-		Name        respjson.Field
-		Nodes       respjson.Field
-		Published   respjson.Field
-		State       respjson.Field
-		Updated     respjson.Field
-		Updater     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		ID               respjson.Field
+		CancelationToken respjson.Field
+		Created          respjson.Field
+		Creator          respjson.Field
+		Enabled          respjson.Field
+		Name             respjson.Field
+		Nodes            respjson.Field
+		Published        respjson.Field
+		State            respjson.Field
+		Updated          respjson.Field
+		Updater          respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
 	} `json:"-"`
 }
 
