@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.35.0](https://github.com/trycourier/courier-go/compare/v4.34.0...v4.35.0) (2026-09-23)
+
+
+### Features
+
+* **api:** filter notification templates by tag [C-21172] ([#190](https://github.com/trycourier/courier-go/issues/190)) ([950e5b9](https://github.com/trycourier/courier-go/commit/950e5b985841d897325bf2f173034892b4a4d272))
+
 ## [4.34.0](https://github.com/trycourier/courier-go/compare/v4.33.0...v4.34.0) (2026-09-23)
 
 
