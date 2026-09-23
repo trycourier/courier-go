@@ -1614,6 +1614,10 @@ type NotificationListParams struct {
 	Notes param.Opt[bool] `query:"notes,omitzero" json:"-"`
 	// Filter to templates linked to this event map ID.
 	EventID param.Opt[string] `query:"event_id,omitzero" json:"-"`
+	// Comma-delimited list of tag names. Only templates carrying all of the listed
+	// tags are returned. Matching is case-insensitive. Filtering is applied before
+	// pagination.
+	Tags param.Opt[string] `query:"tags,omitzero" json:"-"`
 	paramObj
 }
 
