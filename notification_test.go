@@ -117,6 +117,7 @@ func TestNotificationListWithOptionalParams(t *testing.T) {
 		Cursor:  courier.String("cursor"),
 		EventID: courier.String("event_id"),
 		Notes:   courier.Bool(true),
+		Tags:    courier.String("tags"),
 	})
 	if err != nil {
 		var apierr *courier.Error
