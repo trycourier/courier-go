@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.34.0](https://github.com/trycourier/courier-go/compare/v4.33.0...v4.34.0) (2026-09-23)
+
+
+### Features
+
+* **api:** publish the secondary and tertiary action styles [C-19961] ([#188](https://github.com/trycourier/courier-go/issues/188)) ([58bb0c3](https://github.com/trycourier/courier-go/commit/58bb0c30ade316ca0db490ad35efc08dd2cfd7c5))
+
 ## [4.33.0](https://github.com/trycourier/courier-go/compare/v4.32.0...v4.33.0) (2026-09-22)
 
 
