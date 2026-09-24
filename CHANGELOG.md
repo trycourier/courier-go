@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.37.0](https://github.com/trycourier/courier-go/compare/v4.36.0...v4.37.0) (2026-09-24)
+
+
+### Features
+
+* **api:** cross-client previews endpoints ([#194](https://github.com/trycourier/courier-go/issues/194)) ([73b0106](https://github.com/trycourier/courier-go/commit/73b0106f919c1b785e466220f69a706e207a4061))
+
 ## [4.36.0](https://github.com/trycourier/courier-go/compare/v4.35.0...v4.36.0) (2026-09-24)
 
 
