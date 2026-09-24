@@ -8,9 +8,11 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"slices"
 
 	"github.com/trycourier/courier-go/v4/internal/apijson"
+	"github.com/trycourier/courier-go/v4/internal/apiquery"
 	shimjson "github.com/trycourier/courier-go/v4/internal/encoding/json"
 	"github.com/trycourier/courier-go/v4/internal/requestconfig"
 	"github.com/trycourier/courier-go/v4/option"
@@ -94,6 +96,17 @@ func (r *WorkspacePreferenceService) Archive(ctx context.Context, sectionID stri
 	return err
 }
 
+// Returns the history of preference changes in this environment, newest first.
+// Each entry records one change a user made to one subscription topic, and carries
+// the value before it where there was one. Supply user_id to read a single user's
+// history instead of the whole environment.
+func (r *WorkspacePreferenceService) ListLogs(ctx context.Context, query WorkspacePreferenceListLogsParams, opts ...option.RequestOption) (res *PreferenceLogsListResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "preferences/logs"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return res, err
+}
+
 // Publishes the workspace preference page, snapshotting every preference and
 // topic, and returns the page id and a preview URL.
 func (r *WorkspacePreferenceService) Publish(ctx context.Context, params WorkspacePreferencePublishParams, opts ...option.RequestOption) (res *PublishPreferencesResponse, err error) {
@@ -120,6 +133,99 @@ func (r *WorkspacePreferenceService) Replace(ctx context.Context, sectionID stri
 	path := fmt.Sprintf("preferences/sections/%s", sectionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
 	return res, err
+}
+
+type PreferenceChangeLogEntry struct {
+	// Unique identifier for this change.
+	ID string `json:"id" api:"required"`
+	// The channels chosen for this topic, present only when has_custom_routing is
+	// true. Empty otherwise.
+	CustomRouting []shared.ChannelClassification `json:"custom_routing" api:"required"`
+	// Whether specific delivery channels were chosen for this topic rather than the
+	// topic's default routing.
+	HasCustomRouting bool `json:"has_custom_routing" api:"required"`
+	// The subscription status the change set.
+	//
+	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
+	Status shared.PreferenceStatus `json:"status" api:"required"`
+	// When the change was made, as an ISO-8601 date-time in UTC.
+	Timestamp string `json:"timestamp" api:"required"`
+	// The subscription topic the change applies to.
+	TopicID string `json:"topic_id" api:"required"`
+	// The display name of that topic when the change was made.
+	TopicName string `json:"topic_name" api:"required"`
+	// The user whose preference changed.
+	UserID string `json:"user_id" api:"required"`
+	// The value before this change, where it was recorded.
+	Previous PreferenceChangeLogValue `json:"previous"`
+	// The tenant context the change was made in. Absent when the user set the
+	// preference outside any tenant.
+	TenantID string `json:"tenant_id"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID               respjson.Field
+		CustomRouting    respjson.Field
+		HasCustomRouting respjson.Field
+		Status           respjson.Field
+		Timestamp        respjson.Field
+		TopicID          respjson.Field
+		TopicName        respjson.Field
+		UserID           respjson.Field
+		Previous         respjson.Field
+		TenantID         respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PreferenceChangeLogEntry) RawJSON() string { return r.JSON.raw }
+func (r *PreferenceChangeLogEntry) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type PreferenceChangeLogValue struct {
+	// The channels chosen before the change.
+	CustomRouting []shared.ChannelClassification `json:"custom_routing" api:"required"`
+	// Whether custom routing was in effect before the change.
+	HasCustomRouting bool `json:"has_custom_routing" api:"required"`
+	// The subscription status before the change.
+	//
+	// Any of "OPTED_IN", "OPTED_OUT", "REQUIRED".
+	Status shared.PreferenceStatus `json:"status" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CustomRouting    respjson.Field
+		HasCustomRouting respjson.Field
+		Status           respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PreferenceChangeLogValue) RawJSON() string { return r.JSON.raw }
+func (r *PreferenceChangeLogValue) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type PreferenceLogsListResponse struct {
+	// One entry per preference change, newest first.
+	Items  []PreferenceChangeLogEntry `json:"items" api:"required"`
+	Paging shared.Paging              `json:"paging" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Items       respjson.Field
+		Paging      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PreferenceLogsListResponse) RawJSON() string { return r.JSON.raw }
+func (r *PreferenceLogsListResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // Optional page metadata to apply when publishing the workspace's preferences
@@ -793,6 +899,33 @@ func (r WorkspacePreferenceNewParams) MarshalJSON() (data []byte, err error) {
 }
 func (r *WorkspacePreferenceNewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+type WorkspacePreferenceListLogsParams struct {
+	// A cursor from a previous response's paging.cursor. Continue only while
+	// paging.more is true; the cursor is omitted on the last page.
+	Cursor param.Opt[string] `query:"cursor,omitzero" json:"-"`
+	// How many entries to return. Defaults to 25.
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Return only changes at or after this time, as an ISO-8601 date or date-time. A
+	// date alone is read as the start of that day in UTC.
+	Since param.Opt[string] `query:"since,omitzero" json:"-"`
+	// Narrow to the changes this user made in one tenant context. Only valid together
+	// with user_id.
+	TenantID param.Opt[string] `query:"tenant_id,omitzero" json:"-"`
+	// Return only this user's changes. Omit it to read every change in the
+	// environment.
+	UserID param.Opt[string] `query:"user_id,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [WorkspacePreferenceListLogsParams]'s query parameters as
+// `url.Values`.
+func (r WorkspacePreferenceListLogsParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }
 
 type WorkspacePreferencePublishParams struct {
