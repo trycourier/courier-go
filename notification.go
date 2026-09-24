@@ -35,7 +35,8 @@ type NotificationService struct {
 	Options []option.RequestOption
 	// Create, update, version, publish, and localize notification templates and their
 	// content.
-	Checks NotificationCheckService
+	Checks   NotificationCheckService
+	Previews NotificationPreviewService
 }
 
 // NewNotificationService generates a new service that applies the given options to
@@ -45,6 +46,7 @@ func NewNotificationService(opts ...option.RequestOption) (r NotificationService
 	r = NotificationService{}
 	r.Options = opts
 	r.Checks = NewNotificationCheckService(opts...)
+	r.Previews = NewNotificationPreviewService(opts...)
 	return
 }
 
