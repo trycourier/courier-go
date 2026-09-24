@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.36.0](https://github.com/trycourier/courier-go/compare/v4.35.0...v4.36.0) (2026-09-24)
+
+
+### Features
+
+* **api:** add GET /preferences/logs [C-21018] ([dd1c5bf](https://github.com/trycourier/courier-go/commit/dd1c5bf4a37a733a43fa80bb556b6cce8859fb59))
+
 ## [4.35.0](https://github.com/trycourier/courier-go/compare/v4.34.0...v4.35.0) (2026-09-23)
 
 
