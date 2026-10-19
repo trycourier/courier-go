@@ -117,7 +117,10 @@ type Provider struct {
 	Created int64 `json:"created" api:"required"`
 	// The provider key (e.g. "sendgrid", "twilio", "slack").
 	Provider string `json:"provider" api:"required"`
-	// Provider-specific settings (snake_case keys on the wire).
+	// Provider-specific settings (snake_case keys on the wire). `rate_limit` is this
+	// configuration's send rate limit,
+	// `{ "rate": number, "period": "second" | "minute" | "hour" }`, or null for no
+	// limit.
 	Settings map[string]any `json:"settings" api:"required"`
 	// Display title. Defaults to "Default Configuration" when not explicitly set.
 	Title string `json:"title" api:"required"`
@@ -234,7 +237,17 @@ type ProviderNewParams struct {
 	XIdempotencyExpiration param.Opt[string] `header:"x-idempotency-expiration,omitzero" json:"-"`
 	// Provider-specific settings (snake_case keys). Defaults to an empty object when
 	// omitted. Use the catalog endpoint to discover required fields for a given
-	// provider — omitting a required field returns a 400 validation error.
+	// provider — omitting a required field returns a 400 validation error. Set
+	// `rate_limit` to cap this configuration's send rate:
+	// `{ "rate": <number greater than 0>, "period": "second" | "minute" | "hour" }`,
+	// e.g. `{ "rate": 0.5, "period": "minute" }` for one send every 2 minutes. The
+	// interval between sends (`period` divided by `rate`) must be from 1 millisecond
+	// to 12 hours, otherwise the request returns a 400 `InvalidRateLimit` error. The
+	// limit applies per configuration and per environment (a test-environment
+	// configuration has its own limit). Sends above the rate are queued, not dropped,
+	// and changes take up to 60 seconds to apply. It has no effect on observability or
+	// CDP integrations, which do not send messages. Omit it or set it to null for no
+	// limit.
 	Settings map[string]any `json:"settings,omitzero"`
 	paramObj
 }
@@ -257,7 +270,16 @@ type ProviderUpdateParams struct {
 	Title param.Opt[string] `json:"title,omitzero"`
 	// Provider-specific settings (snake_case keys). Replaces the full settings object
 	// — omitted settings fields are removed. Use the catalog endpoint to check
-	// required fields.
+	// required fields. Set `rate_limit` to cap this configuration's send rate:
+	// `{ "rate": <number greater than 0>, "period": "second" | "minute" | "hour" }`,
+	// e.g. `{ "rate": 0.5, "period": "minute" }` for one send every 2 minutes. The
+	// interval between sends (`period` divided by `rate`) must be from 1 millisecond
+	// to 12 hours, otherwise the request returns a 400 `InvalidRateLimit` error. The
+	// limit applies per configuration and per environment (a test-environment
+	// configuration has its own limit). Sends above the rate are queued, not dropped,
+	// and changes take up to 60 seconds to apply. It has no effect on observability or
+	// CDP integrations, which do not send messages. Omitting `rate_limit` or setting
+	// it to null removes any existing limit, including one set in Studio.
 	Settings map[string]any `json:"settings,omitzero"`
 	paramObj
 }
