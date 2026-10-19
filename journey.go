@@ -400,9 +400,14 @@ type JourneyAINode struct {
 	// group, or an AND/OR nested group. Omit the `conditions` property entirely to
 	// express "no conditions".
 	Conditions JourneyConditionsFieldUnion `json:"conditions"`
-	Model      string                      `json:"model"`
-	UserPrompt string                      `json:"user_prompt"`
-	WebSearch  bool                        `json:"web_search"`
+	// A supported AI model id. Requests with an unknown id may be rejected with a 400
+	// that lists the supported ids. Supported ids: `claude-fable-5-1`,
+	// `claude-opus-5-5`, `claude-sonnet-5-5`, `claude-haiku-5-5`, `gpt-6-astra`,
+	// `gpt-5.5`, `gpt-5.4`, `gpt-6.1-sol`, `gpt-5.4-mini`, `gpt-5.4-nano`,
+	// `gpt-6-luna`.
+	Model      string `json:"model"`
+	UserPrompt string `json:"user_prompt"`
+	WebSearch  bool   `json:"web_search"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		OutputSchema respjson.Field
@@ -446,8 +451,13 @@ type JourneyAINodeParam struct {
 	// A JSONSchema object (Draft-07-compatible). Validated at runtime by Ajv.
 	OutputSchema map[string]any `json:"output_schema,omitzero" api:"required"`
 	// Any of "ai".
-	Type       JourneyAINodeType `json:"type,omitzero" api:"required"`
-	ID         param.Opt[string] `json:"id,omitzero"`
+	Type JourneyAINodeType `json:"type,omitzero" api:"required"`
+	ID   param.Opt[string] `json:"id,omitzero"`
+	// A supported AI model id. Requests with an unknown id may be rejected with a 400
+	// that lists the supported ids. Supported ids: `claude-fable-5-1`,
+	// `claude-opus-5-5`, `claude-sonnet-5-5`, `claude-haiku-5-5`, `gpt-6-astra`,
+	// `gpt-5.5`, `gpt-5.4`, `gpt-6.1-sol`, `gpt-5.4-mini`, `gpt-5.4-nano`,
+	// `gpt-6-luna`.
 	Model      param.Opt[string] `json:"model,omitzero"`
 	UserPrompt param.Opt[string] `json:"user_prompt,omitzero"`
 	WebSearch  param.Opt[bool]   `json:"web_search,omitzero"`
