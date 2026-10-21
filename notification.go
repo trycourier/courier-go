@@ -956,6 +956,80 @@ const (
 	NotificationTemplateCreateRequestStatePublished NotificationTemplateCreateRequestState = "PUBLISHED"
 )
 
+// Email header fields for the template's email channel: the From, Reply-to, CC and
+// BCC values set in the Studio email channel settings. Each value may use template
+// variables, such as `{{data.cc}}`, which are resolved at send time. Reads omit
+// `email` when no header is set, and omit each unset field. Writes treat it as
+// optional, with three meanings. Omit it to keep the stored headers. Send null to
+// clear all four. Send an object to replace all four: a field the object leaves
+// out is cleared. Other email channel settings, such as the subject, are kept
+// either way. Headers only apply while `content` has an email channel; with no
+// email channel they are not stored.
+type NotificationTemplateEmail struct {
+	// BCC addresses.
+	Bcc []string `json:"bcc"`
+	// CC addresses.
+	Cc []string `json:"cc"`
+	// The From address.
+	From string `json:"from"`
+	// The Reply-to address.
+	ReplyTo string `json:"reply_to"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Bcc         respjson.Field
+		Cc          respjson.Field
+		From        respjson.Field
+		ReplyTo     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r NotificationTemplateEmail) RawJSON() string { return r.JSON.raw }
+func (r *NotificationTemplateEmail) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this NotificationTemplateEmail to a
+// NotificationTemplateEmailParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// NotificationTemplateEmailParam.Overrides()
+func (r NotificationTemplateEmail) ToParam() NotificationTemplateEmailParam {
+	return param.Override[NotificationTemplateEmailParam](json.RawMessage(r.RawJSON()))
+}
+
+// Email header fields for the template's email channel: the From, Reply-to, CC and
+// BCC values set in the Studio email channel settings. Each value may use template
+// variables, such as `{{data.cc}}`, which are resolved at send time. Reads omit
+// `email` when no header is set, and omit each unset field. Writes treat it as
+// optional, with three meanings. Omit it to keep the stored headers. Send null to
+// clear all four. Send an object to replace all four: a field the object leaves
+// out is cleared. Other email channel settings, such as the subject, are kept
+// either way. Headers only apply while `content` has an email channel; with no
+// email channel they are not stored.
+type NotificationTemplateEmailParam struct {
+	// The From address.
+	From param.Opt[string] `json:"from,omitzero"`
+	// The Reply-to address.
+	ReplyTo param.Opt[string] `json:"reply_to,omitzero"`
+	// BCC addresses.
+	Bcc []string `json:"bcc,omitzero"`
+	// CC addresses.
+	Cc []string `json:"cc,omitzero"`
+	paramObj
+}
+
+func (r NotificationTemplateEmailParam) MarshalJSON() (data []byte, err error) {
+	type shadow NotificationTemplateEmailParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *NotificationTemplateEmailParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Core template fields used in POST and PUT request bodies (nested under a
 // `notification` key) and returned at the top level in responses.
 type NotificationTemplatePayload struct {
@@ -971,6 +1045,16 @@ type NotificationTemplatePayload struct {
 	Subscription NotificationTemplatePayloadSubscription `json:"subscription" api:"required"`
 	// Tags for categorization. Send empty array for none.
 	Tags []string `json:"tags" api:"required"`
+	// Email header fields for the template's email channel: the From, Reply-to, CC and
+	// BCC values set in the Studio email channel settings. Each value may use template
+	// variables, such as `{{data.cc}}`, which are resolved at send time. Reads omit
+	// `email` when no header is set, and omit each unset field. Writes treat it as
+	// optional, with three meanings. Omit it to keep the stored headers. Send null to
+	// clear all four. Send an object to replace all four: a field the object leaves
+	// out is cleared. Other email channel settings, such as the subject, are kept
+	// either way. Headers only apply while `content` has an email channel; with no
+	// email channel they are not stored.
+	Email NotificationTemplateEmail `json:"email" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Brand        respjson.Field
@@ -979,6 +1063,7 @@ type NotificationTemplatePayload struct {
 		Routing      respjson.Field
 		Subscription respjson.Field
 		Tags         respjson.Field
+		Email        respjson.Field
 		ExtraFields  map[string]respjson.Field
 		raw          string
 	} `json:"-"`
@@ -1068,6 +1153,16 @@ type NotificationTemplatePayloadParam struct {
 	Name string `json:"name" api:"required"`
 	// Tags for categorization. Send empty array for none.
 	Tags []string `json:"tags,omitzero" api:"required"`
+	// Email header fields for the template's email channel: the From, Reply-to, CC and
+	// BCC values set in the Studio email channel settings. Each value may use template
+	// variables, such as `{{data.cc}}`, which are resolved at send time. Reads omit
+	// `email` when no header is set, and omit each unset field. Writes treat it as
+	// optional, with three meanings. Omit it to keep the stored headers. Send null to
+	// clear all four. Send an object to replace all four: a field the object leaves
+	// out is cleared. Other email channel settings, such as the subject, are kept
+	// either way. Headers only apply while `content` has an email channel; with no
+	// email channel they are not stored.
+	Email NotificationTemplateEmailParam `json:"email,omitzero"`
 	paramObj
 }
 
