@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.38.0](https://github.com/trycourier/courier-go/compare/v4.37.0...v4.38.0) (2026-10-21)
+
+
+### Features
+
+* **api:** add PATCH /providers/{id} for partial provider updates [C-21790] ([#200](https://github.com/trycourier/courier-go/issues/200)) ([4198a31](https://github.com/trycourier/courier-go/commit/4198a31c7a44ac6801e2db0bdb3b0317b14fc85f))
+* **api:** expose email From, Reply-to, CC and BCC on notification templates [C-21709] ([#199](https://github.com/trycourier/courier-go/issues/199)) ([59e6b76](https://github.com/trycourier/courier-go/commit/59e6b765fd0bcc651a33d8596e2cd58bd2d0bfd1))
+
+
+### Documentation
+
+* **api:** describe the AI node model constraint [C-21614] ([#196](https://github.com/trycourier/courier-go/issues/196)) ([627a1f8](https://github.com/trycourier/courier-go/commit/627a1f81aadf960a3f68ba4d1688f17b2983d4a4))
+* **api:** document provider settings.rate_limit [C-21732] ([#198](https://github.com/trycourier/courier-go/issues/198)) ([cd554ac](https://github.com/trycourier/courier-go/commit/cd554ace3b7726df6be39c633a7a5b3985a959c5))
+
 ## [4.37.0](https://github.com/trycourier/courier-go/compare/v4.36.0...v4.37.0) (2026-09-24)
 
 
