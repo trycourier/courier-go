@@ -109,6 +109,20 @@ func (r *ProviderService) Delete(ctx context.Context, id string, opts ...option.
 	return err
 }
 
+// Updates part of a provider's configuration and keeps every field you omit.
+// Settings merge into the stored settings key by key, and a setting sent as null
+// is removed.
+func (r *ProviderService) Patch(ctx context.Context, id string, body ProviderPatchParams, opts ...option.RequestOption) (res *Provider, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("providers/%s", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
+	return res, err
+}
+
 // A configured provider in the workspace.
 type Provider struct {
 	// A unique identifier for the provider configuration.
@@ -304,4 +318,29 @@ func (r ProviderListParams) URLQuery() (v url.Values, err error) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+type ProviderPatchParams struct {
+	// Updated alias. Set to null to clear it.
+	Alias param.Opt[string] `json:"alias,omitzero"`
+	// The provider key identifying the type. Optional. When sent, it must match the
+	// stored provider, otherwise the request returns a 400.
+	Provider param.Opt[string] `json:"provider,omitzero"`
+	// Updated display title.
+	Title param.Opt[string] `json:"title,omitzero"`
+	// Provider-specific settings (snake_case keys) to merge into the stored settings,
+	// using JSON Merge Patch (RFC 7396). Each key you send replaces the stored value,
+	// a key set to null is removed, nested objects merge recursively, and arrays
+	// replace the stored value. Keys you omit keep their stored values. Set
+	// `rate_limit` to null to remove this configuration's send rate limit.
+	Settings map[string]any `json:"settings,omitzero"`
+	paramObj
+}
+
+func (r ProviderPatchParams) MarshalJSON() (data []byte, err error) {
+	type shadow ProviderPatchParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ProviderPatchParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
