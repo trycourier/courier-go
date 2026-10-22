@@ -2813,6 +2813,11 @@ func (r *JourneyRunResponse) UnmarshalJSON(data []byte) error {
 type JourneyRunStep struct {
 	// The kind of node that ran, e.g. `send`, `delay`, or `exit`.
 	Action string `json:"action" api:"required"`
+	// Why the step failed. Set when `status` is `ERROR`, `null` otherwise.
+	Error JourneyRunStepError `json:"error" api:"required"`
+	// Why the step was skipped, e.g. `Node conditions not met`. Set when `status` is
+	// `SKIPPED`, `null` otherwise.
+	SkipReason string `json:"skip_reason" api:"required"`
 	// The state of the step: the seven run statuses, plus `SKIPPED` and `COMPUTING`.
 	// Not an enum — new values have been added before.
 	Status string `json:"status" api:"required"`
@@ -2829,6 +2834,8 @@ type JourneyRunStep struct {
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Action      respjson.Field
+		Error       respjson.Field
+		SkipReason  respjson.Field
 		Status      respjson.Field
 		CreatedAt   respjson.Field
 		MessageID   respjson.Field
@@ -2842,6 +2849,25 @@ type JourneyRunStep struct {
 // Returns the unmodified JSON received from the API
 func (r JourneyRunStep) RawJSON() string { return r.JSON.raw }
 func (r *JourneyRunStep) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Why the step failed. Set when `status` is `ERROR`, `null` otherwise.
+type JourneyRunStepError struct {
+	// The reason, e.g. `Fetch failed: GET api.example.com returned 404` or
+	// `AI step timed out after 15 minutes`.
+	Message string `json:"message" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Message     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r JourneyRunStepError) RawJSON() string { return r.JSON.raw }
+func (r *JourneyRunStepError) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
