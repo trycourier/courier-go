@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.39.0](https://github.com/trycourier/courier-go/compare/v4.38.0...v4.39.0) (2026-10-23)
+
+
+### Features
+
+* **api:** journey run steps return error and skip_reason ([#201](https://github.com/trycourier/courier-go/issues/201)) ([d76be2f](https://github.com/trycourier/courier-go/commit/d76be2fa04abac5f8ad4ea3871ac27e5f7793c15))
+
+
+### Chores
+
+* **api:** regenerate SDK ([#203](https://github.com/trycourier/courier-go/issues/203)) ([ff53e14](https://github.com/trycourier/courier-go/commit/ff53e14c82fdd29e1af66635de14993ec176f332))
+
 ## [4.38.0](https://github.com/trycourier/courier-go/compare/v4.37.0...v4.38.0) (2026-10-21)
 
 
