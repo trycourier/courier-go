@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.40.1](https://github.com/trycourier/courier-go/compare/v4.40.0...v4.40.1) (2026-10-29)
+
+
+### Documentation
+
+* **api:** add gpt-6.1-terra to AI node model ids [C-22053] ([#206](https://github.com/trycourier/courier-go/issues/206)) ([b66b2bb](https://github.com/trycourier/courier-go/commit/b66b2bb8193b14c359217f9dc76dd15094a656ee))
+
 ## [4.40.0](https://github.com/trycourier/courier-go/compare/v4.39.0...v4.40.0) (2026-10-29)
 
 
