@@ -150,7 +150,7 @@ func TestProviderDelete(t *testing.T) {
 	}
 }
 
-func TestProviderPatchWithOptionalParams(t *testing.T) {
+func TestProviderPatch(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -167,12 +167,17 @@ func TestProviderPatchWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"id",
 		courier.ProviderPatchParams{
-			Alias:    courier.String("alias"),
-			Provider: courier.String("provider"),
-			Settings: map[string]any{
-				"api_key": "bar",
-			},
-			Title: courier.String("Production SendGrid"),
+			Patch: []courier.ProviderPatchParamsPatch{{
+				Op:    "replace",
+				Path:  "/title",
+				From:  courier.String("from"),
+				Value: "Production SendGrid",
+			}, {
+				Op:    "replace",
+				Path:  "/settings/api_key",
+				From:  courier.String("from"),
+				Value: "SG.xxxxxxxx",
+			}},
 		},
 	)
 	if err != nil {

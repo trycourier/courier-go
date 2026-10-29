@@ -109,9 +109,10 @@ func (r *ProviderService) Delete(ctx context.Context, id string, opts ...option.
 	return err
 }
 
-// Updates part of a provider's configuration and keeps every field you omit.
-// Settings merge into the stored settings key by key, and a setting sent as null
-// is removed.
+// Applies JSON Patch (RFC 6902) operations to a provider configuration and keeps
+// every field the operations don't touch. Paths address the provider as it is
+// returned: /title, /alias and /settings/<key>. The operations apply in order, and
+// if one fails, nothing is saved.
 func (r *ProviderService) Patch(ctx context.Context, id string, body ProviderPatchParams, opts ...option.RequestOption) (res *Provider, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -321,19 +322,13 @@ func (r ProviderListParams) URLQuery() (v url.Values, err error) {
 }
 
 type ProviderPatchParams struct {
-	// Updated alias. Set to null to clear it.
-	Alias param.Opt[string] `json:"alias,omitzero"`
-	// The provider key identifying the type. Optional. When sent, it must match the
-	// stored provider, otherwise the request returns a 400.
-	Provider param.Opt[string] `json:"provider,omitzero"`
-	// Updated display title.
-	Title param.Opt[string] `json:"title,omitzero"`
-	// Provider-specific settings (snake_case keys) to merge into the stored settings,
-	// using JSON Merge Patch (RFC 7396). Each key you send replaces the stored value,
-	// a key set to null is removed, nested objects merge recursively, and arrays
-	// replace the stored value. Keys you omit keep their stored values. Set
-	// `rate_limit` to null to remove this configuration's send rate limit.
-	Settings map[string]any `json:"settings,omitzero"`
+	// Operations to apply, in order. Paths address the provider as it is returned:
+	// `/title`, `/alias`, `/provider`, and `/settings/<key>` with the snake_case
+	// setting keys, including nested paths such as `/settings/rate_limit/rate`. If any
+	// operation fails, for example a `test`, nothing is saved and the request returns
+	// a 400. The result can't change `provider`, remove `title`, or add other
+	// top-level fields. Removing `/alias` clears it.
+	Patch []ProviderPatchParamsPatch `json:"patch,omitzero" api:"required"`
 	paramObj
 }
 
@@ -343,4 +338,35 @@ func (r ProviderPatchParams) MarshalJSON() (data []byte, err error) {
 }
 func (r *ProviderPatchParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+// One JSON Patch (RFC 6902) operation.
+//
+// The properties Op, Path are required.
+type ProviderPatchParamsPatch struct {
+	// The operation to perform.
+	//
+	// Any of "add", "remove", "replace", "move", "copy", "test".
+	Op string `json:"op,omitzero" api:"required"`
+	// JSON Pointer to the field to operate on, such as `/settings/api_key`.
+	Path string `json:"path" api:"required"`
+	// JSON Pointer to the source field for `move` and `copy`.
+	From param.Opt[string] `json:"from,omitzero"`
+	// The value for `add`, `replace` and `test`. Any JSON value.
+	Value any `json:"value,omitzero"`
+	paramObj
+}
+
+func (r ProviderPatchParamsPatch) MarshalJSON() (data []byte, err error) {
+	type shadow ProviderPatchParamsPatch
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ProviderPatchParamsPatch) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ProviderPatchParamsPatch](
+		"op", "add", "remove", "replace", "move", "copy", "test",
+	)
 }
