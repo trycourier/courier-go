@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.40.0](https://github.com/trycourier/courier-go/compare/v4.39.0...v4.40.0) (2026-10-29)
+
+
+### Features
+
+* **api:** PATCH /providers/{id} takes JSON Patch operations [C-22022] ([baee9a1](https://github.com/trycourier/courier-go/commit/baee9a1425bc316422dee856202d7fc85e5ce55f))
+
 ## [4.39.0](https://github.com/trycourier/courier-go/compare/v4.38.0...v4.39.0) (2026-10-23)
 
 
