@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.40.1](https://github.com/trycourier/courier-go/compare/v4.40.0...v4.40.1) (2026-11-17)
+
+
+### Chores
+
+* **api:** regenerate SDK ([#208](https://github.com/trycourier/courier-go/issues/208)) ([7165b67](https://github.com/trycourier/courier-go/commit/7165b67604fc34c853001243e992e8d074c33c9b))
+
+
+### Documentation
+
+* **api:** add gpt-6.1-terra to AI node model ids [C-22053] ([#206](https://github.com/trycourier/courier-go/issues/206)) ([b66b2bb](https://github.com/trycourier/courier-go/commit/b66b2bb8193b14c359217f9dc76dd15094a656ee))
+* **api:** list Claude Fable 5.2 as a JourneyAINode model [C-22567] ([#209](https://github.com/trycourier/courier-go/issues/209)) ([521a410](https://github.com/trycourier/courier-go/commit/521a4107882e91dc385c8fd204a164c103625d29))
+
 ## [4.40.0](https://github.com/trycourier/courier-go/compare/v4.39.0...v4.40.0) (2026-10-29)
 
 
