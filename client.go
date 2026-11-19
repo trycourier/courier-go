@@ -50,6 +50,9 @@ type Client struct {
 	// consistent look.
 	Brands  BrandService
 	Digests DigestService
+	// Report suspected bugs, confusing behavior and missing features in Courier, from
+	// an AI agent, a developer tool or by hand.
+	Feedback FeedbackService
 	// Record an inbound event that triggers the journeys and automations mapped to it.
 	Inbound InboundService
 	// Manage static groups of users that you subscribe explicitly, and send to them by
@@ -124,6 +127,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Bulk = NewBulkService(opts...)
 	r.Brands = NewBrandService(opts...)
 	r.Digests = NewDigestService(opts...)
+	r.Feedback = NewFeedbackService(opts...)
 	r.Inbound = NewInboundService(opts...)
 	r.Lists = NewListService(opts...)
 	r.Messages = NewMessageService(opts...)

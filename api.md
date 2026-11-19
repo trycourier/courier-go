@@ -490,6 +490,16 @@ Methods:
 - <code title="get /digests/schedules/{schedule_id}/instances">client.Digests.Schedules.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#DigestScheduleService.ListInstances">ListInstances</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, scheduleID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#DigestScheduleListInstancesParams">DigestScheduleListInstancesParams</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#DigestInstanceListResponse">DigestInstanceListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="post /digests/schedules/{schedule_id}/trigger">client.Digests.Schedules.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#DigestScheduleService.Release">Release</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, scheduleID <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 
+# Feedback
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#FeedbackNewResponse">FeedbackNewResponse</a>
+
+Methods:
+
+- <code title="post /feedback">client.Feedback.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#FeedbackService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#FeedbackNewParams">FeedbackNewParams</a>) (\*<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4">courier</a>.<a href="https://pkg.go.dev/github.com/trycourier/courier-go/v4#FeedbackNewResponse">FeedbackNewResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
 # Inbound
 
 Response Types:
