@@ -164,6 +164,7 @@ func TestTenantTemplateReplaceWithOptionalParams(t *testing.T) {
 							},
 						}},
 						Version: "2022-01-01",
+						Scope:   shared.ElementalContentScopeDefault,
 					},
 					Channels: shared.MessageChannelsParam{
 						"foo": shared.ChannelParam{

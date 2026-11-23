@@ -250,6 +250,7 @@ func TestJourneyTemplatePutContentWithOptionalParams(t *testing.T) {
 							Type: "channel",
 						},
 					}},
+					Scope:   "default",
 					Version: courier.String("2022-01-01"),
 				},
 				State: courier.NotificationTemplateStateDraft,
