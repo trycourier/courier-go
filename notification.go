@@ -473,6 +473,14 @@ type NotificationContentPutRequestContentParam struct {
 	// Content version identifier (e.g., `2022-01-01`). Optional; server defaults when
 	// omitted.
 	Version param.Opt[string] `json:"version,omitzero"`
+	// How template variables read the data sent with the message. Under `strict`, data
+	// fields are read only through the `data.` prefix, as in `{{data.name}}`. Under
+	// `default`, `data` is spread onto the root, so `{{name}}` resolves and
+	// `{{data.name}}` renders as an empty string. This request replaces the stored
+	// content, so omitting `scope` resets it to `default`.
+	//
+	// Any of "default", "strict".
+	Scope string `json:"scope,omitzero"`
 	paramObj
 }
 
@@ -482,6 +490,12 @@ func (r NotificationContentPutRequestContentParam) MarshalJSON() (data []byte, e
 }
 func (r *NotificationContentPutRequestContentParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[NotificationContentPutRequestContentParam](
+		"scope", "default", "strict",
+	)
 }
 
 // Request body for updating a single element. Additional type-specific fields are

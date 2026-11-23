@@ -174,11 +174,14 @@ type InboundBulkMessageContentUnion struct {
 	Elements []shared.ElementalNodeUnion `json:"elements"`
 	// This field is from variant [shared.ElementalContent].
 	Version string `json:"version"`
-	JSON    struct {
+	// This field is from variant [shared.ElementalContent].
+	Scope shared.ElementalContentScope `json:"scope"`
+	JSON  struct {
 		Body     respjson.Field
 		Title    respjson.Field
 		Elements respjson.Field
 		Version  respjson.Field
+		Scope    respjson.Field
 		raw      string
 	} `json:"-"`
 }

@@ -45,6 +45,7 @@ func TestNotificationNewWithOptionalParams(t *testing.T) {
 							},
 						}},
 						Version: "2022-01-01",
+						Scope:   shared.ElementalContentScopeDefault,
 					},
 					Name: "Welcome Email",
 					Routing: courier.NotificationTemplatePayloadRoutingParam{
@@ -279,6 +280,7 @@ func TestNotificationPutContentWithOptionalParams(t *testing.T) {
 							Type: "channel",
 						},
 					}},
+					Scope:   "default",
 					Version: courier.String("2022-01-01"),
 				},
 				State: courier.NotificationTemplateStateDraft,
@@ -404,6 +406,7 @@ func TestNotificationReplaceWithOptionalParams(t *testing.T) {
 								},
 							}},
 							Version: "2022-01-01",
+							Scope:   shared.ElementalContentScopeDefault,
 						},
 						Name: "Updated Name",
 						Routing: courier.NotificationTemplatePayloadRoutingParam{

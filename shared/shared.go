@@ -704,10 +704,21 @@ type ElementalContent struct {
 	Elements []ElementalNodeUnion `json:"elements" api:"required"`
 	// For example, "2022-01-01"
 	Version string `json:"version" api:"required"`
+	// How template variables read the data sent with the message. Under `strict`, data
+	// fields are read only through the `data.` prefix, as in `{{data.name}}`. Under
+	// `default`, `data` is spread onto the root, so `{{name}}` resolves and
+	// `{{data.name}}` renders as an empty string. Templates saved in Design Studio are
+	// `strict`. When omitted, the content is `default`. A write that replaces a
+	// template's content resets it to `default` unless the request sends `scope`
+	// again.
+	//
+	// Any of "default", "strict".
+	Scope ElementalContentScope `json:"scope"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Elements    respjson.Field
 		Version     respjson.Field
+		Scope       respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -728,11 +739,35 @@ func (r ElementalContent) ToParam() ElementalContentParam {
 	return param.Override[ElementalContentParam](json.RawMessage(r.RawJSON()))
 }
 
+// How template variables read the data sent with the message. Under `strict`, data
+// fields are read only through the `data.` prefix, as in `{{data.name}}`. Under
+// `default`, `data` is spread onto the root, so `{{name}}` resolves and
+// `{{data.name}}` renders as an empty string. Templates saved in Design Studio are
+// `strict`. When omitted, the content is `default`. A write that replaces a
+// template's content resets it to `default` unless the request sends `scope`
+// again.
+type ElementalContentScope string
+
+const (
+	ElementalContentScopeDefault ElementalContentScope = "default"
+	ElementalContentScopeStrict  ElementalContentScope = "strict"
+)
+
 // The properties Elements, Version are required.
 type ElementalContentParam struct {
 	Elements []ElementalNodeUnionParam `json:"elements,omitzero" api:"required"`
 	// For example, "2022-01-01"
 	Version string `json:"version" api:"required"`
+	// How template variables read the data sent with the message. Under `strict`, data
+	// fields are read only through the `data.` prefix, as in `{{data.name}}`. Under
+	// `default`, `data` is spread onto the root, so `{{name}}` resolves and
+	// `{{data.name}}` renders as an empty string. Templates saved in Design Studio are
+	// `strict`. When omitted, the content is `default`. A write that replaces a
+	// template's content resets it to `default` unless the request sends `scope`
+	// again.
+	//
+	// Any of "default", "strict".
+	Scope ElementalContentScope `json:"scope,omitzero"`
 	paramObj
 }
 
