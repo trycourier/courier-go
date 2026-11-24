@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.43.0](https://github.com/trycourier/courier-go/compare/v4.42.0...v4.43.0) (2026-11-24)
+
+
+### Features
+
+* **api:** remove `scope` from v2 notification, journey and broadcast template content ([#216](https://github.com/trycourier/courier-go/issues/216)) ([335eb82](https://github.com/trycourier/courier-go/commit/335eb823da20938c588d0283b9a9d677bf7080a0))
+
 ## [4.42.0](https://github.com/trycourier/courier-go/compare/v4.41.0...v4.42.0) (2026-11-23)
 
 
