@@ -3757,8 +3757,6 @@ type JourneyTemplateCreateRequestNotificationContentParam struct {
 	Elements []shared.ElementalNodeUnionParam `json:"elements,omitzero" api:"required"`
 	// Any of "2022-01-01".
 	Version string `json:"version,omitzero" api:"required"`
-	// Any of "default", "strict".
-	Scope string `json:"scope,omitzero"`
 	paramObj
 }
 
@@ -3773,9 +3771,6 @@ func (r *JourneyTemplateCreateRequestNotificationContentParam) UnmarshalJSON(dat
 func init() {
 	apijson.RegisterFieldValidator[JourneyTemplateCreateRequestNotificationContentParam](
 		"version", "2022-01-01",
-	)
-	apijson.RegisterFieldValidator[JourneyTemplateCreateRequestNotificationContentParam](
-		"scope", "default", "strict",
 	)
 }
 
@@ -3851,13 +3846,10 @@ type JourneyTemplateGetResponseContent struct {
 	Elements []shared.ElementalNodeUnion `json:"elements" api:"required"`
 	// Any of "2022-01-01".
 	Version string `json:"version" api:"required"`
-	// Any of "default", "strict".
-	Scope string `json:"scope"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Elements    respjson.Field
 		Version     respjson.Field
-		Scope       respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -3980,8 +3972,6 @@ type JourneyTemplateReplaceRequestNotificationContentParam struct {
 	Elements []shared.ElementalNodeUnionParam `json:"elements,omitzero" api:"required"`
 	// Any of "2022-01-01".
 	Version string `json:"version,omitzero" api:"required"`
-	// Any of "default", "strict".
-	Scope string `json:"scope,omitzero"`
 	paramObj
 }
 
@@ -3996,9 +3986,6 @@ func (r *JourneyTemplateReplaceRequestNotificationContentParam) UnmarshalJSON(da
 func init() {
 	apijson.RegisterFieldValidator[JourneyTemplateReplaceRequestNotificationContentParam](
 		"version", "2022-01-01",
-	)
-	apijson.RegisterFieldValidator[JourneyTemplateReplaceRequestNotificationContentParam](
-		"scope", "default", "strict",
 	)
 }
 

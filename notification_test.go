@@ -35,7 +35,7 @@ func TestNotificationNewWithOptionalParams(t *testing.T) {
 					Brand: courier.NotificationTemplatePayloadBrandParam{
 						ID: "bnd_01kx4mrd0pfzw8wt7pn7p2fzag",
 					},
-					Content: shared.ElementalContentParam{
+					Content: courier.NotificationTemplateContentParam{
 						Elements: []shared.ElementalNodeUnionParam{{
 							OfElementalChannelNodeWithType: &shared.ElementalChannelNodeWithTypeParam{
 								ElementalChannelNodeParam: shared.ElementalChannelNodeParam{
@@ -45,7 +45,6 @@ func TestNotificationNewWithOptionalParams(t *testing.T) {
 							},
 						}},
 						Version: "2022-01-01",
-						Scope:   shared.ElementalContentScopeDefault,
 					},
 					Name: "Welcome Email",
 					Routing: courier.NotificationTemplatePayloadRoutingParam{
@@ -280,7 +279,6 @@ func TestNotificationPutContentWithOptionalParams(t *testing.T) {
 							Type: "channel",
 						},
 					}},
-					Scope:   "default",
 					Version: courier.String("2022-01-01"),
 				},
 				State: courier.NotificationTemplateStateDraft,
@@ -396,7 +394,7 @@ func TestNotificationReplaceWithOptionalParams(t *testing.T) {
 						Brand: courier.NotificationTemplatePayloadBrandParam{
 							ID: "id",
 						},
-						Content: shared.ElementalContentParam{
+						Content: courier.NotificationTemplateContentParam{
 							Elements: []shared.ElementalNodeUnionParam{{
 								OfElementalChannelNodeWithType: &shared.ElementalChannelNodeWithTypeParam{
 									ElementalChannelNodeParam: shared.ElementalChannelNodeParam{
@@ -406,7 +404,6 @@ func TestNotificationReplaceWithOptionalParams(t *testing.T) {
 								},
 							}},
 							Version: "2022-01-01",
-							Scope:   shared.ElementalContentScopeDefault,
 						},
 						Name: "Updated Name",
 						Routing: courier.NotificationTemplatePayloadRoutingParam{
