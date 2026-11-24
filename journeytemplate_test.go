@@ -47,7 +47,6 @@ func TestJourneyTemplateNewWithOptionalParams(t *testing.T) {
 							},
 						}},
 						Version: "2022-01-01",
-						Scope:   "default",
 					},
 					Name: "Welcome email",
 					Subscription: courier.JourneyTemplateCreateRequestNotificationSubscriptionParam{
@@ -250,7 +249,6 @@ func TestJourneyTemplatePutContentWithOptionalParams(t *testing.T) {
 							Type: "channel",
 						},
 					}},
-					Scope:   "default",
 					Version: courier.String("2022-01-01"),
 				},
 				State: courier.NotificationTemplateStateDraft,
@@ -337,7 +335,6 @@ func TestJourneyTemplateReplaceWithOptionalParams(t *testing.T) {
 							},
 						}},
 						Version: "2022-01-01",
-						Scope:   "default",
 					},
 					Name: "name",
 					Subscription: courier.JourneyTemplateReplaceRequestNotificationSubscriptionParam{

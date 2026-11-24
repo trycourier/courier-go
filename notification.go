@@ -473,14 +473,6 @@ type NotificationContentPutRequestContentParam struct {
 	// Content version identifier (e.g., `2022-01-01`). Optional; server defaults when
 	// omitted.
 	Version param.Opt[string] `json:"version,omitzero"`
-	// How template variables read the data sent with the message. Under `strict`, data
-	// fields are read only through the `data.` prefix, as in `{{data.name}}`. Under
-	// `default`, `data` is spread onto the root, so `{{name}}` resolves and
-	// `{{data.name}}` renders as an empty string. This request replaces the stored
-	// content, so omitting `scope` resets it to `default`.
-	//
-	// Any of "default", "strict".
-	Scope string `json:"scope,omitzero"`
 	paramObj
 }
 
@@ -490,12 +482,6 @@ func (r NotificationContentPutRequestContentParam) MarshalJSON() (data []byte, e
 }
 func (r *NotificationContentPutRequestContentParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[NotificationContentPutRequestContentParam](
-		"scope", "default", "strict",
-	)
 }
 
 // Request body for updating a single element. Additional type-specific fields are
@@ -938,6 +924,58 @@ func (r *NotificationTemplateAliasUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Elemental content of a notification template. Template variables read the data
+// sent with the message through the `data.` prefix, as in `{{data.name}}`, and the
+// recipient's profile through `profile.`.
+type NotificationTemplateContent struct {
+	Elements []shared.ElementalNodeUnion `json:"elements" api:"required"`
+	// For example, "2022-01-01"
+	Version string `json:"version" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Elements    respjson.Field
+		Version     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r NotificationTemplateContent) RawJSON() string { return r.JSON.raw }
+func (r *NotificationTemplateContent) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this NotificationTemplateContent to a
+// NotificationTemplateContentParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// NotificationTemplateContentParam.Overrides()
+func (r NotificationTemplateContent) ToParam() NotificationTemplateContentParam {
+	return param.Override[NotificationTemplateContentParam](json.RawMessage(r.RawJSON()))
+}
+
+// Elemental content of a notification template. Template variables read the data
+// sent with the message through the `data.` prefix, as in `{{data.name}}`, and the
+// recipient's profile through `profile.`.
+//
+// The properties Elements, Version are required.
+type NotificationTemplateContentParam struct {
+	Elements []shared.ElementalNodeUnionParam `json:"elements,omitzero" api:"required"`
+	// For example, "2022-01-01"
+	Version string `json:"version" api:"required"`
+	paramObj
+}
+
+func (r NotificationTemplateContentParam) MarshalJSON() (data []byte, err error) {
+	type shadow NotificationTemplateContentParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *NotificationTemplateContentParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Request body for creating a notification template.
 //
 // The property Notification is required.
@@ -1050,7 +1088,7 @@ type NotificationTemplatePayload struct {
 	// Brand reference, or null for no brand.
 	Brand NotificationTemplatePayloadBrand `json:"brand" api:"required"`
 	// Elemental content definition.
-	Content shared.ElementalContent `json:"content" api:"required"`
+	Content NotificationTemplateContent `json:"content" api:"required"`
 	// Display name for the template.
 	Name string `json:"name" api:"required"`
 	// Routing strategy reference, or null for none.
@@ -1162,7 +1200,7 @@ type NotificationTemplatePayloadParam struct {
 	// Subscription topic reference, or null for none.
 	Subscription NotificationTemplatePayloadSubscriptionParam `json:"subscription,omitzero" api:"required"`
 	// Elemental content definition.
-	Content shared.ElementalContentParam `json:"content,omitzero" api:"required"`
+	Content NotificationTemplateContentParam `json:"content,omitzero" api:"required"`
 	// Display name for the template.
 	Name string `json:"name" api:"required"`
 	// Tags for categorization. Send empty array for none.

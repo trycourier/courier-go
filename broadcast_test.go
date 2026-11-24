@@ -225,7 +225,6 @@ func TestBroadcastPutContentWithOptionalParams(t *testing.T) {
 							Type: "text",
 						},
 					}},
-					Scope:   "default",
 					Version: courier.String("2022-01-01"),
 				},
 				State: courier.NotificationTemplateStateDraft,
