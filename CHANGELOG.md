@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.42.0](https://github.com/trycourier/courier-go/compare/v4.41.0...v4.42.0) (2026-11-23)
+
+
+### Features
+
+* **api:** document `scope` on Elemental content [C-23066] ([#215](https://github.com/trycourier/courier-go/issues/215)) ([06ad6bd](https://github.com/trycourier/courier-go/commit/06ad6bd14beb33368ae1ec34d89e9bd161e469ae))
+
+
+### Chores
+
+* add context7.json to claim the Context7 library ([#213](https://github.com/trycourier/courier-go/issues/213)) ([13649b5](https://github.com/trycourier/courier-go/commit/13649b58fbb1a5f269213d1b65a2d0103d9eec17))
+
 ## [4.41.0](https://github.com/trycourier/courier-go/compare/v4.40.1...v4.41.0) (2026-11-19)
 
 
